@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using HealthCareCenter.Enums;
 
 namespace HealthCareCenter
 {
-    class ChangeRequest
+    public class ChangeRequest
     {
-        public RequestType requestType { get; set; }
-        public Date newDate { get; set; }
-        public AppointmentType newType { get; set; }
-        public Doctor newDoctor { get; set; }
-        public Date dateSent { get; set; }
-        public int appointmentId { get; set; }
-        public Patient patient { get; set; }
+        public RequestType _requestType { get; set; }
+        public DateTime _newDate { get; set; }
+        public AppointmentType _newType { get; set; }
+        public Doctor _newDoctor { get; set; }
+        public DateTime _dateSent { get; set; } // look again
+        public int _id { get; set; }
+        public Patient _patient { get; set; }
     }
 }

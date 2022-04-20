@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using HealthCareCenter.Enums;
 
 namespace HealthCareCenter
 {
-    class Instruction
+    public class Instruction
     {
-        public string comment { get; set; }
-        public List<Date> timeToTake { get; set; }
-        public int dailyConsumption { get; set; }
-        public ConsumptionPeriod consumptionPeriod { get; set; }
+        public string _comment { get; set; }
+        public List<DateTime> _timeToTake { get; set; } // look again
+        public int _dailyConsumption { get; set; }
+        public ConsumptionPeriod _consumptionPeriod { get; set; }
     }
 }

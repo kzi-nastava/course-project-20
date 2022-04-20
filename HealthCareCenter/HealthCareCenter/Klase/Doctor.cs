@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HealthCareCenter.Doctor
+namespace HealthCareCenter
 {
-    class Doctor : User
+    public class Doctor : User
     {
-        public string type { get; set; }
-        public List<VacationRequest> vacationRequests { get; set; }
-        public List<MedicineCreationRequest> medicineSuggestions { get; set; }
-        public List<Doctor> doctors { get; set; }
-        public List<Appointment> allAppointments { get; set; }
+        public string _type { get; set; }
+        public List<VacationRequest> _vacationRequests { get; set; } // look again => _requests
+        public List<MedicineCreationRequest> medicineSuggestions { get; set; } // look again
+        public List<Doctor> _doctors { get; set; } // look again
+        public List<Appointment> _allAppointments { get; set; } // look again _appoinments
     }
 }

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace HealthCareCenter
 {
-    class Referral
+    public class Referral
     {
-        public Patient patient { get; set; }
-        public List<Doctor> doctors { get; set; }
+        public Patient _patient { get; set; }
+        public List<Doctor> _doctors { get; set; }
     }
 }

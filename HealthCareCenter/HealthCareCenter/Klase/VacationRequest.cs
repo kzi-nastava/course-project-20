@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using HealthCareCenter.Enums;
 
 namespace HealthCareCenter
 {
-    class VacationRequest
+    public class VacationRequest
     {
-        public Date startDate { get; set; }
-        public Date endDate { get; set; }
-        public string reason { get; set; }
-        public bool emergency { get; set; }
-        public RequestState requestState { get; set; }
+        public DateTime _startDate { get; set; } // look again
+        public DateTime _endDate { get; set; } // look again
+        public string _reason { get; set; }
+        public bool _emergency { get; set; }
+        public RequestState state { get; set; }
     }
 }

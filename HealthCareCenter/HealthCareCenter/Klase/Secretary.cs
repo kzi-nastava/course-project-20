@@ -4,13 +4,13 @@ using System.Text;
 
 namespace HealthCareCenter
 {
-    class Secretary : User
+    public class Secretary : User
     {
-        public List<ChangeRequest> allChangeRequests { get; set; }
-        public List<HospitalRoom> hospitalRooms { get; set; }
-        public List<Equipment> allEquipment { get; set; }
-        public List<DynamicEquipmentRequest> dynamicEquipmentRequests { get; set; }
-        public List<VacationRequest> vacationRequests { get; set; }
-        public List<Patient> patients { get; set; }
+        public List<ChangeRequest> changedRequests { get; set; } // look again
+        public List<HospitalRoom> _hospitalRooms { get; set; } // look again
+        public List<Equipment> _allEquipment { get; set; } // look again
+        public List<DynamicEquipmentRequest> _dynamicEquipmentRequests { get; set; } // look again
+        public List<VacationRequest> _vacationRequests { get; set; } // look again, same???
+        public List<Patient> _patients { get; set; } // look again
     }
 }

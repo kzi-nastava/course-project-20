@@ -4,12 +4,12 @@ using System.Text;
 
 namespace HealthCareCenter
 {
-    internal class RenovationSchedule
+    public class RenovationSchedule
     {
-        private DateTime startDate;
-        private DateTime finishDate;
-        private bool isSpecialRenovation;
-        private HospitalRooom hospitalRooom;
-        private HospitalRooom secondaryRoom; // if is complex
+        public DateTime _startDate { get; set; } // look again
+        public DateTime _finishDate { get; set; } // look again
+        public bool _isSpecialRenovation { get; set; } // look again => special
+        public HospitalRoom _hospitalRooom { get; set; } // look again
+        public HospitalRoom _secondaryRoom { get; set; } // look again!!! if is complex
     }
 }

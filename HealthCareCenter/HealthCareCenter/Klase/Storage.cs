@@ -4,7 +4,9 @@ using System.Text;
 
 namespace HealthCareCenter
 {
-    internal class Storage
+    public class Storage
     {
+        public List<Equipment> _equipments { get; set; }
+        public List<EquipmentMoveTime> _movesInfo { get; set; } // look again
     }
 }

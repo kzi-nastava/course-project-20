@@ -5,12 +5,12 @@ using HealthCareCenter.Enums;
 
 namespace HealthCareCenter
 {
-    internal class HospitalRooom
+    public class HospitalRoom
     {
-        public int _roomId;
-        public RoomType _roomType;
-        public List<Equipment> allEquipment;
-        public List<EquipmentMoveTime> equipmentToMove;
-        public List<Appointment> appoinmentScheduled;
+        public int _id;
+        public RoomType _type { get; set; }
+        public List<Equipment> _equipments { get; set; }
+        public List<EquipmentMoveTime> _equipmentToMove { get; set; } // look again
+        public List<Appointment> _appoinmentScheduled { get; set; } // look again
     }
 }

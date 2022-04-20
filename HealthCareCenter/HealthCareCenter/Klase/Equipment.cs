@@ -5,10 +5,11 @@ using HealthCareCenter.Enums;
 
 namespace HealthCareCenter
 {
-    internal class Equipment
+    public class Equipment
     {
-        public EquipmentType equipmentType;
-        public string equipmentName;
-        public List<EquipmentMoveTime> moves; // gde da ga mrda
+        public int id { get; set; }
+        public EquipmentType _type { get; set; }
+        public string _name { get; set; }
+        public List<EquipmentMoveTime> movesInfo { get; set; } // look again
     }
 }

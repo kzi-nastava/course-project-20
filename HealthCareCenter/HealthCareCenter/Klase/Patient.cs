@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using HealthCareCenter.Enums;
 
-namespace HealthCareCenter.Patient
+namespace HealthCareCenter
 {
-    class Patient : User
+    public class Patient : User
     {
-        public boolean isBlocked { get; set; }
-        public Blocker blocker { get; set; }
-        public List<Referral> referrals { get; set; }
-        public List<Doctor> doctors { get; set; }
-        public HealthRecord healthRecord { get; set; }
-        public List<Prescription> allPrescriptions { get; set; }
-        public List<Survey> surveys { get; set; }
+        public bool _isBlocked { get; set; }
+        public Blocker _blocker { get; set; }
+        public List<Referral> _referrals { get; set; }
+        public List<Doctor> _doctors { get; set; }
+        public HealthRecord _healthRecord { get; set; }
+        public List<Prescription> _prescriptions { get; set; }
+        public List<Survey> _surveys { get; set; }
     }
 }

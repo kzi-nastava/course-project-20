@@ -4,17 +4,19 @@ using System.Text;
 
 namespace HealthCareCenter.Enums
 {
-    enum Blocker
+    public enum Blocker
     {
         SYSTEM,
         SECRETARY
     }
-    enum RequestType
+
+    public enum RequestType
     {
         DELETE,
         MAKE_CHANGES
     }
-    enum FurnitureType
+
+    public enum FurnitureType
     {
         TABLE,
         CHAIR,
@@ -22,14 +24,16 @@ namespace HealthCareCenter.Enums
         CLOSET,
         OTHER
     }
-    enum EquipmentType
+
+    public enum EquipmentType
     {
         FOR_CHECKUP,
         FOR_SURGERY,
         FURNITURE,
         FOR_HALLWAY
     }
-    enum RoomType
+
+    public enum RoomType
     {
         REST,
         OPERATION,
@@ -37,18 +41,21 @@ namespace HealthCareCenter.Enums
         STORAGE,
         OTHER
     }
-    enum AppointmentType
+
+    public enum AppointmentType
     {
         OPERATION,
         CHECKUP
     }
-    enum ConsumptionPeriod
+
+    public enum ConsumptionPeriod
     {
         AFTER_EATING,
         BEFORE_EATING,
         ANY
     }
-    enum RequestState
+
+    public enum RequestState
     {
         DENIED,
         APPROVED,

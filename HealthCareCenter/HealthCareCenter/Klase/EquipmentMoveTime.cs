@@ -4,11 +4,11 @@ using System.Text;
 
 namespace HealthCareCenter
 {
-    internal class EquipmentMoveTime
+    public class EquipmentMoveTime // change class name;
     {
-        public DateTime _moveTime;
-        public Equipment equipment;
-        public HospitalRooom HospitalRooom;
-        public Storage storage;
+        public DateTime _moveTime { get; set; } // look again => time
+        public Equipment _equipment { get; set; }
+        public HospitalRoom _room { get; set; }
+        public Storage _storage { get; set; }
     }
 }

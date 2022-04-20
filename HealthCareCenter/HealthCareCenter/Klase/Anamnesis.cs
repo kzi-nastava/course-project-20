@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HealthCareCenter
 {
-    class Anamnesis
+    public class Anamnesis
     {
     }
 }

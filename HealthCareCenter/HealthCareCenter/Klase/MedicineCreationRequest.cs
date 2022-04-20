@@ -5,11 +5,10 @@ using HealthCareCenter.Enums;
 
 namespace HealthCareCenter
 {
-    internal class MedicineCreationRequest
+    public class MedicineCreationRequest
     {
-        public string denyComment { get; set; }
-        public RequestState requestState { get; set; }
-
-        public Medicine medicine { get; set; }
+        public string _denyComment { get; set; }
+        public RequestState _state { get; set; }
+        public Medicine _medicine { get; set; } // look again remove???
     }
 }

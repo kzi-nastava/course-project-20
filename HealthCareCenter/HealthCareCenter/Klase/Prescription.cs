@@ -4,10 +4,10 @@ using System.Text;
 
 namespace HealthCareCenter
 {
-    class Prescription
+    public class Prescription
     {
-        public List<Medicine> allMedicine { get; set; }
-        public Doctor doctor { get; set; }
-        public Instruction instruction { get; set; }
+        public List<Medicine> _medicines { get; set; }
+        public Doctor _doctor { get; set; }
+        public Instruction _instruction { get; set; }
     }
 }
