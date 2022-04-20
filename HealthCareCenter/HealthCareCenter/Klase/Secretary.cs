@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HealthCareCenter
 {
-    class Secretary : User
+    public class Secretary : User
     {
         public List<ChangeRequest> allChangeRequests { get; set; }
         public List<HospitalRoom> hospitalRooms { get; set; }

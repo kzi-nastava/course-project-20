@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HealthCareCenter.Patient
 {
-    class Patient : User
+    public class Patient : User
     {
         public boolean isBlocked { get; set; }
         public Blocker blocker { get; set; }

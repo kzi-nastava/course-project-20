@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HealthCareCenter
 {
-    class User
+    public class User
     {
         public string username { get; set; }
         public string password { get; set; }

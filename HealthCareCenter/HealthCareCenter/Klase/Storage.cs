@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HealthCareCenter
 {
-    internal class Storage
+    public class Storage
     {
     }
 }

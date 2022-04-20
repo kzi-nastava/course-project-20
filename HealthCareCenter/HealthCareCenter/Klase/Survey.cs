@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HealthCareCenter
 {
-    class Survey
+    public class Survey
     {
         public int recommendation { get; set; }
         public string comment { get; set; }

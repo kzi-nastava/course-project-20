@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HealthCareCenter
 {
-    class Prescription
+    public class Prescription
     {
         public List<Medicine> allMedicine { get; set; }
         public Doctor doctor { get; set; }

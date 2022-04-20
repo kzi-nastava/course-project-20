@@ -4,10 +4,10 @@ using System.Text;
 
 namespace HealthCareCenter
 {
-    internal class Manager : User
+    public class Manager : User
     {
-        private List<RenovationSchedule> _renovationSchedules;
-        private List<MedicineCreationRequest> medicineSuggestions;
-        private List<Survey> surveys;
+        public List<RenovationSchedule> renovationSchedules { get; set; }
+        public List<MedicineCreationRequest> medicineSuggestions { get; set; }
+        public List<Survey> surveys { get; set; }
     }
 }
