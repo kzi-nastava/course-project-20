@@ -11,6 +11,6 @@ namespace HealthCareCenter
         public DateTime _endDate { get; set; } // look again
         public string _reason { get; set; }
         public bool _emergency { get; set; }
-        public RequestState state { get; set; }
+        public RequestState _requestState { get; set; } // look again
     }
 }

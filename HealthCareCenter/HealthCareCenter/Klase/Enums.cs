@@ -6,59 +6,59 @@ namespace HealthCareCenter.Enums
 {
     public enum Blocker
     {
-        SYSTEM,
-        SECRETARY
+        System,
+        Secretary
     }
 
     public enum RequestType
     {
-        DELETE,
-        MAKE_CHANGES
+        Delete,
+        MakeChanges
     }
 
     public enum FurnitureType
     {
-        TABLE,
-        CHAIR,
-        BED,
-        CLOSET,
-        OTHER
+        Table,
+        Chair,
+        Bed,
+        Closet,
+        Other
     }
 
     public enum EquipmentType
     {
-        FOR_CHECKUP,
-        FOR_SURGERY,
-        FURNITURE,
-        FOR_HALLWAY
+        ForCheckup,
+        ForSurgery,
+        Furniture,
+        ForHallway
     }
 
     public enum RoomType
     {
-        REST,
-        OPERATION,
-        CHECKUP,
-        STORAGE,
-        OTHER
+        Rest,
+        Operation,
+        Checkup,
+        Storage,
+        Other
     }
 
     public enum AppointmentType
     {
-        OPERATION,
-        CHECKUP
+        Operation,
+        Checkup
     }
 
     public enum ConsumptionPeriod
     {
-        AFTER_EATING,
-        BEFORE_EATING,
-        ANY
+        AfterEating,
+        BeforeEating,
+        Any
     }
 
     public enum RequestState
     {
-        DENIED,
-        APPROVED,
-        WAITING
+        Denied,
+        Approved,
+        Waiting
     }
 }

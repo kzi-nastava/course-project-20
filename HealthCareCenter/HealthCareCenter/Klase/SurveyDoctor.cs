@@ -6,6 +6,6 @@ namespace HealthCareCenter
 {
     public class SurveyDoctor : Survey
     {
-        public int serviceQuality { get; set; }
+        public int _serviceQuality { get; set; }
     }
 }
