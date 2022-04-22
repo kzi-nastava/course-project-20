@@ -1,0 +1,11 @@
+[
+  {
+    "ID": 0,
+    "Height": 165,
+    "Weight": 60,
+    "PreviousDiseases": [ "Hypertension", "Tachycardia"],
+    "Allergens": ["Ragweed", "Tree pollen"],
+    "PatientID": 2,
+    "AppointmentIDs": []
+  }
+]
