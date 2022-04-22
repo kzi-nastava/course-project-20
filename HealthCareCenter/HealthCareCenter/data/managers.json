@@ -1,0 +1,14 @@
+{
+  [
+    {
+      "ID": 0,
+      "Username": "ivan",
+      "Password": "ivan",
+      "FirstName": "Ivan",
+      "LastName": "Ivanovic",
+      "DateOfBirth": "20/05/1992",
+      "RenovationScheduleIDs": [],
+      "MedicineSuggestionIDs": []
+    }
+  ]
+}

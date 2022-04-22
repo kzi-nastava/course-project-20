@@ -1,0 +1,16 @@
+{
+  [
+    {
+      "ID": 1,
+      "Username": "jovan",
+      "Password": "jovan",
+      "FirstName": "Jovan",
+      "LastName": "Jovanovic",
+      "DateOfBirth": "15/06/1994",
+      "Type": "General practitioner",
+      "VacationRequestIDs": [],
+      "MedicineCreationRequestIDs": [],
+      "AllAppointmentIDs": []
+    }
+  ]
+}

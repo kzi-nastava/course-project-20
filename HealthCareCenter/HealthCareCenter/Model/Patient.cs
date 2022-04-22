@@ -10,8 +10,9 @@ namespace HealthCareCenter.Model
         public bool IsBlocked { get; set; }
         public Blocker BlockedBy { get; set; }
         public List<int> ReferralIDs { get; set; }
-        public int HealthRecordIDs { get; set; }
         public List<int> PrescriptionIDs { get; set; }
+        public int HealthRecordID { get; set; }
+        
         //public List<Survey> Surveys { get; set; }
     }
 }
