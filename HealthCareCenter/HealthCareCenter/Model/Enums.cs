@@ -6,6 +6,7 @@ namespace HealthCareCenter.Enums
 {
     public enum Blocker
     {
+        None,
         System,
         Secretary
     }

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using HealthCareCenter.Model;
 
 namespace HealthCareCenter
 {
@@ -20,6 +21,58 @@ namespace HealthCareCenter
         public LoginWindow()
         {
             InitializeComponent();
+            try
+            {
+                UserManager.LoadUsers();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void ShowWindow(Window window)
+        {
+            window.Show();
+            Close();
+        }
+
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool foundUser = false;
+            foreach (User user in UserManager.Users)
+            {
+                if (user.Username == usernameTextBox.Text)
+                {
+                    foundUser = true;
+                    if (user.Password == passwordBox.Password)
+                    {
+                        if (user.GetType() == typeof(Doctor))
+                        {
+                            ShowWindow(new DoctorWindow());
+                        } 
+                        else if (user.GetType() == typeof(Manager))
+                        {
+                            ShowWindow(new ManagerWindow());
+                        }
+                        else if (user.GetType() == typeof(Patient))
+                        {
+                            ShowWindow(new PatientWindow());
+                        }
+                        else if (user.GetType() == typeof(Secretary))
+                        {
+                            ShowWindow(new SecretaryWindow());
+                        }
+                    } else {
+                        passwordBox.Clear();
+                        MessageBox.Show("Invalid password.");
+                    }
+                }
+            }
+            if (!foundUser)
+            {
+                MessageBox.Show("Invalid username.");
+            }
         }
     }
 }

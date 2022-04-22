@@ -1,17 +1,15 @@
-{
-  [
-    {
-      "ID": 2,
-      "Username": "eva",
-      "Password": "eva",
-      "FirstName": "Eva",
-      "LastName": "Evic",
-      "DateOfBirth": "12/07/1940",
-      "IsBlocked": false,
-      "BlockedBy": null,
-      "ReferralIDs": [],
-      "PrescriptionIDs": [],
-      "HealthRecordID": 0
-    }
-  ]
-}
+[
+  {
+    "ID": 2,
+    "Username": "eva",
+    "Password": "eva",
+    "FirstName": "Eva",
+    "LastName": "Evic",
+    "DateOfBirth": "12/07/1940",
+    "IsBlocked": false,
+    "BlockedBy": 0,
+    "ReferralIDs": [],
+    "PrescriptionIDs": [],
+    "HealthRecordID": 0
+  }
+]

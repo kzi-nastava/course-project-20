@@ -22,16 +22,16 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="1" Grid.Column="1" Margin="10">
-            Email
+            Username
         </TextBlock>
         <TextBlock Grid.Row="2" Grid.Column="1" Margin="10">
             Password
         </TextBlock>
 
-        <TextBox x:Name="emailTextBox" Grid.Row="1" Grid.Column="2" Margin="10"/>
-        <TextBox x:Name="passwordTextBox" Grid.Row="2" Grid.Column="2" Margin="10" />
+        <TextBox x:Name="usernameTextBox" Grid.Row="1" Grid.Column="2" Margin="10"/>
+        <PasswordBox x:Name="passwordBox" Grid.Row="2" Grid.Column="2" Margin="10" />
 
-        <Button x:Name="loginButton" Content="Login" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="10"/>
+        <Button x:Name="loginButton" Content="Login" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="10" Click="LoginButton_Click"/>
 
     </Grid>
 </Window>
