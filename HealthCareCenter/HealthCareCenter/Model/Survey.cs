@@ -6,7 +6,8 @@ namespace HealthCareCenter
 {
     public class Survey
     {
-        public int _recommendation { get; set; }
-        public string _comment { get; set; }
+        public int ID { get; set; }
+        public int Recommendation { get; set; }
+        public string Comment { get; set; }
     }
 }

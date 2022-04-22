@@ -6,7 +6,8 @@ namespace HealthCareCenter
 {
     public class Referral
     {
-        public Patient _patient { get; set; }
-        public List<Doctor> _doctors { get; set; }
+        public int ID { get; set; }
+        public int PatientID { get; set; }
+        public List<int> DoctorIDs { get; set; }
     }
 }

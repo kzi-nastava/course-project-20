@@ -6,7 +6,7 @@ namespace HealthCareCenter
 {
     public class SurveyHospital : Survey
     {
-        public int _hygiene { get; set; }
-        public int _satisfactionLevel { get; set; } // look again
+        public int Hygiene { get; set; }
+        public int SatisfactionLevel { get; set; }
     }
 }
