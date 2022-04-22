@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using HealthCareCenter.Enums;
 
-namespace HealthCareCenter
+namespace HealthCareCenter.Model
 {
     public class MedicineInstruction
     {
