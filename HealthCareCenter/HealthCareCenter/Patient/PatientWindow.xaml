@@ -25,5 +25,15 @@
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
+        <Menu HorizontalAlignment="Left" Grid.Row="0" Grid.Column="1">
+            <MenuItem x:Name="scheduleAppointmentMenuItem" Header="Schedule an appointment" />
+            <MenuItem x:Name="viewAppointmentsMenuItem" Header="View all appointments" />
+            <MenuItem x:Name="searchDoctorsMenuItem" Header="Seach doctors" />
+            <MenuItem Header="Open survey">
+                <MenuItem x:Name="doctorSurveyMenuItem" Header="About doctor" />
+                <MenuItem x:Name="healthCenterSurveyMenuItem" Header="About health center" />
+            </MenuItem>
+        </Menu>
+
     </Grid>
 </Window>
