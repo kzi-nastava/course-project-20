@@ -12,13 +12,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using HealthCareCenter.Model;
 
 namespace HealthCareCenter
 {
     public partial class SecretaryWindow : Window
     {
-        public SecretaryWindow()
+        public Secretary signedUser;
+        public SecretaryWindow(Model.User user)
         {
+            signedUser = (Secretary) user;
             InitializeComponent();
         }
     }
