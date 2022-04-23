@@ -9,8 +9,8 @@ namespace HealthCareCenter.Model
 {
     internal class AppointmentsMenager
     {
-        public List<Appointment> Appointments { get; set; }
-        public List<Appointment> loadAppointments()
+        public static List<Appointment> Appointments { get; set; }
+        public static List<Appointment> loadAppointments()
         {
             var settings = new JsonSerializerSettings
             {
