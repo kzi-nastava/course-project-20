@@ -12,13 +12,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using HealthCareCenter.Model;
 
 namespace HealthCareCenter
 {
     public partial class ManagerWindow : Window
     {
-        public ManagerWindow()
+        public Manager signedUser;
+        public ManagerWindow(Model.User user)
         {
+            signedUser = (Manager)user;
             InitializeComponent();
         }
     }

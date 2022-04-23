@@ -49,19 +49,19 @@ namespace HealthCareCenter
                     {
                         if (user.GetType() == typeof(Doctor))
                         {
-                            ShowWindow(new DoctorWindow());
+                            ShowWindow(new DoctorWindow(user));
                         } 
                         else if (user.GetType() == typeof(Manager))
                         {
-                            ShowWindow(new ManagerWindow());
+                            ShowWindow(new ManagerWindow(user));
                         }
                         else if (user.GetType() == typeof(Patient))
                         {
-                            ShowWindow(new PatientWindow());
+                            ShowWindow(new PatientWindow(user));
                         }
                         else if (user.GetType() == typeof(Secretary))
                         {
-                            ShowWindow(new SecretaryWindow());
+                            ShowWindow(new SecretaryWindow(user));
                         }
                     } else {
                         passwordBox.Clear();
