@@ -1,0 +1,24 @@
+﻿[
+  {
+    "ID": 1,
+    "Type": "checkup",
+    "AppointmentDate": "24/04/2022",
+    "CreatedDate": "23/04/2022",
+    "Emergency": "true",
+    "DoctorID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 1,
+    "PatientAnamnesia": ""
+  },
+  {
+    "ID": 2,
+    "Type": "checkup",
+    "AppointmentDate": "25/04/2022",
+    "CreatedDate": "23/04/2022",
+    "Emergency": "false",
+    "DoctorID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 1,
+    "PatientAnamnesia": ""
+  }
+]
