@@ -11,5 +11,18 @@
     "ReferralIDs": [],
     "PrescriptionIDs": [],
     "HealthRecordID": 0
+  },
+  {
+    "ID": 4,
+    "Username": "marko",
+    "Password": "marko",
+    "FirstName": "Marko",
+    "LastName": "Markovic",
+    "DateOfBirth": "07/07/1977",
+    "IsBlocked": true,
+    "BlockedBy": 2,
+    "ReferralIDs": [],
+    "PrescriptionIDs": [],
+    "HealthRecordID": 1
   }
 ]
