@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using HealthCareCenter.Model;
+using HealthCareCenter.SecretaryGUI;
 
 namespace HealthCareCenter
 {

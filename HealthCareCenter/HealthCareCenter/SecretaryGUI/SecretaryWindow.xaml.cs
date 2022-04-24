@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using HealthCareCenter.Model;
 
-namespace HealthCareCenter
+namespace HealthCareCenter.SecretaryGUI
 {
     public partial class SecretaryWindow : Window
     {
