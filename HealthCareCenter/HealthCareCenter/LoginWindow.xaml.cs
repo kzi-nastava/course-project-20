@@ -61,7 +61,7 @@ namespace HealthCareCenter
                         }
                         else if (user.GetType() == typeof(Secretary))
                         {
-                            ShowWindow(new SecretaryWindow());
+                            ShowWindow(new SecretaryWindow(user));
                         }
                     } else {
                         passwordBox.Clear();
