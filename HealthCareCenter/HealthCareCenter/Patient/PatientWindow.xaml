@@ -11,7 +11,6 @@
             <ColumnDefinition Width="20" />
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="20" />
         </Grid.ColumnDefinitions>
@@ -19,21 +18,45 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="20" />
             <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
-        <Menu HorizontalAlignment="Left" Grid.Row="0" Grid.Column="1">
-            <MenuItem x:Name="scheduleAppointmentMenuItem" Header="Schedule an appointment" />
-            <MenuItem x:Name="viewAppointmentsMenuItem" Header="View all appointments" />
-            <MenuItem x:Name="searchDoctorsMenuItem" Header="Seach doctors" />
-            <MenuItem Header="Open survey">
-                <MenuItem x:Name="doctorSurveyMenuItem" Header="About doctor" />
-                <MenuItem x:Name="healthCenterSurveyMenuItem" Header="About health center" />
+        <Menu Grid.Row="1" Grid.Column="1" >
+            <MenuItem Header="Action">
+                <MenuItem x:Name="myAppointmentsMenuItem" Header="View your appointments" Click="myAppointmentsMenuItem_Click" />
+                <MenuItem x:Name="searchDoctorsMenuItem" Header="Search for doctor" Click="searchDoctorsMenuItem_Click" />
+                <MenuItem x:Name="myNotificationMenuItem" Header="My notifications" Click="myNotificationMenuItem_Click" />
+                <MenuItem x:Name="myHealthRecordMenuItem" Header="My health record" Click="myHealthRecordMenuItem_Click" />
+                <MenuItem Header="Access surveys">
+                    <MenuItem x:Name="doctorSurveyMenuItem" Header="Doctor" Click="doctorSurveyMenuItem_Click" />
+                    <MenuItem x:Name="healthCenterMenuItem" Header="Health center" Click="healthCenterMenuItem_Click" />
+                </MenuItem>
             </MenuItem>
         </Menu>
+        <TextBlock x:Name="currentActionTextBlock" Grid.Row="1" Grid.Column="2" Margin="15 0 0 0" />
+
+        <Grid x:Name="myAppointmentsGrid" Margin="0 10 0 0" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Visibility="Visible">
+            <DataGrid x:Name="myAppointmentsDataGrid" AutoGenerateColumns="false" HorizontalScrollBarVisibility="Auto">
+                
+            </DataGrid>
+        </Grid>
+
+        <Grid x:Name="searchDoctorsGrid" Margin="0 10 0 0" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
+
+        </Grid>
+
+        <Grid x:Name="myNotificationGrid" Margin="0 10 0 0" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
+
+        </Grid>
+
+        <Grid x:Name="doctorSurveyGrid" Margin="0 10 0 0" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
+
+        </Grid>
+
+        <Grid x:Name="healthCenterGrid" Margin="0 10 0 0" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
+
+        </Grid>
 
     </Grid>
 </Window>

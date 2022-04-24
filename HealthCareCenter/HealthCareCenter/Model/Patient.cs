@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using HealthCareCenter.Enums;
 
 namespace HealthCareCenter.Model
@@ -14,5 +13,6 @@ namespace HealthCareCenter.Model
         public int HealthRecordID { get; set; }
         
         //public List<Survey> Surveys { get; set; }
+
     }
 }
