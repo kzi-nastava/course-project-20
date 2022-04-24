@@ -24,5 +24,16 @@ namespace HealthCareCenter.SecretaryGUI
             _signedUser = (Secretary)user;
             InitializeComponent();
         }
+        private PatientManipulationWindow patientManipulationWindow;
+        private void PatientButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (patientManipulationWindow != null && patientManipulationWindow.IsVisible == true)
+            {
+                MessageBox.Show("You have already opened this window.", "Window already opened");
+                return;
+            }
+            patientManipulationWindow = new PatientManipulationWindow();
+            patientManipulationWindow.Show();
+        }
     }
 }
