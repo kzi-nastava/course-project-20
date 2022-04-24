@@ -1,21 +1,21 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
 using System.IO;
+using System.Text;
 
-namespace HealthCareCenter.Patient
+namespace HealthCareCenter.Model
 {
     public static class PatientDataManager
     {
-        public static List<Model.Appointment> Appointments { get; set; }
+        public static List<Appointment> Appointments { get; set; }
 
-        public static void Load(Model.Patient patient)
+        public static void Load(Patient patient)
         {
             LoadAppointments(patient);
         }
 
-        private static Model.HealthRecord LoadHealthRecord(Model.Patient patient)
+        private static Model.HealthRecord LoadHealthRecord(Patient patient)
         {
             // loads and returns the patient's health record
 
@@ -30,8 +30,8 @@ namespace HealthCareCenter.Patient
                     DateFormatString = Model.Constants.DateFormat
                 };
 
-                String JSONTextHealthRecords = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\healthrecords.json");
-                allHealthRecords = (List<Model.HealthRecord>)JsonConvert.DeserializeObject<IEnumerable<Model.HealthRecord>>(JSONTextHealthRecords, settings);
+                string JSONTextHealthRecords = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\healthrecords.json");
+                allHealthRecords = (List<HealthRecord>)JsonConvert.DeserializeObject<IEnumerable<HealthRecord>>(JSONTextHealthRecords, settings);
             }
             catch (Exception ex)
             {
@@ -39,7 +39,7 @@ namespace HealthCareCenter.Patient
             }
             //==============================================================================
 
-            foreach (Model.HealthRecord potentialHealthRecord in allHealthRecords)
+            foreach (HealthRecord potentialHealthRecord in allHealthRecords)
             {
                 if (patient.HealthRecordID == potentialHealthRecord.ID)
                 {
@@ -50,12 +50,13 @@ namespace HealthCareCenter.Patient
             return null;
         }
 
-        private static void LoadAppointments(Model.Patient patient)
+        private static void LoadAppointments(Patient patient)
         {
             // loads all appointments for the patient and adds them to the "Appointments" list property
 
-            Model.HealthRecord healthRecord = LoadHealthRecord(patient);
-            List<Model.Appointment> allAppointments;
+            Appointments = new List<Appointment>();
+            HealthRecord healthRecord = LoadHealthRecord(patient);
+            List<Appointment> allAppointments;
 
             // loading all appointments
             //==============================================================================
@@ -66,8 +67,8 @@ namespace HealthCareCenter.Patient
                     DateFormatString = Model.Constants.DateFormat
                 };
 
-                String JSONTextAllAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointments.json");
-                allAppointments = (List<Model.Appointment>)JsonConvert.DeserializeObject<IEnumerable<Model.Appointment>>(JSONTextAllAppointments, settings);
+                string JSONTextAllAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointments.json");
+                allAppointments = (List<Appointment>)JsonConvert.DeserializeObject<IEnumerable<Appointment>>(JSONTextAllAppointments, settings);
             }
             catch (Exception ex)
             {
@@ -75,7 +76,7 @@ namespace HealthCareCenter.Patient
             }
             //==============================================================================
 
-            foreach (Model.Appointment potentialAppointment in allAppointments)
+            foreach (Appointment potentialAppointment in allAppointments)
             {
                 if (healthRecord.AppointmentIDs.Contains(potentialAppointment.ID))
                 {
@@ -85,9 +86,9 @@ namespace HealthCareCenter.Patient
 
         }
 
-        public static string GetDoctorFullName(Model.Appointment appointment)
+        public static string GetDoctorFullName(Appointment appointment)
         {
-            List<Model.Doctor> allDoctors;
+            List<Doctor> allDoctors;
 
             // loading all appointments
             //==============================================================================
@@ -98,8 +99,8 @@ namespace HealthCareCenter.Patient
                     DateFormatString = Model.Constants.DateFormat
                 };
 
-                String JSONTextDoctors = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\doctors.json");
-                allDoctors = (List<Model.Doctor>)JsonConvert.DeserializeObject<IEnumerable<Model.Doctor>>(JSONTextDoctors, settings);
+                string JSONTextDoctors = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\doctors.json");
+                allDoctors = (List<Doctor>)JsonConvert.DeserializeObject<IEnumerable<Doctor>>(JSONTextDoctors, settings);
 
             }
             catch (Exception ex)
