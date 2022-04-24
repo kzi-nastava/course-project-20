@@ -74,5 +74,13 @@ namespace HealthCareCenter
                 MessageBox.Show("Invalid username.");
             }
         }
+
+        private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                LoginButton_Click(null, null);
+            }
+        }
     }
 }
