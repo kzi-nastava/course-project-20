@@ -32,7 +32,7 @@
             <Button x:Name="scheduleRewiew" Content="Schedule rewiew" Grid.Row="1" Grid.Column="1" Margin="10" Click="scheduleRewiewButton_Click"/>
             <Button x:Name="drugMenagment" Content="Drug menagment" Grid.Row="2" Grid.Column="1" Margin="10" Click="drugMenagmentButton_Click"/>
         </Grid>
-        <Grid Grid.Row="1" Grid.Column="1" Name ="scheduleGrid" Visibility="Collapsed">
+        <Grid Grid.Row="1" Grid.Column="1" Name ="scheduleGrid" Visibility="Collapsed" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="3*" />
@@ -47,6 +47,7 @@
                 <RowDefinition Height="3*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
                 <DataGrid Grid.Row="0" Grid.Column="0" Name ="scheduleDataGrid" Grid.ColumnSpan="8" ScrollViewer.CanContentScroll="True" 
@@ -55,12 +56,20 @@
                           IsReadOnly="True">
               
                 </DataGrid>
-                <Button x:Name="healthRecord" Content="Health record" Grid.Row="2" Grid.Column="1" Margin="10"/>
+                <Button x:Name="healthRecord" Content="Health record" Grid.Row="2" Grid.Column="1" Margin="10" Click="healthRecord_Click"/>
                 <Button x:Name="anamnesis" Content="Anamnesis" Grid.Row="2" Grid.Column="2" Margin="10"/>
                 <Button x:Name="add" Content="Add" Grid.Row="2" Grid.Column="3" Margin="10" Click="add_Click"/>
                 <Button x:Name="delete" Content="Delete" Grid.Row="2" Grid.Column="4" Margin="10" Click="delete_Click"/>
                 <Button x:Name="alter" Content="Alter" Grid.Row="2" Grid.Column="5" Margin="10" Click="alter_Click"/>
-                <Button x:Name="startAppointment" Content="Start an appointment" Grid.Row="2" Grid.Column="6" Margin="10"/>
+                <Button x:Name="startAppointment" Content="Start an appointment" Grid.Row="2" Grid.Column="6" Margin="10" Click="startAppointment_Click"/>
+                <Label x:Name="dateLabel" Content="Date" Grid.Row="3" Grid.Column="1" Margin="10"/>
+                <ComboBox x:Name="dayChoiceComboBox" Grid.Row="3" Grid.Column="2" Margin="10">
+                </ComboBox>
+                <ComboBox x:Name="monthChoiceComboBox" Grid.Row="3" Grid.Column="3" Margin="10">
+                </ComboBox>
+                <ComboBox x:Name="yearChoiceComboBox" Grid.Row="3" Grid.Column="4" Margin="10">
+                </ComboBox>
+                <Button x:Name="search" Content="Search" Grid.Row="3" Grid.Column="5" Grid.ColumnSpan="2" Margin="10" Click="search_Click"/>
         </Grid>
         <Grid Grid.Row="1" Grid.Column="1" Name ="appointmentCreationGrid" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
@@ -109,10 +118,39 @@
             </ComboBox>
             <Button x:Name="sumbitAppointment" Content="Add" Grid.Row="4" Grid.ColumnSpan ="8"  Grid.Column="0" Visibility="Collapsed" Margin="10" Click="submitAppointment_Click"/>
             <Button x:Name="alterAppointment" Content="Alter" Grid.Row="4" Grid.ColumnSpan ="8"  Grid.Column="0" Visibility="Collapsed" Margin="10" Click="alterAppointment_Click"/>
-
-            <TextBlock></TextBlock>
         </Grid>
-
+        <Grid Grid.Row="1" Grid.Column="1" Name ="healthRecordGrid" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Label Name="idLabel" Content="Id" Grid.Row="1" Grid.Column=" 1"/>
+            <Label Name="heightLabel" Content="Height" Grid.Row="2" Grid.Column=" 1"/>
+            <Label Name="weigthLabel" Content="Weight" Grid.Row="3" Grid.Column=" 1"/>
+            <Label Name="previousDiseasesLabel" Content="Previous diseases" Grid.Row="4" Grid.Column="1"/>
+            <Label Name="alergensLabel" Content="Alergens" Grid.Row="5" Grid.Column=" 1"/>
+            <Label Name="idInfoLable" Content="Id" Grid.Row="1" Grid.Column=" 2" Margin="10"/>
+            <TextBox Name="heightTextBox" Text="Height" Grid.Row="2" Grid.Column="2" Margin="10"/>
+            <TextBox Name="weigthTextBox" Text="Weight" Grid.Row="3" Grid.Column=" 2" Margin="10"/>
+            <TextBox Name="previousDiseasesTextBox" Text="Previous diseases" Grid.Row="4" Grid.Column="2" Margin="10"/>
+            <TextBox Name="alergensTextBox" Text="Alergens" Grid.Row="5" Grid.Column="2" Margin="10"/>
+            <Button Name ="updateHealthRecord" Content="Update" Grid.Row="7"  Grid.Column="1" Margin="10" Visibility="Collapsed" Click="updateHealthRecord_Click"/>
+            <Button Name ="createAnamnesis" Content="Create Anamnesis" Grid.Row="7" Grid.Column="2" Margin="10" Visibility="Collapsed" Click="createAnamnesia_Click"/>
+        </Grid>
+    
 
 
 

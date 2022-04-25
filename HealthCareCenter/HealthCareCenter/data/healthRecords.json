@@ -1,0 +1,11 @@
+﻿[
+  {
+    "ID": 1,
+    "Height": 168,
+    "Weight": 57,
+    "PreviousDiseases": ["Flu"],
+    "Allergens":["Polen"], 
+    "PatientID": 1,
+    "AppointmentIDs": []
+  }
+]
