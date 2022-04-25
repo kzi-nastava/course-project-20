@@ -42,6 +42,7 @@ namespace HealthCareCenter.SecretaryGUI
             patientsDataGrid.ItemsSource = UserManager.Patients;
             patientsDataGrid.IsReadOnly = true;
             LoadBlockedPatients();
+            HealthRecordManager.LoadHealthRecords();
         }
 
         private void ShowEveryoneRadioButton_Click(object sender, RoutedEventArgs e)
