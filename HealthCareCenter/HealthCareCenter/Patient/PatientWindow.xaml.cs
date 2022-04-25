@@ -20,11 +20,15 @@ namespace HealthCareCenter
     public partial class PatientWindow : Window
     {
         private Patient signedUser;
-        private int activeWindow = 0;  // should be enum, add enum later, should show which grids should be collapsed and which should be visible
 
         // appointment datagrid
         private DataTable appointmentsDataTable;
-        private bool isAppointmentDataTableFilled = false;
+
+        // scheduling appointment items
+        private DataTable allDoctorsDataTable;
+        private DataTable allAvailableTimeTable;
+        private DataRowView chosenDoctor;  // selected row with doctor information in allDoctorsDataGrid
+        private DateTime chosenScheduleDate;
 
         public PatientWindow(User user)
         {
@@ -32,17 +36,36 @@ namespace HealthCareCenter
             PatientDataManager.Load(signedUser);
             InitializeComponent();
 
-            // creating the appointment table
+            // creating the appointment table and making that window visible
+            ClearWindow();
+            myAppointmentsGrid.Visibility = Visibility.Visible;
             CreateAppointmentTable();
             FillAppointmentTable();
+            currentActionTextBlock.Text = "My appointments";
+
+        }
+
+        private void ClearWindow()
+        {
+            myAppointmentsGrid.Visibility = Visibility.Collapsed;
+            createAppointmentGrid.Visibility = Visibility.Collapsed;
+
+            searchDoctorsGrid.Visibility = Visibility.Collapsed;
+
+            myNotificationGrid.Visibility = Visibility.Collapsed;
+
+            myHealthRecordGrid.Visibility = Visibility.Collapsed;
+
+            doctorSurveyGrid.Visibility = Visibility.Collapsed;
+
+            healthCenterGrid.Visibility = Visibility.Collapsed;
+
         }
 
         // creation of appointment table
         //==============================================================================
         private void CreateAppointmentTable()
         {
-            currentActionTextBlock.Text = "My appointments";
-
             appointmentsDataTable = new DataTable("Appointments");
             appointmentsDataTable.Columns.Add(new DataColumn("Id", typeof(int)));
             appointmentsDataTable.Columns.Add(new DataColumn("Type of appointment", typeof(string)));
@@ -57,7 +80,7 @@ namespace HealthCareCenter
         private void FillAppointmentTable()
         {
             DataRow row;
-            foreach (Appointment appointment in PatientDataManager.Appointments)
+            foreach (Appointment appointment in PatientDataManager.UnfinishedAppointments)
             {
                 row = appointmentsDataTable.NewRow();
                 row[0] = appointment.ID;
@@ -65,49 +88,180 @@ namespace HealthCareCenter
                 row[2] = appointment.AppointmentDate;
                 row[3] = appointment.CreatedDate;
                 row[4] = appointment.Emergency;
-                row[5] = PatientDataManager.GetDoctorFullName(appointment);
+                row[5] = PatientDataManager.GetDoctorFullNameFromAppointment(appointment);
                 row[6] = appointment.HospitalRoomID;  // replace with hospital room type
                 appointmentsDataTable.Rows.Add(row);
             }
             myAppointmentsDataGrid.ItemsSource = appointmentsDataTable.DefaultView;
-            isAppointmentDataTableFilled = true;
         }
+        //==============================================================================
+
+        // creation of available appointments tables
+        //==============================================================================
+
+        // doctors table
+        //==================================================
+        private void CreateDoctorTable()
+        {
+            allDoctorsDataTable = new DataTable("Doctors");
+            allDoctorsDataTable.Columns.Add(new DataColumn("Id", typeof(int)));
+            allDoctorsDataTable.Columns.Add(new DataColumn("First name", typeof(string)));
+            allDoctorsDataTable.Columns.Add(new DataColumn("Last name", typeof(string)));
+            allDoctorsDataTable.Columns.Add(new DataColumn("Type", typeof(string)));
+
+        }
+
+        private void FillDoctorTable()
+        {
+            DataRow row;
+            foreach (Doctor doctor in PatientDataManager.AllDoctors)
+            {
+                row = allDoctorsDataTable.NewRow();
+                row[0] = doctor.ID;
+                row[1] = doctor.FirstName;
+                row[2] = doctor.LastName;
+                row[3] = doctor.Type;
+                allDoctorsDataTable.Rows.Add(row);
+            }
+            allDoctorsDataGrid.ItemsSource = allDoctorsDataTable.DefaultView;
+        }
+        //==================================================
+
+        // time table
+        //==================================================
+        private void FillDateComboBox()
+        {
+            for (int i = 1; i <= 31; i++)
+            {
+                string s = i.ToString();
+                if (s.Length == 1)
+                {
+                    s = "0" + s;
+                }
+                dayChoiceComboBox.Items.Add(s);
+            }
+            for (int i = 1; i <= 12; i++)
+            {
+                string s = i.ToString();
+                if (s.Length == 1)
+                {
+                    s = "0" + s;
+                }
+                monthChoiceComboBox.Items.Add(s);
+            }
+            yearChoiceComboBox.Items.Add("2022");
+            yearChoiceComboBox.Items.Add("2023");
+            yearChoiceComboBox.Items.Add("2024");
+            yearChoiceComboBox.Items.Add("2025");
+            yearChoiceComboBox.Items.Add("2026");
+        }
+
+        private void CreateAvailableTimeTable()
+        {
+            allAvailableTimeTable = new DataTable("Available time");
+            allAvailableTimeTable.Columns.Add(new DataColumn("Day", typeof(int)));
+            allAvailableTimeTable.Columns.Add(new DataColumn("Month", typeof(int)));
+            allAvailableTimeTable.Columns.Add(new DataColumn("Year", typeof(int)));
+            allAvailableTimeTable.Columns.Add(new DataColumn("Hour", typeof(int)));
+            allAvailableTimeTable.Columns.Add(new DataColumn("Minutes", typeof(int)));
+        }
+
+        private List<string> GetAllPossibleDailySchedules()
+        {
+            // returns all schedules from 8:00 to 21:00 knowing that an appointment lasts 15 minutes
+
+            int hours = 8;
+            int minutes = 0;
+            List<string> allPossibleSchedules = new List<string>();
+            while (hours < 21 || minutes < 15)
+            {
+                string schedule = hours + ":" + minutes;
+                allPossibleSchedules.Add(schedule);
+                minutes += 15;
+                if (minutes >= 60)
+                {
+                    ++hours;
+                    minutes = 0;
+                }
+            }
+
+            return allPossibleSchedules;
+        }
+
+        private void FillAvailableTimeTable()
+        {
+            List<string> allPossibleSchedules = GetAllPossibleDailySchedules();
+            foreach (Appointment appointment in PatientDataManager.AllAppointments)
+            {
+                if (appointment.DoctorID == Convert.ToInt32(chosenDoctor[0]))
+                {
+                    if (appointment.AppointmentDate.Date.CompareTo(chosenScheduleDate.Date) == 0)
+                    {
+                        allPossibleSchedules.Remove(appointment.AppointmentDate.Hour + ":" + appointment.AppointmentDate.Minute);
+                    }
+                }
+            }
+
+            DataRow row;
+            foreach (string availableTime in allPossibleSchedules)
+            {
+                string[] time = availableTime.Split(":");
+                row = allAvailableTimeTable.NewRow();
+                row[0] = chosenScheduleDate.Day;
+                row[1] = chosenScheduleDate.Month;
+                row[2] = chosenScheduleDate.Year;
+                row[3] = Convert.ToInt32(time[0]);
+                row[4] = Convert.ToInt32(time[1]);
+                allAvailableTimeTable.Rows.Add(row);
+            }
+            allAvailableTimeDataGrid.ItemsSource = allAvailableTimeTable.DefaultView;
+        }
+        //==================================================
+
+
         //==============================================================================
 
         // action menu click methods
         //=======================================================================================
         private void myAppointmentsMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            // changing the visibility based on activeWindow attribute comes here
+            ClearWindow();
+            myAppointmentsGrid.Visibility = Visibility.Visible;
             currentActionTextBlock.Text = "My appointments";
-            if (isAppointmentDataTableFilled)
-            {
-                return;
-            }
         }
 
         private void searchDoctorsMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            ClearWindow();
+            searchDoctorsGrid.Visibility = Visibility.Visible;
             currentActionTextBlock.Text = "Search for doctor";
         }
 
         private void myNotificationMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            ClearWindow();
+            myNotificationGrid.Visibility = Visibility.Visible;
             currentActionTextBlock.Text = "My notifications";
         }
 
         private void myHealthRecordMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            ClearWindow();
+            myHealthRecordGrid.Visibility = Visibility.Visible;
             currentActionTextBlock.Text = "My health record";
         }
 
         private void doctorSurveyMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            ClearWindow();
+            doctorSurveyGrid.Visibility = Visibility.Visible;
             currentActionTextBlock.Text = "Doctor survey";
         }
 
         private void healthCenterMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            ClearWindow();
+            healthCenterGrid.Visibility = Visibility.Visible;
             currentActionTextBlock.Text = "Health center survey";
         }
 
@@ -118,6 +272,111 @@ namespace HealthCareCenter
             LoginWindow loginWindow = new LoginWindow();
             loginWindow.Show();
             Close();
+        }
+        //=======================================================================================
+
+        // my appointment menu button click methods
+        //=======================================================================================
+        private void createAppointmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            myAppointmentsGrid.Visibility = Visibility.Collapsed;
+            createAppointmentGrid.Visibility = Visibility.Visible;
+            CreateDoctorTable();
+            FillDoctorTable();
+            FillDateComboBox();
+        }
+        //=======================================================================================
+
+        // appointments creation menu button click methods
+        //=======================================================================================
+        private void chooseDoctorButton_Click(object sender, RoutedEventArgs e)
+        {
+            chosenDoctor = allDoctorsDataGrid.SelectedItem as DataRowView;
+            if (chosenDoctor == null)
+            {
+                MessageBox.Show("No doctor selected");
+                return;
+            }
+
+            var dayChosen = dayChoiceComboBox.SelectedItem;
+            var monthChosen = monthChoiceComboBox.SelectedItem;
+            var yearChosen = yearChoiceComboBox.SelectedItem;
+
+            if (dayChosen == null || monthChosen == null || yearChosen == null)
+            {
+                MessageBox.Show("Date combo boxes not filled");
+                return;
+            }
+
+            string chosenDate = Convert.ToInt32(dayChosen) + "/" + Convert.ToInt32(monthChosen) + "/" + Convert.ToInt32(yearChosen);
+            try
+            {
+                chosenScheduleDate = Convert.ToDateTime(chosenDate);
+                chosenScheduleDate = Convert.ToDateTime(chosenDate);
+            }
+            catch (Exception formatEx)
+            {
+                MessageBox.Show("Invalid date format");
+                return;
+            }
+
+            if (chosenScheduleDate.CompareTo(DateTime.Now) <= 0)
+            {
+                MessageBox.Show("Invalid date");
+                return;
+            }
+
+
+            CreateAvailableTimeTable();
+            FillAvailableTimeTable();
+
+        }
+
+        private void scheduleAppointmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (chosenDoctor == null)
+            {
+                MessageBox.Show("No doctor selected");
+                return;
+            }
+            if (chosenScheduleDate == null)
+            {
+                MessageBox.Show("No date selected");
+                return;
+            }
+
+            DataRowView chosenScheduleTime = allAvailableTimeDataGrid.SelectedItem as DataRowView;
+            if (chosenScheduleTime == null)
+            {
+                MessageBox.Show("No schedule time selected");
+                return;
+            }
+
+            string newAppointmentDateParseString = chosenScheduleTime[0].ToString() + "/" + chosenScheduleTime[1].ToString() + "/" + chosenScheduleTime[2].ToString() + " " + chosenScheduleTime[3].ToString() + ":" + chosenScheduleTime[0].ToString();
+            
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", "Schedule appointment", System.Windows.MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                Appointment newAppointment = new Appointment();
+                int allAppointmentSize = PatientDataManager.AllAppointments.Count;
+                newAppointment.ID = PatientDataManager.AllAppointments[allAppointmentSize - 1].ID + 1;
+                newAppointment.Type = Enums.AppointmentType.Checkup;
+                newAppointment.CreatedDate = DateTime.Now;
+                newAppointment.AppointmentDate = Convert.ToDateTime(newAppointmentDateParseString);
+                newAppointment.Emergency = false;
+                newAppointment.DoctorID = Convert.ToInt32(chosenDoctor[0]);
+                newAppointment.HealthRecordID = signedUser.HealthRecordID;
+                newAppointment.HospitalRoomID = -1;
+                newAppointment.PatientAnamnesis = null;
+
+                PatientDataManager.UnfinishedAppointments.Add(newAppointment);
+            }
+
+            ClearWindow();
+            CreateAppointmentTable();
+            FillAppointmentTable();
+            createAppointmentGrid.Visibility = Visibility.Collapsed;
+            myAppointmentsGrid.Visibility = Visibility.Visible;
         }
         //=======================================================================================
     }

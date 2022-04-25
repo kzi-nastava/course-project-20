@@ -8,11 +8,14 @@ namespace HealthCareCenter.Model
 {
     public static class PatientDataManager
     {
-        public static List<Appointment> Appointments { get; set; }
+        public static List<Appointment> UnfinishedAppointments { get; set; }
+        public static List<Appointment> AllAppointments { get; set; }
+        public static List<Doctor> AllDoctors { get; set; }
 
         public static void Load(Patient patient)
         {
             LoadAppointments(patient);
+            LoadDoctors();
         }
 
         public static void Write()
@@ -20,48 +23,11 @@ namespace HealthCareCenter.Model
             // implement writing of files
         }
 
-        private static HealthRecord LoadHealthRecord(Patient patient)
-        {
-            // loads and returns the patient's health record
-
-            List<HealthRecord> allHealthRecords;
-
-            // loading all health records
-            //==============================================================================
-            try
-            {
-                JsonSerializerSettings settings = new JsonSerializerSettings
-                {
-                    DateFormatString = Constants.DateFormat
-                };
-
-                string JSONTextHealthRecords = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\healthrecords.json");
-                allHealthRecords = (List<HealthRecord>)JsonConvert.DeserializeObject<IEnumerable<HealthRecord>>(JSONTextHealthRecords, settings);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            //==============================================================================
-
-            foreach (HealthRecord potentialHealthRecord in allHealthRecords)
-            {
-                if (patient.HealthRecordID == potentialHealthRecord.ID)
-                {
-                    return potentialHealthRecord;
-                }
-            }
-
-            return null;
-        }
-
         private static void LoadAppointments(Patient patient)
         {
             // loads all appointments for the patient and adds them to the "Appointments" list property
 
-            Appointments = new List<Appointment>();
-            HealthRecord healthRecord = LoadHealthRecord(patient);
-            List<Appointment> allAppointments;
+            UnfinishedAppointments = new List<Appointment>();
 
             // loading all appointments
             //==============================================================================
@@ -69,11 +35,11 @@ namespace HealthCareCenter.Model
             {
                 JsonSerializerSettings settings = new JsonSerializerSettings
                 {
-                    DateFormatString = Constants.DateFormat
+                    DateFormatString = Constants.DateTimeFormat
                 };
 
                 string JSONTextAllAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointments.json");
-                allAppointments = (List<Appointment>)JsonConvert.DeserializeObject<IEnumerable<Appointment>>(JSONTextAllAppointments, settings);
+                AllAppointments = (List<Appointment>)JsonConvert.DeserializeObject<IEnumerable<Appointment>>(JSONTextAllAppointments, settings);
             }
             catch (Exception ex)
             {
@@ -82,40 +48,22 @@ namespace HealthCareCenter.Model
             }
             //==============================================================================
 
-            foreach (Appointment potentialAppointment in allAppointments)
+            foreach (Appointment potentialAppointment in AllAppointments)
             {
-                if (healthRecord.AppointmentIDs.Contains(potentialAppointment.ID))
+                if (potentialAppointment.HealthRecordID == patient.HealthRecordID)
                 {
-                    Appointments.Add(potentialAppointment);
+                    if (potentialAppointment.AppointmentDate.CompareTo(DateTime.Now) > 0)
+                    {
+                        UnfinishedAppointments.Add(potentialAppointment);
+                    }
                 }
             }
 
         }
 
-        public static string GetDoctorFullName(Appointment appointment)
+        public static string GetDoctorFullNameFromAppointment(Appointment appointment)
         {
-            List<Doctor> allDoctors;
-
-            // loading all appointments
-            //==============================================================================
-            try
-            {
-                JsonSerializerSettings settings = new JsonSerializerSettings
-                {
-                    DateFormatString = Constants.DateFormat
-                };
-
-                string JSONTextDoctors = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\doctors.json");
-                allDoctors = (List<Doctor>)JsonConvert.DeserializeObject<IEnumerable<Doctor>>(JSONTextDoctors, settings);
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            //==============================================================================
-
-            foreach (Doctor potentialDoctor in allDoctors)
+            foreach (Doctor potentialDoctor in AllDoctors)
             {
                 if (potentialDoctor.ID == appointment.DoctorID)
                 {
@@ -124,6 +72,25 @@ namespace HealthCareCenter.Model
             }
 
             return null;
+        }
+
+        private static void LoadDoctors()
+        {
+            try
+            {
+                JsonSerializerSettings settings = new JsonSerializerSettings
+                {
+                    DateFormatString = Constants.DateFormat
+                };
+
+                string JSONTextDoctors = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\doctors.json");
+                AllDoctors = (List<Doctor>)JsonConvert.DeserializeObject<IEnumerable<Doctor>>(JSONTextDoctors, settings);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }
