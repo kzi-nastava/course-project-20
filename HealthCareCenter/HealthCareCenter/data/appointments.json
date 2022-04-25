@@ -1,3 +1,13 @@
 ﻿[
-
+  {
+    "ID": 1,
+    "Type": "Checkup",
+    "AppointmentDate": "15/06/2022",
+    "CreatedDate": "26/04/2022",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": -1,
+    "PatientAnamnesis": null
+  }
 ]

@@ -15,19 +15,24 @@ namespace HealthCareCenter.Model
             LoadAppointments(patient);
         }
 
-        private static Model.HealthRecord LoadHealthRecord(Patient patient)
+        public static void Write()
+        {
+            // implement writing of files
+        }
+
+        private static HealthRecord LoadHealthRecord(Patient patient)
         {
             // loads and returns the patient's health record
 
-            List<Model.HealthRecord> allHealthRecords;
+            List<HealthRecord> allHealthRecords;
 
             // loading all health records
             //==============================================================================
             try
             {
-                var settings = new JsonSerializerSettings
+                JsonSerializerSettings settings = new JsonSerializerSettings
                 {
-                    DateFormatString = Model.Constants.DateFormat
+                    DateFormatString = Constants.DateFormat
                 };
 
                 string JSONTextHealthRecords = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\healthrecords.json");
@@ -62,9 +67,9 @@ namespace HealthCareCenter.Model
             //==============================================================================
             try
             {
-                var settings = new JsonSerializerSettings
+                JsonSerializerSettings settings = new JsonSerializerSettings
                 {
-                    DateFormatString = Model.Constants.DateFormat
+                    DateFormatString = Constants.DateFormat
                 };
 
                 string JSONTextAllAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointments.json");
@@ -72,6 +77,7 @@ namespace HealthCareCenter.Model
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 throw ex;
             }
             //==============================================================================
@@ -94,9 +100,9 @@ namespace HealthCareCenter.Model
             //==============================================================================
             try
             {
-                var settings = new JsonSerializerSettings
+                JsonSerializerSettings settings = new JsonSerializerSettings
                 {
-                    DateFormatString = Model.Constants.DateFormat
+                    DateFormatString = Constants.DateFormat
                 };
 
                 string JSONTextDoctors = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\doctors.json");
@@ -109,7 +115,7 @@ namespace HealthCareCenter.Model
             }
             //==============================================================================
 
-            foreach (Model.Doctor potentialDoctor in allDoctors)
+            foreach (Doctor potentialDoctor in allDoctors)
             {
                 if (potentialDoctor.ID == appointment.DoctorID)
                 {

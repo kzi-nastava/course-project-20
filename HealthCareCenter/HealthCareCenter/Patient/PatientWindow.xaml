@@ -32,6 +32,7 @@
                     <MenuItem x:Name="doctorSurveyMenuItem" Header="Doctor" Click="doctorSurveyMenuItem_Click" />
                     <MenuItem x:Name="healthCenterMenuItem" Header="Health center" Click="healthCenterMenuItem_Click" />
                 </MenuItem>
+                <MenuItem x:Name="logOutMenuItem" Header="Log out" Click="logOutMenuItem_Click" />
             </MenuItem>
         </Menu>
         <TextBlock x:Name="currentActionTextBlock" Grid.Row="1" Grid.Column="2" Margin="15 0 0 0" />
@@ -53,9 +54,11 @@
                 <RowDefinition Height="10" />
             </Grid.RowDefinitions>
 
-            <DataGrid x:Name="myAppointmentsDataGrid" AutoGenerateColumns="false" HorizontalScrollBarVisibility="Auto"
-                      Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" >
-                
+            <DataGrid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" x:Name ="myAppointmentsDataGrid" ScrollViewer.CanContentScroll="True" 
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          IsReadOnly="True">
+
             </DataGrid>
 
             <Button x:Name="createAppointmentButton" Margin="5 10 5 0" Content="Create appointment" Grid.Row="2" Grid.Column="1"/>

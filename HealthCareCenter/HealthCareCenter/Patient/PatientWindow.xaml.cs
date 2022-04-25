@@ -37,7 +37,7 @@ namespace HealthCareCenter
             FillAppointmentTable();
         }
 
-        // creation of appointment tables
+        // creation of appointment table
         //==============================================================================
         private void CreateAppointmentTable()
         {
@@ -109,6 +109,15 @@ namespace HealthCareCenter
         private void healthCenterMenuItem_Click(object sender, RoutedEventArgs e)
         {
             currentActionTextBlock.Text = "Health center survey";
+        }
+
+        private void logOutMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            PatientDataManager.Write();
+
+            LoginWindow loginWindow = new LoginWindow();
+            loginWindow.Show();
+            Close();
         }
         //=======================================================================================
     }
