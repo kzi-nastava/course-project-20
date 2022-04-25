@@ -34,8 +34,8 @@
         <Button x:Name="viewButton" Grid.Row="0" Grid.Column="1" Margin="7.5" Content="View" FontSize="18"/>
         <Button x:Name="editButton" Grid.Row="0" Grid.Column="2" Margin="7.5" Content="Edit" FontSize="18"/>
         <Button x:Name="deleteButton" Grid.Row="0" Grid.Column="3" Margin="7.5" Content="Delete" FontSize="18"/>
-        <Button x:Name="blockButton" Grid.Row="1" Grid.Column="0" Margin="7.5" Content="Block" FontSize="18"/>
-        <Button x:Name="unblockButton" Grid.Row="1" Grid.Column="1" Margin="7.5" Content="Unblock" FontSize="18"/>
+        <Button x:Name="blockButton" Grid.Row="1" Grid.Column="0" Margin="7.5" Content="Block" FontSize="18" Click="BlockButton_Click"/>
+        <Button x:Name="unblockButton" Grid.Row="1" Grid.Column="1" Margin="7.5" Content="Unblock" FontSize="18" Click="UnblockButton_Click"/>
 
         <Viewbox Grid.Row="1" Grid.Column="2" Margin="5">
             <RadioButton x:Name="showEveryoneRadioButton" Content="Show everyone     " GroupName="DisplaySettingsGroup" Click="ShowEveryoneRadioButton_Click" IsChecked="True"/>

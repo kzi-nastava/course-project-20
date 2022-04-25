@@ -53,5 +53,53 @@ namespace HealthCareCenter.SecretaryGUI
         {
             patientsDataGrid.ItemsSource = _blockedPatients;
         }
+
+        private void BlockButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (patientsDataGrid.SelectedItem == null)
+            {
+                MessageBox.Show("You must select a patient from the table first.");
+                return;
+            }
+
+            Patient selectedPatient = (Patient)patientsDataGrid.SelectedItem;
+            if (!selectedPatient.IsBlocked)
+            {
+                selectedPatient.IsBlocked = true;
+                selectedPatient.BlockedBy = Enums.Blocker.Secretary;
+                _blockedPatients.Add(selectedPatient);
+                UserManager.SavePatients();
+                patientsDataGrid.Items.Refresh();
+                MessageBox.Show("Patient successfully blocked.");
+            }
+            else
+            {
+                MessageBox.Show("Patient is already blocked.");
+            }
+        }
+
+        private void UnblockButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (patientsDataGrid.SelectedItem == null)
+            {
+                MessageBox.Show("You must select a patient from the table first.");
+                return;
+            }
+
+            Patient selectedPatient = (Patient)patientsDataGrid.SelectedItem;
+            if (selectedPatient.IsBlocked)
+            {
+                selectedPatient.IsBlocked = false;
+                selectedPatient.BlockedBy = Enums.Blocker.None;
+                _blockedPatients.Remove(selectedPatient);
+                UserManager.SavePatients();
+                patientsDataGrid.Items.Refresh();
+                MessageBox.Show("Patient successfully unblocked.");
+            }
+            else
+            {
+                MessageBox.Show("Patient is not blocked.");
+            }
+        }
     }
 }

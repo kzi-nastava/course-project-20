@@ -1,28 +1,28 @@
 [
   {
+    "IsBlocked": true,
+    "BlockedBy": 2,
+    "ReferralIDs": [],
+    "PrescriptionIDs": [],
+    "HealthRecordID": 0,
     "ID": 2,
     "Username": "eva",
     "Password": "eva",
     "FirstName": "Eva",
     "LastName": "Evic",
-    "DateOfBirth": "12/07/1940",
+    "DateOfBirth": "12/07/1940"
+  },
+  {
     "IsBlocked": false,
     "BlockedBy": 0,
     "ReferralIDs": [],
     "PrescriptionIDs": [],
-    "HealthRecordID": 0
-  },
-  {
+    "HealthRecordID": 1,
     "ID": 4,
     "Username": "marko",
     "Password": "marko",
     "FirstName": "Marko",
     "LastName": "Markovic",
-    "DateOfBirth": "07/07/1977",
-    "IsBlocked": true,
-    "BlockedBy": 2,
-    "ReferralIDs": [],
-    "PrescriptionIDs": [],
-    "HealthRecordID": 1
+    "DateOfBirth": "07/07/1977"
   }
 ]
