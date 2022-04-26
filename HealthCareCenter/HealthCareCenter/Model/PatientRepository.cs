@@ -6,41 +6,47 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    public static class PatientDataManager
+    public class PatientRepository
     {
-        public static List<Appointment> UnfinishedAppointments { get; set; }  // unfinished appointments of the currently signed patient
-        public static List<Appointment> AllAppointments { get; set; }
-        public static List<Doctor> AllDoctors { get; set; }
-        public static List<AppointmentChangeRequest> AllChangeRequests { get; set; }
+        private Patient patient;
+        public List<Appointment> UnfinishedAppointments { get; set; }  // unfinished appointments of the currently signed patient
+        public List<Appointment> AllAppointments { get; set; }
+        public List<Doctor> AllDoctors { get; set; }
+        public List<AppointmentChangeRequest> AllChangeRequests { get; set; }
 
-        public static void Load(Patient patient)
+        public PatientRepository(Patient patient)
         {
-            s_loadAppointments(patient);
-            s_loadAppointmentChangeRequests(patient);
-            s_loadDoctors();
+            this.patient = patient;
         }
 
-        public static int GenerateAppointmentID()
+        public void Load()
         {
-            int allAppointmentsSize = PatientDataManager.AllAppointments.Count;
-            return allAppointmentsSize <= 0 ? 1 : PatientDataManager.AllAppointments[allAppointmentsSize - 1].ID + 1;
+            LoadAppointments();
+            LoadAppointmentChangeRequests();
+            LoadDoctors();
         }
 
-        public static int GenerateAppointmentChangeRequestID()
+        public int GenerateAppointmentID()
         {
-            int allChangeRequestsSize = PatientDataManager.AllChangeRequests.Count;
+            int allAppointmentsSize = AllAppointments.Count;
+            return allAppointmentsSize <= 0 ? 1 : AllAppointments[allAppointmentsSize - 1].ID + 1;
+        }
+
+        public int GenerateAppointmentChangeRequestID()
+        {
+            int allChangeRequestsSize = AllChangeRequests.Count;
             //return allChangeRequestsSize <= 0 ? 1 : PatientDataManager.AllChangeRequests[allChangeRequestsSize - 1].ID + 1;
             return -1;
         }
 
-        public static void WriteAll()
+        public void WriteAll()
         {
             // implement writing of files
 
             // call after every action (modification or creation)
         }
 
-        private static void s_loadAppointments(Patient patient)
+        private void LoadAppointments()
         {
             // loads all appointments for the patient and adds them to the "Appointments" list property
 
@@ -78,7 +84,7 @@ namespace HealthCareCenter.Model
 
         }
 
-        private static void s_loadAppointmentChangeRequests(Patient patient)
+        private void LoadAppointmentChangeRequests()
         {
             // loading all appointment change requests
             //==============================================================================
@@ -100,7 +106,7 @@ namespace HealthCareCenter.Model
             //==============================================================================
         }
 
-        public static string GetDoctorFullNameFromAppointment(Appointment appointment)
+        public string GetDoctorFullNameFromAppointment(Appointment appointment)
         {
             foreach (Doctor potentialDoctor in AllDoctors)
             {
@@ -113,7 +119,7 @@ namespace HealthCareCenter.Model
             return null;
         }
 
-        private static void s_loadDoctors()
+        private void LoadDoctors()
         {
             try
             {
