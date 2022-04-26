@@ -31,10 +31,22 @@ namespace HealthCareCenter
         private DateTime chosenScheduleDate;
         private bool isScheduleDateChosen = false;
         private DataRowView chosenAppointment;  // selected row with appointment information, used when making changes to an appointment
+        private bool shouldSendRequestToSecretary = false;
+
+        // trolling limits
+        private int creationTrollLimit = 8;
+        private int modificationTrollLimit = 5;
 
         public PatientWindow(User user)
         {
             signedUser = (Patient)user;
+            if (signedUser.IsBlocked)
+            {
+                MessageBox.Show("This user is blocked\nReturning to login screen");
+                LoginWindow loginWindow = new LoginWindow();
+                loginWindow.Show();
+                Close();
+            }
             PatientDataManager.Load(signedUser);
             InitializeComponent();
 
@@ -60,6 +72,7 @@ namespace HealthCareCenter
             dayChoiceComboBox.Items.Clear();
             monthChoiceComboBox.Items.Clear();
             yearChoiceComboBox.Items.Clear();
+            shouldSendRequestToSecretary = false;
 
             searchDoctorsGrid.Visibility = Visibility.Collapsed;
 
@@ -229,7 +242,6 @@ namespace HealthCareCenter
         }
         //==================================================
 
-
         //==============================================================================
 
         // action menu click methods
@@ -278,7 +290,7 @@ namespace HealthCareCenter
 
         private void logOutMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            PatientDataManager.Write();
+            PatientDataManager.WriteAll();
 
             LoginWindow loginWindow = new LoginWindow();
             loginWindow.Show();
@@ -306,6 +318,15 @@ namespace HealthCareCenter
                 MessageBox.Show("No appointment selected");
                 return;
             }
+
+            DateTime chosenAppointmentDate = Convert.ToDateTime(chosenAppointment[2]);
+            TimeSpan timeTillAppointment = chosenAppointmentDate.Subtract(DateTime.Now);
+            if (timeTillAppointment.TotalDays <= 2)
+            {
+                MessageBox.Show("Since there are less than 2 days left until the appointment starts" +
+                    "\nrequest will be sent to the secretary to confirm");
+                shouldSendRequestToSecretary = true;
+            }
             myAppointmentsGrid.Visibility = Visibility.Collapsed;
             createAppointmentGrid.Visibility = Visibility.Visible;
             CreateDoctorTable();
@@ -323,16 +344,39 @@ namespace HealthCareCenter
                 return;
             }
 
+            DateTime chosenAppointmentDate = Convert.ToDateTime(chosenAppointment[2]);
+            TimeSpan timeTillAppointment = chosenAppointmentDate.Subtract(DateTime.Now);
+            if (timeTillAppointment.TotalDays <= 2)
+            {
+                MessageBox.Show("Since there are less than 2 days left until the appointment starts," +
+                    "\nrequest will be sent to the secretary to confirm");
+                shouldSendRequestToSecretary = true;
+            }
+
             MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", "Cancel appointment", System.Windows.MessageBoxButton.YesNo);
             Appointment forDeletion = new Appointment();
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                foreach (Appointment appointment in PatientDataManager.UnfinishedAppointments)
+                CheckModificationTroll();
+
+                if (shouldSendRequestToSecretary)
                 {
-                    if (Convert.ToInt32(chosenAppointment[0]) == appointment.ID)
+                    AppointmentChangeRequest changeRequest = new AppointmentChangeRequest();
+                    changeRequest.AppointmentID = Convert.ToInt32(chosenAppointment[0]);
+                    changeRequest.RequestType = Enums.RequestType.Delete;
+                    changeRequest.DateSent = DateTime.Now;
+                    changeRequest.PatientID = signedUser.ID;
+                    PatientDataManager.AllChangeRequests.Add(changeRequest);
+                }
+                else
+                {
+                    foreach (Appointment appointment in PatientDataManager.UnfinishedAppointments)
                     {
-                        forDeletion = appointment;
-                        break;
+                        if (Convert.ToInt32(chosenAppointment[0]) == appointment.ID)
+                        {
+                            forDeletion = appointment;
+                            break;
+                        }
                     }
                 }
             }
@@ -424,20 +468,36 @@ namespace HealthCareCenter
                 Appointment newAppointment = new Appointment();
                 if (IsModification())
                 {
-                    foreach (Appointment appointment in PatientDataManager.UnfinishedAppointments)
+                    CheckModificationTroll();
+                    if (shouldSendRequestToSecretary)
                     {
-                        if (Convert.ToInt32(chosenAppointment[0]) == appointment.ID)
+                        AppointmentChangeRequest changeRequest = new AppointmentChangeRequest();
+                        changeRequest.ID = PatientDataManager.GenerateAppointmentChangeRequestID();
+                        changeRequest.AppointmentID = Convert.ToInt32(chosenAppointment[0]);
+                        changeRequest.RequestType = Enums.RequestType.Delete;
+                        changeRequest.NewDate = Convert.ToDateTime(chosenAppointment[2]);
+                        changeRequest.NewAppointmentType = Enums.AppointmentType.Checkup;
+                        changeRequest.NewDoctorID = Convert.ToInt32(chosenDoctor[0]);
+                        changeRequest.DateSent = DateTime.Now;
+                        changeRequest.PatientID = signedUser.ID;
+                        PatientDataManager.AllChangeRequests.Add(changeRequest);
+                    }
+                    else
+                    {
+                        foreach (Appointment appointment in PatientDataManager.UnfinishedAppointments)
                         {
-                            newAppointment = appointment;
-                            break;
+                            if (Convert.ToInt32(chosenAppointment[0]) == appointment.ID)
+                            {
+                                newAppointment = appointment;
+                                break;
+                            }
                         }
                     }
                 }
                 else
                 {
-                    int allAppointmentSize = PatientDataManager.AllAppointments.Count;
-                    newAppointment.ID = allAppointmentSize <= 0 ? 1 : PatientDataManager.AllAppointments[allAppointmentSize - 1].ID + 1;
-
+                    CheckCreationTroll();
+                    newAppointment.ID = PatientDataManager.GenerateAppointmentID();
                     PatientDataManager.UnfinishedAppointments.Add(newAppointment);
                 }
 
@@ -467,5 +527,64 @@ namespace HealthCareCenter
             return chosenAppointment != null;
         }
         //=======================================================================================
+
+        // anti troll mechanism methods
+        //=======================================================================================
+        private void CheckCreationTroll()
+        {
+            int creationCount = 0;
+            foreach (Appointment appointment in PatientDataManager.AllAppointments)
+            {
+                if (appointment.HealthRecordID == signedUser.HealthRecordID)
+                {
+                    TimeSpan timePassedSinceScheduling = DateTime.Now.Subtract(appointment.CreatedDate);
+                    if (timePassedSinceScheduling.TotalDays < 30)
+                    {
+                        ++creationCount;
+                    }
+                }
+            }
+
+            if (creationCount >= creationTrollLimit)
+            {
+                signedUser.IsBlocked = true;
+                signedUser.BlockedBy = Enums.Blocker.System;
+
+                MessageBox.Show("You have been blocked for excessive amounts of appointments created in the last 30 days");
+                LoginWindow loginWindow = new LoginWindow();
+                loginWindow.Show();
+                Close();
+            }
+        }
+
+        private void CheckModificationTroll()
+        {
+            int modificationCount = 0;
+            foreach (AppointmentChangeRequest changeRequest in PatientDataManager.AllChangeRequests)
+            {
+                if (changeRequest.PatientID == signedUser.ID)
+                {
+                    TimeSpan timePassedSinceScheduling = DateTime.Now.Subtract(changeRequest.DateSent);
+                    if (timePassedSinceScheduling.TotalDays < 30)
+                    {
+                        ++modificationCount;
+                    }
+                }
+            }
+
+            if (modificationCount >= modificationTrollLimit)
+            {
+                signedUser.IsBlocked = true;
+                signedUser.BlockedBy = Enums.Blocker.System;
+
+                MessageBox.Show("You have been blocked for excessive amounts of change requests sent in the last 30 days");
+
+                LoginWindow loginWindow = new LoginWindow();
+                loginWindow.Show();
+                Close();
+            }
+        }
+        //=======================================================================================
+
     }
 }
