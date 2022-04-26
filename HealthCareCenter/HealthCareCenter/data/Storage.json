@@ -1,8 +1,11 @@
 [
   {
     "ID": 0,
-    "EquipmentIDsAmounts": {},
-    "MoveInfoIDs": {}
+    "EquipmentIDsAmounts": {
+      "Stolica": 1,
+      "Klupa": 1
+    },
+    "MoveInfoIDs": []
   }
 
 ]

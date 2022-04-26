@@ -40,10 +40,10 @@
         <StackPanel>
             <Menu IsMainMenu="True">
                 <MenuItem Header="Hospital premises">
-                    <MenuItem Header="CRUD hospital rooms"></MenuItem>
+                    <MenuItem Header="CRUD hospital rooms" Click="CrudHospitalRoomMenuItemClick"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Hospital equipment">
-                    <MenuItem Header="Equipment review"></MenuItem>
+                    <MenuItem Header="Equipment review" Click="EquipmentReviewMenuItemClick"></MenuItem>
                     <MenuItem Header="Arranging equipment"></MenuItem>
                 </MenuItem>
             </Menu>

@@ -6,12 +6,25 @@ namespace HealthCareCenter.Model
 {
     public class HospitalRoomNotFound : Exception
     {
-        /// <summary>
-        ///
-        /// </summary>
         public HospitalRoomNotFound()
         {
             Console.WriteLine("Error, hospital room not found!");
+        }
+    }
+
+    public class EquipmentNotFound : Exception
+    {
+        public EquipmentNotFound()
+        {
+            Console.WriteLine("Error, equipment not found!");
+        }
+    }
+
+    public class EquipmentRearrangementNotFount : Exception
+    {
+        public EquipmentRearrangementNotFount()
+        {
+            Console.WriteLine("Error, equipment rearrangement not found!");
         }
     }
 }

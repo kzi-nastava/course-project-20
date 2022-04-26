@@ -8,14 +8,13 @@ namespace HealthCareCenter.Model
 {
     public class HospitalRoomRepository
     {
-        private static List<HospitalRoom> s_rooms = getRooms();
+        private static List<HospitalRoom> s_rooms = LoadRooms();
 
         /// <summary>
         /// Loads all hospital rooms from file HospitalRooms.json
         /// </summary>
         /// <returns>List of all hospital rooms</returns>
-        /// <exception cref="System.Exception">Thrown when hospital rooms could not be loaded from the file HospitalRooms.json </exception>
-        private static List<HospitalRoom> getRooms()
+        private static List<HospitalRoom> LoadRooms()
         {
             try
             {
@@ -98,7 +97,7 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Add new room in file HospitalRooms.json.
+        /// Add new hospital room in file HospitalRooms.json.
         /// </summary>
         /// <param name="newRoom"></param>
         public static void AddRoom(HospitalRoom newRoom)
@@ -159,6 +158,12 @@ namespace HealthCareCenter.Model
             }
         }
 
+        /// <summary>
+        /// Delete room from file HospitalRooms.josn with specific ID
+        /// </summary>
+        /// <param name="room">Room we want to delete</param>
+        /// <returns>true if room is deleted or false if it's not</returns>
+        /// <exception cref="HospitalRoomNotFound">Thrown when room is not found</exception>
         public static bool DeleteRoom(HospitalRoom room)
         {
             try
@@ -185,6 +190,11 @@ namespace HealthCareCenter.Model
             }
         }
 
+        /// <summary>
+        /// Updating hospital room
+        /// </summary>
+        /// <param name="room">Hospital room we want to update</param>
+        /// <returns>true if room is updated or false if room is not found</returns>
         public static bool UpdateRoom(HospitalRoom room)
         {
             try

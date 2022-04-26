@@ -1,0 +1,37 @@
+[
+  {
+    "ID": 0,
+    "Type": 2,
+    "CurrentRoomID": 1,
+    "Name": "Chair",
+    "RearrangementID": 0
+  },
+  {
+    "ID": 1,
+    "Type": 2,
+    "CurrentRoomID": 1,
+    "Name": "Table",
+    "RearrangementID": -1
+  },
+  {
+    "ID": 2,
+    "Type": 2,
+    "CurrentRoomID": 0,
+    "Name": "Chair",
+    "RearrangementID": -1
+  },
+  {
+    "ID": 3,
+    "Type": 2,
+    "CurrentRoomID": 1,
+    "Name": "Bad",
+    "RearrangementID": -1
+  },
+  {
+    "ID": 4,
+    "Type": 3,
+    "CurrentRoomID": 0,
+    "Name": "Bench",
+    "RearrangementID": -1
+  }
+]

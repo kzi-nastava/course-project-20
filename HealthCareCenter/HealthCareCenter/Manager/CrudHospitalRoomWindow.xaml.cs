@@ -119,5 +119,21 @@ namespace HealthCareCenter
             HospitalRoomIdTextBox.Text = "";
             HospitalRoomNameTextBox.Text = "";
         }
+
+        private void ShowWindow(Window window)
+        {
+            window.Show();
+            Close();
+        }
+
+        private void CrudHospitalRoomMenuItemClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new ManagerWindow(signedUser));
+        }
+
+        private void EquipmentReviewMenuItemClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new HospitalEquipmentReviewWindow(signedUser));
+        }
     }
 }

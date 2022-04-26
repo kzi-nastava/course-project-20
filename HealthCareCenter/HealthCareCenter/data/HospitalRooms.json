@@ -1,1 +1,45 @@
-[{"Type":0,"Name":"Soba","EquipmentRearrangementsIDs":[],"AppointmentIDs":[],"ID":1,"EquipmentIDsAmounts":{},"MoveInfoIDs":[]}]
+[
+  {
+    "Type": 0,
+    "Name": "Room1",
+    "EquipmentRearrangementsIDs": [
+      0
+    ],
+    "AppointmentIDs": [
+    ],
+    "ID": 1,
+    "EquipmentIDsAmounts": {
+      "Stolica": 1,
+      "Sto": 1,
+      "Krevet": 1
+    },
+    "MoveInfoIDs": [
+    ]
+  },
+  {
+    "Type": 1,
+    "Name": "Room2",
+    "EquipmentRearrangementsIDs": [
+    ],
+    "AppointmentIDs": [
+    ],
+    "ID": 2,
+    "EquipmentIDsAmounts": {
+    },
+    "MoveInfoIDs": [
+    ]
+  },
+  {
+    "Type": 2,
+    "Name": "Room3",
+    "EquipmentRearrangementsIDs": [
+    ],
+    "AppointmentIDs": [
+    ],
+    "ID": 3,
+    "EquipmentIDsAmounts": {
+    },
+    "MoveInfoIDs": [
+    ]
+  }
+]

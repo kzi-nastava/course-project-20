@@ -50,10 +50,10 @@ namespace HealthCareCenter
                         if (user.GetType() == typeof(Doctor))
                         {
                             ShowWindow(new DoctorWindow(user));
-                        } 
+                        }
                         else if (user.GetType() == typeof(Manager))
                         {
-                            ShowWindow(new ManagerWindow(user));
+                            ShowWindow(new HospitalEquipmentReviewWindow(user));
                         }
                         else if (user.GetType() == typeof(Patient))
                         {
@@ -63,7 +63,9 @@ namespace HealthCareCenter
                         {
                             ShowWindow(new SecretaryWindow(user));
                         }
-                    } else {
+                    }
+                    else
+                    {
                         passwordBox.Clear();
                         MessageBox.Show("Invalid password.");
                     }
