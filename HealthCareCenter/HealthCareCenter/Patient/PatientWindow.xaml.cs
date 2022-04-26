@@ -29,6 +29,8 @@ namespace HealthCareCenter
         private DataTable allAvailableTimeTable;
         private DataRowView chosenDoctor;  // selected row with doctor information in allDoctorsDataGrid
         private DateTime chosenScheduleDate;
+        private bool isScheduleDateChosen = false;
+        private DataRowView chosenAppointment;  // selected row with appointment information, used when making changes to an appointment
 
         public PatientWindow(User user)
         {
@@ -49,6 +51,15 @@ namespace HealthCareCenter
         {
             myAppointmentsGrid.Visibility = Visibility.Collapsed;
             createAppointmentGrid.Visibility = Visibility.Collapsed;
+            if (allAvailableTimeTable != null)
+            {
+                allAvailableTimeTable.Clear();
+            }    
+            chosenDoctor = null;
+            isScheduleDateChosen = false;
+            dayChoiceComboBox.Items.Clear();
+            monthChoiceComboBox.Items.Clear();
+            yearChoiceComboBox.Items.Clear();
 
             searchDoctorsGrid.Visibility = Visibility.Collapsed;
 
@@ -284,10 +295,54 @@ namespace HealthCareCenter
             CreateDoctorTable();
             FillDoctorTable();
             FillDateComboBox();
+            chosenAppointment = null;
+        }
+
+        private void makeChangeAppointmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            chosenAppointment = myAppointmentsDataGrid.SelectedItem as DataRowView;
+            if (chosenAppointment == null)
+            {
+                MessageBox.Show("No appointment selected");
+                return;
+            }
+            myAppointmentsGrid.Visibility = Visibility.Collapsed;
+            createAppointmentGrid.Visibility = Visibility.Visible;
+            CreateDoctorTable();
+            FillDoctorTable();
+            FillDateComboBox();
+
+        }
+
+        private void cancelAppointmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            chosenAppointment = myAppointmentsDataGrid.SelectedItem as DataRowView;
+            if (chosenAppointment == null)
+            {
+                MessageBox.Show("No appointment selected");
+                return;
+            }
+
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", "Cancel appointment", System.Windows.MessageBoxButton.YesNo);
+            Appointment forDeletion = new Appointment();
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                foreach (Appointment appointment in PatientDataManager.UnfinishedAppointments)
+                {
+                    if (Convert.ToInt32(chosenAppointment[0]) == appointment.ID)
+                    {
+                        forDeletion = appointment;
+                        break;
+                    }
+                }
+            }
+            PatientDataManager.UnfinishedAppointments.Remove(forDeletion);
+            CreateAppointmentTable();
+            FillAppointmentTable();
         }
         //=======================================================================================
 
-        // appointments creation menu button click methods
+        // appointments creation/modification menu button click methods
         //=======================================================================================
         private void chooseDoctorButton_Click(object sender, RoutedEventArgs e)
         {
@@ -312,7 +367,7 @@ namespace HealthCareCenter
             try
             {
                 chosenScheduleDate = Convert.ToDateTime(chosenDate);
-                chosenScheduleDate = Convert.ToDateTime(chosenDate);
+                isScheduleDateChosen = true;
             }
             catch (Exception formatEx)
             {
@@ -339,7 +394,7 @@ namespace HealthCareCenter
                 MessageBox.Show("No doctor selected");
                 return;
             }
-            if (chosenScheduleDate == null)
+            if (!isScheduleDateChosen)
             {
                 MessageBox.Show("No date selected");
                 return;
@@ -353,13 +408,39 @@ namespace HealthCareCenter
             }
 
             string newAppointmentDateParseString = chosenScheduleTime[0].ToString() + "/" + chosenScheduleTime[1].ToString() + "/" + chosenScheduleTime[2].ToString() + " " + chosenScheduleTime[3].ToString() + ":" + chosenScheduleTime[0].ToString();
-            
-            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", "Schedule appointment", System.Windows.MessageBoxButton.YesNo);
+
+            string confirmationMessage;
+            if (IsModification())
+            {
+                confirmationMessage = "Make changes";
+            }
+            else
+            {
+                confirmationMessage = "Schedule appointment";
+            }
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", confirmationMessage, System.Windows.MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
                 Appointment newAppointment = new Appointment();
-                int allAppointmentSize = PatientDataManager.AllAppointments.Count;
-                newAppointment.ID = PatientDataManager.AllAppointments[allAppointmentSize - 1].ID + 1;
+                if (IsModification())
+                {
+                    foreach (Appointment appointment in PatientDataManager.UnfinishedAppointments)
+                    {
+                        if (Convert.ToInt32(chosenAppointment[0]) == appointment.ID)
+                        {
+                            newAppointment = appointment;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    int allAppointmentSize = PatientDataManager.AllAppointments.Count;
+                    newAppointment.ID = allAppointmentSize <= 0 ? 1 : PatientDataManager.AllAppointments[allAppointmentSize - 1].ID + 1;
+
+                    PatientDataManager.UnfinishedAppointments.Add(newAppointment);
+                }
+
                 newAppointment.Type = Enums.AppointmentType.Checkup;
                 newAppointment.CreatedDate = DateTime.Now;
                 newAppointment.AppointmentDate = Convert.ToDateTime(newAppointmentDateParseString);
@@ -369,14 +450,21 @@ namespace HealthCareCenter
                 newAppointment.HospitalRoomID = -1;
                 newAppointment.PatientAnamnesis = null;
 
-                PatientDataManager.UnfinishedAppointments.Add(newAppointment);
+                ClearWindow();
+                CreateAppointmentTable();
+                FillAppointmentTable();
+                createAppointmentGrid.Visibility = Visibility.Collapsed;
+                myAppointmentsGrid.Visibility = Visibility.Visible;
             }
 
-            ClearWindow();
-            CreateAppointmentTable();
-            FillAppointmentTable();
-            createAppointmentGrid.Visibility = Visibility.Collapsed;
-            myAppointmentsGrid.Visibility = Visibility.Visible;
+        }
+
+        private bool IsModification()
+        {
+            // returns true if the user is in the process of modifying the appointment
+            // and false if he is in the process of creating a new appointment
+
+            return chosenAppointment != null;
         }
         //=======================================================================================
     }

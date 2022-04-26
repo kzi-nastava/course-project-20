@@ -8,6 +8,7 @@ namespace HealthCareCenter.Model
     public class AppointmentChangeRequest
     {
         public int ID { get; set; }
+        public int AppointmentID { get; set; }
         public RequestType NewRequestType { get; set; }
         public DateTime NewDate { get; set; }
         public AppointmentType NewAppointmentType { get; set; }
