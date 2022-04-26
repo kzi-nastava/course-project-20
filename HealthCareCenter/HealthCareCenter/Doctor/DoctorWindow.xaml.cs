@@ -29,6 +29,7 @@ namespace HealthCareCenter
         private bool patientsTableIsFilled = false;
         private List<Appointment> Appointments;
         private int appointmentIndex;
+        private int healthRecordIndex;
         DataRow dr;
         public DoctorWindow(Model.User user)
         {
@@ -219,7 +220,12 @@ namespace HealthCareCenter
             dayComboBox.SelectedIndex = int.Parse(timeFragments[1]) - 1;
             monthComboBox.SelectedIndex = int.Parse(timeFragments[0]) - 1;
             yearComboBox.SelectedIndex = int.Parse(yearAndTime[0]) - 2022;
-            hourComboBox.SelectedIndex = int.Parse(time[0]) - 9;
+            int hour = int.Parse(time[0]);
+            if (hour <= 12 && timeFragments[2] == "AM")
+                hour -= 9;
+            else
+                hour -= 9;
+            hourComboBox.SelectedIndex = hour;                               
             minuteComboBox.SelectedIndex = int.Parse(time[1]) / 15;
             emergencyCheckBox.IsChecked = appointment.Emergency;
             if (appointment.Type == AppointmentType.Checkup)
@@ -265,6 +271,14 @@ namespace HealthCareCenter
             else
             {
                 alergensTextBox.Text = "none";
+            }
+            if(AppointmentsMenager.Appointments[appointmentIndex].PatientAnamnesis == null)
+            {
+                anamnesisLabel.Content = "No anamnesis";
+            }
+            else
+            {
+                anamnesisLabel.Content = AppointmentsMenager.Appointments[appointmentIndex].PatientAnamnesis.Comment;
             }
         }
         private void scheduleRewiewButton_Click(object sender, RoutedEventArgs e)
@@ -396,23 +410,29 @@ namespace HealthCareCenter
             try
             {
                 row = (DataRowView)scheduleDataGrid.SelectedItems[0];
+                appointmentIndex = scheduleDataGrid.SelectedIndex;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Select an appointment");
                 return;
             }
-            int id = (int)row["Id"];
+            int id = int.Parse(row["Patient Id"].ToString());
             healthRecordGrid.Visibility = Visibility.Visible;
             scheduleGrid.Visibility = Visibility.Collapsed;
+            backButton.Visibility = Visibility.Visible;
+
+            int counter = 0;
 
             foreach (HealthRecord healthRecord in HealthRecordsMenager.HealthRecords)
-            {
+            {          
                 if (healthRecord.ID == id)
                 {
+                    healthRecordIndex = counter;
                     fillHealthRecordData(healthRecord);
                     break;
                 }
+                counter++;
             }
         }
 
@@ -442,13 +462,48 @@ namespace HealthCareCenter
                 }
             }
         }
-        private void createAnamnesia_Click(object sender, RoutedEventArgs e)
+        private void createAnamnesis_Click(object sender, RoutedEventArgs e)
         {
-
+            healthRecordGrid.Visibility = Visibility.Collapsed;
+            anamnesisGrid.Visibility = Visibility.Visible;
         }
         private void updateHealthRecord_Click(object sender, RoutedEventArgs e)
         {
-
+            healthRecordGrid.Visibility = Visibility.Collapsed;
+            scheduleGrid.Visibility = Visibility.Visible;
+            updateHealthRecord.Visibility = Visibility.Collapsed;
+            createAnamnesis.Visibility = Visibility.Collapsed;
+            HealthRecordsMenager.HealthRecords[healthRecordIndex].Height = double.Parse(heightTextBox.Text);
+            HealthRecordsMenager.HealthRecords[healthRecordIndex].Weight = double.Parse(weigthTextBox.Text);
+            HealthRecordsMenager.HealthRecords[healthRecordIndex].PreviousDiseases.Clear();
+            string[] previousDiseases = previousDiseasesTextBox.Text.Split(",");
+            foreach(string disease in previousDiseases)
+            {
+                HealthRecordsMenager.HealthRecords[healthRecordIndex].PreviousDiseases.Add(disease);
+            }
+            HealthRecordsMenager.HealthRecords[healthRecordIndex].Allergens.Clear();
+            string[] allergens = alergensTextBox.Text.Split(",");
+            foreach (string allergen in allergens)
+            {
+                HealthRecordsMenager.HealthRecords[healthRecordIndex].Allergens.Add(allergen);
+            }
         }
+        private void backButton_Click(object sender, RoutedEventArgs e)
+        {
+            scheduleGrid.Visibility = Visibility.Visible;
+            healthRecordGrid.Visibility = Visibility.Collapsed;
+            backButton.Visibility = Visibility.Collapsed;
+        }
+        private void submitAnamnesis_Click(object sender, RoutedEventArgs e)
+        {
+            string anamnesisTxt = anamnesisTextBox.Text;
+            Anamnesis anamnesis = new Anamnesis();
+            anamnesis.Comment = anamnesisTxt;
+            AppointmentsMenager.Appointments[appointmentIndex].PatientAnamnesis = anamnesis;
+            anamnesisGrid.Visibility = Visibility.Collapsed;
+            healthRecordGrid.Visibility = Visibility.Visible;
+            anamnesisLabel.Content = anamnesisTxt;
+        }
+
     }
 }

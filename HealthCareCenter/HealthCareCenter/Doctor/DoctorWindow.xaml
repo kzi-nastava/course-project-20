@@ -135,6 +135,8 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Label Name="idLabel" Content="Id" Grid.Row="1" Grid.Column=" 1"/>
@@ -147,8 +149,22 @@
             <TextBox Name="weigthTextBox" Text="Weight" Grid.Row="3" Grid.Column=" 2" Margin="10"/>
             <TextBox Name="previousDiseasesTextBox" Text="Previous diseases" Grid.Row="4" Grid.Column="2" Margin="10"/>
             <TextBox Name="alergensTextBox" Text="Alergens" Grid.Row="5" Grid.Column="2" Margin="10"/>
-            <Button Name ="updateHealthRecord" Content="Update" Grid.Row="7"  Grid.Column="1" Margin="10" Visibility="Collapsed" Click="updateHealthRecord_Click"/>
-            <Button Name ="createAnamnesis" Content="Create Anamnesis" Grid.Row="7" Grid.Column="2" Margin="10" Visibility="Collapsed" Click="createAnamnesia_Click"/>
+            <Label Name="anamnesisLabel" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" Margin="10"/>
+            <Button Name ="backButton" Content="Back" Grid.Row="9"  Grid.Column="1" Grid.ColumnSpan="2" Margin="10" Visibility="Collapsed" Click="backButton_Click"/>
+            <Button Name ="updateHealthRecord" Content="Update" Grid.Row="8"  Grid.Column="1" Margin="10" Visibility="Collapsed" Click="updateHealthRecord_Click"/>
+            <Button Name ="createAnamnesis" Content="Create Anamnesis" Grid.Row="8" Grid.Column="2" Margin="10" Visibility="Collapsed" Click="createAnamnesis_Click"/>
+        </Grid>
+        <Grid Grid.Row="1" Grid.Column="1" Name ="anamnesisGrid" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBox Name="anamnesisTextBox" Text="Anamnesis" Grid.Row="0" Grid.Column="0"/>
+            <Button Name="submitAnamnesis" Content="Submit" Grid.Row="2" Grid.Column="0" Click="submitAnamnesis_Click"/>
         </Grid>
     
 
