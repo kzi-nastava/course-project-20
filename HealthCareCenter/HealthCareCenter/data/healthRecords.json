@@ -1,20 +1,37 @@
 [
   {
     "ID": 0,
-    "Height": 165,
-    "Weight": 60,
-    "PreviousDiseases": [ "Hypertension", "Tachycardia" ],
-    "Allergens": [ "Ragweed", "Tree pollen" ],
+    "Height": 165.0,
+    "Weight": 60.0,
+    "PreviousDiseases": [
+      "Hypertension",
+      "Tachycardia"
+    ],
+    "Allergens": [
+      "Ragweed",
+      "Tree pollen"
+    ],
     "PatientID": 2,
     "AppointmentIDs": []
   },
   {
     "ID": 1,
-    "Height": 172,
-    "Weight": 68,
-    "PreviousDiseases": [ "Tachycardia" ],
+    "Height": 172.0,
+    "Weight": 68.0,
+    "PreviousDiseases": [
+      "Tachycardia"
+    ],
     "Allergens": [],
     "PatientID": 4,
+    "AppointmentIDs": []
+  },
+  {
+    "ID": 2,
+    "Height": 170.2,
+    "Weight": 170.3,
+    "PreviousDiseases": [],
+    "Allergens": [],
+    "PatientID": 5,
     "AppointmentIDs": []
   }
 ]

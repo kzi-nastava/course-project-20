@@ -1,7 +1,7 @@
 [
   {
-    "IsBlocked": true,
-    "BlockedBy": 2,
+    "IsBlocked": false,
+    "BlockedBy": 0,
     "ReferralIDs": [],
     "PrescriptionIDs": [],
     "HealthRecordID": 0,
@@ -13,8 +13,8 @@
     "DateOfBirth": "12/07/1940"
   },
   {
-    "IsBlocked": false,
-    "BlockedBy": 0,
+    "IsBlocked": true,
+    "BlockedBy": 2,
     "ReferralIDs": [],
     "PrescriptionIDs": [],
     "HealthRecordID": 1,
@@ -24,5 +24,18 @@
     "FirstName": "Marko",
     "LastName": "Markovic",
     "DateOfBirth": "07/07/1977"
+  },
+  {
+    "IsBlocked": false,
+    "BlockedBy": 0,
+    "ReferralIDs": [],
+    "PrescriptionIDs": [],
+    "HealthRecordID": 2,
+    "ID": 5,
+    "Username": "vuk",
+    "Password": "vuk",
+    "FirstName": "Vuk",
+    "LastName": "Vukovic",
+    "DateOfBirth": "03/04/2022"
   }
 ]

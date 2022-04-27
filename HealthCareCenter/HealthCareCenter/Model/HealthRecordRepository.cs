@@ -6,7 +6,7 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    public static class HealthRecordManager
+    public static class HealthRecordRepository
     {
         public static List<HealthRecord> HealthRecords { get; set; }
 

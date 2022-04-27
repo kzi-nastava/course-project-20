@@ -24,7 +24,7 @@ namespace HealthCareCenter
             InitializeComponent();
             try
             {
-                UserManager.LoadUsers();
+                UserRepository.LoadUsers();
             }
             catch (Exception ex)
             {
@@ -41,7 +41,7 @@ namespace HealthCareCenter
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             bool foundUser = false;
-            foreach (User user in UserManager.Users)
+            foreach (User user in UserRepository.Users)
             {
                 if (user.Username == usernameTextBox.Text)
                 {

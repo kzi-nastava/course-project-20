@@ -30,10 +30,10 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Button x:Name="createButton" Grid.Row="0" Grid.Column="0" Margin="7.5" Content="Create" FontSize="18"/>
+        <Button x:Name="createButton" Grid.Row="0" Grid.Column="0" Margin="7.5" Content="Create" FontSize="18" Click="CreateButton_Click"/>
         <Button x:Name="viewButton" Grid.Row="0" Grid.Column="1" Margin="7.5" Content="View" FontSize="18"/>
         <Button x:Name="editButton" Grid.Row="0" Grid.Column="2" Margin="7.5" Content="Edit" FontSize="18"/>
-        <Button x:Name="deleteButton" Grid.Row="0" Grid.Column="3" Margin="7.5" Content="Delete" FontSize="18"/>
+        <Button x:Name="deleteButton" Grid.Row="0" Grid.Column="3" Margin="7.5" Content="Delete" FontSize="18" Click="DeleteButton_Click"/>
         <Button x:Name="blockButton" Grid.Row="1" Grid.Column="0" Margin="7.5" Content="Block" FontSize="18" Click="BlockButton_Click"/>
         <Button x:Name="unblockButton" Grid.Row="1" Grid.Column="1" Margin="7.5" Content="Unblock" FontSize="18" Click="UnblockButton_Click"/>
 

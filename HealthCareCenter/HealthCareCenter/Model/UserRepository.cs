@@ -6,7 +6,7 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    public static class UserManager
+    public static class UserRepository
     {
         public static List<User> Users { get; set; }
         public static List<Doctor> Doctors { get; set; }
