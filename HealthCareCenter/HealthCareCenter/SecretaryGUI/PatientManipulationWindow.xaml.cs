@@ -156,5 +156,22 @@ namespace HealthCareCenter.SecretaryGUI
 
             MessageBox.Show("Successfully deleted patient and the corresponding health record.");
         }
+
+        private void ViewButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (patientsDataGrid.SelectedItem == null)
+            {
+                MessageBox.Show("You must select a patient from the table first.");
+                return;
+            }
+
+            Patient patient = (Patient)patientsDataGrid.SelectedItem;
+            HealthRecord record = HealthRecordService.FindRecord(patient);
+
+            PatientViewWindow patientViewWindow = new PatientViewWindow(patient, record);
+            patientViewWindow.ShowDialog();
+            LoadBlockedPatients();
+            patientsDataGrid.Items.Refresh();
+        }
     }
 }

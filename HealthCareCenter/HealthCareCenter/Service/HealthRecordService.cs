@@ -20,5 +20,17 @@ namespace HealthCareCenter.Service
                 }
             }
         }
+
+        public static HealthRecord FindRecord(Patient patient)
+        {
+            foreach (HealthRecord record in HealthRecordRepository.HealthRecords)
+            {
+                if (patient.HealthRecordID == record.ID)
+                {
+                    return record;
+                }
+            }
+            return null;
+        }
     }
 }

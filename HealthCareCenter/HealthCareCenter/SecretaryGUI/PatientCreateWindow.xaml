@@ -6,6 +6,19 @@
         xmlns:local="clr-namespace:HealthCareCenter.SecretaryGUI"
         mc:Ignorable="d"
         Title="Patient Create Window" Height="600" Width="800" Initialized="Window_Initialized">
+    <Window.Resources>
+        <Style TargetType="{x:Type DatePickerTextBox}">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <TextBox x:Name="PART_TextBox"
+     Text="{Binding Path=SelectedDate, StringFormat='dd/MM/yyyy', 
+     RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" IsEnabled="False"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" />
