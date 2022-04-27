@@ -73,7 +73,7 @@
 
         <Button x:Name="blockButton" Grid.Row="7" Grid.Column="0" Content="Block" Margin="10" Click="BlockButton_Click"/>
         <Button x:Name="unblockButton" Grid.Row="8" Grid.Column="0" Content="Unblock" Margin="10" Click="UnblockButton_Click"/>
-        <Button x:Name="editButton" Grid.Row="7" Grid.Column="1" Content="Edit" Margin="10" IsEnabled="False"/>
+        <Button x:Name="editButton" Grid.Row="7" Grid.Column="1" Content="Edit" Margin="10" Click="EditButton_Click" />
         <Button x:Name="viewChangeAppointmentRequestsButton" Grid.Row="8" Grid.Column="1" Content="View change appointment requests" Margin="10" IsEnabled="False"/>
         <Button x:Name="viewReferralsButton" Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2" Content="View referrals" Margin="10" IsEnabled="False"/>
         <Button x:Name="scheduleUrgentAppointmentButton" Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="2" Content="Schedule urgent appointment" Margin="10" IsEnabled="False"/>

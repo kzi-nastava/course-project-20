@@ -173,5 +173,21 @@ namespace HealthCareCenter.SecretaryGUI
             LoadBlockedPatients();
             patientsDataGrid.Items.Refresh();
         }
+
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (patientsDataGrid.SelectedItem == null)
+            {
+                MessageBox.Show("You must select a patient from the table first.");
+                return;
+            }
+
+            Patient patient = (Patient)patientsDataGrid.SelectedItem;
+            HealthRecord record = HealthRecordService.FindRecord(patient);
+
+            PatientEditWindow patientEditWindow = new PatientEditWindow(patient, record);
+            patientEditWindow.ShowDialog();
+            patientsDataGrid.Items.Refresh();
+        }
     }
 }

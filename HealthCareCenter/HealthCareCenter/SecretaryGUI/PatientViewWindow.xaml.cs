@@ -33,7 +33,7 @@ namespace HealthCareCenter.SecretaryGUI
             InitializeComponent();
         }
 
-        private void Window_Initialized(object sender, EventArgs e)
+        private void InitializeWindow()
         {
             idTextBox.Text = _patient.ID.ToString();
             firstNameTextBox.Text = _patient.FirstName;
@@ -47,6 +47,11 @@ namespace HealthCareCenter.SecretaryGUI
             weightTextBox.Text = _record.Weight.ToString();
             previousDiseasesListBox.ItemsSource = _record.PreviousDiseases;
             allergensListBox.ItemsSource = _record.Allergens;
+        }
+
+        private void Window_Initialized(object sender, EventArgs e)
+        {
+            InitializeWindow();
         }
 
         private void BlockButton_Click(object sender, RoutedEventArgs e)
@@ -81,6 +86,15 @@ namespace HealthCareCenter.SecretaryGUI
             {
                 MessageBox.Show("Patient is not blocked.");
             }
+        }
+
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+            PatientEditWindow patientEditWindow = new PatientEditWindow(_patient, _record);
+            patientEditWindow.ShowDialog();
+            InitializeWindow();
+            previousDiseasesListBox.Items.Refresh();
+            allergensListBox.Items.Refresh();
         }
     }
 }

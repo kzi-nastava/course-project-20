@@ -1,7 +1,7 @@
 ﻿using HealthCareCenter.Model;
-using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -16,14 +16,28 @@ using System.Windows.Shapes;
 namespace HealthCareCenter.SecretaryGUI
 {
     /// <summary>
-    /// Interaction logic for PatientCreateWindow.xaml
+    /// Interaction logic for PatientEditWindow.xaml
     /// </summary>
-    public partial class PatientCreateWindow : Window
+    public partial class PatientEditWindow : Window
     {
-        public PatientCreateWindow()
+        private Patient _patient;
+        private HealthRecord _record;
+
+        private ObservableCollection<string> _previousDiseases;
+        private ObservableCollection<string> _allergens;
+
+        public PatientEditWindow()
         {
             InitializeComponent();
         }
+
+        public PatientEditWindow(Patient patient, HealthRecord record)
+        {
+            this._patient = patient;
+            this._record = record;
+            InitializeComponent();
+        }
+
         private void Reset()
         {
             firstNameTextBox.Clear();
@@ -34,8 +48,8 @@ namespace HealthCareCenter.SecretaryGUI
             weightTextBox.Clear();
             previousDiseaseTextBox.Clear();
             allergenTextBox.Clear();
-            previousDiseasesListBox.Items.Clear();
-            allergensListBox.Items.Clear();
+            previousDiseasesListBox.ItemsSource = null;
+            allergensListBox.ItemsSource = null;
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
@@ -50,7 +64,7 @@ namespace HealthCareCenter.SecretaryGUI
                 MessageBox.Show("You must enter a disease.");
                 return;
             }
-            previousDiseasesListBox.Items.Add(previousDiseaseTextBox.Text);
+            _previousDiseases.Add(previousDiseaseTextBox.Text);
         }
 
         private void AddAllergenButton_Click(object sender, RoutedEventArgs e)
@@ -60,14 +74,14 @@ namespace HealthCareCenter.SecretaryGUI
                 MessageBox.Show("You must enter an allergen.");
                 return;
             }
-            allergensListBox.Items.Add(allergenTextBox.Text);
+            _allergens.Add(allergenTextBox.Text);
         }
 
         private void DeletePreviousDiseaseButton_Click(object sender, RoutedEventArgs e)
         {
-            if (previousDiseasesListBox.SelectedItem != null) 
+            if (previousDiseasesListBox.SelectedItem != null)
             {
-                previousDiseasesListBox.Items.Remove(previousDiseasesListBox.SelectedItem);
+                _previousDiseases.Remove(previousDiseasesListBox.SelectedItem.ToString());
             }
             else
             {
@@ -79,7 +93,7 @@ namespace HealthCareCenter.SecretaryGUI
         {
             if (allergensListBox.SelectedItem != null)
             {
-                allergensListBox.Items.Remove(allergensListBox.SelectedItem);
+                _allergens.Remove(allergensListBox.SelectedItem.ToString());
             }
             else
             {
@@ -96,7 +110,7 @@ namespace HealthCareCenter.SecretaryGUI
             }
             if (previousDiseasesListBox.SelectedItem != null)
             {
-                previousDiseasesListBox.Items[previousDiseasesListBox.SelectedIndex] = previousDiseaseTextBox.Text;
+                _previousDiseases[previousDiseasesListBox.SelectedIndex] = previousDiseaseTextBox.Text;
             }
             else
             {
@@ -113,17 +127,12 @@ namespace HealthCareCenter.SecretaryGUI
             }
             if (allergensListBox.SelectedItem != null)
             {
-                allergensListBox.Items[allergensListBox.SelectedIndex] = allergenTextBox.Text;
+                _allergens[allergensListBox.SelectedIndex] = allergenTextBox.Text;
             }
             else
             {
                 MessageBox.Show("You need to select an allergen from the list first.");
             }
-        }
-
-        private void Window_Initialized(object sender, EventArgs e)
-        {
-            idTextBox.Text = (UserService.maxUserID + 1).ToString();
         }
 
         private void PreviousDiseasesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -150,7 +159,23 @@ namespace HealthCareCenter.SecretaryGUI
             }
         }
 
-        private void CreateButton_Click(object sender, RoutedEventArgs e)
+        private void Window_Initialized(object sender, EventArgs e)
+        {
+            idTextBox.Text = _patient.ID.ToString();
+            firstNameTextBox.Text = _patient.FirstName;
+            usernameTextBox.Text = _patient.Username;
+            lastNameTextBox.Text = _patient.LastName;
+            passwordTextBox.Text = _patient.Password;
+            birthDatePicker.SelectedDate = _patient.DateOfBirth;
+            heightTextBox.Text = _record.Height.ToString();
+            weightTextBox.Text = _record.Weight.ToString();
+            _previousDiseases = new ObservableCollection<string>(_record.PreviousDiseases);
+            previousDiseasesListBox.ItemsSource = _previousDiseases;
+            _allergens = new ObservableCollection<string>(_record.Allergens);
+            allergensListBox.ItemsSource = _allergens;
+        }
+
+        private void EditButton_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(firstNameTextBox.Text))
             {
@@ -193,12 +218,15 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
             //check if username already in use
-            foreach (User user in UserRepository.Users)
+            if (_patient.Username != usernameTextBox.Text)
             {
-                if (user.Username == usernameTextBox.Text)
+                foreach (User user in UserRepository.Users)
                 {
-                    MessageBox.Show("Username is already in use. Choose a different one.");
-                    return;
+                    if (user.Username == usernameTextBox.Text)
+                    {
+                        MessageBox.Show("Username is already in use. Choose a different one.");
+                        return;
+                    }
                 }
             }
             if (!Double.TryParse(heightTextBox.Text, out double height))
@@ -211,23 +239,21 @@ namespace HealthCareCenter.SecretaryGUI
                 MessageBox.Show("Weight must be a number.");
                 return;
             }
-            //update max user and health record ID
-            HealthRecordService.maxHealthRecordID++;
-            UserService.maxUserID++;
-            //create record and patient
-            HealthRecord record = new HealthRecord(HealthRecordService.maxHealthRecordID, height, weight, previousDiseasesListBox.Items.Cast<String>().ToList(), allergensListBox.Items.Cast<String>().ToList(), UserService.maxUserID, new List<int>());
-            Patient patient = new Patient(UserService.maxUserID, usernameTextBox.Text, passwordTextBox.Text, firstNameTextBox.Text, lastNameTextBox.Text, (DateTime)birthDatePicker.SelectedDate, false, Enums.Blocker.None, new List<int>(), new List<int>(), HealthRecordService.maxHealthRecordID);
-            //add to repositories
-            HealthRecordRepository.HealthRecords.Add(record);
-            UserRepository.Patients.Add(patient);
-            UserRepository.Users.Add(patient);
+            //edit health record and patient
+            _record.Height = height;
+            _record.Weight = weight;
+            _record.PreviousDiseases = _previousDiseases.Cast<String>().ToList();
+            _record.Allergens = _allergens.Cast<String>().ToList();
+            _patient.Username = usernameTextBox.Text;
+            _patient.Password = passwordTextBox.Text;
+            _patient.FirstName = firstNameTextBox.Text;
+            _patient.LastName = lastNameTextBox.Text;
+            _patient.DateOfBirth = (DateTime)birthDatePicker.SelectedDate;
             //save to files
             HealthRecordRepository.SaveHealthRecords();
             UserRepository.SavePatients();
 
-            Reset();
-            idTextBox.Text = (UserService.maxUserID + 1).ToString();
-            MessageBox.Show("Successfully created the patient and health record.");
+            MessageBox.Show("Successfully edited the patient and health record.");
         }
     }
 }

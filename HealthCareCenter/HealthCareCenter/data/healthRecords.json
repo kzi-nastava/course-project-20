@@ -8,7 +8,7 @@
       "Tachycardia"
     ],
     "Allergens": [
-      "Ragweed",
+      "Ragweed pollen",
       "Tree pollen"
     ],
     "PatientID": 2,
@@ -27,10 +27,14 @@
   },
   {
     "ID": 2,
-    "Height": 170.2,
-    "Weight": 170.3,
-    "PreviousDiseases": [],
-    "Allergens": [],
+    "Height": 182.3,
+    "Weight": 78.3,
+    "PreviousDiseases": [
+      "Diabetes"
+    ],
+    "Allergens": [
+      "Ragweed pollen"
+    ],
     "PatientID": 5,
     "AppointmentIDs": []
   }
