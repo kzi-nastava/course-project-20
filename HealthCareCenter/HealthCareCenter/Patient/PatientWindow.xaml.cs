@@ -35,19 +35,12 @@ namespace HealthCareCenter
         private bool shouldSendRequestToSecretary = false;
 
         // trolling limits
-        private int creationTrollLimit = 8;
-        private int modificationTrollLimit = 5;
+        private const int creationTrollLimit = 8;
+        private const int modificationTrollLimit = 5;
 
         public PatientWindow(User user)
         {
             signedUser = (Patient)user;
-            if (signedUser.IsBlocked)
-            {
-                MessageBox.Show("This user is blocked\nReturning to login screen");
-                LoginWindow loginWindow = new LoginWindow();
-                loginWindow.Show();
-                Close();
-            }
             patientRepository = new PatientRepository(signedUser);
             patientRepository.Load();
             InitializeComponent();
@@ -199,7 +192,7 @@ namespace HealthCareCenter
             int hours = 8;
             int minutes = 0;
             List<string> allPossibleSchedules = new List<string>();
-            while (hours < 21 || minutes < 15)
+            while (hours < 21)
             {
                 string schedule = hours + ":" + minutes;
                 allPossibleSchedules.Add(schedule);
@@ -292,11 +285,7 @@ namespace HealthCareCenter
 
         private void logOutMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            patientRepository.WriteAll();
-
-            LoginWindow loginWindow = new LoginWindow();
-            loginWindow.Show();
-            Close();
+            LogOut();
         }
         //=======================================================================================
 
@@ -369,6 +358,8 @@ namespace HealthCareCenter
                     changeRequest.DateSent = DateTime.Now;
                     changeRequest.PatientID = signedUser.ID;
                     patientRepository.AllChangeRequests.Add(changeRequest);
+                    patientRepository.WriteChangeRequests();
+                    return;
                 }
                 else
                 {
@@ -489,16 +480,20 @@ namespace HealthCareCenter
                 CheckModificationTroll();
                 if (shouldSendRequestToSecretary)
                 {
-                    AppointmentChangeRequest changeRequest = new AppointmentChangeRequest();
-                    changeRequest.ID = patientRepository.GenerateAppointmentChangeRequestID();
-                    changeRequest.AppointmentID = Convert.ToInt32(chosenAppointment[0]);
-                    changeRequest.RequestType = Enums.RequestType.Delete;
-                    changeRequest.NewDate = Convert.ToDateTime(chosenAppointment[2]);
-                    changeRequest.NewAppointmentType = Enums.AppointmentType.Checkup;
-                    changeRequest.NewDoctorID = Convert.ToInt32(chosenDoctor[0]);
-                    changeRequest.DateSent = DateTime.Now;
-                    changeRequest.PatientID = signedUser.ID;
+                    AppointmentChangeRequest changeRequest = new AppointmentChangeRequest
+                    {
+                        ID = patientRepository.GenerateAppointmentChangeRequestID(),
+                        AppointmentID = Convert.ToInt32(chosenAppointment[0]),
+                        RequestType = Enums.RequestType.Delete,
+                        NewDate = Convert.ToDateTime(chosenAppointment[2]),
+                        NewAppointmentType = Enums.AppointmentType.Checkup,
+                        NewDoctorID = Convert.ToInt32(chosenDoctor[0]),
+                        DateSent = DateTime.Now,
+                        PatientID = signedUser.ID
+                    };
                     patientRepository.AllChangeRequests.Add(changeRequest);
+                    patientRepository.WriteChangeRequests();
+                    return;
                 }
                 else
                 {
@@ -517,6 +512,7 @@ namespace HealthCareCenter
                 CheckCreationTroll();
                 newAppointment.ID = patientRepository.GenerateAppointmentID();
                 patientRepository.UnfinishedAppointments.Add(newAppointment);
+                patientRepository.AllAppointments.Add(newAppointment);
             }
 
             newAppointment.Type = Enums.AppointmentType.Checkup;
@@ -527,6 +523,8 @@ namespace HealthCareCenter
             newAppointment.HealthRecordID = signedUser.HealthRecordID;
             newAppointment.HospitalRoomID = -1;
             newAppointment.PatientAnamnesis = null;
+
+            patientRepository.WriteAppointments();
         }
 
         private bool IsModification()
@@ -561,9 +559,8 @@ namespace HealthCareCenter
                 signedUser.BlockedBy = Enums.Blocker.System;
 
                 MessageBox.Show("You have been blocked for excessive amounts of appointments created in the last 30 days");
-                LoginWindow loginWindow = new LoginWindow();
-                loginWindow.Show();
-                Close();
+                patientRepository.WritePatient();
+                LogOut();
             }
         }
 
@@ -588,13 +585,18 @@ namespace HealthCareCenter
                 signedUser.BlockedBy = Enums.Blocker.System;
 
                 MessageBox.Show("You have been blocked for excessive amounts of change requests sent in the last 30 days");
-
-                LoginWindow loginWindow = new LoginWindow();
-                loginWindow.Show();
-                Close();
+                patientRepository.WritePatient();
+                LogOut();
             }
         }
         //=======================================================================================
+
+        private void LogOut()
+        {
+            LoginWindow loginWindow = new LoginWindow();
+            loginWindow.Show();
+            Close();
+        }
 
     }
 }

@@ -23,7 +23,7 @@ namespace HealthCareCenter
             InitializeComponent();
             try
             {
-                UserManager.LoadUsers();
+                UserRepository.LoadUsers();
             }
             catch (Exception ex)
             {
@@ -40,12 +40,12 @@ namespace HealthCareCenter
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             bool foundUser = false;
-            foreach (User user in UserManager.Users)
+            foreach (User user in UserRepository.Users)
             {
                 if (user.Username == usernameTextBox.Text)
                 {
                     foundUser = true;
-                    if (user.Password == passwordBox.Password)
+                    if (user.Password == passwordTextBox.Password)
                     {
                         if (user.GetType() == typeof(Doctor))
                         {
@@ -57,6 +57,14 @@ namespace HealthCareCenter
                         }
                         else if (user.GetType() == typeof(Patient))
                         {
+                            Patient patient = (Patient)user;
+                            if (patient.IsBlocked)
+                            {
+                                MessageBox.Show("This user is blocked");
+                                usernameTextBox.Clear();
+                                passwordTextBox.Clear();
+                                return;
+                            }
                             ShowWindow(new PatientWindow(user));
                         }
                         else if (user.GetType() == typeof(Secretary))
@@ -64,7 +72,7 @@ namespace HealthCareCenter
                             ShowWindow(new SecretaryWindow(user));
                         }
                     } else {
-                        passwordBox.Clear();
+                        passwordTextBox.Clear();
                         MessageBox.Show("Invalid password.");
                     }
                 }

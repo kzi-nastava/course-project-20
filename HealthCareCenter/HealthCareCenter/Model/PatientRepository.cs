@@ -35,20 +35,115 @@ namespace HealthCareCenter.Model
         public int GenerateAppointmentChangeRequestID()
         {
             int allChangeRequestsSize = AllChangeRequests.Count;
-            //return allChangeRequestsSize <= 0 ? 1 : PatientDataManager.AllChangeRequests[allChangeRequestsSize - 1].ID + 1;
-            return -1;
+            return allChangeRequestsSize <= 0 ? 1 : AllChangeRequests[allChangeRequestsSize - 1].ID + 1;
         }
 
-        public void WriteAll()
+        public void WritePatient()
         {
-            // implement writing of files
+            List<Patient> allPatients;
 
-            // call after every action (modification or creation)
+            // loading all patients
+            //==============================================================================
+            try
+            {
+                JsonSerializerSettings settings = new JsonSerializerSettings
+                {
+                    DateFormatString = Constants.DateTimeFormat
+                };
+
+                string JSONTextAllAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\patients.json");
+                allPatients = (List<Patient>)JsonConvert.DeserializeObject<IEnumerable<Patient>>(JSONTextAllAppointments, settings);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+            //==============================================================================
+
+            // changing the patient info inside of allPatients list
+            //==============================================================================
+            foreach (Patient loadedPatient in allPatients)
+            {
+                if (loadedPatient.ID == patient.ID)
+                {
+                    loadedPatient.IsBlocked = patient.IsBlocked;
+                    loadedPatient.BlockedBy = patient.BlockedBy;
+                    loadedPatient.ReferralIDs = patient.ReferralIDs;
+                    loadedPatient.HealthRecordID = patient.HealthRecordID;
+                    break;
+                }
+            }
+            //==============================================================================
+
+            // writing all patients
+            //==============================================================================
+            try
+            {
+                JsonSerializer serializer = new JsonSerializer
+                {
+                    Formatting = Formatting.Indented,
+                    DateFormatString = Constants.DateFormat
+                };
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\patients.json"))
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    serializer.Serialize(writer, allPatients);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            //==============================================================================
+        }
+
+        public void WriteAppointments()
+        {
+            try
+            {
+                JsonSerializer serializer = new JsonSerializer
+                {
+                    Formatting = Formatting.Indented,
+                    DateFormatString = Constants.DateTimeFormat
+                };
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointments.json"))
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    serializer.Serialize(writer, AllAppointments);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void WriteChangeRequests()
+        {
+            try
+            {
+                JsonSerializer serializer = new JsonSerializer
+                {
+                    Formatting = Formatting.Indented,
+                    DateFormatString = Constants.DateTimeFormat
+                };
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\changerequests.json"))
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    serializer.Serialize(writer, AllChangeRequests);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private void LoadAppointments()
         {
-            // loads all appointments for the patient and adds them to the "Appointments" list property
+            // loads all appointments to AllAppointments and filters the patient's unfinished appointments and it
+            // adds them to UnfinishedAppointments
 
             UnfinishedAppointments = new List<Appointment>();
 
