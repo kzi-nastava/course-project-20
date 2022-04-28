@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HealthCareCenter.SecretaryGUI"
         mc:Ignorable="d"
-        Title="Patient Edit Window" Height="600" Width="800" Initialized="Window_Initialized">
+        Title="Patient Edit Window" Height="600" Width="800" Initialized="Window_Initialized"
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style TargetType="{x:Type DatePickerTextBox}">
             <Setter Property="Control.Template">

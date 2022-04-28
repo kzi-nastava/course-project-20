@@ -10,7 +10,7 @@ namespace HealthCareCenter.Model
     {
         public static List<HealthRecord> HealthRecords { get; set; }
 
-        public static void LoadHealthRecords()
+        public static void Load()
         {
             try
             {
@@ -23,7 +23,7 @@ namespace HealthCareCenter.Model
             }
         }
 
-        public static void SaveHealthRecords()
+        public static void Save()
         {
             try
             {

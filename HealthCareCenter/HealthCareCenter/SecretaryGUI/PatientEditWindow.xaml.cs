@@ -250,7 +250,7 @@ namespace HealthCareCenter.SecretaryGUI
             _patient.LastName = lastNameTextBox.Text;
             _patient.DateOfBirth = (DateTime)birthDatePicker.SelectedDate;
             //save to files
-            HealthRecordRepository.SaveHealthRecords();
+            HealthRecordRepository.Save();
             UserRepository.SavePatients();
 
             MessageBox.Show("Successfully edited the patient and health record.");

@@ -96,5 +96,11 @@ namespace HealthCareCenter.SecretaryGUI
             previousDiseasesListBox.Items.Refresh();
             allergensListBox.Items.Refresh();
         }
+
+        private void ViewChangeAppointmentRequestsButton_Click(object sender, RoutedEventArgs e)
+        {
+            ViewPatientAppointmentChangeRequestsWindow window = new ViewPatientAppointmentChangeRequestsWindow(_patient);
+            window.ShowDialog();
+        }
     }
 }

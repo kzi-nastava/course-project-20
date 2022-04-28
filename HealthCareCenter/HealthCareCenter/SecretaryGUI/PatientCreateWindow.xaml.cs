@@ -222,7 +222,7 @@ namespace HealthCareCenter.SecretaryGUI
             UserRepository.Patients.Add(patient);
             UserRepository.Users.Add(patient);
             //save to files
-            HealthRecordRepository.SaveHealthRecords();
+            HealthRecordRepository.Save();
             UserRepository.SavePatients();
 
             Reset();

@@ -43,7 +43,7 @@ namespace HealthCareCenter.SecretaryGUI
             patientsDataGrid.ItemsSource = UserRepository.Patients;
             patientsDataGrid.IsReadOnly = true;
             LoadBlockedPatients();
-            HealthRecordRepository.LoadHealthRecords();
+            HealthRecordRepository.Load();
             if (UserService.maxUserID == -1)
             {
                 UserService.CalculateMaxUserID();
@@ -141,7 +141,7 @@ namespace HealthCareCenter.SecretaryGUI
                     break;
                 }
             }
-            HealthRecordRepository.SaveHealthRecords();
+            HealthRecordRepository.Save();
 
             UserRepository.Patients.Remove(patient);
             UserRepository.Users.Remove(patient);
