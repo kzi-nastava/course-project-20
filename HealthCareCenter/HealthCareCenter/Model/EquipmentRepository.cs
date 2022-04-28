@@ -11,9 +11,9 @@ namespace HealthCareCenter.Model
         private static List<Equipment> s_equipments = LoadEquipments();
 
         /// <summary>
-        /// Load all equipments from file Equipments.json
+        /// Load all equipments from file Equipments.json.
         /// </summary>
-        /// <returns>List of all hospital rooms</returns>
+        /// <returns>List of all hospital rooms.</returns>
         private static List<Equipment> LoadEquipments()
         {
             try
@@ -35,20 +35,20 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Return loaded equipments from list
+        /// Return loaded equipments from list.
         /// </summary>
-        /// <returns>Loaded equipments</returns>
+        /// <returns>Loaded equipments.</returns>
         public static List<Equipment> GetEquipments()
         {
             return s_equipments;
         }
 
         /// <summary>
-        /// Finding equipment with specific ID
+        /// Finding equipment with specific id.
         /// </summary>
-        /// <param name="id">ID of wanted equipment</param>
-        /// <returns>Equipment with specific ID, if equipment is found, or null if equipment is not found</returns>
-        /// <exception cref="EquipmentNotFound">Thrown when equipment with specific ID is not found</exception>
+        /// <param name="id">id of wanted equipment</param>
+        /// <returns>Equipment with specific id, if equipment is found, or null if equipment is not found.</returns>
+        /// <exception cref="EquipmentNotFound">Thrown when equipment with specific id is not found.</exception>
         public static Equipment GetEquipmentById(int id)
         {
             try
@@ -73,11 +73,11 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Replace all data from file Equipments.json with list equipments
+        /// Replace all data from file Equipments.json with list equipments.
         /// </summary>
-        /// <param name="equipments">Data that will replace the old ones</param>
-        /// <returns>true if data update performed properly</returns>
-        public static bool UpdateAllEquipment(List<Equipment> equipments)
+        /// <param name="equipments">Data that will replace the old ones.</param>
+        /// <returns>True if data update performed properly.</returns>
+        public static bool SaveAllEquipments(List<Equipment> equipments)
         {
             try
             {
@@ -97,19 +97,19 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Add new equipment in file Equipments.json
+        /// Add new equipment in file Equipments.json.
         /// </summary>
         /// <param name="newEquipment"></param>
         public static void AddEquipment(Equipment newEquipment)
         {
             s_equipments.Add(newEquipment);
-            UpdateAllEquipment(s_equipments);
+            SaveAllEquipments(s_equipments);
         }
 
         /// <summary>
-        /// Finding last(largest) ID in file Equipments.json.
+        /// Finding last(largest) id in file Equipments.json.
         /// </summary>
-        /// <returns>last(largest) ID</returns>
+        /// <returns>last(largest) id.</returns>
         public static int GetLastEquipmentId()
         {
             try
@@ -127,11 +127,11 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Delete equipment from file Equipments.josn with specific ID
+        /// Delete equipment from file Equipments.josn with specific id.
         /// </summary>
-        /// <param name="id">ID of the equipment we want to delete</param>
-        /// <returns>true if equipment is deleted or false if it's not</returns>
-        /// <exception cref="EquipmentNotFound">Thrown when equipment with specific ID is not found</exception>
+        /// <param name="id">id of the equipment we want to delete.</param>
+        /// <returns>true if equipment is deleted or false if it's not.</returns>
+        /// <exception cref="EquipmentNotFound">Thrown when equipment with specific id is not found.</exception>
         public static bool DeleteEquipment(int id)
         {
             try
@@ -141,7 +141,7 @@ namespace HealthCareCenter.Model
                     if (id == s_equipments[i].ID)
                     {
                         s_equipments.RemoveAt(i);
-                        UpdateAllEquipment(s_equipments);
+                        SaveAllEquipments(s_equipments);
                         return true;
                     }
                 }
@@ -159,11 +159,11 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Delete equipment from file Equipments.josn
+        /// Delete equipment from file Equipments.josn.
         /// </summary>
         /// <param name="equipment">equipment we want to delete</param>
         /// <returns>true if equipment is deleted or false if it's not</returns>
-        /// <exception cref="EquipmentNotFound">Thrown when equipment with specific ID is not found</exception>
+        /// <exception cref="EquipmentNotFound">Thrown when equipment with specific id is not found</exception>
         public static bool DeleteEquipment(Equipment equipment)
         {
             try
@@ -173,7 +173,7 @@ namespace HealthCareCenter.Model
                     if (equipment.ID == s_equipments[i].ID)
                     {
                         s_equipments.RemoveAt(i);
-                        UpdateAllEquipment(s_equipments);
+                        SaveAllEquipments(s_equipments);
                         return true;
                     }
                 }
@@ -191,11 +191,11 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Updating equipment
+        /// Updating equipment.
         /// </summary>
         /// <param name="equipment"></param>
-        /// <returns>true if equipment is found or false if it's not</returns>
-        /// <exception cref="EquipmentNotFound">Thrown when equipment is not found</exception>
+        /// <returns>true if equipment is found or false if it's not.</returns>
+        /// <exception cref="EquipmentNotFound">Thrown when equipment is not found.</exception>
         public static bool UpdateEquipment(Equipment equipment)
         {
             try
@@ -205,7 +205,7 @@ namespace HealthCareCenter.Model
                     if (equipment.ID == s_equipments[i].ID)
                     {
                         s_equipments[i] = equipment;
-                        UpdateAllEquipment(s_equipments);
+                        SaveAllEquipments(s_equipments);
                         return true;
                     }
                 }

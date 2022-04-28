@@ -11,9 +11,9 @@ namespace HealthCareCenter.Model
         private static List<HospitalRoom> s_rooms = LoadRooms();
 
         /// <summary>
-        /// Loads all hospital rooms from file HospitalRooms.json
+        /// Loads all hospital rooms from file HospitalRooms.json.
         /// </summary>
-        /// <returns>List of all hospital rooms</returns>
+        /// <returns>List of all hospital rooms.</returns>
         private static List<HospitalRoom> LoadRooms()
         {
             try
@@ -35,20 +35,20 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Return loaded hospital rooms from list
+        /// Return loaded hospital rooms from list.
         /// </summary>
-        /// <returns>Loaded hospital rooms</returns>
+        /// <returns>Loaded hospital rooms.</returns>
         public static List<HospitalRoom> GetRooms()
         {
             return s_rooms;
         }
 
         /// <summary>
-        /// Finding room with specific ID
+        /// Finding room with specific id.
         /// </summary>
-        /// <param name="id">ID of wanted hospital room</param>
-        /// <returns>Hospital room with specific ID, if room is found, or null if room is not found</returns>
-        /// <exception cref="HospitalRoomNotFound">Thrown when room with specific ID is not found</exception>
+        /// <param name="id">id of wanted hospital room.</param>
+        /// <returns>Hospital room with specific id, if room is found, or null if room is not found.</returns>
+        /// <exception cref="HospitalRoomNotFound">Thrown when room with specific id is not found.</exception>
         public static HospitalRoom GetRoomById(int id)
         {
             try
@@ -73,11 +73,11 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Replace all data from file HospitalRooms.json with list rooms
+        /// Replace all data from file HospitalRooms.json with list rooms.
         /// </summary>
-        /// <param name="rooms">Data that will replace the old ones</param>
-        /// <returns>true if data update performed properly</returns>
-        public static bool UpdateAllRooms(List<HospitalRoom> rooms)
+        /// <param name="rooms">Data that will replace the old ones.</param>
+        /// <returns>true if data update performed properly.</returns>
+        public static bool SaveAllRooms(List<HospitalRoom> rooms)
         {
             try
             {
@@ -103,13 +103,13 @@ namespace HealthCareCenter.Model
         public static void AddRoom(HospitalRoom newRoom)
         {
             s_rooms.Add(newRoom);
-            UpdateAllRooms(s_rooms);
+            SaveAllRooms(s_rooms);
         }
 
         /// <summary>
-        /// Finding last(largest) ID in file HospitalRooms.json.
+        /// Finding last(largest) id in file HospitalRooms.json.
         /// </summary>
-        /// <returns>last(largest) ID</returns>
+        /// <returns>last(largest) id.</returns>
         public static int GetLastRoomId()
         {
             try
@@ -127,11 +127,11 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Delete room from file HospitalRooms.josn with specific ID
+        /// Delete room from file HospitalRooms.josn with specific id.
         /// </summary>
-        /// <param name="id">ID of the hospital room we want to delete</param>
-        /// <returns>true if room is deleted or false if it's not</returns>
-        /// <exception cref="HospitalRoomNotFound">Thrown when room with specific ID is not found</exception>
+        /// <param name="id">id of the hospital room we want to delete.</param>
+        /// <returns>True if room is deleted or false if it's not.</returns>
+        /// <exception cref="HospitalRoomNotFound">Thrown when room with specific id is not found.</exception>
         public static bool DeleteRoom(int id)
         {
             try
@@ -141,7 +141,7 @@ namespace HealthCareCenter.Model
                     if (id == s_rooms[i].ID)
                     {
                         s_rooms.RemoveAt(i);
-                        UpdateAllRooms(s_rooms);
+                        SaveAllRooms(s_rooms);
                         return true;
                     }
                 }
@@ -159,11 +159,11 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Delete room from file HospitalRooms.josn with specific ID
+        /// Delete room from file HospitalRooms.josn with specific id.
         /// </summary>
-        /// <param name="room">Room we want to delete</param>
-        /// <returns>true if room is deleted or false if it's not</returns>
-        /// <exception cref="HospitalRoomNotFound">Thrown when room is not found</exception>
+        /// <param name="room">Room we want to delete.</param>
+        /// <returns>true if room is deleted or false if it's not.</returns>
+        /// <exception cref="HospitalRoomNotFound">Thrown when room is not found.</exception>
         public static bool DeleteRoom(HospitalRoom room)
         {
             try
@@ -173,7 +173,7 @@ namespace HealthCareCenter.Model
                     if (room.ID == s_rooms[i].ID)
                     {
                         s_rooms.RemoveAt(i);
-                        UpdateAllRooms(s_rooms);
+                        SaveAllRooms(s_rooms);
                         return true;
                     }
                 }
@@ -191,10 +191,10 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Updating hospital room
+        /// Updating hospital room.
         /// </summary>
-        /// <param name="room">Hospital room we want to update</param>
-        /// <returns>true if room is updated or false if room is not found</returns>
+        /// <param name="room">Hospital room we want to update.</param>
+        /// <returns>true if room is updated or false if room is not found.</returns>
         public static bool UpdateRoom(HospitalRoom room)
         {
             try
@@ -204,7 +204,7 @@ namespace HealthCareCenter.Model
                     if (room.ID == s_rooms[i].ID)
                     {
                         s_rooms[i] = room;
-                        UpdateAllRooms(s_rooms);
+                        SaveAllRooms(s_rooms);
                         return true;
                     }
                 }

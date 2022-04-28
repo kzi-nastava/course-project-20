@@ -2,44 +2,37 @@
   {
     "Type": 0,
     "Name": "Room1",
-    "EquipmentRearrangementsIDs": [
-      0
-    ],
     "AppointmentIDs": [
     ],
     "ID": 1,
-    "EquipmentIDsAmounts": {
-      "Stolica": 1,
-      "Sto": 1,
-      "Krevet": 1
+    "EquipmentAmounts": {
+      "Table": 0,
+      "Bad": 1
     },
-    "MoveInfoIDs": [
+    "EquipmentRearrangementsIDs": [
+      0
     ]
   },
   {
     "Type": 1,
     "Name": "Room2",
-    "EquipmentRearrangementsIDs": [
-    ],
     "AppointmentIDs": [
     ],
     "ID": 2,
-    "EquipmentIDsAmounts": {
+    "EquipmentAmounts": {
     },
-    "MoveInfoIDs": [
+    "EquipmentRearrangementsIDs": [
     ]
   },
   {
     "Type": 2,
     "Name": "Room3",
-    "EquipmentRearrangementsIDs": [
-    ],
     "AppointmentIDs": [
     ],
     "ID": 3,
-    "EquipmentIDsAmounts": {
+    "EquipmentAmounts": {
     },
-    "MoveInfoIDs": [
+    "EquipmentRearrangementsIDs": [
     ]
   }
 ]

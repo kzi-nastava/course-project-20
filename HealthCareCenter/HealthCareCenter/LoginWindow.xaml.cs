@@ -18,9 +18,20 @@ namespace HealthCareCenter
 {
     public partial class LoginWindow : Window
     {
+        private void DoEquipmentRearrangements()
+        {
+            List<Equipment> equipments = EquipmentRepository.GetEquipments();
+            for (int i = 0; i < equipments.Count; i++)
+            {
+                equipments[i].DoRearrangement();
+            }
+        }
+
         public LoginWindow()
         {
             InitializeComponent();
+            DoEquipmentRearrangements();
+
             try
             {
                 UserManager.LoadUsers();
@@ -53,7 +64,7 @@ namespace HealthCareCenter
                         }
                         else if (user.GetType() == typeof(Manager))
                         {
-                            ShowWindow(new HospitalEquipmentReviewWindow(user));
+                            ShowWindow(new CrudHospitalRoomWindow(user));
                         }
                         else if (user.GetType() == typeof(Patient))
                         {

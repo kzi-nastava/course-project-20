@@ -20,20 +20,27 @@ namespace HealthCareCenter
     public partial class HospitalEquipmentReviewWindow : Window
     {
         private string[] _headerDataGridEquipment = new string[] { "Equipment Id", "Current Room Id", "Equipment Type", "Equipment Name", "Move Time", "New Room Id" };
-        public Manager signedUser;
+        private Manager _signedUser;
 
         public HospitalEquipmentReviewWindow(User user)
         {
-            signedUser = (Manager)user;
+            _signedUser = (Manager)user;
             InitializeComponent();
-            fillDataGridEquipment();
-            fillAllComboBoxes();
+            AddDataGridHeader(DataGridEquipments, _headerDataGridEquipment);
+            FillDataGridEquipment();
+            FillAllComboBoxes();
+        }
+
+        private void ShowWindow(Window window)
+        {
+            window.Show();
+            Close();
         }
 
         /// <summary>
         /// Fill RoomTypeComboBox with room type constants from Enum RoomType.
         /// </summary>
-        private void fillRoomTypeComboBox(ComboBox RoomTypeComboBox)
+        private void FillRoomTypeComboBox(ComboBox RoomTypeComboBox)
         {
             RoomTypeComboBox.Items.Add(new ComboBoxItem() { Content = "" });
             RoomTypeComboBox.Items.Add(new ComboBoxItem() { Content = Enums.RoomType.Storage });
@@ -47,7 +54,7 @@ namespace HealthCareCenter
         /// <summary>
         ///  Fill EquipmentTypeComboBox with equipment type constants from Enum EquipmentType.
         /// </summary>
-        private void fillEquipmentTypeComboBox(ComboBox EquipmentTypeComboBox)
+        private void FillEquipmentTypeComboBox(ComboBox EquipmentTypeComboBox)
         {
             EquipmentTypeComboBox.Items.Add(new ComboBoxItem() { Content = "" });
             EquipmentTypeComboBox.Items.Add(new ComboBoxItem() { Content = Enums.EquipmentType.ForCheckup });
@@ -60,7 +67,7 @@ namespace HealthCareCenter
         /// <summary>
         ///  Fill EquipmentAmountComboBox with amount constants given in project specification #1.2.
         /// </summary>
-        private void fillEquipmentAmountComboBox(ComboBox EquipmentAmountComboBox)
+        private void FillEquipmentAmountComboBox(ComboBox EquipmentAmountComboBox)
         {
             EquipmentAmountComboBox.Items.Add(new ComboBoxItem() { Content = "" });
             EquipmentAmountComboBox.Items.Add(new ComboBoxItem() { Content = "Out of stock" });
@@ -72,18 +79,18 @@ namespace HealthCareCenter
         /// <summary>
         /// This method behaves like a container that calls only the other  methods for filling all comboBoxes.
         /// </summary>
-        private void fillAllComboBoxes()
+        private void FillAllComboBoxes()
         {
-            fillRoomTypeComboBox(RoomTypeComboBox);
-            fillEquipmentTypeComboBox(EquipmentTypeComboBox);
-            fillEquipmentAmountComboBox(EquipmentAmountComboBox);
+            FillRoomTypeComboBox(RoomTypeComboBox);
+            FillEquipmentTypeComboBox(EquipmentTypeComboBox);
+            FillEquipmentAmountComboBox(EquipmentAmountComboBox);
         }
 
         /// <summary>
         /// Adding DataGridEquipment header
         /// </summary>
         /// <param name="header"></param>
-        private void addDataGridHeader(DataGrid dataGrid, string[] header)
+        private void AddDataGridHeader(DataGrid dataGrid, string[] header)
         {
             foreach (string label in header)
             {
@@ -100,7 +107,7 @@ namespace HealthCareCenter
         /// The row of the DataGrid is obtained by making a string array from object. For example if object is type of equipment and object has arrangement, then the date of arrangement and new room for equipment are added to array like strings, if equipment has no arragement then two empty strings are added to the string array which one represents the row.
         /// </summary>
         /// <param name="equipmentAttributesToDisplay">Content we want to display in DataGridEquipment (One row)</param>
-        private void addDataGridRow(DataGrid dataGrid, string[] header, List<string> equipmentAttributesToDisplay)
+        private void AddDataGridRow(DataGrid dataGrid, string[] header, List<string> equipmentAttributesToDisplay)
         {
             dynamic row = new ExpandoObject();
 
@@ -113,7 +120,7 @@ namespace HealthCareCenter
         /// When equipment object don't have rearrangement we add 2 empty strings for "Move Time" and for "New Room Id"
         /// </summary>
         /// <param name="equipmentAttributesToDisplay">Content we want to display in DataGridEquipment</param>
-        private void addEmptyRowsForEquipmentDisplay(ref List<string> equipmentAttributesToDisplay)
+        private void AddEmptyFieldsForEquipmentDisplay(ref List<string> equipmentAttributesToDisplay)
         {
             equipmentAttributesToDisplay.Add("");
             equipmentAttributesToDisplay.Add("");
@@ -122,18 +129,16 @@ namespace HealthCareCenter
         /// <summary>
         /// Filling DataGridEquipment with content
         /// </summary>
-        private void fillDataGridEquipment()
+        private void FillDataGridEquipment()
         {
-            addDataGridHeader(DataGridEquipments, _headerDataGridEquipment);
-
             List<Equipment> equipments = EquipmentRepository.GetEquipments();
             foreach (Equipment equipment in equipments)
             {
-                if (equipment.RearrangementID == -1)
+                if (!equipment.IsScheduledRearrangement())
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
-                    addEmptyRowsForEquipmentDisplay(ref equipmentAttributesToDisplay);
-                    addDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
+                    AddEmptyFieldsForEquipmentDisplay(ref equipmentAttributesToDisplay);
+                    AddDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
                 }
                 else
                 {
@@ -141,7 +146,7 @@ namespace HealthCareCenter
                     EquipmentRearrangement rearrangement = EquipmentRearrangementRepository.GetRearrangementById(equipment.RearrangementID);
                     equipmentAttributesToDisplay.Add(rearrangement.MoveTime.ToString(Constants.DateFormat));
                     equipmentAttributesToDisplay.Add(rearrangement.NewRoomID.ToString());
-                    addDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
+                    AddDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
                 }
             }
         }
@@ -151,7 +156,7 @@ namespace HealthCareCenter
         /// </summary>
         /// <param name="equipmentAttributesToDisplay">Content we are filtering (One row)</param>
         /// <returns>true if contenent pass criterion</returns>
-        private bool filterEquipmentsBySearchTextBox(List<string> equipmentAttributesToDisplay)
+        private bool FilterEquipmentsBySearchTextBox(List<string> equipmentAttributesToDisplay)
         {
             string searchContent = SearchEquipmentTextBox.Text;
             if (searchContent == "")
@@ -169,7 +174,7 @@ namespace HealthCareCenter
         /// </summary>
         /// <param name="equipmentAttributesToDisplay">Content we want to fileter</param>
         /// <returns>True if content pass criterion</returns>
-        private bool filterEquipmentsByCurrentRoomType(List<string> equipmentAttributesToDisplay)
+        private bool FilterEquipmentsByCurrentRoomType(List<string> equipmentAttributesToDisplay)
         {
             string roomType = RoomTypeComboBox.Text;
             string currentRoomId = equipmentAttributesToDisplay[1];
@@ -193,7 +198,7 @@ namespace HealthCareCenter
         /// </summary>
         /// <param name="equipmentAttributesToDisplay">Contet we want to fileter</param>
         /// <returns>True if content pass criterion</returns>
-        private bool filterEquipmentsByEquipmentType(List<string> equipmentAttributesToDisplay)
+        private bool FilterEquipmentsByEquipmentType(List<string> equipmentAttributesToDisplay)
         {
             string equipmentType = EquipmentTypeComboBox.Text;
 
@@ -211,7 +216,7 @@ namespace HealthCareCenter
         /// </summary>
         /// <param name="equipmentAttributesToDisplay">Content we want to filter</param>
         /// <returns>True if content pass criterion</returns>
-        private bool filterEquipmentsByAmount(List<string> equipmentAttributesToDisplay)
+        private bool FilterEquipmentsByAmount(List<string> equipmentAttributesToDisplay)
         {
             string amount = EquipmentAmountComboBox.Text;
             string equipmentName = equipmentAttributesToDisplay[3];
@@ -222,23 +227,23 @@ namespace HealthCareCenter
             Room storage = StorageRepository.GetStorage();
 
             if (amount == "Out of stock")
-                if ((!storage.EquipmentIDsAmounts.ContainsKey(equipmentName)) || (storage.EquipmentIDsAmounts[equipmentName] == 0))
+                if (!storage.ContainsEquipmentName(equipmentName))
                     return true;
 
             if (amount == "0-10")
             {
-                if (!storage.EquipmentIDsAmounts.ContainsKey(equipmentName))
+                if (!storage.ContainsEquipmentName(equipmentName))
                     return false;
 
-                if (storage.EquipmentIDsAmounts[equipmentName] > 0 && storage.EquipmentIDsAmounts[equipmentName] < 10)
+                if (storage.GetEquipmentAmount(equipmentName) > 0 && storage.GetEquipmentAmount(equipmentName) < 10)
                     return true;
             }
 
             if (amount == "10+")
             {
-                if (!storage.EquipmentIDsAmounts.ContainsKey(equipmentName))
+                if (!storage.ContainsEquipmentName(equipmentName))
                     return false;
-                if (storage.EquipmentIDsAmounts[equipmentName] > 10)
+                if (storage.GetEquipmentAmount(equipmentName) > 10)
                     return true;
             }
 
@@ -249,13 +254,13 @@ namespace HealthCareCenter
         /// Here are called all filter metheods and if all filter methods return true, content is added.
         /// </summary>
         /// <param name="equipmentAttributesToDisplay">Content we want to add</param>
-        private void filterEquipment(List<string> equipmentAttributesToDisplay)
+        private void FilterEquipment(List<string> equipmentAttributesToDisplay)
         {
-            if (filterEquipmentsBySearchTextBox(equipmentAttributesToDisplay))
-                if (filterEquipmentsByCurrentRoomType(equipmentAttributesToDisplay))
-                    if (filterEquipmentsByEquipmentType(equipmentAttributesToDisplay))
-                        if (filterEquipmentsByAmount(equipmentAttributesToDisplay))
-                            addDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
+            if (FilterEquipmentsBySearchTextBox(equipmentAttributesToDisplay))
+                if (FilterEquipmentsByCurrentRoomType(equipmentAttributesToDisplay))
+                    if (FilterEquipmentsByEquipmentType(equipmentAttributesToDisplay))
+                        if (FilterEquipmentsByAmount(equipmentAttributesToDisplay))
+                            AddDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
         }
 
         private void ShowSearchResultButton_Click(object sender, RoutedEventArgs e)
@@ -265,11 +270,11 @@ namespace HealthCareCenter
 
             foreach (Equipment equipment in equipments)
             {
-                if (equipment.RearrangementID == -1)
+                if (!equipment.IsScheduledRearrangement())
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
-                    addEmptyRowsForEquipmentDisplay(ref equipmentAttributesToDisplay);
-                    filterEquipment(equipmentAttributesToDisplay);
+                    AddEmptyFieldsForEquipmentDisplay(ref equipmentAttributesToDisplay);
+                    FilterEquipment(equipmentAttributesToDisplay);
                 }
                 else
                 {
@@ -277,25 +282,29 @@ namespace HealthCareCenter
                     EquipmentRearrangement rearrangement = EquipmentRearrangementRepository.GetRearrangementById(equipment.RearrangementID);
                     equipmentAttributesToDisplay.Add(rearrangement.MoveTime.ToString(Constants.DateFormat));
                     equipmentAttributesToDisplay.Add(rearrangement.NewRoomID.ToString());
-                    filterEquipment(equipmentAttributesToDisplay);
+                    FilterEquipment(equipmentAttributesToDisplay);
                 }
             }
         }
 
-        private void ShowWindow(Window window)
-        {
-            window.Show();
-            Close();
-        }
-
         private void CrudHospitalRoomMenuItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ManagerWindow(signedUser));
+            ShowWindow(new CrudHospitalRoomWindow(_signedUser));
         }
 
         private void EquipmentReviewMenuItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new HospitalEquipmentReviewWindow(signedUser));
+            ShowWindow(new HospitalEquipmentReviewWindow(_signedUser));
+        }
+
+        private void ArrangingEquipmentItemClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new ArrangingEquipmentWindow(_signedUser));
+        }
+
+        private void LogOffItemClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new LoginWindow());
         }
     }
 }

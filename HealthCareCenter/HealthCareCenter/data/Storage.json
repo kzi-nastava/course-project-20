@@ -1,11 +1,12 @@
 [
   {
     "ID": 0,
-    "EquipmentIDsAmounts": {
-      "Stolica": 1,
-      "Klupa": 1
+    "EquipmentAmounts": {
+      "Chair": 2,
+      "Bench": 1,
+      "Table": 1
     },
-    "MoveInfoIDs": []
+    "EquipmentRearrangementsIDs": [
+    ]
   }
-
 ]

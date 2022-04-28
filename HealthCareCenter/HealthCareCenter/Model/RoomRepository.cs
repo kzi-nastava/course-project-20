@@ -24,7 +24,7 @@ namespace HealthCareCenter.Model
             Dictionary<string, int> equipmentsAmount = new Dictionary<string, int>();
             foreach (Room room in hospitalPremises)
             {
-                foreach (KeyValuePair<string, int> entry in room.EquipmentIDsAmounts)
+                foreach (KeyValuePair<string, int> entry in room.EquipmentAmounts)
                 {
                     if (equipmentsAmount.ContainsKey(entry.Key))
                         equipmentsAmount[entry.Key] = equipmentsAmount[entry.Key] + entry.Value;
@@ -33,6 +33,22 @@ namespace HealthCareCenter.Model
                 }
             }
             return equipmentsAmount;
+        }
+
+        public static bool UpdateRoom(Room room)
+        {
+            try
+            {
+                if (room.IsStorage())
+                    StorageRepository.UpdateStorage(room);
+                else
+                    HospitalRoomRepository.UpdateRoom((HospitalRoom)room);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

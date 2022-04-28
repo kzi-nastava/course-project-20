@@ -20,9 +20,9 @@ namespace HealthCareCenter.Model
         }
     }
 
-    public class EquipmentRearrangementNotFount : Exception
+    public class EquipmentRearrangementNotFound : Exception
     {
-        public EquipmentRearrangementNotFount()
+        public EquipmentRearrangementNotFound()
         {
             Console.WriteLine("Error, equipment rearrangement not found!");
         }

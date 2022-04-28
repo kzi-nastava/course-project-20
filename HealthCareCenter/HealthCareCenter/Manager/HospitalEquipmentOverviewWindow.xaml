@@ -35,8 +35,9 @@
                 </MenuItem>
                 <MenuItem Header="Hospital equipment">
                     <MenuItem Header="Equipment review" Click="EquipmentReviewMenuItemClick"></MenuItem>
-                    <MenuItem Header="Arranging equipment"></MenuItem>
+                    <MenuItem Header="Arranging equipment" Click="ArrangingEquipmentItemClick"></MenuItem>
                 </MenuItem>
+                <MenuItem Header="Log off" Click="LogOffItemClick"></MenuItem>
             </Menu>
         </StackPanel>
     </Grid>

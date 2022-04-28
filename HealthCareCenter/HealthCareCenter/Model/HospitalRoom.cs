@@ -10,7 +10,7 @@ namespace HealthCareCenter.Model
         public RoomType Type { get; set; }
 
         public string Name { get; set; }
-        public List<int> EquipmentRearrangementsIDs { get; set; }
+
         public List<int> AppointmentIDs { get; set; }
 
         public HospitalRoom()
@@ -23,11 +23,21 @@ namespace HealthCareCenter.Model
         {
             this.ID = HospitalRoomRepository.GetLastRoomId() + 1;
             this.Name = name;
-            this.EquipmentIDsAmounts = new Dictionary<string, int>();
-            this.MoveInfoIDs = new List<int>();
-            this.Type = type;
+            this.EquipmentAmounts = new Dictionary<string, int>();
             this.EquipmentRearrangementsIDs = new List<int>();
+            this.Type = type;
             this.AppointmentIDs = new List<int>();
+        }
+
+        /// <summary>
+        /// Check if room conatain any appointment
+        /// </summary>
+        /// <returns></returns>
+        public bool ContainAnyAppointment()
+        {
+            if (AppointmentIDs.Count != 0)
+                return true;
+            return false;
         }
     }
 }

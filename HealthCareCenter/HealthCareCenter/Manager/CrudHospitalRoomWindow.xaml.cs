@@ -6,11 +6,40 @@ using System.Windows.Controls;
 
 namespace HealthCareCenter
 {
-    public partial class ManagerWindow : Window
+    public partial class CrudHospitalRoomWindow : Window
     {
-        public Manager signedUser;
+        private Manager _signedUser;
 
-        private void fillComboBox()
+        private bool IsHospitalRoomNameInputValide(string roomName)
+        {
+            if (roomName == "")
+                return false;
+
+            return true;
+        }
+
+        private bool IsHospitalRoomIdInputValide(ref int roomId)
+        {
+            if (Int32.TryParse(HospitalRoomIdTextBox.Text, out roomId))
+                return true;
+            return false;
+        }
+
+        private bool IsHospitalRoomFound(HospitalRoom room)
+        {
+            if (room == null)
+                return false;
+
+            return true;
+        }
+
+        private void ShowWindow(Window window)
+        {
+            window.Show();
+            Close();
+        }
+
+        private void FillComboBox()
         {
             RoomTypeComboBox.Items.Add(new ComboBoxItem() { Content = Enums.RoomType.Checkup });
             RoomTypeComboBox.Items.Add(new ComboBoxItem() { Content = Enums.RoomType.Operation });
@@ -19,7 +48,7 @@ namespace HealthCareCenter
             RoomTypeComboBox.SelectedItem = RoomTypeComboBox.Items[0];
         }
 
-        private void fillDataGridHospitalRooms()
+        private void FillDataGridHospitalRooms()
         {
             DataGridHospitalRooms.Items.Clear();
             List<HospitalRoom> rooms = HospitalRoomRepository.GetRooms();
@@ -30,22 +59,22 @@ namespace HealthCareCenter
         private void DeleteHospitalRoom(HospitalRoom delteteRoom)
         {
             HospitalRoomRepository.DeleteRoom(delteteRoom);
-            fillDataGridHospitalRooms();
+            FillDataGridHospitalRooms();
         }
 
-        public ManagerWindow(Model.User user)
+        public CrudHospitalRoomWindow(User user)
         {
-            signedUser = (Manager)user;
+            _signedUser = (Manager)user;
             InitializeComponent();
-            fillComboBox();
-            fillDataGridHospitalRooms();
+            FillComboBox();
+            FillDataGridHospitalRooms();
         }
 
         private void AddHospitalRoomButton_Click(object sender, RoutedEventArgs e)
         {
             Enums.RoomType type = (Enums.RoomType)Enum.Parse(typeof(Enums.RoomType), RoomTypeComboBox.Text);
             string roomName = HospitalRoomNameTextBox.Text;
-            if (roomName == "")
+            if (!IsHospitalRoomNameInputValide(roomName))
             {
                 MessageBox.Show("You must enter room name");
                 return;
@@ -59,29 +88,32 @@ namespace HealthCareCenter
 
         private void DeleteHospitalRoomButton_Click(object sender, RoutedEventArgs e)
         {
-            int roomId;
-            if (!Int32.TryParse(HospitalRoomIdTextBox.Text, out roomId))
+            int roomId = 0;
+            if (!IsHospitalRoomIdInputValide(ref roomId))
             {
                 MessageBox.Show("You must enter hospital room Id!");
                 return;
             }
+
             HospitalRoom room = HospitalRoomRepository.GetRoomById(roomId);
-            if (room == null)
+            if (!IsHospitalRoomFound(room))
             {
                 MessageBox.Show($"Hospital room with {roomId} Id it's not found!");
                 return;
             }
 
-            if (room.EquipmentIDsAmounts.Count != 0)
+            if (room.ContainAnyEquipment())
             {
                 MessageBox.Show($"Hospital room with {roomId} Id contain equipment.");
                 return;
             }
-            if (room.AppointmentIDs.Count != 0)
+
+            if (room.ContainAnyAppointment())
             {
                 MessageBox.Show($"Hospital room with {roomId} Id contain apointments.");
                 return;
             }
+
             HospitalRoomIdTextBox.Text = "";
             HospitalRoomNameTextBox.Text = "";
             DeleteHospitalRoom(room);
@@ -91,22 +123,22 @@ namespace HealthCareCenter
         {
             Enums.RoomType newType = (Enums.RoomType)Enum.Parse(typeof(Enums.RoomType), RoomTypeComboBox.Text);
             string newRoomName = HospitalRoomNameTextBox.Text;
-            int roomId;
+            int roomId = 0;
 
-            if (!Int32.TryParse(HospitalRoomIdTextBox.Text, out roomId))
+            if (!IsHospitalRoomIdInputValide(ref roomId))
             {
                 MessageBox.Show("You must enter hospital room Id");
                 return;
             }
 
-            if (newRoomName == "")
+            if (!IsHospitalRoomNameInputValide(newRoomName))
             {
                 MessageBox.Show("You must enter room name");
                 return;
             }
 
             HospitalRoom room = HospitalRoomRepository.GetRoomById(roomId);
-            if (room == null)
+            if (!IsHospitalRoomFound(room))
             {
                 MessageBox.Show($"Hospital room with {roomId} id it's not found");
                 return;
@@ -115,25 +147,29 @@ namespace HealthCareCenter
             room.Name = newRoomName;
             room.Type = newType;
             HospitalRoomRepository.UpdateRoom(room);
-            fillDataGridHospitalRooms();
+            FillDataGridHospitalRooms();
             HospitalRoomIdTextBox.Text = "";
             HospitalRoomNameTextBox.Text = "";
         }
 
-        private void ShowWindow(Window window)
-        {
-            window.Show();
-            Close();
-        }
-
         private void CrudHospitalRoomMenuItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ManagerWindow(signedUser));
+            ShowWindow(new CrudHospitalRoomWindow(_signedUser));
         }
 
         private void EquipmentReviewMenuItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new HospitalEquipmentReviewWindow(signedUser));
+            ShowWindow(new HospitalEquipmentReviewWindow(_signedUser));
+        }
+
+        private void ArrangingEquipmentItemClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new ArrangingEquipmentWindow(_signedUser));
+        }
+
+        private void LogOffItemClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new LoginWindow());
         }
     }
 }

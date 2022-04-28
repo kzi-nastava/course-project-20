@@ -1,11 +1,11 @@
-﻿<Window x:Class="HealthCareCenter.ManagerWindow"
+﻿<Window x:Class="HealthCareCenter.CrudHospitalRoomWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HealthCareCenter"
         mc:Ignorable="d"
-        Title="Manager window" Height="400" Width="420">
+        Title="CrudHospitalRoomWindow" Height="400" Width="420">
     <Grid>
         <DataGrid x:Name="DataGridHospitalRooms" Margin="10,26,10,214" IsReadOnly="True">
 
@@ -44,8 +44,9 @@
                 </MenuItem>
                 <MenuItem Header="Hospital equipment">
                     <MenuItem Header="Equipment review" Click="EquipmentReviewMenuItemClick"></MenuItem>
-                    <MenuItem Header="Arranging equipment"></MenuItem>
+                    <MenuItem Header="Arranging equipment" Click="ArrangingEquipmentItemClick"></MenuItem>
                 </MenuItem>
+                <MenuItem Header="Log off" Click="LogOffItemClick"></MenuItem>
             </Menu>
         </StackPanel>
     </Grid>
