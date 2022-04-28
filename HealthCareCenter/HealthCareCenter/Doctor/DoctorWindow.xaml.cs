@@ -129,7 +129,7 @@ namespace HealthCareCenter
         {
             appointmentsDataTable.Rows.Clear();
             if (AppointmentsMenager.Appointments == null)
-                appointments = AppointmentsMenager.loadAppointments();
+                appointments = AppointmentsMenager.LoadAppointments();
 
             foreach (Appointment appointment in appointments)
             {
@@ -222,7 +222,7 @@ namespace HealthCareCenter
             if (hour <= 12 && timeFragments[2] == "AM")
                 hour -= 9;
             else
-                hour -= 9;
+                hour += 4;
             hourComboBox.SelectedIndex = hour;                               
             minuteComboBox.SelectedIndex = int.Parse(time[1]) / 15;
             emergencyCheckBox.IsChecked = appointment.Emergency;

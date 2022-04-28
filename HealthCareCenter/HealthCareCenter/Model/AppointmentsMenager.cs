@@ -11,7 +11,7 @@ namespace HealthCareCenter.Model
     {
         public static List<Appointment> Appointments { get; set; }
         public static int HighestIndex { get; set; }
-        public static List<Appointment> loadAppointments()
+        public static List<Appointment> LoadAppointments()
         {
             var settings = new JsonSerializerSettings
             {
@@ -20,7 +20,7 @@ namespace HealthCareCenter.Model
 
             String JSONTextAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointments.json");
             Appointments = (List<Appointment>)JsonConvert.DeserializeObject<IEnumerable<Appointment>>(JSONTextAppointments, settings);
-            HighestIndex = Appointments[Appointments.Count-1].ID;
+            HighestIndex = Appointments[^1].ID;
             return Appointments;
         }
     }
