@@ -17,6 +17,5 @@ namespace HealthCareCenter.Model
         public int HealthRecordID { get; set; }
         public int HospitalRoomID { get; set; }
         public Anamnesis PatientAnamnesis { get; set; }
-
     }
 }

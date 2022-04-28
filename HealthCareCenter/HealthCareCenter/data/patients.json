@@ -1,7 +1,7 @@
 [
   {
     "IsBlocked": false,
-    "BlockedBy": 1,
+    "BlockedBy": 0,
     "ReferralIDs": [],
     "PrescriptionIDs": [],
     "HealthRecordID": 1,
@@ -10,6 +10,6 @@
     "Password": "eva",
     "FirstName": "Eva",
     "LastName": "Evic",
-    "DateOfBirth": "07/12/1940"
+    "DateOfBirth": "12/07/1940"
   }
 ]

@@ -20,9 +20,10 @@ namespace HealthCareCenter
     public partial class PatientWindow : Window
     {
         private Patient signedUser;
-        private PatientRepository patientRepository;
+        //private PatientRepository patientRepository;
+        private List<Appointment> unfinishedAppointments;
 
-        // appointment datagrid
+        // appointment datagrid table
         private DataTable appointmentsDataTable;
 
         // scheduling appointment items
@@ -41,8 +42,14 @@ namespace HealthCareCenter
         public PatientWindow(User user)
         {
             signedUser = (Patient)user;
-            patientRepository = new PatientRepository(signedUser);
-            patientRepository.Load();
+            
+            // loading all necessary information
+            //============================================
+            AppointmentRepository.Load();
+            ChangeRequestRepository.Load();
+            //============================================
+
+            unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
             InitializeComponent();
 
             // creating the appointment table and making that window visible
@@ -61,7 +68,7 @@ namespace HealthCareCenter
             if (allAvailableTimeTable != null)
             {
                 allAvailableTimeTable.Clear();
-            }    
+            }
             chosenDoctor = null;
             isScheduleDateChosen = false;
             dayChoiceComboBox.Items.Clear();
@@ -91,7 +98,7 @@ namespace HealthCareCenter
             appointmentsDataTable.Columns.Add(new DataColumn("Appointment date", typeof(string)));
             appointmentsDataTable.Columns.Add(new DataColumn("Creation date", typeof(string)));
             appointmentsDataTable.Columns.Add(new DataColumn("Emergency", typeof(bool)));
-            appointmentsDataTable.Columns.Add(new DataColumn("Doctor's full name", typeof(string)));
+            appointmentsDataTable.Columns.Add(new DataColumn("Doctor's ID", typeof(string)));
             appointmentsDataTable.Columns.Add(new DataColumn("Room", typeof(string)));
 
         }
@@ -99,7 +106,7 @@ namespace HealthCareCenter
         private void FillAppointmentTable()
         {
             DataRow row;
-            foreach (Appointment appointment in patientRepository.UnfinishedAppointments)
+            foreach (Appointment appointment in unfinishedAppointments)
             {
                 row = appointmentsDataTable.NewRow();
                 row[0] = appointment.ID;
@@ -107,8 +114,8 @@ namespace HealthCareCenter
                 row[2] = appointment.AppointmentDate;
                 row[3] = appointment.CreatedDate;
                 row[4] = appointment.Emergency;
-                row[5] = patientRepository.GetDoctorFullNameFromAppointment(appointment);
-                row[6] = appointment.HospitalRoomID;  // replace with hospital room type
+                row[5] = appointment.DoctorID;
+                row[6] = appointment.HospitalRoomID;
                 appointmentsDataTable.Rows.Add(row);
             }
             myAppointmentsDataGrid.ItemsSource = appointmentsDataTable.DefaultView;
@@ -127,13 +134,12 @@ namespace HealthCareCenter
             allDoctorsDataTable.Columns.Add(new DataColumn("First name", typeof(string)));
             allDoctorsDataTable.Columns.Add(new DataColumn("Last name", typeof(string)));
             allDoctorsDataTable.Columns.Add(new DataColumn("Type", typeof(string)));
-
         }
 
         private void FillDoctorTable()
         {
             DataRow row;
-            foreach (Doctor doctor in patientRepository.AllDoctors)
+            foreach (Doctor doctor in UserRepository.Doctors)
             {
                 row = allDoctorsDataTable.NewRow();
                 row[0] = doctor.ID;
@@ -188,6 +194,7 @@ namespace HealthCareCenter
         private List<string> GetAllPossibleDailySchedules()
         {
             // returns all schedules from 8:00 to 21:00 knowing that an appointment lasts 15 minutes
+            // example { "8:00", "8:15", "8:30" ... "20:30", "20:45" }
 
             int hours = 8;
             int minutes = 0;
@@ -210,13 +217,15 @@ namespace HealthCareCenter
         private void FillAvailableTimeTable()
         {
             List<string> allPossibleSchedules = GetAllPossibleDailySchedules();
-            foreach (Appointment appointment in patientRepository.AllAppointments)
+            foreach (Appointment appointment in AppointmentRepository.AllAppointments)
             {
-                if (appointment.DoctorID == Convert.ToInt32(chosenDoctor[0]))
+                int chosenDoctorID = Convert.ToInt32(chosenDoctor[0]);
+                if (appointment.DoctorID == chosenDoctorID)
                 {
                     if (appointment.AppointmentDate.Date.CompareTo(chosenScheduleDate.Date) == 0)
                     {
-                        allPossibleSchedules.Remove(appointment.AppointmentDate.Hour + ":" + appointment.AppointmentDate.Minute);
+                        string unavailableSchedule = appointment.AppointmentDate.Hour + ":" + appointment.AppointmentDate.Minute;
+                        allPossibleSchedules.Remove(unavailableSchedule);
                     }
                 }
             }
@@ -314,8 +323,8 @@ namespace HealthCareCenter
             TimeSpan timeTillAppointment = chosenAppointmentDate.Subtract(DateTime.Now);
             if (timeTillAppointment.TotalDays <= 2)
             {
-                MessageBox.Show("Since there are less than 2 days left until the appointment starts" +
-                    "\nrequest will be sent to the secretary to confirm");
+                MessageBox.Show("Since there are less than 2 days left until the appointment starts," +
+                    " the request will be sent to the secretary to confirm the change");
                 shouldSendRequestToSecretary = true;
             }
             myAppointmentsGrid.Visibility = Visibility.Collapsed;
@@ -323,7 +332,6 @@ namespace HealthCareCenter
             CreateDoctorTable();
             FillDoctorTable();
             FillDateComboBox();
-
         }
 
         private void cancelAppointmentButton_Click(object sender, RoutedEventArgs e)
@@ -340,40 +348,46 @@ namespace HealthCareCenter
             if (timeTillAppointment.TotalDays <= 2)
             {
                 MessageBox.Show("Since there are less than 2 days left until the appointment starts," +
-                    "\nrequest will be sent to the secretary to confirm");
+                    " the request will be sent to the secretary to confirm");
                 shouldSendRequestToSecretary = true;
             }
 
             MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", "Cancel appointment", System.Windows.MessageBoxButton.YesNo);
-            Appointment forDeletion = new Appointment();
             if (messageBoxResult == MessageBoxResult.Yes)
             {
                 CheckModificationTroll();
+                AppointmentChangeRequest newChangeRequest = new AppointmentChangeRequest
+                {
+                    ID = ++ChangeRequestRepository.LargestID,
+                    AppointmentID = Convert.ToInt32(chosenAppointment[0]),
+                    RequestType = Enums.RequestType.Delete,
+                    DateSent = DateTime.Now,
+                    PatientID = signedUser.ID
+                };
 
                 if (shouldSendRequestToSecretary)
                 {
-                    AppointmentChangeRequest changeRequest = new AppointmentChangeRequest();
-                    changeRequest.AppointmentID = Convert.ToInt32(chosenAppointment[0]);
-                    changeRequest.RequestType = Enums.RequestType.Delete;
-                    changeRequest.DateSent = DateTime.Now;
-                    changeRequest.PatientID = signedUser.ID;
-                    patientRepository.AllChangeRequests.Add(changeRequest);
-                    patientRepository.WriteChangeRequests();
+                    foreach (AppointmentChangeRequest changeRequest in ChangeRequestRepository.AllChangeRequests)
+                    {
+                        if (changeRequest.AppointmentID == newChangeRequest.AppointmentID)
+                        {
+                            changeRequest.RequestState = Enums.RequestState.Waiting;
+                            changeRequest.NewDate = newChangeRequest.NewDate;
+                            changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
+                            ChangeRequestRepository.Write();
+                            return;
+                        }
+                    }
+                    ChangeRequestRepository.AllChangeRequests.Add(newChangeRequest);
+                    ChangeRequestRepository.Write();
                     return;
                 }
                 else
                 {
-                    foreach (Appointment appointment in patientRepository.UnfinishedAppointments)
-                    {
-                        if (Convert.ToInt32(chosenAppointment[0]) == appointment.ID)
-                        {
-                            forDeletion = appointment;
-                            break;
-                        }
-                    }
+                    ChangeRequestService.DeleteAppointment(newChangeRequest);
+                    unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
                 }
             }
-            patientRepository.UnfinishedAppointments.Remove(forDeletion);
             CreateAppointmentTable();
             FillAppointmentTable();
         }
@@ -444,8 +458,6 @@ namespace HealthCareCenter
                 return;
             }
 
-            string newAppointmentDateParsed = chosenScheduleTime[0].ToString() + "/" + chosenScheduleTime[1].ToString() + "/" + chosenScheduleTime[2].ToString() + " " + chosenScheduleTime[3].ToString() + ":" + chosenScheduleTime[0].ToString();
-
             string confirmationMessage;
             if (IsModification())
             {
@@ -456,7 +468,19 @@ namespace HealthCareCenter
                 confirmationMessage = "Schedule appointment";
             }
 
-            AddAppointmentToSchedule(newAppointmentDateParsed);
+            string newAppointmentDateParsed = chosenScheduleTime[0].ToString() + "/" + chosenScheduleTime[1].ToString() + "/" + chosenScheduleTime[2].ToString() + " " + chosenScheduleTime[3].ToString() + ":" + chosenScheduleTime[4].ToString();
+            AppointmentChangeRequest newChangeRequest = new AppointmentChangeRequest
+            {
+                ID = ++ChangeRequestRepository.LargestID,
+                AppointmentID = (chosenAppointment == null) ? ++AppointmentRepository.LargestID : Convert.ToInt32(chosenAppointment[0]),
+                RequestType = Enums.RequestType.MakeChanges,
+                NewDate = Convert.ToDateTime(Convert.ToDateTime(newAppointmentDateParsed)),
+                NewAppointmentType = Enums.AppointmentType.Checkup,
+                NewDoctorID = Convert.ToInt32(chosenDoctor[0]),
+                DateSent = DateTime.Now,
+                PatientID = signedUser.ID
+            };
+            AddAppointmentToSchedule(newChangeRequest);
 
             MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", confirmationMessage, System.Windows.MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
@@ -470,61 +494,57 @@ namespace HealthCareCenter
 
         }
 
-        private void AddAppointmentToSchedule(string newAppointmentDateParsed)
+        private void AddAppointmentToSchedule(AppointmentChangeRequest newChangeRequest)
         {
             // adds new/modified appointment to patientRepository.UnifinishedAppointments
 
-            Appointment newAppointment = new Appointment();
             if (IsModification())
             {
                 CheckModificationTroll();
                 if (shouldSendRequestToSecretary)
                 {
-                    AppointmentChangeRequest changeRequest = new AppointmentChangeRequest
+                    foreach (AppointmentChangeRequest changeRequest in ChangeRequestRepository.AllChangeRequests)
                     {
-                        ID = patientRepository.GenerateAppointmentChangeRequestID(),
-                        AppointmentID = Convert.ToInt32(chosenAppointment[0]),
-                        RequestType = Enums.RequestType.Delete,
-                        NewDate = Convert.ToDateTime(chosenAppointment[2]),
-                        NewAppointmentType = Enums.AppointmentType.Checkup,
-                        NewDoctorID = Convert.ToInt32(chosenDoctor[0]),
-                        DateSent = DateTime.Now,
-                        PatientID = signedUser.ID
-                    };
-                    patientRepository.AllChangeRequests.Add(changeRequest);
-                    patientRepository.WriteChangeRequests();
+                        if (changeRequest.AppointmentID == newChangeRequest.AppointmentID)
+                        {
+                            changeRequest.RequestState = Enums.RequestState.Waiting;
+                            changeRequest.NewDate = newChangeRequest.NewDate;
+                            changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
+                            ChangeRequestRepository.Write();
+                            return;
+                        }
+                    }
+                    ChangeRequestRepository.AllChangeRequests.Add(newChangeRequest);
+                    ChangeRequestRepository.Write();
                     return;
                 }
                 else
                 {
-                    foreach (Appointment appointment in patientRepository.UnfinishedAppointments)
-                    {
-                        if (Convert.ToInt32(chosenAppointment[0]) == appointment.ID)
-                        {
-                            newAppointment = appointment;
-                            break;
-                        }
-                    }
+                    ChangeRequestService.MakeChangesToAppointment(newChangeRequest);
+                    unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
                 }
             }
             else
             {
                 CheckCreationTroll();
-                newAppointment.ID = patientRepository.GenerateAppointmentID();
-                patientRepository.UnfinishedAppointments.Add(newAppointment);
-                patientRepository.AllAppointments.Add(newAppointment);
+                Appointment newAppointment = new Appointment
+                {
+                    ID = newChangeRequest.AppointmentID,
+                    Type = Enums.AppointmentType.Checkup,
+                    CreatedDate = DateTime.Now,
+                    AppointmentDate = newChangeRequest.NewDate,
+                    Emergency = false,
+                    DoctorID = Convert.ToInt32(chosenDoctor[0]),
+                    HealthRecordID = signedUser.HealthRecordID,
+                    HospitalRoomID = -1,
+                    PatientAnamnesis = null
+                };
+                unfinishedAppointments.Add(newAppointment);
+                AppointmentRepository.AllAppointments.Add(newAppointment);
             }
 
-            newAppointment.Type = Enums.AppointmentType.Checkup;
-            newAppointment.CreatedDate = DateTime.Now;
-            newAppointment.AppointmentDate = Convert.ToDateTime(newAppointmentDateParsed);
-            newAppointment.Emergency = false;
-            newAppointment.DoctorID = Convert.ToInt32(chosenDoctor[0]);
-            newAppointment.HealthRecordID = signedUser.HealthRecordID;
-            newAppointment.HospitalRoomID = -1;
-            newAppointment.PatientAnamnesis = null;
 
-            patientRepository.WriteAppointments();
+            AppointmentRepository.Write();
         }
 
         private bool IsModification()
@@ -541,7 +561,7 @@ namespace HealthCareCenter
         private void CheckCreationTroll()
         {
             int creationCount = 0;
-            foreach (Appointment appointment in patientRepository.AllAppointments)
+            foreach (Appointment appointment in AppointmentRepository.AllAppointments)
             {
                 if (appointment.HealthRecordID == signedUser.HealthRecordID)
                 {
@@ -555,11 +575,19 @@ namespace HealthCareCenter
 
             if (creationCount >= creationTrollLimit)
             {
-                signedUser.IsBlocked = true;
-                signedUser.BlockedBy = Enums.Blocker.System;
-
                 MessageBox.Show("You have been blocked for excessive amounts of appointments created in the last 30 days");
-                patientRepository.WritePatient();
+                foreach (Patient patient in UserRepository.Patients)
+                {
+                    if (signedUser.ID == patient.ID)
+                    {
+                        MessageBox.Show(patient.ID.ToString());
+                        patient.IsBlocked = true;
+                        patient.BlockedBy = Enums.Blocker.System;
+                        break;
+                    }
+
+                }
+                UserRepository.SavePatients();
                 LogOut();
             }
         }
@@ -567,7 +595,7 @@ namespace HealthCareCenter
         private void CheckModificationTroll()
         {
             int modificationCount = 0;
-            foreach (AppointmentChangeRequest changeRequest in patientRepository.AllChangeRequests)
+            foreach (AppointmentChangeRequest changeRequest in ChangeRequestRepository.AllChangeRequests)
             {
                 if (changeRequest.PatientID == signedUser.ID)
                 {
@@ -581,11 +609,17 @@ namespace HealthCareCenter
 
             if (modificationCount >= modificationTrollLimit)
             {
-                signedUser.IsBlocked = true;
-                signedUser.BlockedBy = Enums.Blocker.System;
-
                 MessageBox.Show("You have been blocked for excessive amounts of change requests sent in the last 30 days");
-                patientRepository.WritePatient();
+                foreach (Patient patient in UserRepository.Patients)
+                {
+                    if (signedUser.ID == patient.ID)
+                    {
+                        patient.IsBlocked = true;
+                        patient.BlockedBy = Enums.Blocker.System;
+                        break;
+                    }
+                }
+                UserRepository.SavePatients();
                 LogOut();
             }
         }

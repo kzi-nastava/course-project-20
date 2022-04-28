@@ -13,6 +13,5 @@ namespace HealthCareCenter.Model
         public int HealthRecordID { get; set; }
         
         //public List<Survey> Surveys { get; set; }
-
     }
 }
