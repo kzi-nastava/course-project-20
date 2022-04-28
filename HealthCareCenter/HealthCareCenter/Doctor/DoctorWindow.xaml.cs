@@ -25,23 +25,21 @@ namespace HealthCareCenter
         private Doctor signedUser;
         private DataTable appointmentsDataTable;
         private DataTable patientsDataTable;
-        private bool appointmentsTableIsFilled = false;
         private bool patientsTableIsFilled = false;
-        private List<Appointment> Appointments;
         private int appointmentIndex;
         private int healthRecordIndex;
         DataRow dr;
         public DoctorWindow(Model.User user)
         {
             signedUser = (Doctor)user;
-            createAppointmentTable();
-            createPatientTable();
-            HealthRecordsMenager.loadHealthRecords();
+            CreateAppointmentTable();
+            CreatePatientsTable();
+            HealthRecordsMenager.LoadHealthRecords();
             InitializeComponent();
-            fillDateComboBox();
+            FillDateTimeComboBoxes();
         }
-
-        private void createAppointmentTable()
+        //Creating tables(table headers)
+        private void CreateAppointmentTable()
         {
             appointmentsDataTable = new DataTable("Appointments");
             DataColumn dc1 = new DataColumn("Id", typeof(int));
@@ -61,7 +59,7 @@ namespace HealthCareCenter
             appointmentsDataTable.Columns.Add(dc7);
             appointmentsDataTable.Columns.Add(dc8);
         }
-        private void createPatientTable()
+        private void CreatePatientsTable()
         {
             patientsDataTable = new DataTable("Patients");
             DataColumn dc1 = new DataColumn("Id", typeof(int));
@@ -71,7 +69,24 @@ namespace HealthCareCenter
             patientsDataTable.Columns.Add(dc2);
             patientsDataTable.Columns.Add(dc3);
         }
-        private void fillDateComboBox()
+
+        //---------------------------------------------------------------------------------------
+        //Putting data into tables
+        private void FillPatientsTable()
+        {
+            patientsDataTable.Rows.Clear();
+            foreach (Patient patient in UserManager.Patients)
+            {
+                dr = patientsDataTable.NewRow();
+                dr[0] = patient.ID;
+                dr[1] = patient.FirstName;
+                dr[2] = patient.LastName;
+                patientsDataTable.Rows.Add(dr);
+            }
+            patientsTableIsFilled = true;
+            patientsDataGrid.ItemsSource = patientsDataTable.DefaultView;
+        }
+        private void FillDateTimeComboBoxes()
         {
             for (int i = 1; i <= 31; i++)
             {
@@ -110,7 +125,7 @@ namespace HealthCareCenter
                 minuteComboBox.Items.Add(s);
             }
         }
-        private void loadAppointmentTable(List<Appointment> appointments)
+        private void FillAppointmentsTable(List<Appointment> appointments)
         {
             appointmentsDataTable.Rows.Clear();
             if (AppointmentsMenager.Appointments == null)
@@ -118,8 +133,6 @@ namespace HealthCareCenter
 
             foreach (Appointment appointment in appointments)
             {
-                DateTime now = DateTime.Now;
-
                 dr = appointmentsDataTable.NewRow();
                 dr[0] = appointment.ID;
                 dr[1] = appointment.Type;
@@ -131,31 +144,16 @@ namespace HealthCareCenter
                 dr[7] = appointment.HealthRecordID;
                 appointmentsDataTable.Rows.Add(dr);
             }
-            appointmentsTableIsFilled = true;
             scheduleDataGrid.ItemsSource = appointmentsDataTable.DefaultView;
         }
-        private void loadPatientTable()
-        {
-            patientsDataTable.Rows.Clear();
-            foreach (Patient patient in UserManager.Patients)
-            {
-                dr = patientsDataTable.NewRow();
-                dr[0] = patient.ID;
-                dr[1] = patient.FirstName;
-                dr[2] = patient.LastName;
-                patientsDataTable.Rows.Add(dr);
-            }
-            patientsTableIsFilled = true;
-            patientsDataGrid.ItemsSource = patientsDataTable.DefaultView;
-        }
-        private void fillApointmentWithData(Appointment appointment)
+        private void FillApointmentWithData(Appointment appointment)
         {
             DataRowView row;
             try
             {
                 row = (DataRowView)patientsDataGrid.SelectedItems[0];
             }
-            catch (Exception ex)
+            catch
             {
                 throw;
             }
@@ -163,7 +161,7 @@ namespace HealthCareCenter
             string selectedValue;
             try
             {
-                selectedValue = ((ComboBoxItem)appointmentComboBox.SelectedItem).Content.ToString();
+                selectedValue = ((ComboBoxItem)appointmentTypeComboBox.SelectedItem).Content.ToString();
             }
             catch (Exception ex)
             {
@@ -180,24 +178,24 @@ namespace HealthCareCenter
                 hour = hourComboBox.SelectedItem.ToString();
                 minute = minuteComboBox.SelectedItem.ToString();
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Please select date and time");
                 return;
             }
-            string dateStr = day + "/" + month + "/" + year + " " + hour + ":" + minute;
-            DateTime date = DateTime.ParseExact(dateStr,
+            string unparsedDate = day + "/" + month + "/" + year + " " + hour + ":" + minute;
+            DateTime date = DateTime.ParseExact(unparsedDate,
                     Constants.DateTimeFormat,
                     CultureInfo.InvariantCulture);
             foreach (Appointment appointments in AppointmentsMenager.Appointments)
             {
-                TimeSpan t = appointments.AppointmentDate.Subtract(date);
-                if (Math.Abs(t.TotalMinutes) < 15)
+                TimeSpan timeSpan = appointments.AppointmentDate.Subtract(date);
+                if (Math.Abs(timeSpan.TotalMinutes) < 15)
                 {
                     throw new ArgumentException("Termin je zauzet");
                 }
             }
-            DateTime current_date = DateTime.Today;
+            DateTime currentDate = DateTime.Today;
             appointment.ID = AppointmentsMenager.HighestIndex + 1;
             appointment.Type = (AppointmentType)Enum.Parse(typeof(AppointmentType), selectedValue);
             appointment.Emergency = emergency;
@@ -205,13 +203,13 @@ namespace HealthCareCenter
             appointment.HealthRecordID = id;
             appointment.HospitalRoomID = 1;
             appointment.AppointmentDate = date;
-            appointment.CreatedDate = current_date;
+            appointment.CreatedDate = currentDate;
             AppointmentsMenager.Appointments.Add(appointment);
-            loadAppointmentTable(AppointmentsMenager.Appointments);
+            FillAppointmentsTable(AppointmentsMenager.Appointments);
             appointmentCreationGrid.Visibility = Visibility.Collapsed;
             scheduleGrid.Visibility = Visibility.Visible;
         }
-        private void fillAppointmentWithDefaultValues(Appointment appointment)
+        private void FillAppointmentWithDefaultValues(Appointment appointment)
         {
             string[] timeFragments = appointment.AppointmentDate.ToString().Split("/");
             dayComboBox.SelectedItem = timeFragments[0];
@@ -229,9 +227,9 @@ namespace HealthCareCenter
             minuteComboBox.SelectedIndex = int.Parse(time[1]) / 15;
             emergencyCheckBox.IsChecked = appointment.Emergency;
             if (appointment.Type == AppointmentType.Checkup)
-                appointmentComboBox.SelectedIndex = 0;
+                appointmentTypeComboBox.SelectedIndex = 0;
             else
-                appointmentComboBox.SelectedIndex = 1;
+                appointmentTypeComboBox.SelectedIndex = 1;
             int patientIndex = 0;
             foreach (Patient patient in UserManager.Patients)
             {
@@ -242,9 +240,9 @@ namespace HealthCareCenter
             patientsDataGrid.SelectedIndex = patientIndex;
 
         }
-        private void fillHealthRecordData(HealthRecord healthRecord)
+        private void FillHealthRecordData(HealthRecord healthRecord)
         {
-            idInfoLable.Content = healthRecord.ID.ToString();
+            idLable.Content = healthRecord.ID.ToString();
             heightTextBox.Text = healthRecord.Height.ToString();
             weigthTextBox.Text = healthRecord.Weight.ToString();
             string previousDiseases = "";
@@ -281,17 +279,23 @@ namespace HealthCareCenter
                 anamnesisLabel.Content = AppointmentsMenager.Appointments[appointmentIndex].PatientAnamnesis.Comment;
             }
         }
-        private void scheduleRewiewButton_Click(object sender, RoutedEventArgs e)
+
+        //---------------------------------------------------------------------------------------
+        //First menu buttons
+        private void ScheduleRewiewButton_Click(object sender, RoutedEventArgs e)
         {
             startingGrid.Visibility = Visibility.Collapsed;
             scheduleGrid.Visibility = Visibility.Visible;
-            if (appointmentsTableIsFilled)
-            {
-                return;
-            }
-            loadAppointmentTable(AppointmentsMenager.Appointments);
+            FillAppointmentsTable(AppointmentsMenager.Appointments);
         }
-        private void add_Click(object sender, RoutedEventArgs e)
+        private void DrugMenagmentButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        //---------------------------------------------------------------------------------------
+        //Buttons on schedule rewiew menu
+        private void Add_Click(object sender, RoutedEventArgs e)
         {
             appointmentCreationGrid.Visibility = Visibility.Visible;
             scheduleGrid.Visibility = Visibility.Collapsed;
@@ -301,10 +305,10 @@ namespace HealthCareCenter
             {
                 return;
             }
-            loadPatientTable();
+            FillPatientsTable();
 
         }
-        private void alter_Click(object sender, RoutedEventArgs e)
+        private void Alter_Click(object sender, RoutedEventArgs e)
         {
 
             int rowIndex;
@@ -320,91 +324,57 @@ namespace HealthCareCenter
             sumbitAppointment.Visibility = Visibility.Collapsed;
             if (!patientsTableIsFilled)
             {
-                loadPatientTable();
+                FillPatientsTable();
             }
             appointmentIndex = rowIndex;
             Appointment appointment = AppointmentsMenager.Appointments[rowIndex];
-            fillAppointmentWithDefaultValues(appointment);
+            FillAppointmentWithDefaultValues(appointment);
         }
-        private void delete_Click(object sender, RoutedEventArgs e)
+        private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            DataRowView row;
             int rowIndex;
             try
             {
                 rowIndex = scheduleDataGrid.SelectedIndex;
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Select an appointment");
                 return;
             }
             AppointmentsMenager.Appointments.RemoveAt(rowIndex);
-            loadAppointmentTable(AppointmentsMenager.Appointments);
+            FillAppointmentsTable(AppointmentsMenager.Appointments);
         }
-        private void search_Click(object sender, RoutedEventArgs e)
+        private void Search_Click(object sender, RoutedEventArgs e)
         {
-            string day, month, year, hour, minute;
+            string day, month, year;
             try
             {
                 day = dayChoiceComboBox.SelectedItem.ToString();
                 month = monthChoiceComboBox.SelectedItem.ToString();
                 year = yearChoiceComboBox.SelectedItem.ToString();
             }
-            catch (Exception ex)
+            catch 
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Select a date");
                 return;
             }
-            string dateStr = day + "/" + month + "/" + year;
-            DateTime date = DateTime.ParseExact(dateStr,
+            string unparsedDate = day + "/" + month + "/" + year;
+            DateTime date = DateTime.ParseExact(unparsedDate,
                     Constants.DateFormat,
                     CultureInfo.InvariantCulture);
             List<Appointment> appointmentsResult = new List<Appointment>();
             foreach (Appointment appointment in AppointmentsMenager.Appointments)
             {
-                TimeSpan t = appointment.AppointmentDate.Subtract(date);
-                if (t.TotalDays <= 3 && t.TotalDays >= 0)
+                TimeSpan timeSpan = appointment.AppointmentDate.Subtract(date);
+                if (timeSpan.TotalDays <= 3 && timeSpan.TotalDays >= 0)
                 {
                     appointmentsResult.Add(appointment);
                 }
             }
-            loadAppointmentTable(appointmentsResult);
+            FillAppointmentsTable(appointmentsResult);
         }
-        private void submitAppointment_Click(object sender, RoutedEventArgs e)
-        {
-
-            Appointment appointment = new Appointment();
-            try
-            {
-                fillApointmentWithData(appointment);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-        }
-        private void alterAppointment_Click(object sender, RoutedEventArgs e)
-        {
-            Appointment appointment = AppointmentsMenager.Appointments[appointmentIndex];
-            try
-            {
-                fillApointmentWithData(appointment);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return;
-            }
-            AppointmentsMenager.Appointments.RemoveAt(appointmentIndex);
-            loadAppointmentTable(AppointmentsMenager.Appointments);
-        }
-        private void drugMenagmentButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-        private void healthRecord_Click(object sender, RoutedEventArgs e)
+        private void HealthRecord_Click(object sender, RoutedEventArgs e)
         {
             DataRowView row;
             try
@@ -412,7 +382,7 @@ namespace HealthCareCenter
                 row = (DataRowView)scheduleDataGrid.SelectedItems[0];
                 appointmentIndex = scheduleDataGrid.SelectedIndex;
             }
-            catch (Exception ex)
+            catch 
             {
                 MessageBox.Show("Select an appointment");
                 return;
@@ -429,21 +399,20 @@ namespace HealthCareCenter
                 if (healthRecord.ID == id)
                 {
                     healthRecordIndex = counter;
-                    fillHealthRecordData(healthRecord);
+                    FillHealthRecordData(healthRecord);
                     break;
                 }
                 counter++;
             }
         }
-
-        private void startAppointment_Click(object sender, RoutedEventArgs e)
+        private void StartAppointment_Click(object sender, RoutedEventArgs e)
         {
             DataRowView row;
             try
             {
                 row = (DataRowView)scheduleDataGrid.SelectedItems[0];
             }
-            catch (Exception ex)
+            catch 
             {
                 MessageBox.Show("Select an appointment");
                 return;
@@ -457,17 +426,55 @@ namespace HealthCareCenter
             {
                 if (healthRecord.ID == id)
                 {
-                    fillHealthRecordData(healthRecord);
+                    FillHealthRecordData(healthRecord);
                     break;
                 }
             }
         }
-        private void createAnamnesis_Click(object sender, RoutedEventArgs e)
+
+        //---------------------------------------------------------------------------------------
+        //Buttons on appointment creation menu
+        private void SubmitAppointment_Click(object sender, RoutedEventArgs e)
+        {
+
+            Appointment appointment = new Appointment();
+            try
+            {
+                FillApointmentWithData(appointment);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+        
+        //---------------------------------------------------------------------------------------
+        //Buttons on appointment altering menu
+        private void AlterAppointment_Click(object sender, RoutedEventArgs e)
+        {
+            Appointment appointment = AppointmentsMenager.Appointments[appointmentIndex];
+            try
+            {
+                FillApointmentWithData(appointment);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+            AppointmentsMenager.Appointments.RemoveAt(appointmentIndex);
+            FillAppointmentsTable(AppointmentsMenager.Appointments);
+        }
+
+        //---------------------------------------------------------------------------------------
+        //Health record menu buttons
+        private void CreateAnamnesis_Click(object sender, RoutedEventArgs e)
         {
             healthRecordGrid.Visibility = Visibility.Collapsed;
             anamnesisGrid.Visibility = Visibility.Visible;
         }
-        private void updateHealthRecord_Click(object sender, RoutedEventArgs e)
+        private void UpdateHealthRecord_Click(object sender, RoutedEventArgs e)
         {
             healthRecordGrid.Visibility = Visibility.Collapsed;
             scheduleGrid.Visibility = Visibility.Visible;
@@ -488,22 +495,27 @@ namespace HealthCareCenter
                 HealthRecordsMenager.HealthRecords[healthRecordIndex].Allergens.Add(allergen);
             }
         }
-        private void backButton_Click(object sender, RoutedEventArgs e)
+        private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             scheduleGrid.Visibility = Visibility.Visible;
             healthRecordGrid.Visibility = Visibility.Collapsed;
             backButton.Visibility = Visibility.Collapsed;
         }
-        private void submitAnamnesis_Click(object sender, RoutedEventArgs e)
+
+        //---------------------------------------------------------------------------------------
+        //Anamnesis creation buttons
+        private void SubmitAnamnesis_Click(object sender, RoutedEventArgs e)
         {
-            string anamnesisTxt = anamnesisTextBox.Text;
+            string anamnesisComment = anamnesisTextBox.Text;
             Anamnesis anamnesis = new Anamnesis();
-            anamnesis.Comment = anamnesisTxt;
+            anamnesis.Comment = anamnesisComment;
             AppointmentsMenager.Appointments[appointmentIndex].PatientAnamnesis = anamnesis;
             anamnesisGrid.Visibility = Visibility.Collapsed;
             healthRecordGrid.Visibility = Visibility.Visible;
-            anamnesisLabel.Content = anamnesisTxt;
+            anamnesisLabel.Content = anamnesisComment;
         }
+
+        //---------------------------------------------------------------------------------------
 
     }
 }

@@ -12,7 +12,7 @@ namespace HealthCareCenter.Model
     internal class HealthRecordsMenager
     {
         public static List<HealthRecord> HealthRecords{ get; set; }
-        public static List<HealthRecord> loadHealthRecords()
+        public static List<HealthRecord> LoadHealthRecords()
         {
             var settings = new JsonSerializerSettings
             {
