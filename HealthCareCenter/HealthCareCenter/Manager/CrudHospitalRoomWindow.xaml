@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HealthCareCenter"
         mc:Ignorable="d"
-        Title="CrudHospitalRoomWindow" Height="400" Width="420">
+        Title="CrudHospitalRoomWindow" Height="400" Width="420"
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <DataGrid x:Name="DataGridHospitalRooms" Margin="10,26,10,214" IsReadOnly="True">
 

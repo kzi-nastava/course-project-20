@@ -217,7 +217,7 @@ namespace HealthCareCenter
         private void FillAvailableTimeTable()
         {
             List<string> allPossibleSchedules = GetAllPossibleDailySchedules();
-            foreach (Appointment appointment in AppointmentRepository.AllAppointments)
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
                 int chosenDoctorID = Convert.ToInt32(chosenDoctor[0]);
                 if (appointment.DoctorID == chosenDoctorID)
@@ -367,24 +367,24 @@ namespace HealthCareCenter
 
                 if (shouldSendRequestToSecretary)
                 {
-                    foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.AllChangeRequests)
+                    foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
                     {
                         if (changeRequest.AppointmentID == newChangeRequest.AppointmentID)
                         {
                             changeRequest.RequestState = Enums.RequestState.Waiting;
                             changeRequest.NewDate = newChangeRequest.NewDate;
                             changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
-                            AppointmentChangeRequestRepository.Write();
+                            AppointmentChangeRequestRepository.Save();
                             return;
                         }
                     }
-                    AppointmentChangeRequestRepository.AllChangeRequests.Add(newChangeRequest);
-                    AppointmentChangeRequestRepository.Write();
+                    AppointmentChangeRequestRepository.Requests.Add(newChangeRequest);
+                    AppointmentChangeRequestRepository.Save();
                     return;
                 }
                 else
                 {
-                    ChangeRequestService.DeleteAppointment(newChangeRequest);
+                    AppointmentChangeRequestService.DeleteAppointment(newChangeRequest);
                     unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
                 }
             }
@@ -503,24 +503,24 @@ namespace HealthCareCenter
                 CheckModificationTroll();
                 if (shouldSendRequestToSecretary)
                 {
-                    foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.AllChangeRequests)
+                    foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
                     {
                         if (changeRequest.AppointmentID == newChangeRequest.AppointmentID)
                         {
                             changeRequest.RequestState = Enums.RequestState.Waiting;
                             changeRequest.NewDate = newChangeRequest.NewDate;
                             changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
-                            AppointmentChangeRequestRepository.Write();
+                            AppointmentChangeRequestRepository.Save();
                             return;
                         }
                     }
-                    AppointmentChangeRequestRepository.AllChangeRequests.Add(newChangeRequest);
-                    AppointmentChangeRequestRepository.Write();
+                    AppointmentChangeRequestRepository.Requests.Add(newChangeRequest);
+                    AppointmentChangeRequestRepository.Save();
                     return;
                 }
                 else
                 {
-                    ChangeRequestService.MakeChangesToAppointment(newChangeRequest);
+                    AppointmentChangeRequestService.MakeChangesToAppointment(newChangeRequest);
                     unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
                 }
             }
@@ -540,11 +540,11 @@ namespace HealthCareCenter
                     PatientAnamnesis = null
                 };
                 unfinishedAppointments.Add(newAppointment);
-                AppointmentRepository.AllAppointments.Add(newAppointment);
+                AppointmentRepository.Appointments.Add(newAppointment);
             }
 
 
-            AppointmentRepository.Write();
+            AppointmentRepository.Save();
         }
 
         private bool IsModification()
@@ -561,7 +561,7 @@ namespace HealthCareCenter
         private void CheckCreationTroll()
         {
             int creationCount = 0;
-            foreach (Appointment appointment in AppointmentRepository.AllAppointments)
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
                 if (appointment.HealthRecordID == signedUser.HealthRecordID)
                 {
@@ -595,7 +595,7 @@ namespace HealthCareCenter
         private void CheckModificationTroll()
         {
             int modificationCount = 0;
-            foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.AllChangeRequests)
+            foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
             {
                 if (changeRequest.PatientID == signedUser.ID)
                 {

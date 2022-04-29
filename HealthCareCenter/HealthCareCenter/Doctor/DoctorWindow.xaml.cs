@@ -25,6 +25,7 @@ namespace HealthCareCenter
             CreateAppointmentTable();
             CreatePatientsTable();
             HealthRecordRepository.Load();
+            AppointmentRepository.Load();
             InitializeComponent();
             FillDateTimeComboBoxes();
         }
@@ -65,7 +66,7 @@ namespace HealthCareCenter
         private void FillPatientsTable()
         {
             patientsDataTable.Rows.Clear();
-            foreach (Patient patient in UserManager.Patients)
+            foreach (Patient patient in UserRepository.Patients)
             {
                 dr = patientsDataTable.NewRow();
                 dr[0] = patient.ID;
@@ -131,7 +132,14 @@ namespace HealthCareCenter
                 dr[4] = appointment.Emergency;
                 dr[5] = appointment.DoctorID;
                 dr[6] = appointment.HospitalRoomID;
-                dr[7] = appointment.HealthRecordID;
+                foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
+                {
+                    if (healthRecord.ID == appointment.HealthRecordID)
+                    {
+                        dr[7] = healthRecord.PatientID;
+                        break;
+                    }
+                }
                 appointmentsDataTable.Rows.Add(dr);
             }
             scheduleDataGrid.ItemsSource = appointmentsDataTable.DefaultView;
@@ -213,7 +221,7 @@ namespace HealthCareCenter
             appointment.CreatedDate = currentDate;
             if (isBeingCreated)
             {
-                appointment.ID = AppointmentRepository.HighestIndex + 1;
+                appointment.ID = AppointmentRepository.LargestID + 1;
                 AppointmentRepository.Appointments.Add(appointment);
             }
             FillAppointmentsTable(AppointmentRepository.Appointments);
@@ -242,7 +250,7 @@ namespace HealthCareCenter
             else
                 appointmentTypeComboBox.SelectedIndex = 1;
             int patientIndex = 0;
-            foreach (Patient patient in UserManager.Patients)
+            foreach (Patient patient in UserRepository.Patients)
             {
                 patientIndex++;
                 if (patient.ID == appointment.HealthRecordID)
@@ -263,8 +271,15 @@ namespace HealthCareCenter
                 {
                     previousDiseases += "," + s;
                 }
-
-                previousDiseasesTextBox.Text = previousDiseases.Substring(1, previousDiseases.Length - 1);
+                
+                if (healthRecord.PreviousDiseases.Count == 0)
+                {
+                    previousDiseasesTextBox.Text = "";
+                }
+                else
+                {
+                    previousDiseasesTextBox.Text = previousDiseases.Substring(1, previousDiseases.Length - 1);
+                }
             }
             else
                 previousDiseasesTextBox.Text = "none";
@@ -275,7 +290,15 @@ namespace HealthCareCenter
                 {
                     alergens += "," + s;
                 }
-                alergensTextBox.Text = alergens.Substring(1, alergens.Length - 1);
+
+                if (healthRecord.Allergens.Count == 0)
+                {
+                    alergensTextBox.Text = "";
+                }
+                else
+                {
+                    alergensTextBox.Text = alergens.Substring(1, alergens.Length - 1);
+                }
             }
             else
             {
@@ -393,7 +416,7 @@ namespace HealthCareCenter
                 row = (DataRowView)scheduleDataGrid.SelectedItems[0];
                 appointmentIndex = scheduleDataGrid.SelectedIndex;
             }
-            catch 
+            catch
             {
                 MessageBox.Show("Select an appointment");
                 return;
@@ -405,9 +428,9 @@ namespace HealthCareCenter
 
             int counter = 0;
 
-            foreach (HealthRecord healthRecord in HealthRecordRepository.HealthRecords)
-            {          
-                if (healthRecord.ID == id)
+            foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
+            {
+                if (healthRecord.PatientID == id)
                 {
                     healthRecordIndex = counter;
                     FillHealthRecordData(healthRecord);
@@ -433,7 +456,7 @@ namespace HealthCareCenter
             scheduleGrid.Visibility = Visibility.Collapsed;
             updateHealthRecord.Visibility = Visibility.Visible;
             createAnamnesis.Visibility = Visibility.Visible;
-            foreach (HealthRecord healthRecord in HealthRecordRepository.HealthRecords)
+            foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
             {
                 if (healthRecord.ID == id)
                 {
@@ -490,19 +513,19 @@ namespace HealthCareCenter
             scheduleGrid.Visibility = Visibility.Visible;
             updateHealthRecord.Visibility = Visibility.Collapsed;
             createAnamnesis.Visibility = Visibility.Collapsed;
-            HealthRecordRepository.HealthRecords[healthRecordIndex].Height = double.Parse(heightTextBox.Text);
-            HealthRecordRepository.HealthRecords[healthRecordIndex].Weight = double.Parse(weigthTextBox.Text);
-            HealthRecordRepository.HealthRecords[healthRecordIndex].PreviousDiseases.Clear();
+            HealthRecordRepository.Records[healthRecordIndex].Height = double.Parse(heightTextBox.Text);
+            HealthRecordRepository.Records[healthRecordIndex].Weight = double.Parse(weigthTextBox.Text);
+            HealthRecordRepository.Records[healthRecordIndex].PreviousDiseases.Clear();
             string[] previousDiseases = previousDiseasesTextBox.Text.Split(",");
             foreach(string disease in previousDiseases)
             {
-                HealthRecordRepository.HealthRecords[healthRecordIndex].PreviousDiseases.Add(disease);
+                HealthRecordRepository.Records[healthRecordIndex].PreviousDiseases.Add(disease);
             }
-            HealthRecordRepository.HealthRecords[healthRecordIndex].Allergens.Clear();
+            HealthRecordRepository.Records[healthRecordIndex].Allergens.Clear();
             string[] allergens = alergensTextBox.Text.Split(",");
             foreach (string allergen in allergens)
             {
-                HealthRecordRepository.HealthRecords[healthRecordIndex].Allergens.Add(allergen);
+                HealthRecordRepository.Records[healthRecordIndex].Allergens.Add(allergen);
             }
         }
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -532,6 +555,13 @@ namespace HealthCareCenter
         {
             HealthRecordRepository.Save();
             AppointmentRepository.Save();
+            LogOut();
+        }
+
+        private void LogOut()
+        {
+            LoginWindow loginWindow = new LoginWindow();
+            loginWindow.Show();
         }
 
     }

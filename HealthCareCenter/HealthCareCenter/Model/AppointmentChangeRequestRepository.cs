@@ -8,7 +8,7 @@ namespace HealthCareCenter.Model
 {
     class AppointmentChangeRequestRepository
     {
-        public static List<AppointmentChangeRequest> AllChangeRequests{ get; set; }
+        public static List<AppointmentChangeRequest> Requests { get; set; }
         public static int LargestID { get; set; }
         
         public static List<AppointmentChangeRequest> Load()
@@ -20,25 +20,18 @@ namespace HealthCareCenter.Model
                     DateFormatString = Constants.DateTimeFormat
                 };
 
-                String JSONTextAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\changerequests.json");
-                AllChangeRequests = (List<AppointmentChangeRequest>)JsonConvert.DeserializeObject<IEnumerable<AppointmentChangeRequest>>(JSONTextAppointments, settings);
-                if (AllChangeRequests.Count == 0)
-                {
-                    LargestID = 0;
-                }
-                else
-                {
-                    LargestID = AllChangeRequests[^1].ID;
-                }
+                String JSONTextAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointmentchangerequests.json");
+                Requests = (List<AppointmentChangeRequest>)JsonConvert.DeserializeObject<IEnumerable<AppointmentChangeRequest>>(JSONTextAppointments, settings);
+                LargestID = Requests.Count == 0 ? 0 : Requests[^1].ID;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-            return AllChangeRequests;
+            return Requests;
         }
 
-        public static void Write()
+        public static void Save()
         {
             try
             {
@@ -47,10 +40,10 @@ namespace HealthCareCenter.Model
                     Formatting = Formatting.Indented,
                     DateFormatString = Constants.DateTimeFormat
                 };
-                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\changerequests.json"))
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointmentchangerequests.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
-                    serializer.Serialize(writer, AllChangeRequests);
+                    serializer.Serialize(writer, Requests);
                 }
             }
             catch (Exception ex)

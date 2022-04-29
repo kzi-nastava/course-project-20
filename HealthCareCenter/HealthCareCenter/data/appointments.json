@@ -6,7 +6,7 @@
     "CreatedDate": "29/04/2022 00:00",
     "Emergency": true,
     "DoctorID": 1,
-    "HealthRecordID": 2,
+    "HealthRecordID": 1,
     "HospitalRoomID": 1,
     "PatientAnamnesis": {
       "ID": 0,
