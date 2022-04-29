@@ -10,7 +10,7 @@
     "HospitalRoomID": 1,
     "PatientAnamnesis": {
       "ID": 0,
-      "Comment": "This is patients anamnesis"
+      "Comment": "This is also patients annamnesis"
     }
   },
   {
@@ -22,17 +22,9 @@
     "DoctorID": 1,
     "HealthRecordID": 2,
     "HospitalRoomID": 1,
-    "PatientAnamnesis": null
-  },
-  {
-    "ID": 3,
-    "Type": 1,
-    "AppointmentDate": "11/06/2022 15:45",
-    "CreatedDate": "29/04/2022 00:00",
-    "Emergency": false,
-    "DoctorID": 1,
-    "HealthRecordID": 2,
-    "HospitalRoomID": 1,
-    "PatientAnamnesis": null
+    "PatientAnamnesis": {
+      "ID": 1,
+      "Comment": "This is also patients anamnesis"
+    }
   }
 ]

@@ -519,6 +519,7 @@ namespace HealthCareCenter
             string anamnesisComment = anamnesisTextBox.Text;
             Anamnesis anamnesis = new Anamnesis();
             anamnesis.Comment = anamnesisComment;
+            anamnesis.ID = appointmentIndex;
             AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis = anamnesis;
             anamnesisGrid.Visibility = Visibility.Collapsed;
             healthRecordGrid.Visibility = Visibility.Visible;
