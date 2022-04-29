@@ -1,22 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using HealthCareCenter.Model;
 using System.Data;
-using System.Data.SqlClient;
 using HealthCareCenter.Enums;
 using System.Globalization;
+using System.ComponentModel;
 
 namespace HealthCareCenter
 {
@@ -34,7 +24,7 @@ namespace HealthCareCenter
             signedUser = (Doctor)user;
             CreateAppointmentTable();
             CreatePatientsTable();
-            HealthRecordsMenager.LoadHealthRecords();
+            HealthRecordRepository.Load();
             InitializeComponent();
             FillDateTimeComboBoxes();
         }
@@ -128,8 +118,8 @@ namespace HealthCareCenter
         private void FillAppointmentsTable(List<Appointment> appointments)
         {
             appointmentsDataTable.Rows.Clear();
-            if (AppointmentsMenager.Appointments == null)
-                appointments = AppointmentsMenager.LoadAppointments();
+            if (AppointmentRepository.Appointments == null)
+                appointments = AppointmentRepository.Load();
 
             foreach (Appointment appointment in appointments)
             {
@@ -146,7 +136,7 @@ namespace HealthCareCenter
             }
             scheduleDataGrid.ItemsSource = appointmentsDataTable.DefaultView;
         }
-        private void FillApointmentWithData(Appointment appointment)
+        private void FillApointmentWithData(Appointment appointment, bool isBeingCreated)
         {
             DataRowView row;
             try
@@ -155,7 +145,7 @@ namespace HealthCareCenter
             }
             catch
             {
-                throw;
+                throw new Exception("Choose a patient from the table");
             }
             int id = (int)row["Id"];
             string selectedValue;
@@ -170,24 +160,42 @@ namespace HealthCareCenter
             }
             bool emergency = (bool)emergencyCheckBox.IsChecked;
             string day, month, year, hour, minute;
-            try
+            if(dayComboBox.SelectedItem == null)
             {
-                day = dayComboBox.SelectedItem.ToString();
-                month = monthComboBox.SelectedItem.ToString();
-                year = yearComboBox.SelectedItem.ToString();
-                hour = hourComboBox.SelectedItem.ToString();
-                minute = minuteComboBox.SelectedItem.ToString();
-            }
-            catch
-            {
-                MessageBox.Show("Please select date and time");
+                MessageBox.Show("Select day from combo box");
                 return;
             }
+            if (monthComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Select month from combo box");
+                return;
+            }
+            if (yearComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Select year from combo box");
+                return;
+            }
+            if (hourComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Select hour from combo box");
+                return;
+            }
+            if (minuteComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Select minute from combo box");
+                return;
+            }
+
+            day = dayComboBox.SelectedItem.ToString();
+            month = monthComboBox.SelectedItem.ToString();
+            year = yearComboBox.SelectedItem.ToString();
+            hour = hourComboBox.SelectedItem.ToString();
+            minute = minuteComboBox.SelectedItem.ToString();
             string unparsedDate = day + "/" + month + "/" + year + " " + hour + ":" + minute;
             DateTime date = DateTime.ParseExact(unparsedDate,
                     Constants.DateTimeFormat,
                     CultureInfo.InvariantCulture);
-            foreach (Appointment appointments in AppointmentsMenager.Appointments)
+            foreach (Appointment appointments in AppointmentRepository.Appointments)
             {
                 TimeSpan timeSpan = appointments.AppointmentDate.Subtract(date);
                 if (Math.Abs(timeSpan.TotalMinutes) < 15)
@@ -196,7 +204,6 @@ namespace HealthCareCenter
                 }
             }
             DateTime currentDate = DateTime.Today;
-            appointment.ID = AppointmentsMenager.HighestIndex + 1;
             appointment.Type = (AppointmentType)Enum.Parse(typeof(AppointmentType), selectedValue);
             appointment.Emergency = emergency;
             appointment.DoctorID = signedUser.ID;
@@ -204,8 +211,12 @@ namespace HealthCareCenter
             appointment.HospitalRoomID = 1;
             appointment.AppointmentDate = date;
             appointment.CreatedDate = currentDate;
-            AppointmentsMenager.Appointments.Add(appointment);
-            FillAppointmentsTable(AppointmentsMenager.Appointments);
+            if (isBeingCreated)
+            {
+                appointment.ID = AppointmentRepository.HighestIndex + 1;
+                AppointmentRepository.Appointments.Add(appointment);
+            }
+            FillAppointmentsTable(AppointmentRepository.Appointments);
             appointmentCreationGrid.Visibility = Visibility.Collapsed;
             scheduleGrid.Visibility = Visibility.Visible;
         }
@@ -219,8 +230,8 @@ namespace HealthCareCenter
             monthComboBox.SelectedIndex = int.Parse(timeFragments[0]) - 1;
             yearComboBox.SelectedIndex = int.Parse(yearAndTime[0]) - 2022;
             int hour = int.Parse(time[0]);
-            if (hour <= 12 && timeFragments[2] == "AM")
-                hour -= 9;
+            if (hour <= 12 && yearAndTime[2] == "AM")
+                hour -= 8;
             else
                 hour += 4;
             hourComboBox.SelectedIndex = hour;                               
@@ -270,13 +281,13 @@ namespace HealthCareCenter
             {
                 alergensTextBox.Text = "none";
             }
-            if(AppointmentsMenager.Appointments[appointmentIndex].PatientAnamnesis == null)
+            if(AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis == null)
             {
                 anamnesisLabel.Content = "No anamnesis";
             }
             else
             {
-                anamnesisLabel.Content = AppointmentsMenager.Appointments[appointmentIndex].PatientAnamnesis.Comment;
+                anamnesisLabel.Content = AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis.Comment;
             }
         }
 
@@ -286,7 +297,7 @@ namespace HealthCareCenter
         {
             startingGrid.Visibility = Visibility.Collapsed;
             scheduleGrid.Visibility = Visibility.Visible;
-            FillAppointmentsTable(AppointmentsMenager.Appointments);
+            FillAppointmentsTable(AppointmentRepository.Appointments);
         }
         private void DrugMenagmentButton_Click(object sender, RoutedEventArgs e)
         {
@@ -327,7 +338,7 @@ namespace HealthCareCenter
                 FillPatientsTable();
             }
             appointmentIndex = rowIndex;
-            Appointment appointment = AppointmentsMenager.Appointments[rowIndex];
+            Appointment appointment = AppointmentRepository.Appointments[rowIndex];
             FillAppointmentWithDefaultValues(appointment);
         }
         private void Delete_Click(object sender, RoutedEventArgs e)
@@ -342,8 +353,8 @@ namespace HealthCareCenter
                 MessageBox.Show("Select an appointment");
                 return;
             }
-            AppointmentsMenager.Appointments.RemoveAt(rowIndex);
-            FillAppointmentsTable(AppointmentsMenager.Appointments);
+            AppointmentRepository.Appointments.RemoveAt(rowIndex);
+            FillAppointmentsTable(AppointmentRepository.Appointments);
         }
         private void Search_Click(object sender, RoutedEventArgs e)
         {
@@ -364,7 +375,7 @@ namespace HealthCareCenter
                     Constants.DateFormat,
                     CultureInfo.InvariantCulture);
             List<Appointment> appointmentsResult = new List<Appointment>();
-            foreach (Appointment appointment in AppointmentsMenager.Appointments)
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
                 TimeSpan timeSpan = appointment.AppointmentDate.Subtract(date);
                 if (timeSpan.TotalDays <= 3 && timeSpan.TotalDays >= 0)
@@ -394,7 +405,7 @@ namespace HealthCareCenter
 
             int counter = 0;
 
-            foreach (HealthRecord healthRecord in HealthRecordsMenager.HealthRecords)
+            foreach (HealthRecord healthRecord in HealthRecordRepository.HealthRecords)
             {          
                 if (healthRecord.ID == id)
                 {
@@ -417,12 +428,12 @@ namespace HealthCareCenter
                 MessageBox.Show("Select an appointment");
                 return;
             }
-            int id = (int)row["Id"];
+            int id = int.Parse(row["Patient ID"].ToString());
             healthRecordGrid.Visibility = Visibility.Visible;
             scheduleGrid.Visibility = Visibility.Collapsed;
             updateHealthRecord.Visibility = Visibility.Visible;
             createAnamnesis.Visibility = Visibility.Visible;
-            foreach (HealthRecord healthRecord in HealthRecordsMenager.HealthRecords)
+            foreach (HealthRecord healthRecord in HealthRecordRepository.HealthRecords)
             {
                 if (healthRecord.ID == id)
                 {
@@ -440,7 +451,7 @@ namespace HealthCareCenter
             Appointment appointment = new Appointment();
             try
             {
-                FillApointmentWithData(appointment);
+                FillApointmentWithData(appointment,true);
             }
             catch (Exception ex)
             {
@@ -453,18 +464,17 @@ namespace HealthCareCenter
         //Buttons on appointment altering menu
         private void AlterAppointment_Click(object sender, RoutedEventArgs e)
         {
-            Appointment appointment = AppointmentsMenager.Appointments[appointmentIndex];
+            Appointment appointment = AppointmentRepository.Appointments[appointmentIndex];
             try
             {
-                FillApointmentWithData(appointment);
+                FillApointmentWithData(appointment,false);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message); 
                 return;
             }
-            AppointmentsMenager.Appointments.RemoveAt(appointmentIndex);
-            FillAppointmentsTable(AppointmentsMenager.Appointments);
+            FillAppointmentsTable(AppointmentRepository.Appointments);
         }
 
         //---------------------------------------------------------------------------------------
@@ -480,19 +490,19 @@ namespace HealthCareCenter
             scheduleGrid.Visibility = Visibility.Visible;
             updateHealthRecord.Visibility = Visibility.Collapsed;
             createAnamnesis.Visibility = Visibility.Collapsed;
-            HealthRecordsMenager.HealthRecords[healthRecordIndex].Height = double.Parse(heightTextBox.Text);
-            HealthRecordsMenager.HealthRecords[healthRecordIndex].Weight = double.Parse(weigthTextBox.Text);
-            HealthRecordsMenager.HealthRecords[healthRecordIndex].PreviousDiseases.Clear();
+            HealthRecordRepository.HealthRecords[healthRecordIndex].Height = double.Parse(heightTextBox.Text);
+            HealthRecordRepository.HealthRecords[healthRecordIndex].Weight = double.Parse(weigthTextBox.Text);
+            HealthRecordRepository.HealthRecords[healthRecordIndex].PreviousDiseases.Clear();
             string[] previousDiseases = previousDiseasesTextBox.Text.Split(",");
             foreach(string disease in previousDiseases)
             {
-                HealthRecordsMenager.HealthRecords[healthRecordIndex].PreviousDiseases.Add(disease);
+                HealthRecordRepository.HealthRecords[healthRecordIndex].PreviousDiseases.Add(disease);
             }
-            HealthRecordsMenager.HealthRecords[healthRecordIndex].Allergens.Clear();
+            HealthRecordRepository.HealthRecords[healthRecordIndex].Allergens.Clear();
             string[] allergens = alergensTextBox.Text.Split(",");
             foreach (string allergen in allergens)
             {
-                HealthRecordsMenager.HealthRecords[healthRecordIndex].Allergens.Add(allergen);
+                HealthRecordRepository.HealthRecords[healthRecordIndex].Allergens.Add(allergen);
             }
         }
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -509,13 +519,19 @@ namespace HealthCareCenter
             string anamnesisComment = anamnesisTextBox.Text;
             Anamnesis anamnesis = new Anamnesis();
             anamnesis.Comment = anamnesisComment;
-            AppointmentsMenager.Appointments[appointmentIndex].PatientAnamnesis = anamnesis;
+            AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis = anamnesis;
             anamnesisGrid.Visibility = Visibility.Collapsed;
             healthRecordGrid.Visibility = Visibility.Visible;
             anamnesisLabel.Content = anamnesisComment;
         }
 
         //---------------------------------------------------------------------------------------
+        //Window closing
+        private void WindowClosing(object sender, CancelEventArgs e)
+        {
+            HealthRecordRepository.Save();
+            AppointmentRepository.Save();
+        }
 
     }
 }

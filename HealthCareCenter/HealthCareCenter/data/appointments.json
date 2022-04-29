@@ -1,24 +1,38 @@
-﻿[
+[
   {
     "ID": 1,
-    "Type": "checkup",
-    "AppointmentDate": "24/04/2022",
-    "CreatedDate": "23/04/2022",
-    "Emergency": "true",
+    "Type": 1,
+    "AppointmentDate": "29/07/2022 13:45",
+    "CreatedDate": "29/04/2022 00:00",
+    "Emergency": true,
     "DoctorID": 1,
-    "HealthRecordID": 1,
+    "HealthRecordID": 2,
     "HospitalRoomID": 1,
-    "PatientAnamnesia": ""
+    "PatientAnamnesis": {
+      "ID": 0,
+      "Comment": "This is patients anamnesis"
+    }
   },
   {
     "ID": 2,
-    "Type": "checkup",
-    "AppointmentDate": "25/04/2022",
-    "CreatedDate": "23/04/2022",
-    "Emergency": "false",
+    "Type": 1,
+    "AppointmentDate": "25/04/2022 00:00",
+    "CreatedDate": "23/04/2022 00:00",
+    "Emergency": false,
     "DoctorID": 1,
-    "HealthRecordID": 1,
+    "HealthRecordID": 2,
     "HospitalRoomID": 1,
-    "PatientAnamnesia": ""
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 3,
+    "Type": 1,
+    "AppointmentDate": "11/06/2022 15:45",
+    "CreatedDate": "29/04/2022 00:00",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 2,
+    "HospitalRoomID": 1,
+    "PatientAnamnesis": null
   }
 ]
