@@ -46,7 +46,7 @@ namespace HealthCareCenter
             // loading all necessary information
             //============================================
             AppointmentRepository.Load();
-            ChangeRequestRepository.Load();
+            AppointmentChangeRequestRepository.Load();
             //============================================
 
             unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
@@ -358,7 +358,7 @@ namespace HealthCareCenter
                 CheckModificationTroll();
                 AppointmentChangeRequest newChangeRequest = new AppointmentChangeRequest
                 {
-                    ID = ++ChangeRequestRepository.LargestID,
+                    ID = ++AppointmentChangeRequestRepository.LargestID,
                     AppointmentID = Convert.ToInt32(chosenAppointment[0]),
                     RequestType = Enums.RequestType.Delete,
                     DateSent = DateTime.Now,
@@ -367,19 +367,19 @@ namespace HealthCareCenter
 
                 if (shouldSendRequestToSecretary)
                 {
-                    foreach (AppointmentChangeRequest changeRequest in ChangeRequestRepository.AllChangeRequests)
+                    foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.AllChangeRequests)
                     {
                         if (changeRequest.AppointmentID == newChangeRequest.AppointmentID)
                         {
                             changeRequest.RequestState = Enums.RequestState.Waiting;
                             changeRequest.NewDate = newChangeRequest.NewDate;
                             changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
-                            ChangeRequestRepository.Write();
+                            AppointmentChangeRequestRepository.Write();
                             return;
                         }
                     }
-                    ChangeRequestRepository.AllChangeRequests.Add(newChangeRequest);
-                    ChangeRequestRepository.Write();
+                    AppointmentChangeRequestRepository.AllChangeRequests.Add(newChangeRequest);
+                    AppointmentChangeRequestRepository.Write();
                     return;
                 }
                 else
@@ -471,7 +471,7 @@ namespace HealthCareCenter
             string newAppointmentDateParsed = chosenScheduleTime[0].ToString() + "/" + chosenScheduleTime[1].ToString() + "/" + chosenScheduleTime[2].ToString() + " " + chosenScheduleTime[3].ToString() + ":" + chosenScheduleTime[4].ToString();
             AppointmentChangeRequest newChangeRequest = new AppointmentChangeRequest
             {
-                ID = ++ChangeRequestRepository.LargestID,
+                ID = ++AppointmentChangeRequestRepository.LargestID,
                 AppointmentID = (chosenAppointment == null) ? ++AppointmentRepository.LargestID : Convert.ToInt32(chosenAppointment[0]),
                 RequestType = Enums.RequestType.MakeChanges,
                 NewDate = Convert.ToDateTime(Convert.ToDateTime(newAppointmentDateParsed)),
@@ -503,19 +503,19 @@ namespace HealthCareCenter
                 CheckModificationTroll();
                 if (shouldSendRequestToSecretary)
                 {
-                    foreach (AppointmentChangeRequest changeRequest in ChangeRequestRepository.AllChangeRequests)
+                    foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.AllChangeRequests)
                     {
                         if (changeRequest.AppointmentID == newChangeRequest.AppointmentID)
                         {
                             changeRequest.RequestState = Enums.RequestState.Waiting;
                             changeRequest.NewDate = newChangeRequest.NewDate;
                             changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
-                            ChangeRequestRepository.Write();
+                            AppointmentChangeRequestRepository.Write();
                             return;
                         }
                     }
-                    ChangeRequestRepository.AllChangeRequests.Add(newChangeRequest);
-                    ChangeRequestRepository.Write();
+                    AppointmentChangeRequestRepository.AllChangeRequests.Add(newChangeRequest);
+                    AppointmentChangeRequestRepository.Write();
                     return;
                 }
                 else
@@ -595,7 +595,7 @@ namespace HealthCareCenter
         private void CheckModificationTroll()
         {
             int modificationCount = 0;
-            foreach (AppointmentChangeRequest changeRequest in ChangeRequestRepository.AllChangeRequests)
+            foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.AllChangeRequests)
             {
                 if (changeRequest.PatientID == signedUser.ID)
                 {

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    class ChangeRequestRepository
+    class AppointmentChangeRequestRepository
     {
         public static List<AppointmentChangeRequest> AllChangeRequests{ get; set; }
         public static int LargestID { get; set; }
