@@ -56,7 +56,7 @@ namespace HealthCareCenter
                 if (user.Username == usernameTextBox.Text)
                 {
                     foundUser = true;
-                    if (user.Password == passwordTextBox.Password)
+                    if (user.Password == passwordBox.Password)
                     {
                         if (user.GetType() == typeof(Doctor))
                         {
@@ -73,7 +73,7 @@ namespace HealthCareCenter
                             {
                                 MessageBox.Show("This user is blocked");
                                 usernameTextBox.Clear();
-                                passwordTextBox.Clear();
+                                passwordBox.Clear();
                                 return;
                             }
                             ShowWindow(new PatientWindow(user));
@@ -86,7 +86,7 @@ namespace HealthCareCenter
                     }
                     else
                     {
-                        passwordTextBox.Clear();
+                        passwordBox.Clear();
 
                         MessageBox.Show("Invalid password.");
                     }
