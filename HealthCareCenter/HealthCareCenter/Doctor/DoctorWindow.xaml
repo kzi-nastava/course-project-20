@@ -39,7 +39,7 @@
         <Grid Grid.Row="1" Grid.Column="1" Name ="scheduleGrid" Visibility="Collapsed" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="3*" />
@@ -65,7 +65,7 @@
                 <Button x:Name="delete" Content="Delete" Grid.Row="2" Grid.Column="3" Margin="10" Click="Delete_Click"/>
                 <Button x:Name="alter" Content="Alter" Grid.Row="2" Grid.Column="4" Margin="10" Click="Alter_Click"/>
                 <Button x:Name="startAppointment" Content="Start an appointment" Grid.Row="2" Grid.Column="5" Grid.ColumnSpan="2" Margin="10" Click="StartAppointment_Click"/>
-                <Label x:Name="dateLabel" Content="Date" Grid.Row="3" Grid.Column="1" Margin="10"/>
+                <Label x:Name="dateLabel" Content="Date dd/mm/yyyy" Grid.Row="3" Grid.Column="1" Margin="10"/>
                 <ComboBox x:Name="dayChoiceComboBox" Grid.Row="3" Grid.Column="2" Margin="10">
                 </ComboBox>
                 <ComboBox x:Name="monthChoiceComboBox" Grid.Row="3" Grid.Column="3" Margin="10">
