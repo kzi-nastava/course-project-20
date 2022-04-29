@@ -209,6 +209,8 @@ namespace HealthCareCenter
                     CultureInfo.InvariantCulture);
             foreach (Appointment appointments in AppointmentRepository.Appointments)
             {
+                if (appointments.ID == appointment.ID)
+                    continue;
                 TimeSpan timeSpan = appointments.ScheduledDate.Subtract(date);
                 if (Math.Abs(timeSpan.TotalMinutes) < 15)
                 {
@@ -219,7 +221,14 @@ namespace HealthCareCenter
             appointment.Type = (AppointmentType)Enum.Parse(typeof(AppointmentType), selectedValue);
             appointment.Emergency = emergency;
             appointment.DoctorID = signedUser.ID;
-            appointment.HealthRecordID = id;
+            foreach(Patient patient in UserRepository.Patients)
+            {
+                if (patient.ID == id)
+                {
+                    appointment.HealthRecordID = patient.HealthRecordID;
+                    break;
+                }
+            }
             appointment.HospitalRoomID = 1;
             appointment.ScheduledDate = date;
             appointment.CreatedDate = currentDate;
@@ -386,17 +395,26 @@ namespace HealthCareCenter
         private void Search_Click(object sender, RoutedEventArgs e)
         {
             string day, month, year;
-            try
+            if(dayChoiceComboBox.SelectedItem == null)
             {
-                day = dayChoiceComboBox.SelectedItem.ToString();
-                month = monthChoiceComboBox.SelectedItem.ToString();
-                year = yearChoiceComboBox.SelectedItem.ToString();
-            }
-            catch 
-            {
-                MessageBox.Show("Select a date");
+                MessageBox.Show("select a day");
                 return;
             }
+            if (monthChoiceComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("select a month");
+                return;
+            }
+            if (yearChoiceComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("select a year");
+                return;
+            }
+
+            day = dayChoiceComboBox.SelectedItem.ToString();
+            month = monthChoiceComboBox.SelectedItem.ToString();
+            year = yearChoiceComboBox.SelectedItem.ToString();
+
             string unparsedDate = day + "/" + month + "/" + year;
             DateTime date = DateTime.ParseExact(unparsedDate,
                     Constants.DateFormat,
@@ -455,14 +473,15 @@ namespace HealthCareCenter
                 MessageBox.Show("Select an appointment");
                 return;
             }
-            int id = int.Parse(row["Patient ID"].ToString());
+            int patientID = int.Parse(row["Patient ID"].ToString());
+            appointmentIndex = scheduleDataGrid.SelectedIndex;  
             healthRecordGrid.Visibility = Visibility.Visible;
             scheduleGrid.Visibility = Visibility.Collapsed;
             updateHealthRecord.Visibility = Visibility.Visible;
             createAnamnesis.Visibility = Visibility.Visible;
             foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
             {
-                if (healthRecord.PatientID == id)
+                if (healthRecord.PatientID == patientID)
                 {
                     FillHealthRecordData(healthRecord);
                     break;
