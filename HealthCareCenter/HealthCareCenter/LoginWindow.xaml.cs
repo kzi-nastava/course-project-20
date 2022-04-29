@@ -18,9 +18,20 @@ namespace HealthCareCenter
 {
     public partial class LoginWindow : Window
     {
+        private void DoEquipmentRearrangements()
+        {
+            List<Equipment> equipments = EquipmentRepository.GetEquipments();
+            for (int i = 0; i < equipments.Count; i++)
+            {
+                equipments[i].DoRearrangement();
+            }
+        }
+
         public LoginWindow()
         {
             InitializeComponent();
+            DoEquipmentRearrangements();
+
             try
             {
                 UserManager.LoadUsers();
@@ -50,10 +61,10 @@ namespace HealthCareCenter
                         if (user.GetType() == typeof(Doctor))
                         {
                             ShowWindow(new DoctorWindow(user));
-                        } 
+                        }
                         else if (user.GetType() == typeof(Manager))
                         {
-                            ShowWindow(new ManagerWindow(user));
+                            ShowWindow(new CrudHospitalRoomWindow(user));
                         }
                         else if (user.GetType() == typeof(Patient))
                         {
@@ -63,7 +74,9 @@ namespace HealthCareCenter
                         {
                             ShowWindow(new SecretaryWindow(user));
                         }
-                    } else {
+                    }
+                    else
+                    {
                         passwordBox.Clear();
                         MessageBox.Show("Invalid password.");
                     }
