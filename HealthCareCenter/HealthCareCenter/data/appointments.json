@@ -1,0 +1,30 @@
+[
+  {
+    "ID": 1,
+    "Type": 1,
+    "AppointmentDate": "29/07/2022 13:45",
+    "CreatedDate": "29/04/2022 00:00",
+    "Emergency": true,
+    "DoctorID": 1,
+    "HealthRecordID": 2,
+    "HospitalRoomID": 1,
+    "PatientAnamnesis": {
+      "ID": 0,
+      "Comment": "This is also patients annamnesis"
+    }
+  },
+  {
+    "ID": 2,
+    "Type": 1,
+    "AppointmentDate": "25/04/2022 00:00",
+    "CreatedDate": "23/04/2022 00:00",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 2,
+    "HospitalRoomID": 1,
+    "PatientAnamnesis": {
+      "ID": 1,
+      "Comment": "This is also patients anamnesis"
+    }
+  }
+]
