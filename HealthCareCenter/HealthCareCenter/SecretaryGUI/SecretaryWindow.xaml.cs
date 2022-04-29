@@ -35,5 +35,11 @@ namespace HealthCareCenter.SecretaryGUI
             patientManipulationWindow = new PatientManipulationWindow();
             patientManipulationWindow.Show();
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            LoginWindow window = new LoginWindow();
+            window.Show();
+        }
     }
 }
