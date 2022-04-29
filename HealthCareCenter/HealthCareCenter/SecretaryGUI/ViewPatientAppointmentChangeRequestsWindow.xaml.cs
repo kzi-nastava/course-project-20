@@ -62,6 +62,7 @@ namespace HealthCareCenter.SecretaryGUI
         {
             CreateDeleteRequestsTable();
             CreateEditRequestsTable();
+
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {
                 if (request.RequestState == Enums.RequestState.Waiting && request.PatientID == _patient.ID)
@@ -71,6 +72,7 @@ namespace HealthCareCenter.SecretaryGUI
                         DataRow row = _deleteRequestsTable.NewRow();
                         row[0] = request.ID;
                         row[1] = request.DateSent;
+
                         foreach (Appointment appointment in AppointmentRepository.Appointments)
                         {
                             if (appointment.ID == request.AppointmentID)
@@ -94,6 +96,7 @@ namespace HealthCareCenter.SecretaryGUI
                         DataRow row = _editRequestsTable.NewRow();
                         row[0] = request.ID;
                         row[1] = request.DateSent;
+
                         foreach (Appointment appointment in AppointmentRepository.Appointments)
                         {
                             if (appointment.ID == request.AppointmentID)

@@ -10,7 +10,7 @@ namespace HealthCareCenter.Model
     {
         public static List<AppointmentChangeRequest> Requests { get; set; }
         public static int LargestID { get; set; }
-        
+
         public static List<AppointmentChangeRequest> Load()
         {
             try

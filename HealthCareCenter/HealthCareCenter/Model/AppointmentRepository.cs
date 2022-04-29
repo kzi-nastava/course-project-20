@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace HealthCareCenter.Model
 {
-    internal class AppointmentRepository
+    class AppointmentRepository
     {
         public static List<Appointment> Appointments { get; set; }
         public static int LargestID { get; set; }
@@ -24,7 +24,7 @@ namespace HealthCareCenter.Model
             LargestID = Appointments.Count == 0 ? 0 : Appointments[^1].ID;
             return Appointments;
         }
-      
+
         public static List<Appointment> GetPatientUnfinishedAppointments(int patientHealthRecordID)
         {
             List<Appointment> unfinishedAppointments = new List<Appointment>();

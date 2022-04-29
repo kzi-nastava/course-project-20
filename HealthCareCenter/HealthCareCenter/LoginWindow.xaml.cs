@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using HealthCareCenter.Model;
+using HealthCareCenter.SecretaryGUI;
 
 namespace HealthCareCenter
 {
@@ -95,6 +96,14 @@ namespace HealthCareCenter
             if (!foundUser)
             {
                 MessageBox.Show("Invalid username.");
+            }
+        }
+
+        private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                LoginButton_Click(null, null);
             }
         }
     }

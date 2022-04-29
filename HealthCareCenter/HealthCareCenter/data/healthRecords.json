@@ -1,13 +1,13 @@
 [
   {
-    "ID": 2,
-    "Height": 168.0,
-    "Weight": 57.0,
+    "ID": 1,
+    "Height": 165.0,
+    "Weight": 60.0,
     "PreviousDiseases": [
-      "Flu"
+      ""
     ],
     "Allergens": [
-      "Polen"
+      ""
     ],
     "PatientID": 2,
     "AppointmentIDs": []
