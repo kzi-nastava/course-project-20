@@ -12,6 +12,6 @@ namespace HealthCareCenter.Model
         public DateTime EndDate { get; set; }
         public string Reason { get; set; }
         public bool Emergency { get; set; }
-        public RequestState RequestState { get; set; }
+        public RequestState State { get; set; }
     }
 }

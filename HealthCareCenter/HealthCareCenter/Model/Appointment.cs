@@ -10,7 +10,7 @@ namespace HealthCareCenter.Model
     {
         public int ID { get; set; }
         public AppointmentType Type { get; set; }
-        public DateTime AppointmentDate { get; set; }
+        public DateTime ScheduledDate { get; set; }
         public DateTime CreatedDate { get; set; }
         public bool Emergency { get; set; }
         public int DoctorID { get; set; }

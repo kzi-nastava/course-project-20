@@ -11,7 +11,7 @@ namespace HealthCareCenter.Model
         private static List<HospitalRoom> s_rooms = LoadRooms();
 
         /// <summary>
-        /// Loads all hospital rooms from file HospitalRooms.json.
+        /// Loads all hospital rooms from file hospitalRooms.json.
         /// </summary>
         /// <returns>List of all hospital rooms.</returns>
         private static List<HospitalRoom> LoadRooms()
@@ -24,7 +24,7 @@ namespace HealthCareCenter.Model
                     DateFormatString = Constants.DateFormat
                 };
 
-                string JSONTextHospitalRooms = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\HospitalRooms.json");
+                string JSONTextHospitalRooms = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\hospitalRooms.json");
                 rooms = (List<HospitalRoom>)JsonConvert.DeserializeObject<IEnumerable<HospitalRoom>>(JSONTextHospitalRooms, settings);
                 return rooms;
             }
@@ -73,7 +73,7 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Replace all data from file HospitalRooms.json with list rooms.
+        /// Replace all data from file hospitalRooms.json with list rooms.
         /// </summary>
         /// <param name="rooms">Data that will replace the old ones.</param>
         /// <returns>true if data update performed properly.</returns>
@@ -83,7 +83,7 @@ namespace HealthCareCenter.Model
             {
                 JsonSerializer serializer = new JsonSerializer();
 
-                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\HospitalRooms.json"))
+                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\hospitalRooms.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, rooms);
@@ -97,7 +97,7 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Add new hospital room in file HospitalRooms.json.
+        /// Add new hospital room in file hospitalRooms.json.
         /// </summary>
         /// <param name="newRoom"></param>
         public static void AddRoom(HospitalRoom newRoom)
@@ -107,7 +107,7 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Finding last(largest) id in file HospitalRooms.json.
+        /// Finding last(largest) id in file hospitalRooms.json.
         /// </summary>
         /// <returns>last(largest) id.</returns>
         public static int GetLastRoomId()

@@ -24,7 +24,7 @@ namespace HealthCareCenter
             List<Equipment> equipments = EquipmentRepository.GetEquipments();
             for (int i = 0; i < equipments.Count; i++)
             {
-                equipments[i].DoRearrangement();
+                equipments[i].Rearrange();
             }
         }
 
@@ -49,7 +49,7 @@ namespace HealthCareCenter
             Close();
         }
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        private void Login()
         {
             bool foundUser = false;
             foreach (User user in UserRepository.Users)
@@ -99,11 +99,16 @@ namespace HealthCareCenter
             }
         }
 
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            Login();
+        }
+
         private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                LoginButton_Click(null, null);
+                Login();
             }
         }
     }

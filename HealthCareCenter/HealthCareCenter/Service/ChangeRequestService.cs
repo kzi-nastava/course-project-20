@@ -35,7 +35,7 @@ namespace HealthCareCenter.Service
             {
                 if (appointment.ID == changeRequest.AppointmentID)
                 {
-                    appointment.AppointmentDate = changeRequest.NewDate;
+                    appointment.ScheduledDate = changeRequest.NewDate;
                     appointment.Type = changeRequest.NewAppointmentType;
                     appointment.DoctorID = changeRequest.NewDoctorID;
                     break;

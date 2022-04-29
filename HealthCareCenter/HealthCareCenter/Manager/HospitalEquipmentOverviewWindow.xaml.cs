@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using HealthCareCenter.Model;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter
 {
@@ -143,7 +144,7 @@ namespace HealthCareCenter
                 else
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
-                    EquipmentRearrangement rearrangement = EquipmentRearrangementRepository.GetRearrangementById(equipment.RearrangementID);
+                    EquipmentRearrangement rearrangement = EquipmentRearrangementService.GetRearrangement(equipment.RearrangementID);
                     equipmentAttributesToDisplay.Add(rearrangement.MoveTime.ToString(Constants.DateFormat));
                     equipmentAttributesToDisplay.Add(rearrangement.NewRoomID.ToString());
                     AddDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
@@ -227,12 +228,12 @@ namespace HealthCareCenter
             Room storage = StorageRepository.GetStorage();
 
             if (amount == "Out of stock")
-                if (!storage.ContainsEquipmentName(equipmentName))
+                if (!storage.Contains(equipmentName))
                     return true;
 
             if (amount == "0-10")
             {
-                if (!storage.ContainsEquipmentName(equipmentName))
+                if (!storage.Contains(equipmentName))
                     return false;
 
                 if (storage.GetEquipmentAmount(equipmentName) > 0 && storage.GetEquipmentAmount(equipmentName) < 10)
@@ -241,7 +242,7 @@ namespace HealthCareCenter
 
             if (amount == "10+")
             {
-                if (!storage.ContainsEquipmentName(equipmentName))
+                if (!storage.Contains(equipmentName))
                     return false;
                 if (storage.GetEquipmentAmount(equipmentName) > 10)
                     return true;
@@ -279,7 +280,7 @@ namespace HealthCareCenter
                 else
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
-                    EquipmentRearrangement rearrangement = EquipmentRearrangementRepository.GetRearrangementById(equipment.RearrangementID);
+                    EquipmentRearrangement rearrangement = EquipmentRearrangementService.GetRearrangement(equipment.RearrangementID);
                     equipmentAttributesToDisplay.Add(rearrangement.MoveTime.ToString(Constants.DateFormat));
                     equipmentAttributesToDisplay.Add(rearrangement.NewRoomID.ToString());
                     FilterEquipment(equipmentAttributesToDisplay);

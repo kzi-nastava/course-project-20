@@ -23,7 +23,7 @@ namespace HealthCareCenter.Model
             }
         }
 
-        public static void MakeChangesToAppointment(AppointmentChangeRequest request)
+        public static void EditAppointment(AppointmentChangeRequest request)
         {
             if (AppointmentRepository.Appointments == null)
             {
@@ -34,7 +34,7 @@ namespace HealthCareCenter.Model
             {
                 if (appointment.ID == request.AppointmentID)
                 {
-                    appointment.AppointmentDate = request.NewDate;
+                    appointment.ScheduledDate = request.NewDate;
                     appointment.Type = request.NewAppointmentType;
                     appointment.DoctorID = request.NewDoctorID;
                     break;

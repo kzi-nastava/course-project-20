@@ -30,10 +30,10 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Check if room conatain any appointment
+        /// Check if room contains any appointment
         /// </summary>
         /// <returns></returns>
-        public bool ContainAnyAppointment()
+        public bool ContainsAnyAppointment()
         {
             if (AppointmentIDs.Count != 0)
                 return true;

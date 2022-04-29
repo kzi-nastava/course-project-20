@@ -2,7 +2,7 @@
   {
     "ID": 1,
     "Type": 1,
-    "AppointmentDate": "29/07/2022 13:45",
+    "ScheduledDate": "29/07/2022 13:45",
     "CreatedDate": "29/04/2022 00:00",
     "Emergency": true,
     "DoctorID": 1,

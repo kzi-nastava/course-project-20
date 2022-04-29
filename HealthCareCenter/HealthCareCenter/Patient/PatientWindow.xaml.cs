@@ -111,7 +111,7 @@ namespace HealthCareCenter
                 row = appointmentsDataTable.NewRow();
                 row[0] = appointment.ID;
                 row[1] = appointment.Type;
-                row[2] = appointment.AppointmentDate;
+                row[2] = appointment.ScheduledDate;
                 row[3] = appointment.CreatedDate;
                 row[4] = appointment.Emergency;
                 row[5] = appointment.DoctorID;
@@ -222,9 +222,9 @@ namespace HealthCareCenter
                 int chosenDoctorID = Convert.ToInt32(chosenDoctor[0]);
                 if (appointment.DoctorID == chosenDoctorID)
                 {
-                    if (appointment.AppointmentDate.Date.CompareTo(chosenScheduleDate.Date) == 0)
+                    if (appointment.ScheduledDate.Date.CompareTo(chosenScheduleDate.Date) == 0)
                     {
-                        string unavailableSchedule = appointment.AppointmentDate.Hour + ":" + appointment.AppointmentDate.Minute;
+                        string unavailableSchedule = appointment.ScheduledDate.Hour + ":" + appointment.ScheduledDate.Minute;
                         allPossibleSchedules.Remove(unavailableSchedule);
                     }
                 }
@@ -371,7 +371,7 @@ namespace HealthCareCenter
                     {
                         if (changeRequest.AppointmentID == newChangeRequest.AppointmentID)
                         {
-                            changeRequest.RequestState = Enums.RequestState.Waiting;
+                            changeRequest.State = Enums.RequestState.Waiting;
                             changeRequest.NewDate = newChangeRequest.NewDate;
                             changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
                             AppointmentChangeRequestRepository.Save();
@@ -507,7 +507,7 @@ namespace HealthCareCenter
                     {
                         if (changeRequest.AppointmentID == newChangeRequest.AppointmentID)
                         {
-                            changeRequest.RequestState = Enums.RequestState.Waiting;
+                            changeRequest.State = Enums.RequestState.Waiting;
                             changeRequest.NewDate = newChangeRequest.NewDate;
                             changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
                             AppointmentChangeRequestRepository.Save();
@@ -520,7 +520,7 @@ namespace HealthCareCenter
                 }
                 else
                 {
-                    AppointmentChangeRequestService.MakeChangesToAppointment(newChangeRequest);
+                    AppointmentChangeRequestService.EditAppointment(newChangeRequest);
                     unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
                 }
             }
@@ -532,7 +532,7 @@ namespace HealthCareCenter
                     ID = newChangeRequest.AppointmentID,
                     Type = Enums.AppointmentType.Checkup,
                     CreatedDate = DateTime.Now,
-                    AppointmentDate = newChangeRequest.NewDate,
+                    ScheduledDate = newChangeRequest.NewDate,
                     Emergency = false,
                     DoctorID = Convert.ToInt32(chosenDoctor[0]),
                     HealthRecordID = signedUser.HealthRecordID,

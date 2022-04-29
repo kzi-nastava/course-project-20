@@ -22,7 +22,7 @@ namespace HealthCareCenter.Model
                     DateFormatString = Constants.DateFormat
                 };
 
-                string JSONTextStorage = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\Storage.json");
+                string JSONTextStorage = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\storage.json");
                 storage = (List<Room>)JsonConvert.DeserializeObject<IEnumerable<Room>>(JSONTextStorage, settings);
                 return storage[0];
             }
@@ -45,7 +45,7 @@ namespace HealthCareCenter.Model
                 rooms.Add(storage);
                 JsonSerializer serializer = new JsonSerializer();
 
-                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\Storage.json"))
+                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\storage.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, rooms);

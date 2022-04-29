@@ -108,7 +108,7 @@ namespace HealthCareCenter
                 return;
             }
 
-            if (room.ContainAnyAppointment())
+            if (room.ContainsAnyAppointment())
             {
                 MessageBox.Show($"Hospital room with {roomId} Id contain apointments.");
                 return;

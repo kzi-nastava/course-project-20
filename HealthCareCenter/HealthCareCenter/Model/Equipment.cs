@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using HealthCareCenter.Enums;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Model
 {
@@ -68,7 +69,7 @@ namespace HealthCareCenter.Model
                 Room newRoomOfRearrangement;
 
                 // Get rearrangement
-                EquipmentRearrangement rearrangement = EquipmentRearrangementRepository.GetRearrangementById(this.RearrangementID);
+                EquipmentRearrangement rearrangement = EquipmentRearrangementService.GetRearrangement(this.RearrangementID);
 
                 // Is newRoomOfPreviusRearrangement storage
                 if (rearrangement.NewRoomID == 0)
@@ -83,7 +84,7 @@ namespace HealthCareCenter.Model
                 currentRoom.EquipmentRearrangementsIDs.Remove(rearrangement.ID);
 
                 // Remove rearrangement from file
-                EquipmentRearrangementRepository.DeleteRearrangement(rearrangement.ID);
+                EquipmentRearrangementService.DeleteRearrangement(rearrangement.ID);
 
                 // Update rooms
                 //********************************************
@@ -135,7 +136,7 @@ namespace HealthCareCenter.Model
             newRoomOfCurrentRearrangement.EquipmentRearrangementsIDs.Add(rearrangement.ID);
 
             // Add new rearrangemnt to file
-            EquipmentRearrangementRepository.AddRearrangement(rearrangement);
+            EquipmentRearrangementService.AddRearrangement(rearrangement);
 
             // Update Rooms
             //********************************************
@@ -160,11 +161,11 @@ namespace HealthCareCenter.Model
         /// <summary>
         /// Check if equipment has rearrangement, if is time for rerarrangement than motehod do rearrangement.
         /// </summary>
-        public void DoRearrangement()
+        public void Rearrange()
         {
             if (this.IsScheduledRearrangement())
             {
-                EquipmentRearrangement rearrangement = EquipmentRearrangementRepository.GetRearrangementById(this.RearrangementID);
+                EquipmentRearrangement rearrangement = EquipmentRearrangementService.GetRearrangement(this.RearrangementID);
 
                 if (IsEquipmentRearrangementTimeBeforeCurrentTime(rearrangement.MoveTime))
                 {

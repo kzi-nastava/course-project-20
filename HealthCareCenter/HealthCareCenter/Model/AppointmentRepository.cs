@@ -19,7 +19,7 @@ namespace HealthCareCenter.Model
                 DateFormatString = Constants.DateTimeFormat
             };
 
-            String JSONTextAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointments.json");
+            string JSONTextAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointments.json");
             Appointments = (List<Appointment>)JsonConvert.DeserializeObject<IEnumerable<Appointment>>(JSONTextAppointments, settings);
             LargestID = Appointments.Count == 0 ? 0 : Appointments[^1].ID;
             return Appointments;
@@ -32,7 +32,7 @@ namespace HealthCareCenter.Model
             {
                 if (potentialAppointment.HealthRecordID == patientHealthRecordID)
                 {
-                    if (potentialAppointment.AppointmentDate.CompareTo(DateTime.Now) > 0)
+                    if (potentialAppointment.ScheduledDate.CompareTo(DateTime.Now) > 0)
                     {
                         unfinishedAppointments.Add(potentialAppointment);
                     }

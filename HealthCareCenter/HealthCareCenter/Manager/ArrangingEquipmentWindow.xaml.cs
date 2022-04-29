@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Model;
+using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -187,7 +188,7 @@ namespace HealthCareCenter
                 else
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
-                    EquipmentRearrangement rearrangement = EquipmentRearrangementRepository.GetRearrangementById(equipment.RearrangementID);
+                    EquipmentRearrangement rearrangement = EquipmentRearrangementService.GetRearrangement(equipment.RearrangementID);
                     equipmentAttributesToDisplay.Add(rearrangement.MoveTime.ToString(Constants.DateFormat));
                     equipmentAttributesToDisplay.Add(rearrangement.NewRoomID.ToString());
                     AddDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);

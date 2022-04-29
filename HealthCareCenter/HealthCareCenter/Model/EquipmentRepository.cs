@@ -11,7 +11,7 @@ namespace HealthCareCenter.Model
         private static List<Equipment> s_equipments = LoadEquipments();
 
         /// <summary>
-        /// Load all equipments from file Equipments.json.
+        /// Load all equipments from file equipments.json.
         /// </summary>
         /// <returns>List of all hospital rooms.</returns>
         private static List<Equipment> LoadEquipments()
@@ -24,7 +24,7 @@ namespace HealthCareCenter.Model
                     DateFormatString = Constants.DateFormat
                 };
 
-                string JSONTextEquipments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\Equipments.json");
+                string JSONTextEquipments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\equipments.json");
                 equipments = (List<Equipment>)JsonConvert.DeserializeObject<IEnumerable<Equipment>>(JSONTextEquipments, settings);
                 return equipments;
             }
@@ -73,7 +73,7 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Replace all data from file Equipments.json with list equipments.
+        /// Replace all data from file equipments.json with list equipments.
         /// </summary>
         /// <param name="equipments">Data that will replace the old ones.</param>
         /// <returns>True if data update performed properly.</returns>
@@ -83,7 +83,7 @@ namespace HealthCareCenter.Model
             {
                 JsonSerializer serializer = new JsonSerializer();
 
-                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\Equipments.json"))
+                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\equipments.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, equipments);
@@ -97,7 +97,7 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Add new equipment in file Equipments.json.
+        /// Add new equipment in file equipments.json.
         /// </summary>
         /// <param name="newEquipment"></param>
         public static void AddEquipment(Equipment newEquipment)
@@ -107,7 +107,7 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Finding last(largest) id in file Equipments.json.
+        /// Finding last(largest) id in file equipments.json.
         /// </summary>
         /// <returns>last(largest) id.</returns>
         public static int GetLastEquipmentId()

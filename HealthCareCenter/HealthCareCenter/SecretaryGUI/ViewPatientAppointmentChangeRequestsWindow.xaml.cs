@@ -65,7 +65,7 @@ namespace HealthCareCenter.SecretaryGUI
 
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {
-                if (request.RequestState == Enums.RequestState.Waiting && request.PatientID == _patient.ID)
+                if (request.State == Enums.RequestState.Waiting && request.PatientID == _patient.ID)
                 {
                     if (request.RequestType == Enums.RequestType.Delete)
                     {
@@ -85,7 +85,7 @@ namespace HealthCareCenter.SecretaryGUI
                                         break;
                                     }
                                 }
-                                row[3] = appointment.AppointmentDate;
+                                row[3] = appointment.ScheduledDate;
                                 break;
                             }
                         }
@@ -120,7 +120,7 @@ namespace HealthCareCenter.SecretaryGUI
                                         break;
                                     }
                                 }
-                                row[4] = appointment.AppointmentDate;
+                                row[4] = appointment.ScheduledDate;
                                 row[6] = appointment.Type;
                                 break;
                             }
@@ -161,7 +161,7 @@ namespace HealthCareCenter.SecretaryGUI
                 
                 if (request.ID == requestID)
                 {
-                    request.RequestState = RequestState.Approved;
+                    request.State = RequestState.Approved;
                     ChangeRequestService.DeleteAppointment(request);
                     break;
                 }
@@ -188,7 +188,7 @@ namespace HealthCareCenter.SecretaryGUI
 
                 if (request.ID == requestID)
                 {
-                    request.RequestState = RequestState.Denied;
+                    request.State = RequestState.Denied;
                     break;
                 }
             }
@@ -213,7 +213,7 @@ namespace HealthCareCenter.SecretaryGUI
 
                 if (request.ID == requestID)
                 {
-                    request.RequestState = RequestState.Approved;
+                    request.State = RequestState.Approved;
                     ChangeRequestService.MakeChangesToAppointment(request);
                     break;
                 }
@@ -240,7 +240,7 @@ namespace HealthCareCenter.SecretaryGUI
 
                 if (request.ID == requestID)
                 {
-                    request.RequestState = RequestState.Denied;
+                    request.State = RequestState.Denied;
                     break;
                 }
             }

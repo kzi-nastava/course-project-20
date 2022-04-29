@@ -124,10 +124,14 @@ namespace HealthCareCenter
 
             foreach (Appointment appointment in appointments)
             {
+                if (appointment.DoctorID != signedUser.ID)
+                {
+                    continue;
+                }
                 dr = appointmentsDataTable.NewRow();
                 dr[0] = appointment.ID;
                 dr[1] = appointment.Type;
-                dr[2] = appointment.AppointmentDate;
+                dr[2] = appointment.ScheduledDate;
                 dr[3] = appointment.CreatedDate;
                 dr[4] = appointment.Emergency;
                 dr[5] = appointment.DoctorID;
@@ -205,7 +209,7 @@ namespace HealthCareCenter
                     CultureInfo.InvariantCulture);
             foreach (Appointment appointments in AppointmentRepository.Appointments)
             {
-                TimeSpan timeSpan = appointments.AppointmentDate.Subtract(date);
+                TimeSpan timeSpan = appointments.ScheduledDate.Subtract(date);
                 if (Math.Abs(timeSpan.TotalMinutes) < 15)
                 {
                     throw new ArgumentException("Termin je zauzet");
@@ -217,7 +221,7 @@ namespace HealthCareCenter
             appointment.DoctorID = signedUser.ID;
             appointment.HealthRecordID = id;
             appointment.HospitalRoomID = 1;
-            appointment.AppointmentDate = date;
+            appointment.ScheduledDate = date;
             appointment.CreatedDate = currentDate;
             if (isBeingCreated)
             {
@@ -230,7 +234,7 @@ namespace HealthCareCenter
         }
         private void FillAppointmentWithDefaultValues(Appointment appointment)
         {
-            string[] timeFragments = appointment.AppointmentDate.ToString().Split("/");
+            string[] timeFragments = appointment.ScheduledDate.ToString().Split("/");
             dayComboBox.SelectedItem = timeFragments[0];
             string[] yearAndTime = timeFragments[2].Split(" ");
             string[] time = yearAndTime[1].Split(":");
@@ -400,7 +404,7 @@ namespace HealthCareCenter
             List<Appointment> appointmentsResult = new List<Appointment>();
             foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
-                TimeSpan timeSpan = appointment.AppointmentDate.Subtract(date);
+                TimeSpan timeSpan = appointment.ScheduledDate.Subtract(date);
                 if (timeSpan.TotalDays <= 3 && timeSpan.TotalDays >= 0)
                 {
                     appointmentsResult.Add(appointment);
@@ -458,7 +462,7 @@ namespace HealthCareCenter
             createAnamnesis.Visibility = Visibility.Visible;
             foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
             {
-                if (healthRecord.ID == id)
+                if (healthRecord.PatientID == id)
                 {
                     FillHealthRecordData(healthRecord);
                     break;

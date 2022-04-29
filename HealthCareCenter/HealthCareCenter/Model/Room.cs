@@ -37,7 +37,7 @@ namespace HealthCareCenter.Model
         /// Checking does room contains equipment. For example is room contains chair.
         /// </summary>
         /// <returns>True if contains or false if not</returns>
-        public bool ContainsEquipmentName(string equipmentName)
+        public bool Contains(string equipmentName)
         {
             if (!EquipmentAmounts.ContainsKey(equipmentName) || (EquipmentAmounts[equipmentName] == 0))
                 return false;
@@ -51,7 +51,7 @@ namespace HealthCareCenter.Model
         /// <returns></returns>
         public int GetEquipmentAmount(string equipmentName)
         {
-            if (!this.ContainsEquipmentName(equipmentName))
+            if (!this.Contains(equipmentName))
                 return 0;
 
             return EquipmentAmounts[equipmentName];
@@ -62,7 +62,7 @@ namespace HealthCareCenter.Model
         /// </summary>
         /// <param name="specificEquipment"></param>
         /// <returns></returns>
-        public bool ContainSpecificEquipment(Equipment specificEquipment)
+        public bool Contains(Equipment specificEquipment)
         {
             List<Equipment> equipments = EquipmentRepository.GetEquipments();
             foreach (Equipment equipment in equipments)
