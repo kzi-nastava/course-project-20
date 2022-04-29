@@ -19,9 +19,20 @@ namespace HealthCareCenter
 {
     public partial class LoginWindow : Window
     {
+        private void DoEquipmentRearrangements()
+        {
+            List<Equipment> equipments = EquipmentRepository.GetEquipments();
+            for (int i = 0; i < equipments.Count; i++)
+            {
+                equipments[i].DoRearrangement();
+            }
+        }
+
         public LoginWindow()
         {
             InitializeComponent();
+            DoEquipmentRearrangements();
+
             try
             {
                 UserRepository.LoadUsers();
@@ -46,26 +57,38 @@ namespace HealthCareCenter
                 if (user.Username == usernameTextBox.Text)
                 {
                     foundUser = true;
-                    if (user.Password == passwordBox.Password)
+                    if (user.Password == passwordTextBox.Password)
                     {
                         if (user.GetType() == typeof(Doctor))
                         {
-                            ShowWindow(new DoctorWindow());
-                        } 
+                            ShowWindow(new DoctorWindow(user));
+                        }
                         else if (user.GetType() == typeof(Manager))
                         {
-                            ShowWindow(new ManagerWindow());
+                            ShowWindow(new CrudHospitalRoomWindow(user));
                         }
                         else if (user.GetType() == typeof(Patient))
                         {
-                            ShowWindow(new PatientWindow());
+                            Patient patient = (Patient)user;
+                            if (patient.IsBlocked)
+                            {
+                                MessageBox.Show("This user is blocked");
+                                usernameTextBox.Clear();
+                                passwordTextBox.Clear();
+                                return;
+                            }
+                            ShowWindow(new PatientWindow(user));
                         }
                         else if (user.GetType() == typeof(Secretary))
                         {
                             ShowWindow(new SecretaryWindow(user));
                         }
-                    } else {
-                        passwordBox.Clear();
+
+                    }
+                    else
+                    {
+                        passwordTextBox.Clear();
+
                         MessageBox.Show("Invalid password.");
                     }
                 }

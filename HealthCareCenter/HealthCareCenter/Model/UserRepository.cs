@@ -50,7 +50,8 @@ namespace HealthCareCenter.Model
             {
                 JsonSerializer serializer = new JsonSerializer
                 {
-                    Formatting = Formatting.Indented, DateFormatString = Constants.DateFormat
+                    Formatting = Formatting.Indented,
+                    DateFormatString = Constants.DateFormat
                 };
                 using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\patients.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
