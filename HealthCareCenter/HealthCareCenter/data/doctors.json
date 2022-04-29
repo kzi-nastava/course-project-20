@@ -9,6 +9,6 @@
     "Type": "General practitioner",
     "VacationRequestIDs": [],
     "MedicineCreationRequestIDs": [],
-    "AllAppointmentIDs": []
+    "AppointmentIDs": []
   }
 ]
