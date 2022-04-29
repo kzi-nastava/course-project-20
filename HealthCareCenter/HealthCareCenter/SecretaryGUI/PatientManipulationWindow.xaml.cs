@@ -44,13 +44,13 @@ namespace HealthCareCenter.SecretaryGUI
             patientsDataGrid.IsReadOnly = true;
             LoadBlockedPatients();
             HealthRecordRepository.Load();
-            if (UserService.maxUserID == -1)
+            if (UserService.maxID == -1)
             {
-                UserService.CalculateMaxUserID();
+                UserService.CalculateMaxID();
             }
-            if (HealthRecordService.maxHealthRecordID == -1)
+            if (HealthRecordService.maxID == -1)
             {
-                HealthRecordService.CalculateMaxHealthRecordID();
+                HealthRecordService.CalculateMaxID();
             }
         }
 
@@ -114,8 +114,8 @@ namespace HealthCareCenter.SecretaryGUI
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            PatientCreateWindow patientCreateWindow = new PatientCreateWindow();
-            patientCreateWindow.ShowDialog();
+            PatientCreateWindow window = new PatientCreateWindow();
+            window.ShowDialog();
             patientsDataGrid.Items.Refresh();
         }
 
@@ -129,14 +129,14 @@ namespace HealthCareCenter.SecretaryGUI
 
             Patient patient = (Patient)patientsDataGrid.SelectedItem;
             
-            foreach (HealthRecord record in HealthRecordRepository.HealthRecords)
+            foreach (HealthRecord record in HealthRecordRepository.Records)
             {
                 if (patient.HealthRecordID == record.ID)
                 {
-                    HealthRecordRepository.HealthRecords.Remove(record);
-                    if (patient.HealthRecordID == HealthRecordService.maxHealthRecordID)
+                    HealthRecordRepository.Records.Remove(record);
+                    if (patient.HealthRecordID == HealthRecordService.maxID)
                     {
-                        HealthRecordService.CalculateMaxHealthRecordID();
+                        HealthRecordService.CalculateMaxID();
                     }
                     break;
                 }
@@ -149,9 +149,9 @@ namespace HealthCareCenter.SecretaryGUI
 
             patientsDataGrid.Items.Refresh();
 
-            if (patient.ID == UserService.maxUserID)
+            if (patient.ID == UserService.maxID)
             {
-                UserService.CalculateMaxUserID();
+                UserService.CalculateMaxID();
             }
 
             MessageBox.Show("Successfully deleted patient and the corresponding health record.");
@@ -168,8 +168,8 @@ namespace HealthCareCenter.SecretaryGUI
             Patient patient = (Patient)patientsDataGrid.SelectedItem;
             HealthRecord record = HealthRecordService.FindRecord(patient);
 
-            PatientViewWindow patientViewWindow = new PatientViewWindow(patient, record);
-            patientViewWindow.ShowDialog();
+            PatientViewWindow window = new PatientViewWindow(patient, record);
+            window.ShowDialog();
             LoadBlockedPatients();
             patientsDataGrid.Items.Refresh();
         }
@@ -185,8 +185,8 @@ namespace HealthCareCenter.SecretaryGUI
             Patient patient = (Patient)patientsDataGrid.SelectedItem;
             HealthRecord record = HealthRecordService.FindRecord(patient);
 
-            PatientEditWindow patientEditWindow = new PatientEditWindow(patient, record);
-            patientEditWindow.ShowDialog();
+            PatientEditWindow window = new PatientEditWindow(patient, record);
+            window.ShowDialog();
             patientsDataGrid.Items.Refresh();
         }
     }

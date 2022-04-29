@@ -8,14 +8,14 @@ namespace HealthCareCenter.Model
 {
     public static class HealthRecordRepository
     {
-        public static List<HealthRecord> HealthRecords { get; set; }
+        public static List<HealthRecord> Records { get; set; }
 
         public static void Load()
         {
             try
             {
                 String JSONTextHealthRecords = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\healthRecords.json");
-                HealthRecords = (List<HealthRecord>)JsonConvert.DeserializeObject<IEnumerable<HealthRecord>>(JSONTextHealthRecords);
+                Records = (List<HealthRecord>)JsonConvert.DeserializeObject<IEnumerable<HealthRecord>>(JSONTextHealthRecords);
             }
             catch (Exception ex)
             {
@@ -35,7 +35,7 @@ namespace HealthCareCenter.Model
                 using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\healthRecords.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
-                    serializer.Serialize(writer, HealthRecords);
+                    serializer.Serialize(writer, Records);
                 }
             }
             catch (Exception ex)

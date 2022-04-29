@@ -7,23 +7,23 @@ namespace HealthCareCenter.Service
 {
     public static class HealthRecordService
     {
-        public static int maxHealthRecordID = -1;
+        public static int maxID = -1;
 
-        public static void CalculateMaxHealthRecordID()
+        public static void CalculateMaxID()
         {
-            maxHealthRecordID = -1;
-            foreach (HealthRecord healthRecord in HealthRecordRepository.HealthRecords)
+            maxID = -1;
+            foreach (HealthRecord record in HealthRecordRepository.Records)
             {
-                if (healthRecord.ID > maxHealthRecordID)
+                if (record.ID > maxID)
                 {
-                    maxHealthRecordID = healthRecord.ID;
+                    maxID = record.ID;
                 }
             }
         }
 
         public static HealthRecord FindRecord(Patient patient)
         {
-            foreach (HealthRecord record in HealthRecordRepository.HealthRecords)
+            foreach (HealthRecord record in HealthRecordRepository.Records)
             {
                 if (patient.HealthRecordID == record.ID)
                 {

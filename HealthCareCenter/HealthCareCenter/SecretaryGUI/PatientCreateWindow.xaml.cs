@@ -123,7 +123,7 @@ namespace HealthCareCenter.SecretaryGUI
 
         private void Window_Initialized(object sender, EventArgs e)
         {
-            idTextBox.Text = (UserService.maxUserID + 1).ToString();
+            idTextBox.Text = (UserService.maxID + 1).ToString();
         }
 
         private void PreviousDiseasesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -212,13 +212,13 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
             //update max user and health record ID
-            HealthRecordService.maxHealthRecordID++;
-            UserService.maxUserID++;
+            HealthRecordService.maxID++;
+            UserService.maxID++;
             //create record and patient
-            HealthRecord record = new HealthRecord(HealthRecordService.maxHealthRecordID, height, weight, previousDiseasesListBox.Items.Cast<String>().ToList(), allergensListBox.Items.Cast<String>().ToList(), UserService.maxUserID, new List<int>());
-            Patient patient = new Patient(UserService.maxUserID, usernameTextBox.Text, passwordTextBox.Text, firstNameTextBox.Text, lastNameTextBox.Text, (DateTime)birthDatePicker.SelectedDate, false, Enums.Blocker.None, new List<int>(), new List<int>(), HealthRecordService.maxHealthRecordID);
+            HealthRecord record = new HealthRecord(HealthRecordService.maxID, height, weight, previousDiseasesListBox.Items.Cast<String>().ToList(), allergensListBox.Items.Cast<String>().ToList(), UserService.maxID, new List<int>());
+            Patient patient = new Patient(UserService.maxID, usernameTextBox.Text, passwordTextBox.Text, firstNameTextBox.Text, lastNameTextBox.Text, (DateTime)birthDatePicker.SelectedDate, false, Enums.Blocker.None, new List<int>(), new List<int>(), HealthRecordService.maxID);
             //add to repositories
-            HealthRecordRepository.HealthRecords.Add(record);
+            HealthRecordRepository.Records.Add(record);
             UserRepository.Patients.Add(patient);
             UserRepository.Users.Add(patient);
             //save to files
@@ -226,7 +226,7 @@ namespace HealthCareCenter.SecretaryGUI
             UserRepository.SavePatients();
 
             Reset();
-            idTextBox.Text = (UserService.maxUserID + 1).ToString();
+            idTextBox.Text = (UserService.maxID + 1).ToString();
             MessageBox.Show("Successfully created the patient and health record.");
         }
     }

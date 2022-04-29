@@ -90,8 +90,8 @@ namespace HealthCareCenter.SecretaryGUI
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
-            PatientEditWindow patientEditWindow = new PatientEditWindow(_patient, _record);
-            patientEditWindow.ShowDialog();
+            PatientEditWindow window = new PatientEditWindow(_patient, _record);
+            window.ShowDialog();
             InitializeWindow();
             previousDiseasesListBox.Items.Refresh();
             allergensListBox.Items.Refresh();
