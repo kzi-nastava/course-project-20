@@ -1,44 +1,30 @@
-﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using HealthCareCenter.Model;
+using Newtonsoft.Json;
 
 namespace HealthCareCenter.Model
 {
-    class AppointmentRepository
+    internal class AppointmentRepository
     {
-        public static List<Appointment> AllAppointments { get; set; }
-        public static int LargestID { get; set; }
-
+        public static List<Appointment> Appointments { get; set; }
+        public static int HighestIndex { get; set; }
         public static List<Appointment> Load()
         {
-            try
+            var settings = new JsonSerializerSettings
             {
-                var settings = new JsonSerializerSettings
-                {
-                    DateFormatString = Constants.DateTimeFormat
-                };
+                DateFormatString = Constants.DateTimeFormat
+            };
 
-                String JSONTextAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointments.json");
-                AllAppointments = (List<Appointment>)JsonConvert.DeserializeObject<IEnumerable<Appointment>>(JSONTextAppointments, settings);
-                if (AllAppointments.Count == 0)
-                {
-                    LargestID = 0;
-                }
-                else
-                {
-                    LargestID = AllAppointments[^1].ID;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return AllAppointments;
+            String JSONTextAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointments.json");
+            Appointments = (List<Appointment>)JsonConvert.DeserializeObject<IEnumerable<Appointment>>(JSONTextAppointments, settings);
+            HighestIndex = Appointments[^1].ID;
+            return Appointments;
         }
-
-        public static List<Appointment> GetPatientUnfinishedAppointments(int patientHealthRecordID)
+      
+      public static List<Appointment> GetPatientUnfinishedAppointments(int patientHealthRecordID)
         {
             List<Appointment> unfinishedAppointments = new List<Appointment>();
             foreach (Appointment potentialAppointment in AllAppointments)
@@ -54,8 +40,8 @@ namespace HealthCareCenter.Model
 
             return unfinishedAppointments;
         }
-
-        public static void Write()
+      
+        public static void Save()
         {
             try
             {
@@ -67,7 +53,7 @@ namespace HealthCareCenter.Model
                 using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointments.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
-                    serializer.Serialize(writer, AllAppointments);
+                    serializer.Serialize(writer, Appointments);
                 }
             }
             catch (Exception ex)
