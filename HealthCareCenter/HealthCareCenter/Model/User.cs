@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    public class User
+    public abstract class User
     {
         public int ID { get; set; }
         public string Username { get; set; }

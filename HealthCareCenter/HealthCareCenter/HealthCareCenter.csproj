@@ -7,11 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Page Include="App.xaml" />
+    <Compile Remove="Enums\**" />
+    <EmbeddedResource Remove="Enums\**" />
+    <None Remove="Enums\**" />
+    <Page Remove="Enums\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Enums\" />
+    <Page Include="App.xaml" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -23,6 +23,24 @@ namespace HealthCareCenter.Model
             HighestIndex = Appointments[^1].ID;
             return Appointments;
         }
+      
+      public static List<Appointment> GetPatientUnfinishedAppointments(int patientHealthRecordID)
+        {
+            List<Appointment> unfinishedAppointments = new List<Appointment>();
+            foreach (Appointment potentialAppointment in AllAppointments)
+            {
+                if (potentialAppointment.HealthRecordID == patientHealthRecordID)
+                {
+                    if (potentialAppointment.AppointmentDate.CompareTo(DateTime.Now) > 0)
+                    {
+                        unfinishedAppointments.Add(potentialAppointment);
+                    }
+                }
+            }
+
+            return unfinishedAppointments;
+        }
+      
         public static void Save()
         {
             try

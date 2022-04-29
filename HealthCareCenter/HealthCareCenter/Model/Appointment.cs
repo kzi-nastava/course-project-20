@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using HealthCareCenter.Enums;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace HealthCareCenter.Model
 {

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    public static class UserManager
+    public static class UserRepository
     {
         public static List<User> Users { get; set; }
         public static List<Doctor> Doctors { get; set; }
@@ -37,6 +37,27 @@ namespace HealthCareCenter.Model
                 Users.AddRange(Managers);
                 Users.AddRange(Patients);
                 Users.AddRange(Secretaries);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static void SavePatients()
+        {
+            try
+            {
+                JsonSerializer serializer = new JsonSerializer
+                {
+                    Formatting = Formatting.Indented,
+                    DateFormatString = Constants.DateFormat
+                };
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\patients.json"))
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    serializer.Serialize(writer, Patients);
+                }
             }
             catch (Exception ex)
             {

@@ -5,8 +5,126 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HealthCareCenter"
         mc:Ignorable="d"
-        Title="Patient Window" Height="450" Width="800">
+        Title="Patient Window" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="20" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="20" />
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="1" Grid.Column="1" >
+            <MenuItem Header="Action">
+                <MenuItem x:Name="myAppointmentsMenuItem" Header="View your appointments" Click="myAppointmentsMenuItem_Click" />
+                <MenuItem x:Name="searchDoctorsMenuItem" Header="Search for doctor" Click="searchDoctorsMenuItem_Click" />
+                <MenuItem x:Name="myNotificationMenuItem" Header="My notifications" Click="myNotificationMenuItem_Click" />
+                <MenuItem x:Name="myHealthRecordMenuItem" Header="My health record" Click="myHealthRecordMenuItem_Click" />
+                <MenuItem Header="Access surveys">
+                    <MenuItem x:Name="doctorSurveyMenuItem" Header="Doctor" Click="doctorSurveyMenuItem_Click" />
+                    <MenuItem x:Name="healthCenterMenuItem" Header="Health center" Click="healthCenterMenuItem_Click" />
+                </MenuItem>
+                <MenuItem x:Name="logOutMenuItem" Header="Log out" Click="logOutMenuItem_Click" />
+            </MenuItem>
+        </Menu>
+        <TextBlock x:Name="currentActionTextBlock" Grid.Row="1" Grid.Column="2" Margin="15 0 0 0" />
+
+        <Grid x:Name="myAppointmentsGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="50" />
+                <RowDefinition Height="10" />
+            </Grid.RowDefinitions>
+
+            <DataGrid Margin="5 10 5 0" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" x:Name ="myAppointmentsDataGrid" ScrollViewer.CanContentScroll="True" 
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          IsReadOnly="True" />
+
+
+            <Button x:Name="createAppointmentButton" Margin="5 10 5 0" Content="Create" Grid.Row="2" Grid.Column="1" Click="createAppointmentButton_Click"/>
+            <Button x:Name="makeChangeAppointmentButton" Margin="5 10 5 0" Content="Make changes" Grid.Row="2" Grid.Column="2" Click="makeChangeAppointmentButton_Click"/>
+            <Button x:Name="cancelAppointmentButton" Margin="5 10 5 0" Content="Cancel" Grid.Row="2" Grid.Column="3" Click="cancelAppointmentButton_Click"/>
+            <Button x:Name="accessAnamnesisAppointmentButton" Margin="5 10 5 0" Content="Access anamnesis" Grid.Row="2" Grid.Column="4"/>
+        </Grid>
+
+        <Grid x:Name="searchDoctorsGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
+
+        </Grid>
+
+        <Grid x:Name="myNotificationGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
+
+        </Grid>
+
+        <Grid x:Name="myHealthRecordGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
+
+        </Grid>
+
+        <Grid x:Name="doctorSurveyGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
+
+        </Grid>
+
+        <Grid x:Name="healthCenterGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
+
+        </Grid>
+
+        <Grid x:Name="createAppointmentGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Visible">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="50" />
+                <RowDefinition Height="10" />
+            </Grid.RowDefinitions>
+
+            <DataGrid Margin="5 10 5 0" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" x:Name ="allDoctorsDataGrid" ScrollViewer.CanContentScroll="True" 
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          IsReadOnly="True" />
+
+            <DataGrid Margin="5 10 5 0" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" x:Name ="allAvailableTimeDataGrid" ScrollViewer.CanContentScroll="True" 
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          IsReadOnly="True" />
+
+            <Button x:Name="chooseDoctorButton" Margin="5 10 5 0" Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Content="Choose doctor" Click="chooseDoctorButton_Click" />
+            <TextBlock Grid.Row="2" Grid.Column="2" Text="Choose day" Margin="15 5 2 0"  />
+            <ComboBox x:Name="dayChoiceComboBox" Margin="5 5 5 0" Grid.Row="3" Grid.Column="2" />
+            <TextBlock Grid.Row="2" Grid.Column="3" Text="Choose month" Margin="15 5 2 0"  />
+            <ComboBox x:Name="monthChoiceComboBox" Margin="5 5 5 0" Grid.Row="3" Grid.Column="3" />
+            <TextBlock Grid.Row="2" Grid.Column="4" Text="Choose year" Margin="15 5 2 0"  />
+            <ComboBox x:Name="yearChoiceComboBox" Margin="5 5 5 0" Grid.Row="3" Grid.Column="4" />
+            <Button x:Name="scheduleAppointmentButton" Margin="5 10 5 0" Grid.Row="2" Grid.Column="5" Grid.RowSpan="2" Content="Schedule appointment" Click="scheduleAppointmentButton_Click" />
+        </Grid>
 
     </Grid>
 </Window>
