@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Model
 {
@@ -64,7 +65,7 @@ namespace HealthCareCenter.Model
         /// <returns></returns>
         public bool Contains(Equipment specificEquipment)
         {
-            List<Equipment> equipments = EquipmentRepository.GetEquipments();
+            List<Equipment> equipments = EquipmentService.GetEquipments();
             foreach (Equipment equipment in equipments)
             {
                 if (equipment.CurrentRoomID == ID)

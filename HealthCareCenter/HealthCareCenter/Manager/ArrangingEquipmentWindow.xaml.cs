@@ -176,7 +176,7 @@ namespace HealthCareCenter
         /// </summary>
         private void FillDataGridEquipment()
         {
-            List<Equipment> equipments = EquipmentRepository.GetEquipments();
+            List<Equipment> equipments = EquipmentService.GetEquipments();
             foreach (Equipment equipment in equipments)
             {
                 if (!equipment.IsScheduledRearrangement())
@@ -229,7 +229,7 @@ namespace HealthCareCenter
                 newRoom = StorageRepository.GetStorage();
             else
             {
-                newRoom = HospitalRoomRepository.GetRoomById(newRoomId);
+                newRoom = HospitalRoomService.GetRoom(newRoomId);
                 if (!IsNewRoomFound(newRoom))
                 {
                     MessageBox.Show($"Error, room with ID {newRoomId} not found!");
@@ -237,7 +237,7 @@ namespace HealthCareCenter
                 }
             }
 
-            equipmentToMove = EquipmentRepository.GetEquipmentById(movingEquipmentId);
+            equipmentToMove = EquipmentService.GetEquipment(movingEquipmentId);
             if (!IsEquipmentToMoveFound(equipmentToMove))
             {
                 MessageBox.Show($"Error, equipment with ID {movingEquipmentId} not found!");
@@ -292,7 +292,7 @@ namespace HealthCareCenter
                 return;
             }
 
-            equipmentToMove = EquipmentRepository.GetEquipmentById(movingEquipmentId);
+            equipmentToMove = EquipmentService.GetEquipment(movingEquipmentId);
             if (!IsEquipmentToMoveFound(equipmentToMove))
             {
                 MessageBox.Show($"Error, equipment with ID {movingEquipmentId} not found!");

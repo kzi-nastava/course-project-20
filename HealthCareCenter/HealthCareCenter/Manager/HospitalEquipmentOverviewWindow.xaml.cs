@@ -132,7 +132,7 @@ namespace HealthCareCenter
         /// </summary>
         private void FillDataGridEquipment()
         {
-            List<Equipment> equipments = EquipmentRepository.GetEquipments();
+            List<Equipment> equipments = EquipmentService.GetEquipments();
             foreach (Equipment equipment in equipments)
             {
                 if (!equipment.IsScheduledRearrangement())
@@ -187,7 +187,7 @@ namespace HealthCareCenter
                 return true;
             else if (currentRoomId != "0")
             {
-                HospitalRoom room = HospitalRoomRepository.GetRoomById(Convert.ToInt32(currentRoomId));
+                HospitalRoom room = HospitalRoomService.GetRoom(Convert.ToInt32(currentRoomId));
                 if (roomType == room.Type.ToString())
                     return true;
             }
@@ -267,7 +267,7 @@ namespace HealthCareCenter
         private void ShowSearchResultButton_Click(object sender, RoutedEventArgs e)
         {
             DataGridEquipments.Items.Clear();
-            List<Equipment> equipments = EquipmentRepository.GetEquipments();
+            List<Equipment> equipments = EquipmentService.GetEquipments();
 
             foreach (Equipment equipment in equipments)
             {

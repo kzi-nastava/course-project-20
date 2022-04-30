@@ -33,11 +33,11 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Updating storage data
+        /// Save storage data
         /// </summary>
         /// <param name="storage"></param>
         /// <returns></returns>
-        public static bool UpdateStorage(Room storage)
+        public static bool SaveStorage(Room storage)
         {
             try
             {

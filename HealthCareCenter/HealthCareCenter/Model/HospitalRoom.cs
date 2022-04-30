@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using HealthCareCenter.Enums;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Model
 {
@@ -21,7 +22,7 @@ namespace HealthCareCenter.Model
         /// </summary>
         public HospitalRoom(RoomType type, string name)
         {
-            this.ID = HospitalRoomRepository.GetLastRoomId() + 1;
+            this.ID = HospitalRoomService.GetLargestRoomId() + 1;
             this.Name = name;
             this.EquipmentAmounts = new Dictionary<string, int>();
             this.EquipmentRearrangementsIDs = new List<int>();

@@ -22,7 +22,7 @@ namespace HealthCareCenter.Model
         /// </summary>
         public Equipment(EquipmentType type, string name)
         {
-            this.ID = EquipmentRepository.GetLastEquipmentId() + 1;
+            this.ID = EquipmentService.GetLargestEquipmentId() + 1;
             this.CurrentRoomID = 0;
             this.Type = type;
             this.Name = name;
@@ -63,7 +63,7 @@ namespace HealthCareCenter.Model
 
             // Is current room storage
             else
-                currentRoom = HospitalRoomRepository.GetRoomById(this.CurrentRoomID);
+                currentRoom = HospitalRoomService.GetRoom(this.CurrentRoomID);
             if (this.IsScheduledRearrangement())
             {
                 Room newRoomOfRearrangement;
@@ -77,7 +77,7 @@ namespace HealthCareCenter.Model
 
                 // Is newRoomOfPreviusRearrangement hospital room
                 else
-                    newRoomOfRearrangement = HospitalRoomRepository.GetRoomById(rearrangement.NewRoomID);
+                    newRoomOfRearrangement = HospitalRoomService.GetRoom(rearrangement.NewRoomID);
 
                 // Romeve rearrangement id from list RearrangemetIDs of newRoomOfPreviusRearrangement and currenRoom
                 newRoomOfRearrangement.EquipmentRearrangementsIDs.Remove(rearrangement.ID);
@@ -88,13 +88,13 @@ namespace HealthCareCenter.Model
 
                 // Update rooms
                 //********************************************
-                RoomRepository.UpdateRoom(newRoomOfRearrangement);
-                RoomRepository.UpdateRoom(currentRoom);
+                RoomService.UpdateRoom(newRoomOfRearrangement);
+                RoomService.UpdateRoom(currentRoom);
                 //********************************************
 
                 // Rearrangement removed
                 this.RearrangementID = -1;
-                EquipmentRepository.UpdateEquipment(this);
+                EquipmentService.UpdateEquipment(this);
             }
         }
 
@@ -113,7 +113,7 @@ namespace HealthCareCenter.Model
 
             // Is current room storage
             else
-                currenRoom = HospitalRoomRepository.GetRoomById(this.CurrentRoomID);
+                currenRoom = HospitalRoomService.GetRoom(this.CurrentRoomID);
 
             // Is new room of current rerrangement storage
             if (rearrangement.NewRoomID == 0)
@@ -121,7 +121,7 @@ namespace HealthCareCenter.Model
 
             // Is new room of current rerrangement hospital room
             else
-                newRoomOfCurrentRearrangement = HospitalRoomRepository.GetRoomById(rearrangement.NewRoomID);
+                newRoomOfCurrentRearrangement = HospitalRoomService.GetRoom(rearrangement.NewRoomID);
 
             // Equipment already has rearrangemt
             if (this.IsScheduledRearrangement())
@@ -140,12 +140,12 @@ namespace HealthCareCenter.Model
 
             // Update Rooms
             //********************************************
-            RoomRepository.UpdateRoom(newRoomOfCurrentRearrangement);
-            RoomRepository.UpdateRoom(currenRoom);
+            RoomService.UpdateRoom(newRoomOfCurrentRearrangement);
+            RoomService.UpdateRoom(currenRoom);
             //********************************************
 
             // Update equipment information
-            EquipmentRepository.UpdateEquipment(this);
+            EquipmentService.UpdateEquipment(this);
         }
 
         private bool IsEquipmentRearrangementTimeBeforeCurrentTime(DateTime rearrangementDate)
@@ -178,7 +178,7 @@ namespace HealthCareCenter.Model
 
                     // Is current room storage
                     else
-                        currentRoom = HospitalRoomRepository.GetRoomById(this.CurrentRoomID);
+                        currentRoom = HospitalRoomService.GetRoom(this.CurrentRoomID);
 
                     // Is newRoomOfPreviusRearrangement storage
                     if (rearrangement.NewRoomID == 0)
@@ -186,18 +186,18 @@ namespace HealthCareCenter.Model
 
                     // Is newRoomOfPreviusRearrangement hospital room
                     else
-                        newRoomOfRearrangement = HospitalRoomRepository.GetRoomById(rearrangement.NewRoomID);
+                        newRoomOfRearrangement = HospitalRoomService.GetRoom(rearrangement.NewRoomID);
 
                     currentRoom.EquipmentAmounts[this.Name]--;
                     if (newRoomOfRearrangement.EquipmentAmounts.ContainsKey(Name))
                         newRoomOfRearrangement.EquipmentAmounts[this.Name]++;
                     else
                         newRoomOfRearrangement.EquipmentAmounts.Add(this.Name, 1);
-                    RoomRepository.UpdateRoom(currentRoom);
-                    RoomRepository.UpdateRoom(newRoomOfRearrangement);
+                    RoomService.UpdateRoom(currentRoom);
+                    RoomService.UpdateRoom(newRoomOfRearrangement);
                     this.CurrentRoomID = rearrangement.NewRoomID;
                     this.RemoveRearrangement();
-                    EquipmentRepository.UpdateEquipment(this);
+                    EquipmentService.UpdateEquipment(this);
                 }
             }
         }

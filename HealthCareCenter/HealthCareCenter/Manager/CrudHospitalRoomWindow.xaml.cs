@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Model;
+using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -51,14 +52,14 @@ namespace HealthCareCenter
         private void FillDataGridHospitalRooms()
         {
             DataGridHospitalRooms.Items.Clear();
-            List<HospitalRoom> rooms = HospitalRoomRepository.GetRooms();
+            List<HospitalRoom> rooms = HospitalRoomService.GetRooms();
             foreach (HospitalRoom room in rooms)
                 DataGridHospitalRooms.Items.Add(room);
         }
 
         private void DeleteHospitalRoom(HospitalRoom delteteRoom)
         {
-            HospitalRoomRepository.DeleteRoom(delteteRoom);
+            HospitalRoomService.DeleteRoom(delteteRoom);
             FillDataGridHospitalRooms();
         }
 
@@ -80,7 +81,7 @@ namespace HealthCareCenter
                 return;
             }
             HospitalRoom room = new HospitalRoom(type, roomName);
-            HospitalRoomRepository.AddRoom(room);
+            HospitalRoomService.AddRoom(room);
             DataGridHospitalRooms.Items.Add(room);
             HospitalRoomIdTextBox.Text = "";
             HospitalRoomNameTextBox.Text = "";
@@ -95,7 +96,7 @@ namespace HealthCareCenter
                 return;
             }
 
-            HospitalRoom room = HospitalRoomRepository.GetRoomById(roomId);
+            HospitalRoom room = HospitalRoomService.GetRoom(roomId);
             if (!IsHospitalRoomFound(room))
             {
                 MessageBox.Show($"Hospital room with {roomId} Id it's not found!");
@@ -137,7 +138,7 @@ namespace HealthCareCenter
                 return;
             }
 
-            HospitalRoom room = HospitalRoomRepository.GetRoomById(roomId);
+            HospitalRoom room = HospitalRoomService.GetRoom(roomId);
             if (!IsHospitalRoomFound(room))
             {
                 MessageBox.Show($"Hospital room with {roomId} id it's not found");
@@ -146,7 +147,7 @@ namespace HealthCareCenter
 
             room.Name = newRoomName;
             room.Type = newType;
-            HospitalRoomRepository.UpdateRoom(room);
+            HospitalRoomService.UpdateRoom(room);
             FillDataGridHospitalRooms();
             HospitalRoomIdTextBox.Text = "";
             HospitalRoomNameTextBox.Text = "";
