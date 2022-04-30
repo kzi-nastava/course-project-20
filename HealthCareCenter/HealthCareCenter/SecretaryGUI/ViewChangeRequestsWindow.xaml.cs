@@ -17,21 +17,21 @@ using System.Windows.Shapes;
 namespace HealthCareCenter.SecretaryGUI
 {
     /// <summary>
-    /// Interaction logic for ViewPatientAppointmentChangeRequestsWindow.xaml
+    /// Interaction logic for ViewChangeRequestsWindow.xaml
     /// </summary>
-    public partial class ViewPatientAppointmentChangeRequestsWindow : Window
+    public partial class ViewChangeRequestsWindow : Window
     {
         private Patient _patient;
 
-        private List<DeleteAppointmentChangeRequestDisplay> _deleteRequests;
-        private List<EditAppointmentChangeRequestDisplay> _editRequests;
+        private List<DeleteRequest> _deleteRequests;
+        private List<EditRequest> _editRequests;
 
-        public ViewPatientAppointmentChangeRequestsWindow()
+        public ViewChangeRequestsWindow()
         {
             InitializeComponent();
         }
 
-        public ViewPatientAppointmentChangeRequestsWindow(Patient patient)
+        public ViewChangeRequestsWindow(Patient patient)
         {
             this._patient = patient;
             AppointmentChangeRequestRepository.Load();
@@ -46,15 +46,15 @@ namespace HealthCareCenter.SecretaryGUI
 
         private void Refresh()
         {
-            _deleteRequests = new List<DeleteAppointmentChangeRequestDisplay>();
-            _editRequests = new List<EditAppointmentChangeRequestDisplay>();
+            _deleteRequests = new List<DeleteRequest>();
+            _editRequests = new List<EditRequest>();
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {
                 if (request.State == Enums.RequestState.Waiting && request.PatientID == _patient.ID)
                 {
                     if (request.RequestType == Enums.RequestType.Delete)
                     {
-                        DeleteAppointmentChangeRequestDisplay deleteRequest = new DeleteAppointmentChangeRequestDisplay
+                        DeleteRequest deleteRequest = new DeleteRequest
                         {
                             ID = request.ID,
                             TimeSent = request.DateSent
@@ -80,7 +80,7 @@ namespace HealthCareCenter.SecretaryGUI
                     }
                     else
                     {
-                        EditAppointmentChangeRequestDisplay editRequest = new EditAppointmentChangeRequestDisplay
+                        EditRequest editRequest = new EditRequest
                         {
                             ID = request.ID,
                             TimeSent = request.DateSent
@@ -132,7 +132,7 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
-            int requestID = (int)((DeleteAppointmentChangeRequestDisplay)deleteRequestsDataGrid.SelectedItem).ID;
+            int requestID = (int)((DeleteRequest)deleteRequestsDataGrid.SelectedItem).ID;
 
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {
@@ -140,7 +140,7 @@ namespace HealthCareCenter.SecretaryGUI
                 if (request.ID == requestID)
                 {
                     request.State = RequestState.Approved;
-                    ChangeRequestService.DeleteAppointment(request);
+                    AppointmentChangeRequestService.DeleteAppointment(request);
                     break;
                 }
             }
@@ -159,7 +159,7 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
-            int requestID = (int)((DeleteAppointmentChangeRequestDisplay)deleteRequestsDataGrid.SelectedItem).ID;
+            int requestID = (int)((DeleteRequest)deleteRequestsDataGrid.SelectedItem).ID;
 
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {
@@ -184,7 +184,7 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
-            int requestID = (int)((EditAppointmentChangeRequestDisplay)editRequestsDataGrid.SelectedItem).ID;
+            int requestID = (int)((EditRequest)editRequestsDataGrid.SelectedItem).ID;
 
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {
@@ -192,7 +192,7 @@ namespace HealthCareCenter.SecretaryGUI
                 if (request.ID == requestID)
                 {
                     request.State = RequestState.Approved;
-                    ChangeRequestService.MakeChangesToAppointment(request);
+                    AppointmentChangeRequestService.EditAppointment(request);
                     break;
                 }
             }
@@ -211,7 +211,7 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
-            int requestID = (int)((EditAppointmentChangeRequestDisplay)editRequestsDataGrid.SelectedItem).ID;
+            int requestID = (int)((EditRequest)editRequestsDataGrid.SelectedItem).ID;
 
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {

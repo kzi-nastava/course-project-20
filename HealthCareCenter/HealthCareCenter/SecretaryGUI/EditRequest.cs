@@ -5,7 +5,10 @@ using System.Text;
 
 namespace HealthCareCenter.SecretaryGUI
 {
-    public class EditAppointmentChangeRequestDisplay
+    /// <summary>
+    /// Class used only for displaying edit appointment requests of a specific patient in ViewChangeRequestsWindow
+    /// </summary>
+    public class EditRequest
     {
         public int ID { get; set; }
         public DateTime TimeSent { get; set; }

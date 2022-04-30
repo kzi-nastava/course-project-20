@@ -99,7 +99,7 @@ namespace HealthCareCenter.SecretaryGUI
 
         private void ViewChangeAppointmentRequestsButton_Click(object sender, RoutedEventArgs e)
         {
-            ViewPatientAppointmentChangeRequestsWindow window = new ViewPatientAppointmentChangeRequestsWindow(_patient);
+            ViewChangeRequestsWindow window = new ViewChangeRequestsWindow(_patient);
             window.ShowDialog();
         }
     }

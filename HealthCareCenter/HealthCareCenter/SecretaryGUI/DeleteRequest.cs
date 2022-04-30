@@ -4,7 +4,10 @@ using System.Text;
 
 namespace HealthCareCenter.SecretaryGUI
 {
-    public class DeleteAppointmentChangeRequestDisplay
+    /// <summary>
+    /// Class used only for displaying delete appointment requests of a specific patient in ViewChangeRequestsWindow
+    /// </summary>
+    public class DeleteRequest
     {
         public int ID { get; set; }
         public DateTime TimeSent { get; set; }
