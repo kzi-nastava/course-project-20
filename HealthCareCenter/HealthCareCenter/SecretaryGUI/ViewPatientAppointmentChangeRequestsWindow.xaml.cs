@@ -22,8 +22,9 @@ namespace HealthCareCenter.SecretaryGUI
     public partial class ViewPatientAppointmentChangeRequestsWindow : Window
     {
         private Patient _patient;
-        private DataTable _editRequestsTable;
-        private DataTable _deleteRequestsTable;
+
+        private List<DeleteAppointmentChangeRequestDisplay> _deleteRequests;
+        private List<EditAppointmentChangeRequestDisplay> _editRequests;
 
         public ViewPatientAppointmentChangeRequestsWindow()
         {
@@ -33,45 +34,31 @@ namespace HealthCareCenter.SecretaryGUI
         public ViewPatientAppointmentChangeRequestsWindow(Patient patient)
         {
             this._patient = patient;
+            AppointmentChangeRequestRepository.Load();
+            AppointmentRepository.Load();
+
             InitializeComponent();
-        }
 
-        private void CreateDeleteRequestsTable()
-        {
-            _deleteRequestsTable = new DataTable("Delete requests");
-            _deleteRequestsTable.Columns.Add(new DataColumn("ID", typeof(int)));
-            _deleteRequestsTable.Columns.Add(new DataColumn("Date sent", typeof(DateTime)));
-            _deleteRequestsTable.Columns.Add(new DataColumn("Doctor", typeof(string)));
-            _deleteRequestsTable.Columns.Add(new DataColumn("App. time", typeof(DateTime)));
-        }
-
-        private void CreateEditRequestsTable()
-        {
-            _editRequestsTable = new DataTable("Edit requests");
-            _editRequestsTable.Columns.Add(new DataColumn("ID", typeof(int)));
-            _editRequestsTable.Columns.Add(new DataColumn("Date sent", typeof(DateTime)));
-            _editRequestsTable.Columns.Add(new DataColumn("Orig. doctor", typeof(string)));
-            _editRequestsTable.Columns.Add(new DataColumn("New doctor", typeof(string)));
-            _editRequestsTable.Columns.Add(new DataColumn("Orig. App. time", typeof(DateTime)));
-            _editRequestsTable.Columns.Add(new DataColumn("New App. time", typeof(DateTime)));
-            _editRequestsTable.Columns.Add(new DataColumn("Orig. App. type", typeof(AppointmentType)));
-            _editRequestsTable.Columns.Add(new DataColumn("New App. type", typeof(AppointmentType)));
+            deleteRequestsDataGrid.IsReadOnly = true;
+            editRequestsDataGrid.IsReadOnly = true;
+            Refresh();
         }
 
         private void Refresh()
         {
-            CreateDeleteRequestsTable();
-            CreateEditRequestsTable();
-
+            _deleteRequests = new List<DeleteAppointmentChangeRequestDisplay>();
+            _editRequests = new List<EditAppointmentChangeRequestDisplay>();
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {
                 if (request.State == Enums.RequestState.Waiting && request.PatientID == _patient.ID)
                 {
                     if (request.RequestType == Enums.RequestType.Delete)
                     {
-                        DataRow row = _deleteRequestsTable.NewRow();
-                        row[0] = request.ID;
-                        row[1] = request.DateSent;
+                        DeleteAppointmentChangeRequestDisplay deleteRequest = new DeleteAppointmentChangeRequestDisplay
+                        {
+                            ID = request.ID,
+                            TimeSent = request.DateSent
+                        };
 
                         foreach (Appointment appointment in AppointmentRepository.Appointments)
                         {
@@ -81,21 +68,23 @@ namespace HealthCareCenter.SecretaryGUI
                                 {
                                     if (doctor.ID == appointment.DoctorID)
                                     {
-                                        row[2] = doctor.Username;
+                                        deleteRequest.DoctorUsername = doctor.Username;
                                         break;
                                     }
                                 }
-                                row[3] = appointment.ScheduledDate;
+                                deleteRequest.AppointmentTime = appointment.ScheduledDate;
                                 break;
                             }
                         }
-                        _deleteRequestsTable.Rows.Add(row);
+                        _deleteRequests.Add(deleteRequest);
                     }
                     else
                     {
-                        DataRow row = _editRequestsTable.NewRow();
-                        row[0] = request.ID;
-                        row[1] = request.DateSent;
+                        EditAppointmentChangeRequestDisplay editRequest = new EditAppointmentChangeRequestDisplay
+                        {
+                            ID = request.ID,
+                            TimeSent = request.DateSent
+                        };
 
                         foreach (Appointment appointment in AppointmentRepository.Appointments)
                         {
@@ -107,12 +96,12 @@ namespace HealthCareCenter.SecretaryGUI
                                 {
                                     if (doctor.ID == appointment.DoctorID)
                                     {
-                                        row[2] = doctor.Username;
+                                        editRequest.OriginalDoctorUsername = doctor.Username;
                                         foundOld = true;
                                     }
-                                    else if (doctor.ID == request.NewDoctorID)
+                                    if (doctor.ID == request.NewDoctorID)
                                     {
-                                        row[3] = doctor.Username;
+                                        editRequest.NewDoctorUsername = doctor.Username;
                                         foundNew = true;
                                     }
                                     if (foundNew && foundOld)
@@ -120,30 +109,19 @@ namespace HealthCareCenter.SecretaryGUI
                                         break;
                                     }
                                 }
-                                row[4] = appointment.ScheduledDate;
-                                row[6] = appointment.Type;
+                                editRequest.OriginalAppointmentTime = appointment.ScheduledDate;
+                                editRequest.OriginalAppointmentType = appointment.Type;
                                 break;
                             }
                         }
-                        row[5] = request.NewDate;
-                        row[7] = request.NewAppointmentType;
-                        _editRequestsTable.Rows.Add(row);
+                        editRequest.NewAppointmentTime = request.NewDate;
+                        editRequest.NewAppointmentType = request.NewAppointmentType;
+                        _editRequests.Add(editRequest);
                     }
                 }
             }
-            deleteRequestsDataGrid.ItemsSource = _deleteRequestsTable.DefaultView;
-            editRequestsDataGrid.ItemsSource = _editRequestsTable.DefaultView;
-        }
-
-        private void Window_Initialized(object sender, EventArgs e)
-        {
-            AppointmentChangeRequestRepository.Load();
-            AppointmentRepository.Load();
-
-            Refresh();
-
-            deleteRequestsDataGrid.IsReadOnly = true;
-            editRequestsDataGrid.IsReadOnly = true;
+            deleteRequestsDataGrid.ItemsSource = _deleteRequests;
+            editRequestsDataGrid.ItemsSource = _editRequests;
         }
 
         private void AcceptDeleteButton_Click(object sender, RoutedEventArgs e)
@@ -154,11 +132,11 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
-            int requestID = (int)((DataRowView)deleteRequestsDataGrid.SelectedItem).Row.ItemArray[0];
+            int requestID = (int)((DeleteAppointmentChangeRequestDisplay)deleteRequestsDataGrid.SelectedItem).ID;
 
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {
-                
+
                 if (request.ID == requestID)
                 {
                     request.State = RequestState.Approved;
@@ -181,7 +159,7 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
-            int requestID = (int)((DataRowView)deleteRequestsDataGrid.SelectedItem).Row.ItemArray[0];
+            int requestID = (int)((DeleteAppointmentChangeRequestDisplay)deleteRequestsDataGrid.SelectedItem).ID;
 
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {
@@ -206,7 +184,7 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
-            int requestID = (int)((DataRowView)editRequestsDataGrid.SelectedItem).Row.ItemArray[0];
+            int requestID = (int)((EditAppointmentChangeRequestDisplay)editRequestsDataGrid.SelectedItem).ID;
 
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {
@@ -233,7 +211,7 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
-            int requestID = (int)((DataRowView)editRequestsDataGrid.SelectedItem).Row.ItemArray[0];
+            int requestID = (int)((EditAppointmentChangeRequestDisplay)editRequestsDataGrid.SelectedItem).ID;
 
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {

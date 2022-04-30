@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HealthCareCenter.SecretaryGUI"
         mc:Ignorable="d"
-        Title="Requests for appointment change" Height="600" Width="1150" Initialized="Window_Initialized"
+        Title="Requests for appointment change" Height="600" Width="1150"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style TargetType="DataGridCell">
@@ -38,12 +38,26 @@
         <Button x:Name="rejectEditButton" Grid.Row="2" Grid.Column="3" Margin="7.5" Content="Reject" FontSize="18" Click="RejectEditButton_Click" />
 
         <DataGrid x:Name="deleteRequestsDataGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="7.5" 
-                  AutoGenerateColumns="True" FontSize="12">
-            
+                  AutoGenerateColumns="False" FontSize="12">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="auto"/>
+                <DataGridTextColumn Header="Time sent" Binding="{Binding TimeSent, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="auto"/>
+                <DataGridTextColumn Header="Doctor" Binding="{Binding DoctorUsername}" Width="auto"/>
+                <DataGridTextColumn Header="App. time" Binding="{Binding AppointmentTime, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="*"/>
+            </DataGrid.Columns>
         </DataGrid>
         <DataGrid x:Name="editRequestsDataGrid" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="7.5" 
-                  AutoGenerateColumns="True" FontSize="12">
-            
+                  AutoGenerateColumns="False" FontSize="12">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="auto"/>
+                <DataGridTextColumn Header="Time sent" Binding="{Binding TimeSent, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="auto"/>
+                <DataGridTextColumn Header="Orig. doctor" Binding="{Binding OriginalDoctorUsername}" Width="auto"/>
+                <DataGridTextColumn Header="New doctor" Binding="{Binding NewDoctorUsername}" Width="auto"/>
+                <DataGridTextColumn Header="Orig. App. time" Binding="{Binding OriginalAppointmentTime, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="auto"/>
+                <DataGridTextColumn Header="New App. time" Binding="{Binding NewAppointmentTime, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="auto"/>
+                <DataGridTextColumn Header="Orig. App. type" Binding="{Binding OriginalAppointmentType}"  Width="auto"/>
+                <DataGridTextColumn Header="New App. type" Binding="{Binding NewAppointmentType}" Width="*"/>
+            </DataGrid.Columns>
         </DataGrid>
 
     </Grid>
