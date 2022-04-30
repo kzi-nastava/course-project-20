@@ -12,5 +12,16 @@
       "ID": 0,
       "Comment": "This is also patients annamnesis"
     }
+  },
+  {
+    "ID": 3,
+    "Type": 1,
+    "ScheduledDate": "01/05/2022 09:30",
+    "CreatedDate": "30/04/2022 09:15",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": -1,
+    "PatientAnamnesis": null
   }
 ]

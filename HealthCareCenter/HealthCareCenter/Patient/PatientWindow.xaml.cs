@@ -19,7 +19,7 @@ namespace HealthCareCenter
 {
     public partial class PatientWindow : Window
     {
-        private Patient signedUser;
+        private Patient signedPatient;
         //private PatientRepository patientRepository;
         private List<Appointment> unfinishedAppointments;
 
@@ -41,7 +41,7 @@ namespace HealthCareCenter
 
         public PatientWindow(User user)
         {
-            signedUser = (Patient)user;
+            signedPatient = (Patient)user;
             
             // loading all necessary information
             //============================================
@@ -49,7 +49,7 @@ namespace HealthCareCenter
             AppointmentChangeRequestRepository.Load();
             //============================================
 
-            unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
+            unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
             InitializeComponent();
 
             // creating the appointment table and making that window visible
@@ -355,18 +355,18 @@ namespace HealthCareCenter
             MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", "Cancel appointment", System.Windows.MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                CheckModificationTroll();
                 AppointmentChangeRequest newChangeRequest = new AppointmentChangeRequest
                 {
                     ID = ++AppointmentChangeRequestRepository.LargestID,
                     AppointmentID = Convert.ToInt32(chosenAppointment[0]),
                     RequestType = Enums.RequestType.Delete,
                     DateSent = DateTime.Now,
-                    PatientID = signedUser.ID
+                    PatientID = signedPatient.ID
                 };
 
                 if (shouldSendRequestToSecretary)
                 {
+                    CheckModificationTroll();
                     foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
                     {
                         if (changeRequest.AppointmentID == newChangeRequest.AppointmentID)
@@ -374,6 +374,7 @@ namespace HealthCareCenter
                             changeRequest.State = Enums.RequestState.Waiting;
                             changeRequest.NewDate = newChangeRequest.NewDate;
                             changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
+                            changeRequest.RequestType = newChangeRequest.RequestType;
                             AppointmentChangeRequestRepository.Save();
                             return;
                         }
@@ -385,9 +386,11 @@ namespace HealthCareCenter
                 else
                 {
                     AppointmentChangeRequestService.DeleteAppointment(newChangeRequest);
-                    unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
+                    AppointmentRepository.Save();
+                    unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
                 }
             }
+
             CreateAppointmentTable();
             FillAppointmentTable();
         }
@@ -478,7 +481,7 @@ namespace HealthCareCenter
                 NewAppointmentType = Enums.AppointmentType.Checkup,
                 NewDoctorID = Convert.ToInt32(chosenDoctor[0]),
                 DateSent = DateTime.Now,
-                PatientID = signedUser.ID
+                PatientID = signedPatient.ID
             };
             AddAppointmentToSchedule(newChangeRequest);
 
@@ -510,6 +513,7 @@ namespace HealthCareCenter
                             changeRequest.State = Enums.RequestState.Waiting;
                             changeRequest.NewDate = newChangeRequest.NewDate;
                             changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
+                            changeRequest.RequestType = newChangeRequest.RequestType;
                             AppointmentChangeRequestRepository.Save();
                             return;
                         }
@@ -521,7 +525,7 @@ namespace HealthCareCenter
                 else
                 {
                     AppointmentChangeRequestService.EditAppointment(newChangeRequest);
-                    unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
+                    unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
                 }
             }
             else
@@ -535,7 +539,7 @@ namespace HealthCareCenter
                     ScheduledDate = newChangeRequest.NewDate,
                     Emergency = false,
                     DoctorID = Convert.ToInt32(chosenDoctor[0]),
-                    HealthRecordID = signedUser.HealthRecordID,
+                    HealthRecordID = signedPatient.HealthRecordID,
                     HospitalRoomID = -1,
                     PatientAnamnesis = null
                 };
@@ -563,7 +567,7 @@ namespace HealthCareCenter
             int creationCount = 0;
             foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
-                if (appointment.HealthRecordID == signedUser.HealthRecordID)
+                if (appointment.HealthRecordID == signedPatient.HealthRecordID)
                 {
                     TimeSpan timePassedSinceScheduling = DateTime.Now.Subtract(appointment.CreatedDate);
                     if (timePassedSinceScheduling.TotalDays < 30)
@@ -578,7 +582,7 @@ namespace HealthCareCenter
                 MessageBox.Show("You have been blocked for excessive amounts of appointments created in the last 30 days");
                 foreach (Patient patient in UserRepository.Patients)
                 {
-                    if (signedUser.ID == patient.ID)
+                    if (signedPatient.ID == patient.ID)
                     {
                         MessageBox.Show(patient.ID.ToString());
                         patient.IsBlocked = true;
@@ -597,7 +601,7 @@ namespace HealthCareCenter
             int modificationCount = 0;
             foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
             {
-                if (changeRequest.PatientID == signedUser.ID)
+                if (changeRequest.PatientID == signedPatient.ID)
                 {
                     TimeSpan timePassedSinceScheduling = DateTime.Now.Subtract(changeRequest.DateSent);
                     if (timePassedSinceScheduling.TotalDays < 30)
@@ -612,7 +616,7 @@ namespace HealthCareCenter
                 MessageBox.Show("You have been blocked for excessive amounts of change requests sent in the last 30 days");
                 foreach (Patient patient in UserRepository.Patients)
                 {
-                    if (signedUser.ID == patient.ID)
+                    if (signedPatient.ID == patient.ID)
                     {
                         patient.IsBlocked = true;
                         patient.BlockedBy = Enums.Blocker.System;
