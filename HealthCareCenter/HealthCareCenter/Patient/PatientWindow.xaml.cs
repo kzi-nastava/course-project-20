@@ -374,6 +374,7 @@ namespace HealthCareCenter
                             changeRequest.State = Enums.RequestState.Waiting;
                             changeRequest.NewDate = newChangeRequest.NewDate;
                             changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
+                            changeRequest.RequestType = newChangeRequest.RequestType;
                             AppointmentChangeRequestRepository.Save();
                             return;
                         }
@@ -385,6 +386,7 @@ namespace HealthCareCenter
                 else
                 {
                     AppointmentChangeRequestService.DeleteAppointment(newChangeRequest);
+                    AppointmentRepository.Save();
                     unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
                 }
             }
@@ -510,6 +512,7 @@ namespace HealthCareCenter
                             changeRequest.State = Enums.RequestState.Waiting;
                             changeRequest.NewDate = newChangeRequest.NewDate;
                             changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
+                            changeRequest.RequestType = newChangeRequest.RequestType;
                             AppointmentChangeRequestRepository.Save();
                             return;
                         }
@@ -542,7 +545,6 @@ namespace HealthCareCenter
                 unfinishedAppointments.Add(newAppointment);
                 AppointmentRepository.Appointments.Add(newAppointment);
             }
-
 
             AppointmentRepository.Save();
         }
