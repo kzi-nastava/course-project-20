@@ -542,8 +542,8 @@ namespace HealthCareCenter
                     HospitalRoomID = -1,
                     PatientAnamnesis = null
                 };
-                unfinishedAppointments.Add(newAppointment);
                 AppointmentRepository.Appointments.Add(newAppointment);
+                unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
             }
 
             AppointmentRepository.Save();
