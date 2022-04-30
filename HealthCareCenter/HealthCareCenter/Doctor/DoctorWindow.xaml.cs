@@ -542,12 +542,16 @@ namespace HealthCareCenter
             string[] previousDiseases = previousDiseasesTextBox.Text.Split(",");
             foreach(string disease in previousDiseases)
             {
+                if (string.IsNullOrWhiteSpace(disease))
+                    continue;
                 HealthRecordRepository.Records[healthRecordIndex].PreviousDiseases.Add(disease);
             }
             HealthRecordRepository.Records[healthRecordIndex].Allergens.Clear();
             string[] allergens = alergensTextBox.Text.Split(",");
             foreach (string allergen in allergens)
             {
+                if (string.IsNullOrWhiteSpace(allergen))
+                    continue;
                 HealthRecordRepository.Records[healthRecordIndex].Allergens.Add(allergen);
             }
         }

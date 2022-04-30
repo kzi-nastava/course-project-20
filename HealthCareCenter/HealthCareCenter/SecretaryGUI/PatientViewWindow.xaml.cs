@@ -97,7 +97,7 @@ namespace HealthCareCenter.SecretaryGUI
             allergensListBox.Items.Refresh();
         }
 
-        private void ViewChangeAppointmentRequestsButton_Click(object sender, RoutedEventArgs e)
+        private void ViewChangeRequestsButton_Click(object sender, RoutedEventArgs e)
         {
             ViewChangeRequestsWindow window = new ViewChangeRequestsWindow(_patient);
             window.ShowDialog();
