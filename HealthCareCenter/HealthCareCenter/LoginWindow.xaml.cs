@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using HealthCareCenter.Model;
 using HealthCareCenter.SecretaryGUI;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter
 {
@@ -21,7 +22,7 @@ namespace HealthCareCenter
     {
         private void DoEquipmentRearrangements()
         {
-            List<Equipment> equipments = EquipmentRepository.GetEquipments();
+            List<Equipment> equipments = EquipmentService.GetEquipments();
             for (int i = 0; i < equipments.Count; i++)
             {
                 equipments[i].Rearrange();
@@ -83,7 +84,6 @@ namespace HealthCareCenter
                         {
                             ShowWindow(new SecretaryWindow(user));
                         }
-
                     }
                     else
                     {

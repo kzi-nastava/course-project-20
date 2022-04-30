@@ -8,6 +8,15 @@ namespace HealthCareCenter.Service
     public static class EquipmentRearrangementService
     {
         /// <summary>
+        /// Return all equipment rearrangements loaded in list.
+        /// </summary>
+        /// <returns>Loaded list of equipment rearrangements.</returns>
+        public static List<EquipmentRearrangement> GetRearrangements()
+        {
+            return EquipmentRearrangementRepository.Rearrangements;
+        }
+
+        /// <summary>
         /// Adding new rearrangement in file equipmentRearrangement.json.
         /// </summary>
         /// <param name="newRearrangement"></param>
@@ -50,7 +59,7 @@ namespace HealthCareCenter.Service
         /// Finiding last (largest) id of equipment rearrangement.
         /// </summary>
         /// <returns>Last (largest) id of rearrangement</returns>
-        public static int GetLastID()
+        public static int GetLargestID()
         {
             try
             {

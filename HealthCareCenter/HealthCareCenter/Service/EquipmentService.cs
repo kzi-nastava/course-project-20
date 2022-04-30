@@ -1,0 +1,174 @@
+﻿using HealthCareCenter.Model;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace HealthCareCenter.Service
+{
+    internal class EquipmentService
+    {
+        /// <summary>
+        /// Finding equipment with specific id.
+        /// </summary>
+        /// <param name="id">id of wanted equipment</param>
+        /// <returns>Equipment with specific id, if equipment is found, or null if equipment is not found.</returns>
+        /// <exception cref="EquipmentNotFound">Thrown when equipment with specific id is not found.</exception>
+        public static Equipment GetEquipment(int id)
+        {
+            try
+            {
+                foreach (Equipment equipment in EquipmentRepository.Equipments)
+                {
+                    if (equipment.ID == id)
+                        return equipment;
+                }
+
+                throw new EquipmentNotFound();
+            }
+            catch (EquipmentNotFound ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Return loaded equipments from list.
+        /// </summary>
+        /// <returns>Loaded equipments.</returns>
+        public static List<Equipment> GetEquipments()
+        {
+            return EquipmentRepository.Equipments;
+        }
+
+        /// <summary>
+        /// Add new equipment in file equipments.json.
+        /// </summary>
+        /// <param name="newEquipment"></param>
+        public static void AddEquipment(Equipment newEquipment)
+        {
+            EquipmentRepository.Equipments.Add(newEquipment);
+            EquipmentRepository.SaveEquipments(EquipmentRepository.Equipments);
+        }
+
+        /// <summary>
+        /// Finding last(largest) id in file equipments.json.
+        /// </summary>
+        /// <returns>last(largest) id.</returns>
+        public static int GetLargestEquipmentId()
+        {
+            try
+            {
+                List<Equipment> equipments = EquipmentRepository.Equipments;
+                equipments.Sort((x, y) => x.ID.CompareTo(y.ID));
+                if (equipments.Count == 0)
+                    return -1;
+                return equipments[equipments.Count - 1].ID;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Delete equipment from file Equipments.josn with specific id.
+        /// </summary>
+        /// <param name="id">id of the equipment we want to delete.</param>
+        /// <returns>true if equipment is deleted or false if it's not.</returns>
+        /// <exception cref="EquipmentNotFound">Thrown when equipment with specific id is not found.</exception>
+        public static bool DeleteEquipment(int id)
+        {
+            try
+            {
+                for (int i = 0; i < EquipmentRepository.Equipments.Count; i++)
+                {
+                    if (id == EquipmentRepository.Equipments[i].ID)
+                    {
+                        EquipmentRepository.Equipments.RemoveAt(i);
+                        EquipmentRepository.SaveEquipments(EquipmentRepository.Equipments);
+                        return true;
+                    }
+                }
+                throw new EquipmentNotFound();
+            }
+            catch (EquipmentNotFound ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Delete equipment from file Equipments.josn.
+        /// </summary>
+        /// <param name="equipment">equipment we want to delete</param>
+        /// <returns>true if equipment is deleted or false if it's not</returns>
+        /// <exception cref="EquipmentNotFound">Thrown when equipment with specific id is not found</exception>
+        public static bool DeleteEquipment(Equipment equipment)
+        {
+            try
+            {
+                for (int i = 0; i < EquipmentRepository.Equipments.Count; i++)
+                {
+                    if (equipment.ID == EquipmentRepository.Equipments[i].ID)
+                    {
+                        EquipmentRepository.Equipments.RemoveAt(i);
+                        EquipmentRepository.SaveEquipments(EquipmentRepository.Equipments);
+                        return true;
+                    }
+                }
+                throw new EquipmentNotFound();
+            }
+            catch (EquipmentNotFound ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Updating equipment.
+        /// </summary>
+        /// <param name="equipment"></param>
+        /// <returns>true if equipment is found or false if it's not.</returns>
+        /// <exception cref="EquipmentNotFound">Thrown when equipment is not found.</exception>
+        public static bool UpdateEquipment(Equipment equipment)
+        {
+            try
+            {
+                for (int i = 0; i < EquipmentRepository.Equipments.Count; i++)
+                {
+                    if (equipment.ID == EquipmentRepository.Equipments[i].ID)
+                    {
+                        EquipmentRepository.Equipments[i] = equipment;
+                        EquipmentRepository.SaveEquipments(EquipmentRepository.Equipments);
+                        return true;
+                    }
+                }
+                throw new EquipmentNotFound();
+            }
+            catch (EquipmentNotFound ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+}
