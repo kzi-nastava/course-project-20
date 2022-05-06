@@ -10,6 +10,19 @@
     "Password": "eva",
     "FirstName": "Eva",
     "LastName": "Evic",
-    "DateOfBirth": "12/07/1940"
+    "DateOfBirth": "13/07/1940"
+  },
+  {
+    "IsBlocked": true,
+    "BlockedBy": 2,
+    "ReferralIDs": [],
+    "PrescriptionIDs": [],
+    "HealthRecordID": 2,
+    "ID": 4,
+    "Username": "iva",
+    "Password": "iva",
+    "FirstName": "iva",
+    "LastName": "drugopreyime",
+    "DateOfBirth": "09/01/2013"
   }
 ]

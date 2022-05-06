@@ -20,7 +20,6 @@ namespace HealthCareCenter
     public partial class PatientWindow : Window
     {
         private Patient signedUser;
-        //private PatientRepository patientRepository;
         private List<Appointment> unfinishedAppointments;
 
         // appointment datagrid table
@@ -64,6 +63,7 @@ namespace HealthCareCenter
         private void ClearWindow()
         {
             myAppointmentsGrid.Visibility = Visibility.Collapsed;
+            //==
             createAppointmentGrid.Visibility = Visibility.Collapsed;
             if (allAvailableTimeTable != null)
             {
@@ -71,10 +71,14 @@ namespace HealthCareCenter
             }
             chosenDoctor = null;
             isScheduleDateChosen = false;
-            dayChoiceComboBox.Items.Clear();
-            monthChoiceComboBox.Items.Clear();
-            yearChoiceComboBox.Items.Clear();
+            dayChoiceCUDComboBox.Items.Clear();
+            monthChoiceCUDComboBox.Items.Clear();
+            yearChoiceCUDComboBox.Items.Clear();
             shouldSendRequestToSecretary = false;
+            //==
+            prioritySchedulingGrid.Visibility = Visibility.Collapsed;
+            startTimeRangePriorityComboBox.Items.Clear();
+            endTimeRangePriorityComboBox.Items.Clear();
 
             searchDoctorsGrid.Visibility = Visibility.Collapsed;
 
@@ -88,7 +92,7 @@ namespace HealthCareCenter
 
         }
 
-        // creation of appointment table
+        // create/modify appointment methods
         //==============================================================================
         private void CreateAppointmentTable()
         {
@@ -120,66 +124,6 @@ namespace HealthCareCenter
             }
             myAppointmentsDataGrid.ItemsSource = appointmentsDataTable.DefaultView;
         }
-        //==============================================================================
-
-        // creation of available appointments tables
-        //==============================================================================
-
-        // doctors table
-        //==================================================
-        private void CreateDoctorTable()
-        {
-            allDoctorsDataTable = new DataTable("Doctors");
-            allDoctorsDataTable.Columns.Add(new DataColumn("Id", typeof(int)));
-            allDoctorsDataTable.Columns.Add(new DataColumn("First name", typeof(string)));
-            allDoctorsDataTable.Columns.Add(new DataColumn("Last name", typeof(string)));
-            allDoctorsDataTable.Columns.Add(new DataColumn("Type", typeof(string)));
-        }
-
-        private void FillDoctorTable()
-        {
-            DataRow row;
-            foreach (Doctor doctor in UserRepository.Doctors)
-            {
-                row = allDoctorsDataTable.NewRow();
-                row[0] = doctor.ID;
-                row[1] = doctor.FirstName;
-                row[2] = doctor.LastName;
-                row[3] = doctor.Type;
-                allDoctorsDataTable.Rows.Add(row);
-            }
-            allDoctorsDataGrid.ItemsSource = allDoctorsDataTable.DefaultView;
-        }
-        //==================================================
-
-        // time table
-        //==================================================
-        private void FillDateComboBox()
-        {
-            for (int i = 1; i <= 31; i++)
-            {
-                string s = i.ToString();
-                if (s.Length == 1)
-                {
-                    s = "0" + s;
-                }
-                dayChoiceComboBox.Items.Add(s);
-            }
-            for (int i = 1; i <= 12; i++)
-            {
-                string s = i.ToString();
-                if (s.Length == 1)
-                {
-                    s = "0" + s;
-                }
-                monthChoiceComboBox.Items.Add(s);
-            }
-            yearChoiceComboBox.Items.Add("2022");
-            yearChoiceComboBox.Items.Add("2023");
-            yearChoiceComboBox.Items.Add("2024");
-            yearChoiceComboBox.Items.Add("2025");
-            yearChoiceComboBox.Items.Add("2026");
-        }
 
         private void CreateAvailableTimeTable()
         {
@@ -189,29 +133,6 @@ namespace HealthCareCenter
             allAvailableTimeTable.Columns.Add(new DataColumn("Year", typeof(int)));
             allAvailableTimeTable.Columns.Add(new DataColumn("Hour", typeof(int)));
             allAvailableTimeTable.Columns.Add(new DataColumn("Minutes", typeof(int)));
-        }
-
-        private List<string> GetAllPossibleDailySchedules()
-        {
-            // returns all schedules from 8:00 to 21:00 knowing that an appointment lasts 15 minutes
-            // example { "8:00", "8:15", "8:30" ... "20:30", "20:45" }
-
-            int hours = 8;
-            int minutes = 0;
-            List<string> allPossibleSchedules = new List<string>();
-            while (hours < 21)
-            {
-                string schedule = hours + ":" + minutes;
-                allPossibleSchedules.Add(schedule);
-                minutes += 15;
-                if (minutes >= 60)
-                {
-                    ++hours;
-                    minutes = 0;
-                }
-            }
-
-            return allPossibleSchedules;
         }
 
         private void FillAvailableTimeTable()
@@ -242,10 +163,8 @@ namespace HealthCareCenter
                 row[4] = Convert.ToInt32(time[1]);
                 allAvailableTimeTable.Rows.Add(row);
             }
-            allAvailableTimeDataGrid.ItemsSource = allAvailableTimeTable.DefaultView;
+            allAvailableTimeCUDDataGrid.ItemsSource = allAvailableTimeTable.DefaultView;
         }
-        //==================================================
-
         //==============================================================================
 
         // action menu click methods
@@ -305,8 +224,8 @@ namespace HealthCareCenter
             myAppointmentsGrid.Visibility = Visibility.Collapsed;
             createAppointmentGrid.Visibility = Visibility.Visible;
             CreateDoctorTable();
-            FillDoctorTable();
-            FillDateComboBox();
+            FillDoctorTable(allDoctorsCUDDataGrid);
+            FillDateComboBoxes(dayChoiceCUDComboBox, monthChoiceCUDComboBox, yearChoiceCUDComboBox);
             chosenAppointment = null;
         }
 
@@ -319,19 +238,13 @@ namespace HealthCareCenter
                 return;
             }
 
-            DateTime chosenAppointmentDate = Convert.ToDateTime(chosenAppointment[2]);
-            TimeSpan timeTillAppointment = chosenAppointmentDate.Subtract(DateTime.Now);
-            if (timeTillAppointment.TotalDays <= 2)
-            {
-                MessageBox.Show("Since there are less than 2 days left until the appointment starts," +
-                    " the request will be sent to the secretary to confirm the change");
-                shouldSendRequestToSecretary = true;
-            }
+            CheckShouldSendRequestToSecretary();
+
             myAppointmentsGrid.Visibility = Visibility.Collapsed;
             createAppointmentGrid.Visibility = Visibility.Visible;
             CreateDoctorTable();
-            FillDoctorTable();
-            FillDateComboBox();
+            FillDoctorTable(allDoctorsCUDDataGrid);
+            FillDateComboBoxes(dayChoiceCUDComboBox, monthChoiceCUDComboBox, yearChoiceCUDComboBox);
         }
 
         private void cancelAppointmentButton_Click(object sender, RoutedEventArgs e)
@@ -343,72 +256,43 @@ namespace HealthCareCenter
                 return;
             }
 
-            DateTime chosenAppointmentDate = Convert.ToDateTime(chosenAppointment[2]);
-            TimeSpan timeTillAppointment = chosenAppointmentDate.Subtract(DateTime.Now);
-            if (timeTillAppointment.TotalDays <= 2)
-            {
-                MessageBox.Show("Since there are less than 2 days left until the appointment starts," +
-                    " the request will be sent to the secretary to confirm");
-                shouldSendRequestToSecretary = true;
-            }
+            CheckShouldSendRequestToSecretary();
 
             MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", "Cancel appointment", System.Windows.MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                CheckModificationTroll();
-                AppointmentChangeRequest newChangeRequest = new AppointmentChangeRequest
-                {
-                    ID = ++AppointmentChangeRequestRepository.LargestID,
-                    AppointmentID = Convert.ToInt32(chosenAppointment[0]),
-                    RequestType = Enums.RequestType.Delete,
-                    DateSent = DateTime.Now,
-                    PatientID = signedUser.ID
-                };
-
-                if (shouldSendRequestToSecretary)
-                {
-                    foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
-                    {
-                        if (changeRequest.AppointmentID == newChangeRequest.AppointmentID)
-                        {
-                            changeRequest.State = Enums.RequestState.Waiting;
-                            changeRequest.NewDate = newChangeRequest.NewDate;
-                            changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
-                            changeRequest.RequestType = newChangeRequest.RequestType;
-                            AppointmentChangeRequestRepository.Save();
-                            return;
-                        }
-                    }
-                    AppointmentChangeRequestRepository.Requests.Add(newChangeRequest);
-                    AppointmentChangeRequestRepository.Save();
-                    return;
-                }
-                else
-                {
-                    AppointmentChangeRequestService.DeleteAppointment(newChangeRequest);
-                    AppointmentRepository.Save();
-                    unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
-                }
+                CancelAppointment();
             }
-            CreateAppointmentTable();
-            FillAppointmentTable();
         }
+
+        private void prioritySchedulingButton_Click(object sender, RoutedEventArgs e)
+        {
+            myAppointmentsGrid.Visibility = Visibility.Collapsed;
+            prioritySchedulingGrid.Visibility = Visibility.Visible;
+            chosenAppointment = null;
+
+            FillDateComboBoxes(dayChoicePriorityComboBox, monthChoicePriorityComboBox, yearChoicePriorityComboBox);
+            FillAppointmentRangeComboBoxes();
+            CreateDoctorTable();
+            FillDoctorTable(allDoctorsPriorityDataGrid);
+        }
+
         //=======================================================================================
 
         // appointments creation/modification menu button click methods
         //=======================================================================================
-        private void chooseDoctorButton_Click(object sender, RoutedEventArgs e)
+        private void chooseDoctorCUDButton_Click(object sender, RoutedEventArgs e)
         {
-            chosenDoctor = allDoctorsDataGrid.SelectedItem as DataRowView;
+            chosenDoctor = allDoctorsCUDDataGrid.SelectedItem as DataRowView;
             if (chosenDoctor == null)
             {
                 MessageBox.Show("No doctor selected");
                 return;
             }
 
-            var dayChosen = dayChoiceComboBox.SelectedItem;
-            var monthChosen = monthChoiceComboBox.SelectedItem;
-            var yearChosen = yearChoiceComboBox.SelectedItem;
+            var dayChosen = dayChoiceCUDComboBox.SelectedItem;
+            var monthChosen = monthChoiceCUDComboBox.SelectedItem;
+            var yearChosen = yearChoiceCUDComboBox.SelectedItem;
 
             if (dayChosen == null || monthChosen == null || yearChosen == null)
             {
@@ -440,7 +324,7 @@ namespace HealthCareCenter
 
         }
 
-        private void scheduleAppointmentButton_Click(object sender, RoutedEventArgs e)
+        private void scheduleAppointmentCUDButton_Click(object sender, RoutedEventArgs e)
         {
             if (chosenDoctor == null)
             {
@@ -453,7 +337,7 @@ namespace HealthCareCenter
                 return;
             }
 
-            DataRowView chosenScheduleTime = allAvailableTimeDataGrid.SelectedItem as DataRowView;
+            DataRowView chosenScheduleTime = allAvailableTimeCUDDataGrid.SelectedItem as DataRowView;
             if (chosenScheduleTime == null)
             {
                 MessageBox.Show("No schedule time selected");
@@ -624,6 +508,147 @@ namespace HealthCareCenter
                 UserRepository.SavePatients();
                 LogOut();
             }
+        }
+        //=======================================================================================
+
+        // priority scheduling methods
+        //=======================================================================================
+        private void FillAppointmentRangeComboBoxes()
+        {
+            foreach (string scheduleTime in GetAllPossibleDailySchedules())
+            {
+                startTimeRangePriorityComboBox.Items.Add(scheduleTime);
+                endTimeRangePriorityComboBox.Items.Add(scheduleTime);
+            }
+        }
+        
+        //=======================================================================================
+
+        // helper methods
+        //=======================================================================================
+        private void CancelAppointment()
+        {
+            CheckModificationTroll();
+            AppointmentChangeRequest newChangeRequest = new AppointmentChangeRequest
+            {
+                ID = ++AppointmentChangeRequestRepository.LargestID,
+                AppointmentID = Convert.ToInt32(chosenAppointment[0]),
+                RequestType = Enums.RequestType.Delete,
+                DateSent = DateTime.Now,
+                PatientID = signedUser.ID
+            };
+
+            if (shouldSendRequestToSecretary)
+            {
+                foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
+                {
+                    if (changeRequest.AppointmentID == newChangeRequest.AppointmentID)
+                    {
+                        changeRequest.State = Enums.RequestState.Waiting;
+                        changeRequest.NewDate = newChangeRequest.NewDate;
+                        changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
+                        changeRequest.RequestType = newChangeRequest.RequestType;
+                        AppointmentChangeRequestRepository.Save();
+                        return;
+                    }
+                }
+                AppointmentChangeRequestRepository.Requests.Add(newChangeRequest);
+                AppointmentChangeRequestRepository.Save();
+                return;
+            }
+            else
+            {
+                AppointmentChangeRequestService.DeleteAppointment(newChangeRequest);
+                AppointmentRepository.Save();
+                unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
+            }
+            CreateAppointmentTable();
+            FillAppointmentTable();
+        }
+
+        private void CheckShouldSendRequestToSecretary()
+        {
+            DateTime chosenAppointmentDate = Convert.ToDateTime(chosenAppointment[2]);
+            TimeSpan timeTillAppointment = chosenAppointmentDate.Subtract(DateTime.Now);
+            if (timeTillAppointment.TotalDays <= 2)
+            {
+                MessageBox.Show("Since there are less than 2 days left until the appointment starts, the request will be sent to the secretary to confirm");
+                shouldSendRequestToSecretary = true;
+            }
+        }
+
+        private void FillDateComboBoxes(ComboBox dayChoiceComboBox, ComboBox monthChoiceComboBox, ComboBox yearChoiceComboBox)
+        {
+            for (int i = 1; i <= 31; i++)
+            {
+                string s = i.ToString();
+                if (s.Length == 1)
+                {
+                    s = "0" + s;
+                }
+                dayChoiceComboBox.Items.Add(s);
+            }
+            for (int i = 1; i <= 12; i++)
+            {
+                string s = i.ToString();
+                if (s.Length == 1)
+                {
+                    s = "0" + s;
+                }
+                monthChoiceComboBox.Items.Add(s);
+            }
+            yearChoiceComboBox.Items.Add("2022");
+            yearChoiceComboBox.Items.Add("2023");
+            yearChoiceComboBox.Items.Add("2024");
+            yearChoiceComboBox.Items.Add("2025");
+            yearChoiceComboBox.Items.Add("2026");
+        }
+        
+        private List<string> GetAllPossibleDailySchedules()
+        {
+            // returns all schedules from 8:00 to 21:00 knowing that an appointment lasts 15 minutes
+            // example { "8:00", "8:15", "8:30" ... "20:30", "20:45" }
+
+            int hours = 8;
+            int minutes = 0;
+            List<string> allPossibleSchedules = new List<string>();
+            while (hours < 21)
+            {
+                string schedule = hours + ":" + minutes;
+                allPossibleSchedules.Add(schedule);
+                minutes += 15;
+                if (minutes >= 60)
+                {
+                    ++hours;
+                    minutes = 0;
+                }
+            }
+
+            return allPossibleSchedules;
+        }
+
+        private void CreateDoctorTable()
+        {
+            allDoctorsDataTable = new DataTable("Doctors");
+            allDoctorsDataTable.Columns.Add(new DataColumn("Id", typeof(int)));
+            allDoctorsDataTable.Columns.Add(new DataColumn("First name", typeof(string)));
+            allDoctorsDataTable.Columns.Add(new DataColumn("Last name", typeof(string)));
+            allDoctorsDataTable.Columns.Add(new DataColumn("Type", typeof(string)));
+        }
+
+        private void FillDoctorTable(DataGrid doctorGrid)
+        {
+            DataRow row;
+            foreach (Doctor doctor in UserRepository.Doctors)
+            {
+                row = allDoctorsDataTable.NewRow();
+                row[0] = doctor.ID;
+                row[1] = doctor.FirstName;
+                row[2] = doctor.LastName;
+                row[3] = doctor.Type;
+                allDoctorsDataTable.Rows.Add(row);
+            }
+            doctorGrid.ItemsSource = allDoctorsDataTable.DefaultView;
         }
         //=======================================================================================
 

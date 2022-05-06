@@ -7,5 +7,18 @@
     "Allergens": [],
     "PatientID": 2,
     "AppointmentIDs": []
+  },
+  {
+    "ID": 2,
+    "Height": 167.0,
+    "Weight": 74.0,
+    "PreviousDiseases": [
+      "Bolest"
+    ],
+    "Allergens": [
+      "Alergen"
+    ],
+    "PatientID": 4,
+    "AppointmentIDs": []
   }
 ]
