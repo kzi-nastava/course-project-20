@@ -33,6 +33,8 @@ namespace HealthCareCenter
         private bool isScheduleDateChosen = false;
         private DataRowView chosenAppointment;  // selected row with appointment information, used when making changes to an appointment
         private bool shouldSendRequestToSecretary = false;
+        private string startRangePriorityTime;
+        private string endRangePriorityTime;
 
         // trolling limits
         private const int creationTrollLimit = 8;
@@ -76,6 +78,9 @@ namespace HealthCareCenter
             yearChoiceCUDComboBox.Items.Clear();
             shouldSendRequestToSecretary = false;
             //==
+            dayChoicePriorityComboBox.Items.Clear();
+            monthChoicePriorityComboBox.Items.Clear();
+            yearChoicePriorityComboBox.Items.Clear();
             prioritySchedulingGrid.Visibility = Visibility.Collapsed;
             startTimeRangePriorityComboBox.Items.Clear();
             endTimeRangePriorityComboBox.Items.Clear();
@@ -137,7 +142,7 @@ namespace HealthCareCenter
 
         private void FillAvailableTimeTable()
         {
-            List<string> allPossibleSchedules = GetAllPossibleDailySchedules();
+            List<string> allPossibleSchedules = GetDailySchedulesFromRange(Constants.StartWorkTime, 0, Constants.EndWorkTime, 0);
             foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
                 int chosenDoctorID = Convert.ToInt32(chosenDoctor[0]);
@@ -276,7 +281,6 @@ namespace HealthCareCenter
             CreateDoctorTable();
             FillDoctorTable(allDoctorsPriorityDataGrid);
         }
-
         //=======================================================================================
 
         // appointments creation/modification menu button click methods
@@ -290,34 +294,10 @@ namespace HealthCareCenter
                 return;
             }
 
-            var dayChosen = dayChoiceCUDComboBox.SelectedItem;
-            var monthChosen = monthChoiceCUDComboBox.SelectedItem;
-            var yearChosen = yearChoiceCUDComboBox.SelectedItem;
-
-            if (dayChosen == null || monthChosen == null || yearChosen == null)
+            if (!IsDateValid(dayChoiceCUDComboBox, monthChoiceCUDComboBox, yearChoiceCUDComboBox))
             {
-                MessageBox.Show("Date combo boxes not filled");
                 return;
             }
-
-            string chosenDate = Convert.ToInt32(dayChosen) + "/" + Convert.ToInt32(monthChosen) + "/" + Convert.ToInt32(yearChosen);
-            try
-            {
-                chosenScheduleDate = Convert.ToDateTime(chosenDate);
-                isScheduleDateChosen = true;
-            }
-            catch (Exception formatEx)
-            {
-                MessageBox.Show("Invalid date format");
-                return;
-            }
-
-            if (chosenScheduleDate.CompareTo(DateTime.Now) <= 0)
-            {
-                MessageBox.Show("Invalid date");
-                return;
-            }
-
 
             CreateAvailableTimeTable();
             FillAvailableTimeTable();
@@ -386,7 +366,10 @@ namespace HealthCareCenter
 
             if (IsModification())
             {
-                CheckModificationTroll();
+                if (CheckModificationTroll())
+                {
+                    return;
+                }
                 if (shouldSendRequestToSecretary)
                 {
                     foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
@@ -413,7 +396,11 @@ namespace HealthCareCenter
             }
             else
             {
-                CheckCreationTroll();
+                if (CheckCreationTroll())
+                {
+                    return;
+                }
+
                 Appointment newAppointment = new Appointment
                 {
                     ID = newChangeRequest.AppointmentID,
@@ -444,7 +431,7 @@ namespace HealthCareCenter
 
         // anti troll mechanism methods
         //=======================================================================================
-        private void CheckCreationTroll()
+        private bool CheckCreationTroll()
         {
             int creationCount = 0;
             foreach (Appointment appointment in AppointmentRepository.Appointments)
@@ -475,10 +462,13 @@ namespace HealthCareCenter
                 }
                 UserRepository.SavePatients();
                 LogOut();
+                return true;
             }
+
+            return false;
         }
 
-        private void CheckModificationTroll()
+        private bool CheckModificationTroll()
         {
             int modificationCount = 0;
             foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
@@ -507,7 +497,10 @@ namespace HealthCareCenter
                 }
                 UserRepository.SavePatients();
                 LogOut();
+                return true;
             }
+
+            return false;
         }
         //=======================================================================================
 
@@ -515,13 +508,180 @@ namespace HealthCareCenter
         //=======================================================================================
         private void FillAppointmentRangeComboBoxes()
         {
-            foreach (string scheduleTime in GetAllPossibleDailySchedules())
+            foreach (string scheduleTime in GetDailySchedulesFromRange(Constants.StartWorkTime, 0, Constants.EndWorkTime, 0))
             {
                 startTimeRangePriorityComboBox.Items.Add(scheduleTime);
                 endTimeRangePriorityComboBox.Items.Add(scheduleTime);
             }
         }
-        
+
+        private bool IsPrioritySearchSelectionValid()
+        {
+            chosenDoctor = allDoctorsPriorityDataGrid.SelectedItem as DataRowView;
+            if (chosenDoctor == null)
+            {
+                MessageBox.Show("Doctor not selected");
+                return false;
+            }
+
+            if (!IsDateValid(dayChoicePriorityComboBox, monthChoicePriorityComboBox, yearChoicePriorityComboBox))
+            {
+                return false;
+            }
+
+            var startRange = startTimeRangePriorityComboBox.SelectedItem;
+            var endRange = endTimeRangePriorityComboBox.SelectedItem;
+
+            if (startRange == null || endRange == null)
+            {
+                MessageBox.Show("Start range and end range not selected");
+                return false;
+            }
+
+            startRangePriorityTime = Convert.ToString(startRange);
+            endRangePriorityTime = Convert.ToString(endRange);
+
+            if (!IsTimeRangeValid())
+            {
+                MessageBox.Show("Invalid time range");
+                return false;
+            }
+
+            return true; ;
+
+        }
+
+        private bool IsTimeRangeValid()
+        {
+            int[] startRange = GetHoursMinutesFromTime(startRangePriorityTime);
+            int[] endRange = GetHoursMinutesFromTime(endRangePriorityTime);
+
+            if (startRange[0] > endRange[0])
+            {
+                return false;
+            }
+            else if (startRange[0] == endRange[0])
+            {
+                if (startRange[1] >= endRange[1])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void CreateAvailablePriorityAppointmentsTable()
+        {
+
+        }
+
+        private Appointment GetPriorityAppointment()
+        {
+            Appointment newAppointment = null;
+            if (Convert.ToBoolean(doctorPriorityRadioButton.IsChecked))
+            {
+                newAppointment = GetDoctorPriorityAppointment();
+            }
+            if (Convert.ToBoolean(timePriorityRadioButton.IsChecked))
+            {
+                newAppointment = GetTimePriorityAppointment();
+            }
+
+            return newAppointment;
+        }
+
+        private Appointment GetDoctorPriorityAppointment()
+        {
+            Appointment newAppointment = BothPrioritiesSearch();
+
+            return newAppointment;
+        }
+
+        private Appointment GetTimePriorityAppointment()
+        {
+            Appointment newAppointment = BothPrioritiesSearch();
+
+            return newAppointment;
+        }
+
+        private Appointment BothPrioritiesSearch()
+        {   
+            DateTime date = DateTime.Now;
+            date = date.AddDays(1);
+            int[] startRange = GetHoursMinutesFromTime(startRangePriorityTime);
+            int[] endRange = GetHoursMinutesFromTime(endRangePriorityTime);
+            while (date.Date.CompareTo(chosenScheduleDate.Date) <= 0)
+            {
+                foreach (string time in GetDailySchedulesFromRange(startRange[0], startRange[1], endRange[0], endRange[1]))
+                {
+                    int[] timeHoursMinutes = GetHoursMinutesFromTime(time);
+                    bool isAvailable = true;
+                    foreach (Appointment appointment in AppointmentRepository.Appointments)
+                    {
+                        if (Convert.ToInt32(chosenDoctor[0]) == appointment.DoctorID)
+                        {
+                            if (timeHoursMinutes[0] == appointment.ScheduledDate.Hour)
+                            {
+                                if (timeHoursMinutes[1] == appointment.ScheduledDate.Minute)
+                                {
+                                    if (appointment.ScheduledDate.Date.CompareTo(date.Date) == 0)
+                                    {
+                                        isAvailable = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (isAvailable)
+                    {
+                        string scheduleDateParse = date.ToString().Split(" ")[0];
+                        scheduleDateParse += time;
+                        DateTime scheduleDate = Convert.ToDateTime(scheduleDateParse);
+                        Appointment newAppointment = new Appointment
+                        {
+                            ID = ++AppointmentRepository.LargestID,
+                            Type = Enums.AppointmentType.Checkup,
+                            ScheduledDate = scheduleDate,
+                            CreatedDate = DateTime.Now,
+                            Emergency = false,
+                            DoctorID = Convert.ToInt32(chosenDoctor[0]),
+                            HealthRecordID = signedUser.HealthRecordID,
+                            HospitalRoomID = -1
+                        };
+                        return newAppointment;
+                    }
+
+                    date = date.AddDays(1);
+                }
+            }
+
+            return null;
+        }
+
+        //=======================================================================================
+
+        // priority scheduling button click methods
+        //=======================================================================================
+        private void scheduleAppointmentPriorityButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsPrioritySearchSelectionValid())
+            {
+                return;
+            }
+
+            Appointment appointment = GetPriorityAppointment();
+            if (appointment == null)
+            {
+                MessageBox.Show("Appointment not found");
+            }
+            else
+            {
+                MessageBox.Show("Appointment found: " + appointment.ScheduledDate.ToString());
+            }
+        }
         //=======================================================================================
 
         // helper methods
@@ -597,25 +757,23 @@ namespace HealthCareCenter
                 }
                 monthChoiceComboBox.Items.Add(s);
             }
-            yearChoiceComboBox.Items.Add("2022");
-            yearChoiceComboBox.Items.Add("2023");
-            yearChoiceComboBox.Items.Add("2024");
-            yearChoiceComboBox.Items.Add("2025");
-            yearChoiceComboBox.Items.Add("2026");
+            int currentYear = DateTime.Now.Year;
+            int nextYear = currentYear + 1;
+            yearChoiceComboBox.Items.Add(currentYear.ToString());
+            yearChoiceComboBox.Items.Add(nextYear.ToString());
         }
-        
-        private List<string> GetAllPossibleDailySchedules()
+
+        private List<string> GetDailySchedulesFromRange(int startHours, int startMinutes, int endHours, int endMinutes)
         {
             // returns all schedules from 8:00 to 21:00 knowing that an appointment lasts 15 minutes
-            // example { "8:00", "8:15", "8:30" ... "20:30", "20:45" }
 
-            int hours = 8;
-            int minutes = 0;
-            List<string> allPossibleSchedules = new List<string>();
-            while (hours < 21)
+            int hours = startHours;
+            int minutes = startMinutes;
+            List<string> possibleSchedules = new List<string>();
+            while (hours < endHours || minutes < endMinutes)
             {
                 string schedule = hours + ":" + minutes;
-                allPossibleSchedules.Add(schedule);
+                possibleSchedules.Add(schedule);
                 minutes += 15;
                 if (minutes >= 60)
                 {
@@ -624,7 +782,7 @@ namespace HealthCareCenter
                 }
             }
 
-            return allPossibleSchedules;
+            return possibleSchedules;
         }
 
         private void CreateDoctorTable()
@@ -649,6 +807,53 @@ namespace HealthCareCenter
                 allDoctorsDataTable.Rows.Add(row);
             }
             doctorGrid.ItemsSource = allDoctorsDataTable.DefaultView;
+        }
+
+        private bool IsDateValid(ComboBox dayChoiceComboBox, ComboBox monthChoiceComboBox, ComboBox yearChoiceComboBox)
+        {
+            var dayChosen = dayChoiceComboBox.SelectedItem;
+            var monthChosen = monthChoiceComboBox.SelectedItem;
+            var yearChosen = yearChoiceComboBox.SelectedItem;
+
+            if (dayChosen == null || monthChosen == null || yearChosen == null)
+            {
+                MessageBox.Show("Date combo boxes not filled");
+                return false;
+            }
+
+            string chosenDate = Convert.ToInt32(dayChosen) + "/" + Convert.ToInt32(monthChosen) + "/" + Convert.ToInt32(yearChosen);
+            try
+            {
+                chosenScheduleDate = Convert.ToDateTime(chosenDate);
+                isScheduleDateChosen = true;
+            }
+            catch (Exception formatEx)
+            {
+                MessageBox.Show("Invalid date format");
+                return false;
+            }
+
+            if (chosenScheduleDate.CompareTo(DateTime.Now) <= 0)
+            {
+                MessageBox.Show("Invalid date");
+                return false;
+            }
+
+            return true;
+        }
+
+        private int[] GetHoursMinutesFromTime(string timeAsWord)
+        {
+            // takes in a string with the format HH:mm and returns an int array with 
+            // hours and minutes as integers
+
+            int[] hoursAndMinutes = new int[2];
+            string[] time = timeAsWord.Split(":");
+
+            hoursAndMinutes[0] = Convert.ToInt32(time[0]);
+            hoursAndMinutes[1] = Convert.ToInt32(time[1]);
+
+            return hoursAndMinutes;
         }
         //=======================================================================================
 

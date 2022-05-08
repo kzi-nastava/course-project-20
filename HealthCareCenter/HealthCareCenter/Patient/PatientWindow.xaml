@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HealthCareCenter"
         mc:Ignorable="d"
-        Title="Patient Window" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+        Title="Patient Window" Height="450" Width="800" 
+        WindowStartupLocation="CenterScreen"
+        >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
@@ -159,8 +161,8 @@
                           IsReadOnly="True" />
 
             <TextBlock Text="Priority:" Grid.Row="3" Grid.Column="1" Grid.RowSpan="2" FontSize="18" Margin="0 10 0 0"/>
-            <RadioButton GroupName="priority" IsChecked="True" Content="Doctor" Grid.Row="5" Grid.Column="1" FontSize="15" Margin="0 5 0 0" />
-            <RadioButton GroupName="priority" Content="Time" Grid.Row="5" FontSize="15" Grid.Column="1" Margin="0 25 0 0"/>
+            <RadioButton x:Name="doctorPriorityRadioButton" GroupName="priority" IsChecked="True" Content="Doctor" Grid.Row="5" Grid.Column="1" FontSize="15" Margin="0 5 0 0" />
+            <RadioButton x:Name="timePriorityRadioButton" GroupName="priority" Content="Time" Grid.Row="5" FontSize="15" Grid.Column="1" Margin="0 25 0 0"/>
             
             <TextBlock Grid.Row="3" Grid.Column="2" Text="Choose latest scheduling date that is most convenient for you:" Grid.ColumnSpan="3" Margin="10 5 0 0" FontWeight="Bold" />
             <TextBlock Grid.Row="4" Grid.Column="2" Text="Choose day" Margin="15 5 2 0"  />
@@ -176,8 +178,7 @@
             <TextBlock Grid.Row="4" Grid.Column="6" Text="Choose end range" Margin="2 5 15 0"  />
             <ComboBox x:Name="endTimeRangePriorityComboBox" Margin="1 5 15 0" Grid.Row="5" Grid.Column="6" />
 
-            <Button x:Name="searchAppointmentsPriorityButton" Content="Search" Grid.Row="1" Grid.Column="4" Margin="5 0 5 0" />
-            <Button x:Name="scheduleAppointmentPriorityButton" Content="Schedule appointment" Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2" Margin="15 0 15 0" />
+            <Button x:Name="scheduleAppointmentPriorityButton" Content="Schedule appointment" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="3" Margin="15 0 15 0" Click="scheduleAppointmentPriorityButton_Click" />
         </Grid>
 
     </Grid>
