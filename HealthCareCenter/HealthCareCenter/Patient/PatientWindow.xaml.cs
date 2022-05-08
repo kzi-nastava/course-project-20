@@ -35,6 +35,7 @@ namespace HealthCareCenter
         private bool shouldSendRequestToSecretary = false;
         private string startRangePriorityTime;
         private string endRangePriorityTime;
+        private DataTable availablePriorityAppointmentsDataTable;
 
         // trolling limits
         private const int creationTrollLimit = 8;
@@ -84,6 +85,11 @@ namespace HealthCareCenter
             prioritySchedulingGrid.Visibility = Visibility.Collapsed;
             startTimeRangePriorityComboBox.Items.Clear();
             endTimeRangePriorityComboBox.Items.Clear();
+            if (availablePriorityAppointmentsDataTable != null)
+            {
+                availablePriorityAppointmentsDataTable.Clear();
+            }
+            availablePriorityAppointmentsDataTable = null;
 
             searchDoctorsGrid.Visibility = Visibility.Collapsed;
 
@@ -370,6 +376,7 @@ namespace HealthCareCenter
                 {
                     return;
                 }
+
                 if (shouldSendRequestToSecretary)
                 {
                     foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
@@ -573,53 +580,80 @@ namespace HealthCareCenter
 
         private void CreateAvailablePriorityAppointmentsTable()
         {
-
+            availablePriorityAppointmentsDataTable = new DataTable("Appointments");
+            availablePriorityAppointmentsDataTable.Columns.Add(new DataColumn("Doctor's ID", typeof(string)));
+            availablePriorityAppointmentsDataTable.Columns.Add(new DataColumn("Appointment date", typeof(string)));
         }
 
-        private Appointment GetPriorityAppointment()
+        private void FillAvailablePriorityAppointmentsTable(List<AppointmentChangeRequest> similarAppointments)
         {
-            Appointment newAppointment = null;
+            DataRow row;
+            int length = similarAppointments.Count >= 3 ? 3 : similarAppointments.Count;  // ensuring that max 3 appointments are shown
+            for (int i = 0; i < length; ++i)
+            {
+                AppointmentChangeRequest appointmentRequest = similarAppointments[i];
+                row = availablePriorityAppointmentsDataTable.NewRow();
+                row[0] = appointmentRequest.NewDoctorID;
+                row[1] = appointmentRequest.NewDate;
+                availablePriorityAppointmentsDataTable.Rows.Add(row);
+            }
+            allAppointmentsPriorityDataGrid.ItemsSource = availablePriorityAppointmentsDataTable.DefaultView;
+        }
+
+        private AppointmentChangeRequest GetPriorityAppointment()
+        {
+            AppointmentChangeRequest newAppointmentRequest = null;
             if (Convert.ToBoolean(doctorPriorityRadioButton.IsChecked))
             {
-                newAppointment = GetDoctorPriorityAppointment();
+                newAppointmentRequest = GetDoctorPriorityAppointment();
             }
             if (Convert.ToBoolean(timePriorityRadioButton.IsChecked))
             {
-                newAppointment = GetTimePriorityAppointment();
+                newAppointmentRequest = GetTimePriorityAppointment();
             }
 
-            return newAppointment;
+            return newAppointmentRequest;
         }
 
-        private Appointment GetDoctorPriorityAppointment()
+        private AppointmentChangeRequest GetDoctorPriorityAppointment()
         {
-            Appointment newAppointment = BothPrioritiesSearch();
+            AppointmentChangeRequest newAppointmentRequest = BothPrioritiesSearch();
 
-            return newAppointment;
+            if (newAppointmentRequest == null)
+            {
+                newAppointmentRequest = SameDoctorDifferentTimeSearch();
+            }
+
+            return newAppointmentRequest;
         }
 
-        private Appointment GetTimePriorityAppointment()
+        private AppointmentChangeRequest GetTimePriorityAppointment()
         {
-            Appointment newAppointment = BothPrioritiesSearch();
+            AppointmentChangeRequest newAppointmentRequest = BothPrioritiesSearch();
 
-            return newAppointment;
+            if (newAppointmentRequest == null)
+            {
+                newAppointmentRequest = DifferentDoctorSameTimeSearch();
+            }
+
+            return newAppointmentRequest;
         }
 
-        private Appointment BothPrioritiesSearch()
-        {   
+        private AppointmentChangeRequest PrioritySearch(int doctorID, List<string> possibleSchedules)
+        {
+            AppointmentChangeRequest newAppointmentRequest = null;
             DateTime date = DateTime.Now;
             date = date.AddDays(1);
-            int[] startRange = GetHoursMinutesFromTime(startRangePriorityTime);
-            int[] endRange = GetHoursMinutesFromTime(endRangePriorityTime);
-            while (date.Date.CompareTo(chosenScheduleDate.Date) <= 0)
+            bool appointmentFound = false;
+            while (date.Date.CompareTo(chosenScheduleDate.Date) <= 0 && !appointmentFound)
             {
-                foreach (string time in GetDailySchedulesFromRange(startRange[0], startRange[1], endRange[0], endRange[1]))
+                foreach (string time in possibleSchedules)
                 {
                     int[] timeHoursMinutes = GetHoursMinutesFromTime(time);
                     bool isAvailable = true;
                     foreach (Appointment appointment in AppointmentRepository.Appointments)
                     {
-                        if (Convert.ToInt32(chosenDoctor[0]) == appointment.DoctorID)
+                        if (doctorID == appointment.DoctorID)
                         {
                             if (timeHoursMinutes[0] == appointment.ScheduledDate.Hour)
                             {
@@ -640,46 +674,245 @@ namespace HealthCareCenter
                         string scheduleDateParse = date.ToString().Split(" ")[0];
                         scheduleDateParse += time;
                         DateTime scheduleDate = Convert.ToDateTime(scheduleDateParse);
-                        Appointment newAppointment = new Appointment
+                        newAppointmentRequest = new AppointmentChangeRequest
                         {
-                            ID = ++AppointmentRepository.LargestID,
-                            Type = Enums.AppointmentType.Checkup,
-                            ScheduledDate = scheduleDate,
-                            CreatedDate = DateTime.Now,
-                            Emergency = false,
-                            DoctorID = Convert.ToInt32(chosenDoctor[0]),
-                            HealthRecordID = signedUser.HealthRecordID,
-                            HospitalRoomID = -1
+                            ID = ++AppointmentChangeRequestRepository.LargestID,
+                            AppointmentID = ++AppointmentRepository.LargestID,
+                            RequestType = Enums.RequestType.MakeChanges,
+                            State = Enums.RequestState.Waiting,
+                            NewAppointmentType = Enums.AppointmentType.Checkup,
+                            NewDate = scheduleDate,
+                            DateSent = DateTime.Now,
+                            NewDoctorID = doctorID,
+                            PatientID = signedUser.ID
                         };
-                        return newAppointment;
+                        appointmentFound = true;
+                        break;
                     }
+                }
+                date = date.AddDays(1);
+            }
 
-                    date = date.AddDays(1);
+            return newAppointmentRequest;
+        }
+
+        private AppointmentChangeRequest BothPrioritiesSearch()
+        {
+            // searches for an appointment based on both priorities
+
+            int[] startRange = GetHoursMinutesFromTime(startRangePriorityTime);
+            int[] endRange = GetHoursMinutesFromTime(endRangePriorityTime);
+            List<string> possibleSchedules = GetDailySchedulesFromRange(startRange[0], startRange[1], endRange[0], endRange[1]);
+
+            return PrioritySearch(Convert.ToInt32(chosenDoctor[0]), possibleSchedules);
+
+        }
+
+        private AppointmentChangeRequest DifferentDoctorSameTimeSearch()
+        {
+            // searches for an available appointment in the selected time span
+            // for any doctor except the doctor that the patient chose
+
+            int[] startRange = GetHoursMinutesFromTime(startRangePriorityTime);
+            int[] endRange = GetHoursMinutesFromTime(endRangePriorityTime);
+            List<string> possibleSchedules = GetDailySchedulesFromRange(startRange[0], startRange[1], endRange[0], endRange[1]);
+            foreach (Doctor doctor in UserRepository.Doctors)
+            {
+                if (doctor.ID == Convert.ToInt32(chosenDoctor[0]))
+                {
+                    continue;
+                }
+
+                AppointmentChangeRequest newAppoinmentRequest = PrioritySearch(doctor.ID, possibleSchedules);
+                if (newAppoinmentRequest != null)
+                {
+                    return newAppoinmentRequest;
                 }
             }
 
             return null;
         }
 
+        private AppointmentChangeRequest SameDoctorDifferentTimeSearch()
+        {
+            // searches the chosen doctor with every time range except the one given
+
+            int[] startRange = GetHoursMinutesFromTime(startRangePriorityTime);
+            int[] endRange = GetHoursMinutesFromTime(endRangePriorityTime);
+            List<string> possibleSchedules = GetDailySchedulesOppositeOfRange(startRange[0], startRange[1], endRange[0], endRange[1]);
+
+            return PrioritySearch(Convert.ToInt32(chosenDoctor[0]), possibleSchedules);
+        }
+
+        private List<AppointmentChangeRequest> GetAppointmentsSimilarToPriorites()
+        {
+            List<AppointmentChangeRequest> similarAppointments = new List<AppointmentChangeRequest>();
+
+            int[] startRange = GetHoursMinutesFromTime(startRangePriorityTime);
+            int[] endRange = GetHoursMinutesFromTime(endRangePriorityTime);
+            List<string> possibleSchedules = GetDailySchedulesFromRange(startRange[0], startRange[1], endRange[0], endRange[1]);
+            List<string> oppositePossibleSchedules = GetDailySchedulesOppositeOfRange(startRange[0], startRange[1], endRange[0], endRange[1]);
+
+            if (Convert.ToBoolean(doctorPriorityRadioButton.IsChecked))
+            {
+                // similar to DifferentDoctorSameTimeSearch except it adds the found appointments
+                // to a list instead of returning one appointment
+
+                foreach (Doctor doctor in UserRepository.Doctors)
+                {
+                    similarAppointments.AddRange(AppointmentsSimilarToPrioritySearch(doctor.ID, possibleSchedules));
+                    if (similarAppointments.Count >= 3)
+                    {
+                        break;
+                    }
+                }
+            }
+            if (Convert.ToBoolean(timePriorityRadioButton.IsChecked))
+            {
+                // similar to SameDoctorDifferentTimeSearch except it adds the found appointments
+                // to a list instead of returning one appointment
+
+                similarAppointments.AddRange(AppointmentsSimilarToPrioritySearch(Convert.ToInt32(chosenDoctor[0]), oppositePossibleSchedules));
+            }
+
+            return similarAppointments;
+        }
+
+        private List<AppointmentChangeRequest> AppointmentsSimilarToPrioritySearch(int doctorID, List<string> possibleSchedules)
+        {
+            List<AppointmentChangeRequest> similarAppointments = new List<AppointmentChangeRequest>();
+            DateTime date = DateTime.Now;
+            date = date.AddDays(1);
+            while (date.Date.CompareTo(chosenScheduleDate.Date) <= 0 && similarAppointments.Count < 3)
+            {
+                foreach (string time in possibleSchedules)
+                {
+                    int[] timeHoursMinutes = GetHoursMinutesFromTime(time);
+                    bool isAvailable = true;
+                    foreach (Appointment appointment in AppointmentRepository.Appointments)
+                    {
+                        if (doctorID == appointment.DoctorID)
+                        {
+                            if (timeHoursMinutes[0] == appointment.ScheduledDate.Hour)
+                            {
+                                if (timeHoursMinutes[1] == appointment.ScheduledDate.Minute)
+                                {
+                                    if (appointment.ScheduledDate.Date.CompareTo(date.Date) == 0)
+                                    {
+                                        isAvailable = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (isAvailable)
+                    {
+                        string scheduleDateParse = date.ToString().Split(" ")[0];
+                        scheduleDateParse += " " + time;
+                        DateTime scheduleDate = Convert.ToDateTime(scheduleDateParse);
+                        AppointmentChangeRequest possibleAppointmentRequest = new AppointmentChangeRequest
+                        {
+                            ID = ++AppointmentChangeRequestRepository.LargestID,
+                            AppointmentID = -1,
+                            RequestType = Enums.RequestType.MakeChanges,
+                            State = Enums.RequestState.Waiting,
+                            NewAppointmentType = Enums.AppointmentType.Checkup,
+                            NewDate = scheduleDate,
+                            DateSent = DateTime.Now,
+                            NewDoctorID = doctorID,
+                            PatientID = signedUser.ID
+                        };
+                        similarAppointments.Add(possibleAppointmentRequest);
+                        break;
+                    }
+                }
+                date = date.AddDays(1);
+            }
+
+            return similarAppointments;
+        }
         //=======================================================================================
 
         // priority scheduling button click methods
         //=======================================================================================
         private void scheduleAppointmentPriorityButton_Click(object sender, RoutedEventArgs e)
         {
+            AppointmentChangeRequest newAppointmentRequest;
+            if (availablePriorityAppointmentsDataTable != null)
+            {
+                chosenAppointment = allAppointmentsPriorityDataGrid.SelectedItem as DataRowView;
+                if (chosenAppointment == null)
+                {
+                    MessageBox.Show("No appointment selected");
+                    return;
+                }
+
+                newAppointmentRequest = new AppointmentChangeRequest
+                {
+                    ID = ++AppointmentChangeRequestRepository.LargestID,
+                    AppointmentID = ++AppointmentRepository.LargestID,
+                    RequestType = Enums.RequestType.MakeChanges,
+                    State = Enums.RequestState.Waiting,
+                    NewAppointmentType = Enums.AppointmentType.Checkup,
+                    NewDate = Convert.ToDateTime(chosenAppointment[1]),
+                    DateSent = DateTime.Now,
+                    NewDoctorID = Convert.ToInt32(chosenAppointment[0]),
+                    PatientID = signedUser.ID
+                };
+                string confirmationMessage = "Are you sure you want to schedule this appointment?";
+                MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", confirmationMessage, System.Windows.MessageBoxButton.YesNo);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    chosenAppointment = null;
+                    AddAppointmentToSchedule(newAppointmentRequest);
+                    ClearWindow();
+                    CreateAppointmentTable();
+                    FillAppointmentTable();
+                    myAppointmentsGrid.Visibility = Visibility.Visible;
+                }
+
+                return;
+            }
+
             if (!IsPrioritySearchSelectionValid())
             {
                 return;
             }
 
-            Appointment appointment = GetPriorityAppointment();
-            if (appointment == null)
+            newAppointmentRequest = GetPriorityAppointment();
+            if (newAppointmentRequest == null)
             {
-                MessageBox.Show("Appointment not found");
+                MessageBox.Show("No appointments found based on the chosen priority");
+                List<AppointmentChangeRequest> similarAppointments = GetAppointmentsSimilarToPriorites();
+                if (similarAppointments.Count <= 0)
+                {
+                    MessageBox.Show("There are no appointments available that match the selected parameters");
+                    ClearWindow();
+                    myAppointmentsGrid.Visibility = Visibility.Visible;
+                    return;
+                }
+                MessageBox.Show("Appointments similar to selected parameters found, please choose the most convenient");
+
+                CreateAvailablePriorityAppointmentsTable();
+                FillAvailablePriorityAppointmentsTable(similarAppointments);
             }
             else
             {
-                MessageBox.Show("Appointment found: " + appointment.ScheduledDate.ToString());
+                string appointmentDetails = "Doctor: " + newAppointmentRequest.NewDoctorID + ", Schedule: " + newAppointmentRequest.NewDate.ToString();
+                MessageBox.Show("Appointment found: " + appointmentDetails);
+                string confirmationMessage = "Are you sure you want to schedule this appointment?";
+                MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", confirmationMessage, System.Windows.MessageBoxButton.YesNo);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    AddAppointmentToSchedule(newAppointmentRequest);
+                    ClearWindow();
+                    CreateAppointmentTable();
+                    FillAppointmentTable();
+                    createAppointmentGrid.Visibility = Visibility.Collapsed;
+                    myAppointmentsGrid.Visibility = Visibility.Visible;
+                }
             }
         }
         //=======================================================================================
@@ -763,28 +996,6 @@ namespace HealthCareCenter
             yearChoiceComboBox.Items.Add(nextYear.ToString());
         }
 
-        private List<string> GetDailySchedulesFromRange(int startHours, int startMinutes, int endHours, int endMinutes)
-        {
-            // returns all schedules from 8:00 to 21:00 knowing that an appointment lasts 15 minutes
-
-            int hours = startHours;
-            int minutes = startMinutes;
-            List<string> possibleSchedules = new List<string>();
-            while (hours < endHours || minutes < endMinutes)
-            {
-                string schedule = hours + ":" + minutes;
-                possibleSchedules.Add(schedule);
-                minutes += 15;
-                if (minutes >= 60)
-                {
-                    ++hours;
-                    minutes = 0;
-                }
-            }
-
-            return possibleSchedules;
-        }
-
         private void CreateDoctorTable()
         {
             allDoctorsDataTable = new DataTable("Doctors");
@@ -840,6 +1051,54 @@ namespace HealthCareCenter
             }
 
             return true;
+        }
+
+        private List<string> GetDailySchedulesFromRange(int startHours, int startMinutes, int endHours, int endMinutes)
+        {
+            // returns all schedules from 8:00 to 21:00 knowing that an appointment lasts 15 minutes
+
+            int hours = startHours;
+            int minutes = startMinutes;
+            List<string> possibleSchedules = new List<string>();
+            while (hours < endHours || minutes < endMinutes)
+            {
+                string schedule = hours + ":" + minutes;
+                possibleSchedules.Add(schedule);
+                minutes += 15;
+                if (minutes >= 60)
+                {
+                    ++hours;
+                    minutes = 0;
+                }
+            }
+
+            return possibleSchedules;
+        }
+
+        private List<string> GetDailySchedulesOppositeOfRange(int startHours, int startMinutes, int endHours, int endMinutes)
+        {
+            List<string> possibleSchedules;
+
+            if (startHours == Constants.StartWorkTime && startMinutes == 0)
+            {
+                possibleSchedules = GetDailySchedulesFromRange(endHours, endHours, Constants.EndWorkTime, 0);
+            }
+            else
+            {
+                if (endHours == Constants.EndWorkTime && endMinutes == 0)
+                {
+                    possibleSchedules = GetDailySchedulesFromRange(Constants.StartWorkTime, 0, startHours, startMinutes);
+                }
+                else
+                {
+                    List<string> beforeStartRangeSchedules = GetDailySchedulesFromRange(Constants.StartWorkTime, 0, startHours, startMinutes);
+                    List<string> afterStartRangeSchedules = GetDailySchedulesFromRange(endHours, endMinutes, Constants.EndWorkTime, 0);
+                    possibleSchedules = beforeStartRangeSchedules;
+                    possibleSchedules.AddRange(afterStartRangeSchedules);
+                }
+            }
+
+            return possibleSchedules;
         }
 
         private int[] GetHoursMinutesFromTime(string timeAsWord)
