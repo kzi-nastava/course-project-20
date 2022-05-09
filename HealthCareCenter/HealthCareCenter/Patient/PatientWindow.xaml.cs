@@ -279,6 +279,9 @@ namespace HealthCareCenter
             ClearWindow();
             myAppointmentsGrid.Visibility = Visibility.Visible;
             currentActionTextBlock.Text = "My appointments";
+            CreateAppointmentTable();
+            FillUnfinishedAppointmentsTable();
+
         }
 
         private void searchDoctorsMenuItem_Click(object sender, RoutedEventArgs e)
