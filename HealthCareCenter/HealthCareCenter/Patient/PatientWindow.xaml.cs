@@ -20,8 +20,9 @@ namespace HealthCareCenter
 {
     public partial class PatientWindow : Window
     {
-        private Patient signedUser;
+        private Patient signedPatient;
         private List<Appointment> unfinishedAppointments;
+        HealthRecord patientHealthRecord;
 
         // appointment datagrid table
         private DataTable appointmentsDataTable;
@@ -33,6 +34,7 @@ namespace HealthCareCenter
         private DateTime chosenScheduleDate;
         private bool isScheduleDateChosen = false;
         private DataRowView chosenAppointment;  // selected row with appointment information, used when making changes to an appointment
+        private bool isModification = false;
         private bool shouldSendRequestToSecretary = false;
         private string startRangePriorityTime;
         private string endRangePriorityTime;
@@ -44,7 +46,10 @@ namespace HealthCareCenter
 
         public PatientWindow(User user)
         {
-            signedUser = (Patient)user;
+            signedPatient = (Patient)user;
+            HealthRecordRepository.Load();
+            patientHealthRecord = HealthRecordService.FindRecord(signedPatient);
+            HealthRecordRepository.Records = null;
             
             // loading all necessary information
             //============================================
@@ -52,14 +57,14 @@ namespace HealthCareCenter
             AppointmentChangeRequestRepository.Load();
             //============================================
 
-            unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
+            unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
             InitializeComponent();
 
             // creating the appointment table and making that window visible
             ClearWindow();
             myAppointmentsGrid.Visibility = Visibility.Visible;
             CreateAppointmentTable();
-            FillAppointmentTable();
+            FillUnfinishedAppointmentsTable();
             currentActionTextBlock.Text = "My appointments";
 
         }
@@ -67,6 +72,10 @@ namespace HealthCareCenter
         private void ClearWindow()
         {
             myAppointmentsGrid.Visibility = Visibility.Collapsed;
+            if (appointmentsDataTable != null)
+            {
+                appointmentsDataTable.Clear();
+            }
             //==
             createAppointmentGrid.Visibility = Visibility.Collapsed;
             if (allAvailableTimeTable != null)
@@ -78,6 +87,7 @@ namespace HealthCareCenter
             dayChoiceCUDComboBox.Items.Clear();
             monthChoiceCUDComboBox.Items.Clear();
             yearChoiceCUDComboBox.Items.Clear();
+            isModification = false;
             shouldSendRequestToSecretary = false;
             //==
             dayChoicePriorityComboBox.Items.Clear();
@@ -97,6 +107,7 @@ namespace HealthCareCenter
             myNotificationGrid.Visibility = Visibility.Collapsed;
 
             myHealthRecordGrid.Visibility = Visibility.Collapsed;
+            healthRecordAppointmentsSortCriteriaComboBox.Items.Clear();
 
             doctorSurveyGrid.Visibility = Visibility.Collapsed;
 
@@ -119,7 +130,7 @@ namespace HealthCareCenter
 
         }
 
-        private void FillAppointmentTable()
+        private void FillUnfinishedAppointmentsTable()
         {
             DataRow row;
             foreach (Appointment appointment in unfinishedAppointments)
@@ -177,6 +188,88 @@ namespace HealthCareCenter
             }
             allAvailableTimeCUDDataGrid.ItemsSource = allAvailableTimeTable.DefaultView;
         }
+
+        private void chooseDoctorCUDButton_Click(object sender, RoutedEventArgs e)
+        {
+            chosenDoctor = allDoctorsCUDDataGrid.SelectedItem as DataRowView;
+            if (chosenDoctor == null)
+            {
+                MessageBox.Show("No doctor selected");
+                return;
+            }
+
+            if (!IsDateValid(dayChoiceCUDComboBox, monthChoiceCUDComboBox, yearChoiceCUDComboBox))
+            {
+                return;
+            }
+
+            CreateAvailableTimeTable();
+            FillAvailableTimeTable();
+
+        }
+
+        private void scheduleAppointmentCUDButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (chosenDoctor == null)
+            {
+                MessageBox.Show("No doctor selected");
+                return;
+            }
+            if (!isScheduleDateChosen)
+            {
+                MessageBox.Show("No date selected");
+                return;
+            }
+
+            DataRowView chosenScheduleTime = allAvailableTimeCUDDataGrid.SelectedItem as DataRowView;
+            if (chosenScheduleTime == null)
+            {
+                MessageBox.Show("No schedule time selected");
+                return;
+            }
+
+            string confirmationMessage;
+            if (isModification)
+            {
+                confirmationMessage = "Make changes";
+            }
+            else
+            {
+                confirmationMessage = "Schedule appointment";
+            }
+
+            string newAppointmentDateParsed = chosenScheduleTime[0].ToString() + "/" + chosenScheduleTime[1].ToString() + "/" + chosenScheduleTime[2].ToString() + " " + chosenScheduleTime[3].ToString() + ":" + chosenScheduleTime[4].ToString();
+            AppointmentChangeRequest newChangeRequest = new AppointmentChangeRequest
+            {
+                ID = ++AppointmentChangeRequestRepository.LargestID,
+                AppointmentID = (chosenAppointment == null) ? ++AppointmentRepository.LargestID : Convert.ToInt32(chosenAppointment[0]),
+                RequestType = Enums.RequestType.MakeChanges,
+                NewDate = Convert.ToDateTime(Convert.ToDateTime(newAppointmentDateParsed)),
+                NewAppointmentType = Enums.AppointmentType.Checkup,
+                NewDoctorID = Convert.ToInt32(chosenDoctor[0]),
+                DateSent = DateTime.Now,
+                PatientID = signedPatient.ID
+            };
+
+            int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(newChangeRequest.NewDate, Enums.RoomType.Checkup);
+            if (hospitalRoomID == -1)
+            {
+                MessageBox.Show("There are no rooms available for that schedule");
+                return;
+            }
+
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", confirmationMessage, System.Windows.MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                AddAppointmentToSchedule(newChangeRequest, hospitalRoomID);
+                ClearWindow();
+                CreateAppointmentTable();
+                FillUnfinishedAppointmentsTable();
+                createAppointmentGrid.Visibility = Visibility.Collapsed;
+                myAppointmentsGrid.Visibility = Visibility.Visible;
+            }
+
+        }
         //==============================================================================
 
         // action menu click methods
@@ -207,6 +300,7 @@ namespace HealthCareCenter
             ClearWindow();
             myHealthRecordGrid.Visibility = Visibility.Visible;
             currentActionTextBlock.Text = "My health record";
+            FillHealthRecordItems();
         }
 
         private void doctorSurveyMenuItem_Click(object sender, RoutedEventArgs e)
@@ -249,6 +343,7 @@ namespace HealthCareCenter
                 MessageBox.Show("No appointment selected");
                 return;
             }
+            isModification = true;
 
             CheckShouldSendRequestToSecretary();
 
@@ -290,91 +385,6 @@ namespace HealthCareCenter
         }
         //=======================================================================================
 
-        // appointments creation/modification menu button click methods
-        //=======================================================================================
-        private void chooseDoctorCUDButton_Click(object sender, RoutedEventArgs e)
-        {
-            chosenDoctor = allDoctorsCUDDataGrid.SelectedItem as DataRowView;
-            if (chosenDoctor == null)
-            {
-                MessageBox.Show("No doctor selected");
-                return;
-            }
-
-            if (!IsDateValid(dayChoiceCUDComboBox, monthChoiceCUDComboBox, yearChoiceCUDComboBox))
-            {
-                return;
-            }
-
-            CreateAvailableTimeTable();
-            FillAvailableTimeTable();
-
-        }
-
-        private void scheduleAppointmentCUDButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (chosenDoctor == null)
-            {
-                MessageBox.Show("No doctor selected");
-                return;
-            }
-            if (!isScheduleDateChosen)
-            {
-                MessageBox.Show("No date selected");
-                return;
-            }
-
-            DataRowView chosenScheduleTime = allAvailableTimeCUDDataGrid.SelectedItem as DataRowView;
-            if (chosenScheduleTime == null)
-            {
-                MessageBox.Show("No schedule time selected");
-                return;
-            }
-
-            string confirmationMessage;
-            if (IsModification())
-            {
-                confirmationMessage = "Make changes";
-            }
-            else
-            {
-                confirmationMessage = "Schedule appointment";
-            }
-
-            string newAppointmentDateParsed = chosenScheduleTime[0].ToString() + "/" + chosenScheduleTime[1].ToString() + "/" + chosenScheduleTime[2].ToString() + " " + chosenScheduleTime[3].ToString() + ":" + chosenScheduleTime[4].ToString();
-            AppointmentChangeRequest newChangeRequest = new AppointmentChangeRequest
-            {
-                ID = ++AppointmentChangeRequestRepository.LargestID,
-                AppointmentID = (chosenAppointment == null) ? ++AppointmentRepository.LargestID : Convert.ToInt32(chosenAppointment[0]),
-                RequestType = Enums.RequestType.MakeChanges,
-                NewDate = Convert.ToDateTime(Convert.ToDateTime(newAppointmentDateParsed)),
-                NewAppointmentType = Enums.AppointmentType.Checkup,
-                NewDoctorID = Convert.ToInt32(chosenDoctor[0]),
-                DateSent = DateTime.Now,
-                PatientID = signedUser.ID
-            };
-
-            int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(newChangeRequest.NewDate, Enums.RoomType.Checkup);
-            if (hospitalRoomID == -1)
-            {
-                MessageBox.Show("There are no rooms available for that schedule");
-                return;
-            }
-
-            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", confirmationMessage, System.Windows.MessageBoxButton.YesNo);
-            if (messageBoxResult == MessageBoxResult.Yes)
-            {
-                AddAppointmentToSchedule(newChangeRequest, hospitalRoomID);
-                ClearWindow();
-                CreateAppointmentTable();
-                FillAppointmentTable();
-                createAppointmentGrid.Visibility = Visibility.Collapsed;
-                myAppointmentsGrid.Visibility = Visibility.Visible;
-            }
-
-        }
-        //=======================================================================================
-
         // anti troll mechanism methods
         //=======================================================================================
         private bool CheckCreationTroll()
@@ -382,7 +392,7 @@ namespace HealthCareCenter
             int creationCount = 0;
             foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
-                if (appointment.HealthRecordID == signedUser.HealthRecordID)
+                if (appointment.HealthRecordID == signedPatient.HealthRecordID)
                 {
                     TimeSpan timePassedSinceScheduling = DateTime.Now.Subtract(appointment.CreatedDate);
                     if (timePassedSinceScheduling.TotalDays < 30)
@@ -397,7 +407,7 @@ namespace HealthCareCenter
                 MessageBox.Show("You have been blocked for excessive amounts of appointments created in the last 30 days");
                 foreach (Patient patient in UserRepository.Patients)
                 {
-                    if (signedUser.ID == patient.ID)
+                    if (signedPatient.ID == patient.ID)
                     {
                         patient.IsBlocked = true;
                         patient.BlockedBy = Enums.Blocker.System;
@@ -418,7 +428,7 @@ namespace HealthCareCenter
             int modificationCount = 0;
             foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
             {
-                if (changeRequest.PatientID == signedUser.ID)
+                if (changeRequest.PatientID == signedPatient.ID)
                 {
                     TimeSpan timePassedSinceScheduling = DateTime.Now.Subtract(changeRequest.DateSent);
                     if (timePassedSinceScheduling.TotalDays < 30)
@@ -433,7 +443,7 @@ namespace HealthCareCenter
                 MessageBox.Show("You have been blocked for excessive amounts of change requests sent in the last 30 days");
                 foreach (Patient patient in UserRepository.Patients)
                 {
-                    if (signedUser.ID == patient.ID)
+                    if (signedPatient.ID == patient.ID)
                     {
                         patient.IsBlocked = true;
                         patient.BlockedBy = Enums.Blocker.System;
@@ -622,7 +632,7 @@ namespace HealthCareCenter
                             NewDate = scheduleDate,
                             DateSent = DateTime.Now,
                             NewDoctorID = doctorID,
-                            PatientID = signedUser.ID
+                            PatientID = signedPatient.ID
                         };
                         appointmentFound = true;
                         break;
@@ -760,7 +770,7 @@ namespace HealthCareCenter
                             NewDate = scheduleDate,
                             DateSent = DateTime.Now,
                             NewDoctorID = doctorID,
-                            PatientID = signedUser.ID
+                            PatientID = signedPatient.ID
                         };
                         similarAppointments.Add(possibleAppointmentRequest);
                         break;
@@ -770,26 +780,6 @@ namespace HealthCareCenter
             }
 
             return similarAppointments;
-        }
-        //=======================================================================================
-
-        // priority scheduling button click methods
-        //=======================================================================================
-        private void scheduleAppointmentPriorityButton_Click(object sender, RoutedEventArgs e)
-        {
-            AppointmentChangeRequest newAppointmentRequest;
-            if (availablePriorityAppointmentsDataTable != null)
-            {
-                PriorityNotFoundScheduling();
-                return;
-            }
-
-            if (!PrioritySearchSelectionValidation())
-            {
-                return;
-            }
-
-            PriorityFoundScheduling();
         }
 
         private void PriorityFoundScheduling()
@@ -829,7 +819,7 @@ namespace HealthCareCenter
                     AddAppointmentToSchedule(newAppointmentRequest, hospitalRoomID);
                     ClearWindow();
                     CreateAppointmentTable();
-                    FillAppointmentTable();
+                    FillUnfinishedAppointmentsTable();
                     createAppointmentGrid.Visibility = Visibility.Collapsed;
                     myAppointmentsGrid.Visibility = Visibility.Visible;
                 }
@@ -855,7 +845,7 @@ namespace HealthCareCenter
                 NewDate = Convert.ToDateTime(chosenAppointment[1]),
                 DateSent = DateTime.Now,
                 NewDoctorID = Convert.ToInt32(chosenAppointment[0]),
-                PatientID = signedUser.ID
+                PatientID = signedPatient.ID
             };
 
             int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(newAppointmentRequest.NewDate, Enums.RoomType.Checkup);
@@ -873,11 +863,150 @@ namespace HealthCareCenter
                 AddAppointmentToSchedule(newAppointmentRequest, hospitalRoomID);
                 ClearWindow();
                 CreateAppointmentTable();
-                FillAppointmentTable();
+                FillUnfinishedAppointmentsTable();
                 myAppointmentsGrid.Visibility = Visibility.Visible;
             }
 
             return;
+        }
+
+        private void scheduleAppointmentPriorityButton_Click(object sender, RoutedEventArgs e)
+        {
+            AppointmentChangeRequest newAppointmentRequest;
+            if (availablePriorityAppointmentsDataTable != null)
+            {
+                PriorityNotFoundScheduling();
+                return;
+            }
+
+            if (!PrioritySearchSelectionValidation())
+            {
+                return;
+            }
+
+            PriorityFoundScheduling();
+        }
+        //=======================================================================================
+
+        // health record methods
+        //=======================================================================================
+        private void showAnamnesisButton_Click(object sender, RoutedEventArgs e)
+        {
+            chosenAppointment = healthRecordAppointmentsDataGrid.SelectedItem as DataRowView;
+            if (chosenAppointment == null)
+            {
+                MessageBox.Show("No appointment chosen");
+                return;
+            }
+
+            foreach (Appointment appointment in AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID))
+            {
+                if (appointment.ID == Convert.ToInt32(chosenAppointment[0]))
+                {
+                    anamnesisTextBox.Text = appointment.PatientAnamnesis.Comment;
+                    return;
+                }
+            }
+        }
+
+        private void sortHealthRecordAppointmentsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var sortCriteriaChosen = healthRecordAppointmentsSortCriteriaComboBox.SelectedItem;
+            if (sortCriteriaChosen == null)
+            {
+                MessageBox.Show("Sort criteria not chosen");
+                return;
+            }
+
+            switch (sortCriteriaChosen.ToString())
+            {
+                case "Date":
+                    FillHealthRecordAppointmentTableSortedDate();
+                    break;
+                case "Doctor":
+                    FillHealthRecordAppointmentTableSortedDoctor();
+                    break;
+                case "Professional area":
+                    FillHealthRecordAppointmentTableSortedProfessionalArea();
+                    break;
+            }
+        }
+
+        private void FillHealthRecordItems()
+        {
+            patientHeightTextBox.Text = patientHealthRecord.Height.ToString() + "cm";
+            patientWeightTextBox.Text = patientHealthRecord.Weight.ToString() + "kg";
+
+            previousDiseasesTextBox.Text = "";
+            foreach (string disease in patientHealthRecord.PreviousDiseases)
+            {
+                previousDiseasesTextBox.Text += "- " + disease + "\n";
+            }
+
+            allergensTextBox.Text = "";
+            foreach (string allergen in patientHealthRecord.Allergens)
+            {
+                allergensTextBox.Text += "- " + allergen + "\n";
+            }
+
+            FillHealthRecordAppointmentsSortCriteriaComboBoxes();
+
+            CreateAppointmentTable();
+            FillHealthRecordAppointmentTable(AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID));
+
+        }
+
+        private void FillHealthRecordAppointmentTable(List<Appointment> finishedAppointments)
+        {
+            appointmentsDataTable.Clear();
+            DataRow row;
+            foreach (Appointment appointment in finishedAppointments)
+            {
+                row = appointmentsDataTable.NewRow();
+                row[0] = appointment.ID;
+                row[1] = appointment.Type;
+                row[2] = appointment.ScheduledDate;
+                row[3] = appointment.CreatedDate;
+                row[4] = appointment.Emergency;
+                row[5] = appointment.DoctorID;
+                row[6] = appointment.HospitalRoomID;
+                appointmentsDataTable.Rows.Add(row);
+            }
+            healthRecordAppointmentsDataGrid.ItemsSource = appointmentsDataTable.DefaultView;
+        }
+
+        private void FillHealthRecordAppointmentTableSortedDate()
+        {
+            List<Appointment> finishedAppointments = AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
+            AppointmentDateCompare appointmentComparation = new AppointmentDateCompare();
+            finishedAppointments.Sort(appointmentComparation);
+
+            FillHealthRecordAppointmentTable(finishedAppointments);
+        }
+
+        private void FillHealthRecordAppointmentTableSortedDoctor()
+        {
+            List<Appointment> finishedAppointments = AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
+            AppointmentDoctorCompare appointmentComparation = new AppointmentDoctorCompare();
+            finishedAppointments.Sort(appointmentComparation);
+
+            FillHealthRecordAppointmentTable(finishedAppointments);
+        }
+
+        private void FillHealthRecordAppointmentTableSortedProfessionalArea()
+        {
+            List<Appointment> finishedAppointments = AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
+            AppointmentProfessionalAreaCompare appointmentComparation = new AppointmentProfessionalAreaCompare();
+            finishedAppointments.Sort(appointmentComparation);
+
+            FillHealthRecordAppointmentTable(finishedAppointments);
+        }
+
+        private void FillHealthRecordAppointmentsSortCriteriaComboBoxes()
+        {
+            healthRecordAppointmentsSortCriteriaComboBox.Items.Add("Date");
+            healthRecordAppointmentsSortCriteriaComboBox.Items.Add("Doctor");
+            healthRecordAppointmentsSortCriteriaComboBox.Items.Add("Professional area");
         }
         //=======================================================================================
 
@@ -887,7 +1016,7 @@ namespace HealthCareCenter
         {
             // adds new/modified appointment to patientRepository.UnifinishedAppointments
 
-            if (IsModification())
+            if (isModification)
             {
                 if (CheckModificationTroll())
                 {
@@ -916,7 +1045,7 @@ namespace HealthCareCenter
                 {
                     HospitalRoomService.AddAppointmentToRoom(hospitalRoomID, newChangeRequest.AppointmentID);
                     AppointmentChangeRequestService.EditAppointment(newChangeRequest);
-                    unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
+                    unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
                 }
             }
             else
@@ -934,24 +1063,16 @@ namespace HealthCareCenter
                     ScheduledDate = newChangeRequest.NewDate,
                     Emergency = false,
                     DoctorID = Convert.ToInt32(chosenDoctor[0]),
-                    HealthRecordID = signedUser.HealthRecordID,
+                    HealthRecordID = signedPatient.HealthRecordID,
                     HospitalRoomID = hospitalRoomID,
                     PatientAnamnesis = null
                 };
                 HospitalRoomService.AddAppointmentToRoom(hospitalRoomID, newChangeRequest.AppointmentID);
                 AppointmentRepository.Appointments.Add(newAppointment);
-                unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
+                unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
             }
 
             AppointmentRepository.Save();
-        }
-
-        private bool IsModification()
-        {
-            // returns true if the user is in the process of modifying the appointment
-            // and false if he is in the process of creating a new appointment
-
-            return chosenAppointment != null;
         }
 
         private void CancelAppointment()
@@ -963,7 +1084,7 @@ namespace HealthCareCenter
                 AppointmentID = Convert.ToInt32(chosenAppointment[0]),
                 RequestType = Enums.RequestType.Delete,
                 DateSent = DateTime.Now,
-                PatientID = signedUser.ID
+                PatientID = signedPatient.ID
             };
 
             if (shouldSendRequestToSecretary)
@@ -988,10 +1109,10 @@ namespace HealthCareCenter
             {
                 AppointmentChangeRequestService.DeleteAppointment(newChangeRequest);
                 AppointmentRepository.Save();
-                unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
+                unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
             }
             CreateAppointmentTable();
-            FillAppointmentTable();
+            FillUnfinishedAppointmentsTable();
         }
 
         private void CheckShouldSendRequestToSecretary()
