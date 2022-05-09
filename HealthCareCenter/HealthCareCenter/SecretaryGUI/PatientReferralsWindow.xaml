@@ -1,0 +1,32 @@
+﻿<Window x:Class="HealthCareCenter.SecretaryGUI.PatientReferralsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HealthCareCenter.SecretaryGUI"
+        mc:Ignorable="d"
+        Title="Referrals" Height="600" Width="800"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+
+        <DataGrid x:Name="referralsDataGrid" Grid.Row="0" Grid.Column="0" Margin="7.5" 
+                  AutoGenerateColumns="False" FontSize="12" SelectionMode="Single" SelectionUnit="FullRow">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="auto"/>
+                <DataGridTextColumn Header="Doctor's username" Binding="{Binding DoctorUsername}" Width="auto"/>
+                <DataGridTextColumn Header="Doctor's first name" Binding="{Binding DoctorFirstName}" Width="auto"/>
+                <DataGridTextColumn Header="Doctor's last name" Binding="{Binding DoctorLastName}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Button x:Name="useReferralButton" Grid.Row="1" Grid.Column="0" Margin="7.5" Content="Use referral" FontSize="18" />
+
+    </Grid>
+</Window>
