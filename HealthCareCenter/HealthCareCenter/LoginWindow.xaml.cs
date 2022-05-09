@@ -29,10 +29,20 @@ namespace HealthCareCenter
             }
         }
 
+        private void FinshPossibleRenovation()
+        {
+            List<HospitalRoom> roomsForRenovation = HospitalRoomForRenovationService.GetRooms();
+            for (int i = 0; i < roomsForRenovation.Count; i++)
+            {
+                roomsForRenovation[i].SetToBeAvailable();
+            }
+        }
+
         public LoginWindow()
         {
             InitializeComponent();
             DoEquipmentRearrangements();
+            FinshPossibleRenovation();
 
             try
             {
@@ -66,7 +76,7 @@ namespace HealthCareCenter
                         }
                         else if (user.GetType() == typeof(Manager))
                         {
-                            ShowWindow(new CrudHospitalRoomWindow(user));
+                            ShowWindow(new HospitalRoomRenovationWindow((Manager)user));
                         }
                         else if (user.GetType() == typeof(Patient))
                         {

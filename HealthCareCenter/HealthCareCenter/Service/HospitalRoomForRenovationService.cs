@@ -5,15 +5,11 @@ using System.Text;
 
 namespace HealthCareCenter.Service
 {
-    internal class HospitalRoomService
+    internal class HospitalRoomForRenovationService
     {
-        /// <summary>
-        /// Return loaded hospital rooms from list.
-        /// </summary>
-        /// <returns>Loaded hospital rooms.</returns>
         public static List<HospitalRoom> GetRooms()
         {
-            return HospitalRoomRepository.Rooms;
+            return HospitalRoomForRenovationRepository.Rooms;
         }
 
         /// <summary>
@@ -26,7 +22,7 @@ namespace HealthCareCenter.Service
         {
             try
             {
-                foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
+                foreach (HospitalRoom room in HospitalRoomForRenovationRepository.Rooms)
                 {
                     if (room.ID == id)
                     {
@@ -48,31 +44,24 @@ namespace HealthCareCenter.Service
         }
 
         /// <summary>
-        /// Add new hospital room in file hospitalRooms.json.
+        /// Add new hospital room in file hospitalRoomsForRenovation.json.
         /// </summary>
         /// <param name="newRoom"></param>
         public static void AddRoom(HospitalRoom newRoom)
         {
-            HospitalRoomRepository.Rooms.Add(newRoom);
-            HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
-        }
-
-        public static void InsertRoom(HospitalRoom room)
-        {
-            HospitalRoomRepository.Rooms.Add(room);
-            HospitalRoomRepository.Rooms.Sort((x, y) => x.ID.CompareTo(y.ID));
-            HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
+            HospitalRoomForRenovationRepository.Rooms.Add(newRoom);
+            HospitalRoomForRenovationRepository.SaveRooms(HospitalRoomForRenovationRepository.Rooms);
         }
 
         /// <summary>
-        /// Finding last(largest) id in file hospitalRooms.json.
+        /// Finding last(largest) id in file hospitalRoomsForRenovation.json.
         /// </summary>
         /// <returns>last(largest) id.</returns>
         public static int GetLargestRoomId()
         {
             try
             {
-                List<HospitalRoom> rooms = HospitalRoomRepository.Rooms;
+                List<HospitalRoom> rooms = HospitalRoomForRenovationRepository.Rooms;
                 rooms.Sort((x, y) => x.ID.CompareTo(y.ID));
                 if (rooms.Count == 0)
                 {
@@ -88,7 +77,7 @@ namespace HealthCareCenter.Service
         }
 
         /// <summary>
-        /// Delete room from file HospitalRooms.josn with specific id.
+        /// Delete room from file hospitalRoomsForRenovation.josn with specific id.
         /// </summary>
         /// <param name="id">id of the hospital room we want to delete.</param>
         /// <returns>True if room is deleted or false if it's not.</returns>
@@ -97,12 +86,12 @@ namespace HealthCareCenter.Service
         {
             try
             {
-                for (int i = 0; i < HospitalRoomRepository.Rooms.Count; i++)
+                for (int i = 0; i < HospitalRoomForRenovationRepository.Rooms.Count; i++)
                 {
-                    if (id == HospitalRoomRepository.Rooms[i].ID)
+                    if (id == HospitalRoomForRenovationRepository.Rooms[i].ID)
                     {
-                        HospitalRoomRepository.Rooms.RemoveAt(i);
-                        HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
+                        HospitalRoomForRenovationRepository.Rooms.RemoveAt(i);
+                        HospitalRoomForRenovationRepository.SaveRooms(HospitalRoomForRenovationRepository.Rooms);
                         return true;
                     }
                 }
@@ -120,7 +109,7 @@ namespace HealthCareCenter.Service
         }
 
         /// <summary>
-        /// Delete room from file HospitalRooms.josn with specific id.
+        /// Delete room from file hospitalRoomsForRenovation.josn with specific id.
         /// </summary>
         /// <param name="room">Room we want to delete.</param>
         /// <returns>true if room is deleted or false if it's not.</returns>
@@ -129,12 +118,12 @@ namespace HealthCareCenter.Service
         {
             try
             {
-                for (int i = 0; i < HospitalRoomRepository.Rooms.Count; i++)
+                for (int i = 0; i < HospitalRoomForRenovationRepository.Rooms.Count; i++)
                 {
-                    if (room.ID == HospitalRoomRepository.Rooms[i].ID)
+                    if (room.ID == HospitalRoomForRenovationRepository.Rooms[i].ID)
                     {
-                        HospitalRoomRepository.Rooms.RemoveAt(i);
-                        HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
+                        HospitalRoomForRenovationRepository.Rooms.RemoveAt(i);
+                        HospitalRoomForRenovationRepository.SaveRooms(HospitalRoomForRenovationRepository.Rooms);
                         return true;
                     }
                 }
@@ -151,21 +140,16 @@ namespace HealthCareCenter.Service
             }
         }
 
-        /// <summary>
-        /// Updating hospital room.
-        /// </summary>
-        /// <param name="room">Hospital room we want to update.</param>
-        /// <returns>true if room is updated or false if room is not found.</returns>
         public static bool UpdateRoom(HospitalRoom room)
         {
             try
             {
-                for (int i = 0; i < HospitalRoomRepository.Rooms.Count; i++)
+                for (int i = 0; i < HospitalRoomForRenovationRepository.Rooms.Count; i++)
                 {
-                    if (room.ID == HospitalRoomRepository.Rooms[i].ID)
+                    if (room.ID == HospitalRoomForRenovationRepository.Rooms[i].ID)
                     {
-                        HospitalRoomRepository.Rooms[i] = room;
-                        HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
+                        HospitalRoomForRenovationRepository.Rooms[i] = room;
+                        HospitalRoomForRenovationRepository.SaveRooms(HospitalRoomForRenovationRepository.Rooms);
                         return true;
                     }
                 }

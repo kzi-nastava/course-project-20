@@ -36,7 +36,7 @@
         <TextBox x:Name="HospitalRoomIdTextBox" HorizontalAlignment="Left" Margin="315,237,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="75" Height="25" />
 
         <TextBox x:Name="HospitalRoomNameTextBox"  HorizontalAlignment="Left" Margin="315,287,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="75" Height="25" />
-        <Label Content="Room name" HorizontalAlignment="Left" Margin="236,287,0,0" VerticalAlignment="Top" Height="25" />
+        <Label Content="Room Name" HorizontalAlignment="Left" Margin="236,287,0,0" VerticalAlignment="Top" Height="25" />
 
         <StackPanel>
             <Menu IsMainMenu="True">
