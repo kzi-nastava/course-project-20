@@ -13,8 +13,8 @@
     "DateOfBirth": "13/07/1940"
   },
   {
-    "IsBlocked": true,
-    "BlockedBy": 2,
+    "IsBlocked": false,
+    "BlockedBy": 0,
     "ReferralIDs": [],
     "PrescriptionIDs": [],
     "HealthRecordID": 2,

@@ -1,68 +1,46 @@
 [
   {
-    "ID": 2,
+    "ID": 1,
     "Type": 1,
-    "ScheduledDate": "09/05/2022 09:30",
-    "CreatedDate": "08/05/2022 14:00",
+    "ScheduledDate": "10/05/2022 09:30",
+    "CreatedDate": "09/05/2022 19:04",
     "Emergency": false,
     "DoctorID": 1,
     "HealthRecordID": 1,
-    "HospitalRoomID": -1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 2,
+    "Type": 1,
+    "ScheduledDate": "10/05/2022 09:45",
+    "CreatedDate": "09/05/2022 19:06",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
     "PatientAnamnesis": null
   },
   {
     "ID": 3,
     "Type": 1,
-    "ScheduledDate": "17/05/2022 15:00",
-    "CreatedDate": "08/05/2022 14:00",
+    "ScheduledDate": "10/05/2022 08:00",
+    "CreatedDate": "09/05/2022 19:07",
     "Emergency": false,
     "DoctorID": 1,
     "HealthRecordID": 1,
-    "HospitalRoomID": -1,
+    "HospitalRoomID": 3,
     "PatientAnamnesis": null
   },
   {
-    "ID": 5,
+    "ID": 4,
     "Type": 1,
-    "ScheduledDate": "09/05/2022 08:00",
-    "CreatedDate": "08/05/2022 17:14",
+    "ScheduledDate": "10/05/2022 08:15",
+    "CreatedDate": "09/05/2022 19:14",
     "Emergency": false,
     "DoctorID": 1,
     "HealthRecordID": 1,
-    "HospitalRoomID": -1,
-    "PatientAnamnesis": null
-  },
-  {
-    "ID": 6,
-    "Type": 1,
-    "ScheduledDate": "09/05/2022 08:15",
-    "CreatedDate": "08/05/2022 18:12",
-    "Emergency": false,
-    "DoctorID": 1,
-    "HealthRecordID": 1,
-    "HospitalRoomID": -1,
-    "PatientAnamnesis": null
-  },
-  {
-    "ID": 7,
-    "Type": 1,
-    "ScheduledDate": "09/05/2022 08:30",
-    "CreatedDate": "08/05/2022 18:27",
-    "Emergency": false,
-    "DoctorID": 1,
-    "HealthRecordID": 1,
-    "HospitalRoomID": -1,
-    "PatientAnamnesis": null
-  },
-  {
-    "ID": 8,
-    "Type": 1,
-    "ScheduledDate": "09/05/2022 08:45",
-    "CreatedDate": "08/05/2022 18:27",
-    "Emergency": false,
-    "DoctorID": 1,
-    "HealthRecordID": 1,
-    "HospitalRoomID": -1,
+    "HospitalRoomID": 3,
     "PatientAnamnesis": null
   }
 ]

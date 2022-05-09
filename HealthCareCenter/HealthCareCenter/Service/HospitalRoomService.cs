@@ -169,5 +169,48 @@ namespace HealthCareCenter.Service
                 throw ex;
             }
         }
+
+        public static int GetAvailableRoomID(DateTime scheduledDate, Enums.RoomType roomType)
+        {
+            int hospitalRoomID = -1;
+            foreach (HospitalRoom hospitalRoom in HospitalRoomRepository.Rooms)
+            {
+                if (hospitalRoom.Type != roomType)
+                {
+                    continue;
+                }
+
+                hospitalRoomID = hospitalRoom.ID;
+                foreach (Appointment appointment in AppointmentRepository.Appointments)
+                {
+                    if (hospitalRoom.AppointmentIDs.Contains(appointment.ID))
+                    {
+                        if (appointment.ScheduledDate.CompareTo(scheduledDate) == 0)
+                        {
+                            hospitalRoomID = -1;
+                        }
+                    }
+                }
+                if (hospitalRoomID != -1)
+                {
+                    break;
+                }
+            }
+
+            return hospitalRoomID;
+        }
+
+        public static void AddAppointmentToRoom(int hospitalRoomID, int appointmentID)
+        {
+            foreach (HospitalRoom hospitalRoom in HospitalRoomRepository.Rooms)
+            {
+                if (hospitalRoom.ID == hospitalRoomID)
+                {
+                    hospitalRoom.AppointmentIDs.Add(appointmentID);
+                    break;
+                }
+            }
+            HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
+        }
     }
 }

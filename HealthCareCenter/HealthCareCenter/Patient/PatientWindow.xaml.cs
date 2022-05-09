@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using HealthCareCenter.Model;
 using System.Data;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter
 {
@@ -352,11 +353,18 @@ namespace HealthCareCenter
                 DateSent = DateTime.Now,
                 PatientID = signedUser.ID
             };
-            AddAppointmentToSchedule(newChangeRequest);
+
+            int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(newChangeRequest.NewDate, Enums.RoomType.Checkup);
+            if (hospitalRoomID == -1)
+            {
+                MessageBox.Show("There are no rooms available for that schedule");
+                return;
+            }
 
             MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", confirmationMessage, System.Windows.MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
+                AddAppointmentToSchedule(newChangeRequest, hospitalRoomID);
                 ClearWindow();
                 CreateAppointmentTable();
                 FillAppointmentTable();
@@ -364,75 +372,6 @@ namespace HealthCareCenter
                 myAppointmentsGrid.Visibility = Visibility.Visible;
             }
 
-        }
-
-        private void AddAppointmentToSchedule(AppointmentChangeRequest newChangeRequest)
-        {
-            // adds new/modified appointment to patientRepository.UnifinishedAppointments
-
-            if (IsModification())
-            {
-                if (CheckModificationTroll())
-                {
-                    return;
-                }
-
-                if (shouldSendRequestToSecretary)
-                {
-                    foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
-                    {
-                        if (changeRequest.AppointmentID == newChangeRequest.AppointmentID)
-                        {
-                            changeRequest.State = Enums.RequestState.Waiting;
-                            changeRequest.NewDate = newChangeRequest.NewDate;
-                            changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
-                            changeRequest.RequestType = newChangeRequest.RequestType;
-                            AppointmentChangeRequestRepository.Save();
-                            return;
-                        }
-                    }
-                    AppointmentChangeRequestRepository.Requests.Add(newChangeRequest);
-                    AppointmentChangeRequestRepository.Save();
-                    return;
-                }
-                else
-                {
-                    AppointmentChangeRequestService.EditAppointment(newChangeRequest);
-                    unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
-                }
-            }
-            else
-            {
-                if (CheckCreationTroll())
-                {
-                    return;
-                }
-
-                Appointment newAppointment = new Appointment
-                {
-                    ID = newChangeRequest.AppointmentID,
-                    Type = Enums.AppointmentType.Checkup,
-                    CreatedDate = DateTime.Now,
-                    ScheduledDate = newChangeRequest.NewDate,
-                    Emergency = false,
-                    DoctorID = Convert.ToInt32(chosenDoctor[0]),
-                    HealthRecordID = signedUser.HealthRecordID,
-                    HospitalRoomID = -1,
-                    PatientAnamnesis = null
-                };
-                AppointmentRepository.Appointments.Add(newAppointment);
-                unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
-            }
-
-            AppointmentRepository.Save();
-        }
-
-        private bool IsModification()
-        {
-            // returns true if the user is in the process of modifying the appointment
-            // and false if he is in the process of creating a new appointment
-
-            return chosenAppointment != null;
         }
         //=======================================================================================
 
@@ -460,7 +399,6 @@ namespace HealthCareCenter
                 {
                     if (signedUser.ID == patient.ID)
                     {
-                        MessageBox.Show(patient.ID.ToString());
                         patient.IsBlocked = true;
                         patient.BlockedBy = Enums.Blocker.System;
                         break;
@@ -522,7 +460,7 @@ namespace HealthCareCenter
             }
         }
 
-        private bool IsPrioritySearchSelectionValid()
+        private bool PrioritySearchSelectionValidation()
         {
             chosenDoctor = allDoctorsPriorityDataGrid.SelectedItem as DataRowView;
             if (chosenDoctor == null)
@@ -842,46 +780,21 @@ namespace HealthCareCenter
             AppointmentChangeRequest newAppointmentRequest;
             if (availablePriorityAppointmentsDataTable != null)
             {
-                chosenAppointment = allAppointmentsPriorityDataGrid.SelectedItem as DataRowView;
-                if (chosenAppointment == null)
-                {
-                    MessageBox.Show("No appointment selected");
-                    return;
-                }
-
-                newAppointmentRequest = new AppointmentChangeRequest
-                {
-                    ID = ++AppointmentChangeRequestRepository.LargestID,
-                    AppointmentID = ++AppointmentRepository.LargestID,
-                    RequestType = Enums.RequestType.MakeChanges,
-                    State = Enums.RequestState.Waiting,
-                    NewAppointmentType = Enums.AppointmentType.Checkup,
-                    NewDate = Convert.ToDateTime(chosenAppointment[1]),
-                    DateSent = DateTime.Now,
-                    NewDoctorID = Convert.ToInt32(chosenAppointment[0]),
-                    PatientID = signedUser.ID
-                };
-                string confirmationMessage = "Are you sure you want to schedule this appointment?";
-                MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", confirmationMessage, System.Windows.MessageBoxButton.YesNo);
-                if (messageBoxResult == MessageBoxResult.Yes)
-                {
-                    chosenAppointment = null;
-                    AddAppointmentToSchedule(newAppointmentRequest);
-                    ClearWindow();
-                    CreateAppointmentTable();
-                    FillAppointmentTable();
-                    myAppointmentsGrid.Visibility = Visibility.Visible;
-                }
-
+                PriorityNotFoundScheduling();
                 return;
             }
 
-            if (!IsPrioritySearchSelectionValid())
+            if (!PrioritySearchSelectionValidation())
             {
                 return;
             }
 
-            newAppointmentRequest = GetPriorityAppointment();
+            PriorityFoundScheduling();
+        }
+
+        private void PriorityFoundScheduling()
+        {
+            AppointmentChangeRequest newAppointmentRequest = GetPriorityAppointment();
             if (newAppointmentRequest == null)
             {
                 MessageBox.Show("No appointments found based on the chosen priority");
@@ -900,13 +813,20 @@ namespace HealthCareCenter
             }
             else
             {
+                int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(newAppointmentRequest.NewDate, Enums.RoomType.Checkup);
+                if (hospitalRoomID == -1)
+                {
+                    MessageBox.Show("There are no rooms available for that schedule");
+                    return;
+                }
+
                 string appointmentDetails = "Doctor: " + newAppointmentRequest.NewDoctorID + ", Schedule: " + newAppointmentRequest.NewDate.ToString();
                 MessageBox.Show("Appointment found: " + appointmentDetails);
                 string confirmationMessage = "Are you sure you want to schedule this appointment?";
                 MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", confirmationMessage, System.Windows.MessageBoxButton.YesNo);
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
-                    AddAppointmentToSchedule(newAppointmentRequest);
+                    AddAppointmentToSchedule(newAppointmentRequest, hospitalRoomID);
                     ClearWindow();
                     CreateAppointmentTable();
                     FillAppointmentTable();
@@ -915,10 +835,125 @@ namespace HealthCareCenter
                 }
             }
         }
+
+        private void PriorityNotFoundScheduling()
+        {
+            chosenAppointment = allAppointmentsPriorityDataGrid.SelectedItem as DataRowView;
+            if (chosenAppointment == null)
+            {
+                MessageBox.Show("No appointment selected");
+                return;
+            }
+
+            AppointmentChangeRequest newAppointmentRequest = new AppointmentChangeRequest
+            {
+                ID = ++AppointmentChangeRequestRepository.LargestID,
+                AppointmentID = ++AppointmentRepository.LargestID,
+                RequestType = Enums.RequestType.MakeChanges,
+                State = Enums.RequestState.Waiting,
+                NewAppointmentType = Enums.AppointmentType.Checkup,
+                NewDate = Convert.ToDateTime(chosenAppointment[1]),
+                DateSent = DateTime.Now,
+                NewDoctorID = Convert.ToInt32(chosenAppointment[0]),
+                PatientID = signedUser.ID
+            };
+
+            int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(newAppointmentRequest.NewDate, Enums.RoomType.Checkup);
+            if (hospitalRoomID == -1)
+            {
+                MessageBox.Show("There are no rooms available for that schedule");
+                return;
+            }
+
+            string confirmationMessage = "Are you sure you want to schedule this appointment?";
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", confirmationMessage, System.Windows.MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                chosenAppointment = null;
+                AddAppointmentToSchedule(newAppointmentRequest, hospitalRoomID);
+                ClearWindow();
+                CreateAppointmentTable();
+                FillAppointmentTable();
+                myAppointmentsGrid.Visibility = Visibility.Visible;
+            }
+
+            return;
+        }
         //=======================================================================================
 
         // helper methods
         //=======================================================================================
+        private void AddAppointmentToSchedule(AppointmentChangeRequest newChangeRequest, int hospitalRoomID)
+        {
+            // adds new/modified appointment to patientRepository.UnifinishedAppointments
+
+            if (IsModification())
+            {
+                if (CheckModificationTroll())
+                {
+                    return;
+                }
+
+                if (shouldSendRequestToSecretary)
+                {
+                    foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
+                    {
+                        if (changeRequest.AppointmentID == newChangeRequest.AppointmentID)
+                        {
+                            changeRequest.State = Enums.RequestState.Waiting;
+                            changeRequest.NewDate = newChangeRequest.NewDate;
+                            changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
+                            changeRequest.RequestType = newChangeRequest.RequestType;
+                            AppointmentChangeRequestRepository.Save();
+                            return;
+                        }
+                    }
+                    AppointmentChangeRequestRepository.Requests.Add(newChangeRequest);
+                    AppointmentChangeRequestRepository.Save();
+                    return;
+                }
+                else
+                {
+                    HospitalRoomService.AddAppointmentToRoom(hospitalRoomID, newChangeRequest.AppointmentID);
+                    AppointmentChangeRequestService.EditAppointment(newChangeRequest);
+                    unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
+                }
+            }
+            else
+            {
+                if (CheckCreationTroll())
+                {
+                    return;
+                }
+
+                Appointment newAppointment = new Appointment
+                {
+                    ID = newChangeRequest.AppointmentID,
+                    Type = Enums.AppointmentType.Checkup,
+                    CreatedDate = DateTime.Now,
+                    ScheduledDate = newChangeRequest.NewDate,
+                    Emergency = false,
+                    DoctorID = Convert.ToInt32(chosenDoctor[0]),
+                    HealthRecordID = signedUser.HealthRecordID,
+                    HospitalRoomID = hospitalRoomID,
+                    PatientAnamnesis = null
+                };
+                HospitalRoomService.AddAppointmentToRoom(hospitalRoomID, newChangeRequest.AppointmentID);
+                AppointmentRepository.Appointments.Add(newAppointment);
+                unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedUser.HealthRecordID);
+            }
+
+            AppointmentRepository.Save();
+        }
+
+        private bool IsModification()
+        {
+            // returns true if the user is in the process of modifying the appointment
+            // and false if he is in the process of creating a new appointment
+
+            return chosenAppointment != null;
+        }
+
         private void CancelAppointment()
         {
             CheckModificationTroll();

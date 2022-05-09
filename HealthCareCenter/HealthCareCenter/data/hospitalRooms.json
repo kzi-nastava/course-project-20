@@ -1,37 +1,30 @@
 [
+  
   {
     "Type": 0,
     "Name": "Room1",
-    "AppointmentIDs": [
-    ],
+    "AppointmentIDs": [],
     "ID": 1,
     "EquipmentAmounts": {
       "Table": 0,
       "Bad": 1
     },
-    "EquipmentRearrangementsIDs": [
-    ]
+    "EquipmentRearrangementsIDs": []
   },
   {
     "Type": 1,
     "Name": "Room2",
-    "AppointmentIDs": [
-    ],
+    "AppointmentIDs": [],
     "ID": 2,
-    "EquipmentAmounts": {
-    },
-    "EquipmentRearrangementsIDs": [
-    ]
+    "EquipmentAmounts": {},
+    "EquipmentRearrangementsIDs": []
   },
   {
     "Type": 2,
     "Name": "Room4",
-    "AppointmentIDs": [
-    ],
+    "AppointmentIDs": [ 1, 2, 3, 4 ],
     "ID": 3,
-    "EquipmentAmounts": {
-    },
-    "EquipmentRearrangementsIDs": [
-    ]
+    "EquipmentAmounts": {},
+    "EquipmentRearrangementsIDs": []
   }
 ]
