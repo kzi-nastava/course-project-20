@@ -10,5 +10,17 @@
     "VacationRequestIDs": [],
     "MedicineCreationRequestIDs": [],
     "AppointmentIDs": []
+  },
+  {
+    "ID": 4,
+    "Username": "zoran",
+    "Password": "zoran",
+    "FirstName": "Zoran",
+    "LastName": "Zoranovic",
+    "DateOfBirth": "15/06/1994",
+    "Type": "Neuro surgeon",
+    "VacationRequestIDs": [],
+    "MedicineCreationRequestIDs": [],
+    "AppointmentIDs": []
   }
 ]

@@ -12,18 +12,24 @@ namespace HealthCareCenter
 {
     public partial class DoctorWindow : Window
     {
+        private int selectedPatientID;
+        private List<Referral> referrals = new List<Referral>();
         private Doctor signedUser;
         private DataTable appointmentsDataTable;
         private DataTable patientsDataTable;
+        private DataTable doctorsDataTable;
+        private Referral referral;
         private bool patientsTableIsFilled = false;
         private int appointmentIndex;
         private int healthRecordIndex;
+        private int comboBoxChangeCounter = 0;
         DataRow dr;
         public DoctorWindow(Model.User user)
         {
             signedUser = (Doctor)user;
             CreateAppointmentTable();
             CreatePatientsTable();
+            CreateDoctorsTable();
             HealthRecordRepository.Load();
             AppointmentRepository.Load();
             InitializeComponent();
@@ -60,9 +66,20 @@ namespace HealthCareCenter
             patientsDataTable.Columns.Add(dc2);
             patientsDataTable.Columns.Add(dc3);
         }
+        private void CreateDoctorsTable()
+        {
+            doctorsDataTable = new DataTable("Doctors");
+            DataColumn dc1 = new DataColumn("Id", typeof(int));
+            DataColumn dc2 = new DataColumn("First name", typeof(string));
+            DataColumn dc3 = new DataColumn("Last name", typeof(string));
+            doctorsDataTable.Columns.Add(dc1);
+            doctorsDataTable.Columns.Add(dc2);
+            doctorsDataTable.Columns.Add(dc3);
+        }
+
 
         //---------------------------------------------------------------------------------------
-        //Putting data into tables
+        //Putting data into tables and combo boxess
         private void FillPatientsTable()
         {
             patientsDataTable.Rows.Clear();
@@ -76,6 +93,19 @@ namespace HealthCareCenter
             }
             patientsTableIsFilled = true;
             patientsDataGrid.ItemsSource = patientsDataTable.DefaultView;
+        }
+        private void FillDoctorsTable(List<Doctor>doctors)
+        {
+            doctorsDataTable.Rows.Clear();
+            foreach (Doctor doctor in doctors)
+            {
+                dr = doctorsDataTable.NewRow();
+                dr[0] = doctor.ID;
+                dr[1] = doctor.FirstName;
+                dr[2] = doctor.LastName;
+                doctorsDataTable.Rows.Add(dr);
+            }
+            doctorsDataGrid.ItemsSource = doctorsDataTable.DefaultView;
         }
         private void FillDateTimeComboBoxes()
         {
@@ -234,7 +264,7 @@ namespace HealthCareCenter
             appointment.CreatedDate = currentDate;
             if (isBeingCreated)
             {
-                appointment.ID = AppointmentRepository.LargestID + 1;
+                appointment.ID = ++AppointmentRepository.LargestID;
                 AppointmentRepository.Appointments.Add(appointment);
             }
             FillAppointmentsTable(AppointmentRepository.Appointments);
@@ -474,11 +504,14 @@ namespace HealthCareCenter
                 return;
             }
             int patientID = int.Parse(row["Patient ID"].ToString());
+            selectedPatientID = patientID;
             appointmentIndex = scheduleDataGrid.SelectedIndex;  
             healthRecordGrid.Visibility = Visibility.Visible;
             scheduleGrid.Visibility = Visibility.Collapsed;
             updateHealthRecord.Visibility = Visibility.Visible;
             createAnamnesis.Visibility = Visibility.Visible;
+            backButton.Visibility = Visibility.Visible;
+            referToADifferentPracticioner.Visibility = Visibility.Visible;
             foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
             {
                 if (healthRecord.PatientID == patientID)
@@ -535,6 +568,7 @@ namespace HealthCareCenter
             healthRecordGrid.Visibility = Visibility.Collapsed;
             scheduleGrid.Visibility = Visibility.Visible;
             updateHealthRecord.Visibility = Visibility.Collapsed;
+            referToADifferentPracticioner.Visibility = Visibility.Collapsed;
             createAnamnesis.Visibility = Visibility.Collapsed;
             HealthRecordRepository.Records[healthRecordIndex].Height = double.Parse(heightTextBox.Text);
             HealthRecordRepository.Records[healthRecordIndex].Weight = double.Parse(weigthTextBox.Text);
@@ -559,7 +593,18 @@ namespace HealthCareCenter
         {
             scheduleGrid.Visibility = Visibility.Visible;
             healthRecordGrid.Visibility = Visibility.Collapsed;
-            backButton.Visibility = Visibility.Collapsed;
+            updateHealthRecord.Visibility = Visibility.Collapsed;
+            createAnamnesis.Visibility = Visibility.Collapsed;
+            referToADifferentPracticioner.Visibility = Visibility.Collapsed;
+        }
+        private void ReferToADifferentPracticioner_Click(object sender, RoutedEventArgs e)
+        {
+            healthRecordGrid.Visibility = Visibility.Collapsed;
+            doctorReferalGrid.Visibility = Visibility.Visible;
+            referral = new Referral();
+            referral.ID = 0;
+            List<Doctor>doctors = getDoctorsByType();
+            FillDoctorsTable(doctors);
         }
 
         //---------------------------------------------------------------------------------------
@@ -577,6 +622,116 @@ namespace HealthCareCenter
         }
 
         //---------------------------------------------------------------------------------------
+        //Refferal creation buttons
+        private void submitReferal_Click(object sender, RoutedEventArgs e)
+        {
+            DataRowView row;
+            try
+            {
+                row = (DataRowView)doctorsDataGrid.SelectedItems[0];
+            }
+            catch
+            {
+                MessageBox.Show("Choose a doctor from the table");
+                return;
+            }
+            int doctorIndex = (int)row["Id"];
+            referral.DoctorID = doctorIndex;
+            referral.PatientID = selectedPatientID;
+            referrals.Add(referral);
+            doctorReferalGrid.Visibility = Visibility.Collapsed;
+            healthRecordGrid.Visibility = Visibility.Visible;
+
+        }
+        private void submitAutomaticReferal_Click(object sender, RoutedEventArgs e)
+        {
+            DataRowView row;
+            try
+            {
+                row = (DataRowView)doctorsDataGrid.Items[0];
+            }
+            catch
+            {
+                MessageBox.Show("There are no available doctors");
+                return;
+            }
+            int doctorIndex = (int)row["Id"];
+            referral.DoctorID =  doctorIndex;
+            referral.PatientID = selectedPatientID;
+            referrals.Add(referral);
+            doctorReferalGrid.Visibility = Visibility.Collapsed;
+            healthRecordGrid.Visibility = Visibility.Visible;
+        }
+        private void doctorReferalBack_Click(object sender, RoutedEventArgs e)
+        {
+            doctorReferalGrid.Visibility = Visibility.Collapsed;
+            healthRecordGrid.Visibility = Visibility.Visible;
+        }
+
+        //---------------------------------------------------------------------------------------
+        //Combo box events
+        private void doctorTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            List<Doctor> doctors = getDoctorsByType();
+            if (doctors == null)
+                return;
+            FillDoctorsTable(doctors);
+        }
+        private void specializationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            List<Doctor> doctors = getDoctorsBySpecialization();
+            if (doctors == null)
+                return;
+            FillDoctorsTable(doctors);
+        }
+
+        //---------------------------------------------------------------------------------------
+        //Data manipulation methods
+        private List<Doctor> getDoctorsByType()
+        {
+            if (comboBoxChangeCounter == 0)
+            {
+                comboBoxChangeCounter++;
+                return null;
+            }
+            int selectedIndex = doctorTypeComboBox.SelectedIndex;
+            string chosenType = "";
+            List<Doctor> doctors = new List<Doctor>();
+            switch (selectedIndex)
+            {
+                case 0: chosenType = "General practitioner"; specializationComboBox.IsEnabled = false; submitAutomaticReferal.IsEnabled = false; break;
+                case 1: chosenType = "Special"; specializationComboBox.IsEnabled = true; return getDoctorsBySpecialization();
+            }
+
+            foreach (Doctor doctor in UserRepository.Doctors)
+            {
+                if (doctor.Type.Equals(chosenType))
+                    doctors.Add(doctor);
+            }
+            return doctors;
+        }
+        private List<Doctor> getDoctorsBySpecialization()
+        {
+            int selectedIndex = specializationComboBox.SelectedIndex;
+            string chosenType = "";
+            List<Doctor> doctors = new List<Doctor>();
+            if (selectedIndex == -1)
+                return doctors;
+            switch (selectedIndex)
+            {
+                case 0: chosenType = "Neuro surgeon"; break;
+                default: return doctors;
+            }
+            submitAutomaticReferal.IsEnabled = true;
+            foreach (Doctor doctor in UserRepository.Doctors)
+            {
+                if (doctor.Type.Equals(chosenType))
+                    doctors.Add(doctor);
+            }
+            return doctors;
+        }
+
+        //---------------------------------------------------------------------------------------
         //Window closing
         private void WindowClosing(object sender, CancelEventArgs e)
         {
@@ -591,5 +746,9 @@ namespace HealthCareCenter
             loginWindow.Show();
         }
 
+        private void sumbitAutomaticReferal_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
