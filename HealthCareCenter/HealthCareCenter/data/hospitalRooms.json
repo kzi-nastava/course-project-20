@@ -13,7 +13,8 @@
   {
     "Type": 1,
     "Name": "Room2",
-    "AppointmentIDs": [],
+    "AppointmentIDs": [
+    ],
     "ID": 2,
     "EquipmentAmounts": {},
     "EquipmentRearrangementsIDs": []
@@ -21,7 +22,14 @@
   {
     "Type": 2,
     "Name": "Room4",
-    "AppointmentIDs": [ 1, 2, 3, 4, 5, 6 ],
+    "AppointmentIDs": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "ID": 3,
     "EquipmentAmounts": {},
     "EquipmentRearrangementsIDs": []
