@@ -7,34 +7,77 @@ using System.Data;
 using HealthCareCenter.Enums;
 using System.Globalization;
 using System.ComponentModel;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter
 {
     public partial class DoctorWindow : Window
     {
+        PrescriptionService prescriptionService;
         private int selectedPatientID;
-        private List<Referral> referrals = new List<Referral>();
+        
         private Doctor signedUser;
         private DataTable appointmentsDataTable;
         private DataTable patientsDataTable;
         private DataTable doctorsDataTable;
+        private DataTable medicineDataTable;
+        private DataTable selectedMedicineDataTable;
         private Referral referral;
         private bool patientsTableIsFilled = false;
         private int appointmentIndex;
         private int healthRecordIndex;
         private int comboBoxChangeCounter = 0;
+        HealthRecord selectedPatientsHealthRecord;
         DataRow dr;
         public DoctorWindow(Model.User user)
         {
             signedUser = (Doctor)user;
+            prescriptionService = new PrescriptionService(signedUser.ID);
             CreateAppointmentTable();
             CreatePatientsTable();
             CreateDoctorsTable();
+            CreateMedicineTable();
             HealthRecordRepository.Load();
             AppointmentRepository.Load();
+            MedicineRepository.Load();
+            PrescriptionRepository.Load();  
+            MedicineInstructionRepository.Load();
+            ReferralRepository.Load();
             InitializeComponent();
             FillDateTimeComboBoxes();
         }
+
+        private void CreateMedicineTable()
+        {
+            medicineDataTable = new DataTable("Medicines");
+            selectedMedicineDataTable = new DataTable("Selected medicines");
+            DataColumn dc1 = new DataColumn("Id", typeof(int));
+            DataColumn dc2 = new DataColumn("Name", typeof(string));
+            DataColumn dc3 = new DataColumn("Creation date", typeof(string));
+            DataColumn dc4 = new DataColumn("Expiration date", typeof(string));
+            DataColumn dc5 = new DataColumn("Ingredients", typeof(List<string>));
+            DataColumn dc6 = new DataColumn("Manufactrer", typeof(string));
+            medicineDataTable.Columns.Add(dc1);
+            medicineDataTable.Columns.Add(dc2);
+            medicineDataTable.Columns.Add(dc3);
+            medicineDataTable.Columns.Add(dc4);
+            medicineDataTable.Columns.Add(dc5);
+            medicineDataTable.Columns.Add(dc6);
+
+            dc1 = new DataColumn("Id", typeof(int));
+            dc2 = new DataColumn("Name", typeof(string));
+            dc3 = new DataColumn("Creation date", typeof(string));
+            dc4 = new DataColumn("Expiration date", typeof(string));
+            dc5 = new DataColumn("Ingredients", typeof(List<string>));
+            dc6 = new DataColumn("Manufactrer", typeof(string));
+            selectedMedicineDataTable.Columns.Add(dc1);
+            selectedMedicineDataTable.Columns.Add(dc2);
+            selectedMedicineDataTable.Columns.Add(dc3);
+            selectedMedicineDataTable.Columns.Add(dc4);
+            selectedMedicineDataTable.Columns.Add(dc5);
+            selectedMedicineDataTable.Columns.Add(dc6);
+        }
+
         //Creating tables(table headers)
         private void CreateAppointmentTable()
         {
@@ -94,6 +137,39 @@ namespace HealthCareCenter
             patientsTableIsFilled = true;
             patientsDataGrid.ItemsSource = patientsDataTable.DefaultView;
         }
+        private void FillMedicinesTable()
+        {
+            medicineDataTable.Rows.Clear();
+            foreach(Medicine medicine in MedicineRepository.Medicines)
+            {
+                dr = medicineDataTable.NewRow();
+                dr[0] = medicine.ID;
+                dr[1] = medicine.Name;
+                dr[2] = medicine.Creation;
+                dr[3] = medicine.Expiration;
+                dr[4] = medicine.Ingredients;
+                dr[5] = medicine.Manufacturer;
+                medicineDataTable.Rows.Add(dr);
+            }
+            medicationDataGrid.ItemsSource = medicineDataTable.DefaultView;
+        }
+
+        private void AddMedicineToTable(Medicine medicine)
+        {
+            dr = selectedMedicineDataTable.NewRow();
+            dr[0] = medicine.ID;
+            dr[1] = medicine.Name;
+            dr[2] = medicine.Creation;
+            dr[3] = medicine.Expiration;
+            dr[4] = medicine.Ingredients;
+            dr[5] = medicine.Manufacturer;
+            selectedMedicineDataTable.Rows.Add(dr);
+            selectedMedicationDataGrid.ItemsSource = selectedMedicineDataTable.DefaultView;
+        }
+        private void DeleteMedicineFromTable(int index)
+        {
+            selectedMedicineDataTable.Rows.RemoveAt(index); 
+        }
         private void FillDoctorsTable(List<Doctor>doctors)
         {
             doctorsDataTable.Rows.Clear();
@@ -144,6 +220,23 @@ namespace HealthCareCenter
                 if (s.Length == 1)
                     s = "0" + s;
                 minuteComboBox.Items.Add(s);
+            }
+        }
+        private void FillMedicineTakingComboBoxes()
+        {
+            for (int i = 0; i <= 24; i++)
+            {
+                string s = i.ToString();
+                if (s.Length == 1)
+                    s = "0" + s;
+               hourOfMedicineTakingComboBox.Items.Add(s);
+            }
+            for (int i = 0; i <= 59; i += 1)
+            {
+                string s = i.ToString();
+                if (s.Length == 1)
+                    s = "0" + s;
+                minuteOfMedicineTakingComboBox.Items.Add(s);
             }
         }
         private void FillAppointmentsTable(List<Appointment> appointments)
@@ -350,10 +443,12 @@ namespace HealthCareCenter
             if(AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis == null)
             {
                 anamnesisLabel.Content = "No anamnesis";
+                createAPrescription.IsEnabled = false;
             }
             else
             {
                 anamnesisLabel.Content = AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis.Comment;
+                createAPrescription.IsEnabled = true;
             }
         }
 
@@ -511,12 +606,16 @@ namespace HealthCareCenter
             updateHealthRecord.Visibility = Visibility.Visible;
             createAnamnesis.Visibility = Visibility.Visible;
             backButton.Visibility = Visibility.Visible;
+            createAPrescription.Visibility = Visibility.Visible;
             referToADifferentPracticioner.Visibility = Visibility.Visible;
+            medicineGrid.Visibility = Visibility.Visible;
+            FillMedicinesTable();
             foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
             {
                 if (healthRecord.PatientID == patientID)
                 {
                     FillHealthRecordData(healthRecord);
+                    selectedPatientsHealthRecord = healthRecord;
                     break;
                 }
             }
@@ -565,11 +664,7 @@ namespace HealthCareCenter
         }
         private void UpdateHealthRecord_Click(object sender, RoutedEventArgs e)
         {
-            healthRecordGrid.Visibility = Visibility.Collapsed;
-            scheduleGrid.Visibility = Visibility.Visible;
-            updateHealthRecord.Visibility = Visibility.Collapsed;
-            referToADifferentPracticioner.Visibility = Visibility.Collapsed;
-            createAnamnesis.Visibility = Visibility.Collapsed;
+            exitHealthRecord();
             HealthRecordRepository.Records[healthRecordIndex].Height = double.Parse(heightTextBox.Text);
             HealthRecordRepository.Records[healthRecordIndex].Weight = double.Parse(weigthTextBox.Text);
             HealthRecordRepository.Records[healthRecordIndex].PreviousDiseases.Clear();
@@ -591,20 +686,145 @@ namespace HealthCareCenter
         }
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            scheduleGrid.Visibility = Visibility.Visible;
-            healthRecordGrid.Visibility = Visibility.Collapsed;
-            updateHealthRecord.Visibility = Visibility.Collapsed;
-            createAnamnesis.Visibility = Visibility.Collapsed;
-            referToADifferentPracticioner.Visibility = Visibility.Collapsed;
+            exitHealthRecord();
         }
         private void ReferToADifferentPracticioner_Click(object sender, RoutedEventArgs e)
         {
             healthRecordGrid.Visibility = Visibility.Collapsed;
             doctorReferalGrid.Visibility = Visibility.Visible;
             referral = new Referral();
-            referral.ID = 0;
+            referral.ID = ++ReferralRepository.LargestID;
             List<Doctor>doctors = getDoctorsByType();
             FillDoctorsTable(doctors);
+        }
+
+        private void exitHealthRecord()
+        {
+            scheduleGrid.Visibility = Visibility.Visible;
+            healthRecordGrid.Visibility = Visibility.Collapsed;
+            updateHealthRecord.Visibility = Visibility.Collapsed;
+            createAnamnesis.Visibility = Visibility.Collapsed;
+            referToADifferentPracticioner.Visibility = Visibility.Collapsed;
+            createAPrescription.Visibility = Visibility.Collapsed;
+            medicineGrid.Visibility = Visibility.Collapsed;
+        }
+        private void createAPrescription_Click(object sender, RoutedEventArgs e)
+        {
+            addMedicine.IsEnabled = true;  
+            deleteMedicine.IsEnabled = true;
+            finishPrescriptionCreation.IsEnabled = true;
+            instructionsTextBox.IsEnabled = true;
+            consumptionPerDayComboBox.IsEnabled = true;
+            consumptionPeriodComboBox.IsEnabled = true;
+            addMedicineConsumptionTime.IsEnabled = true;
+            hourOfMedicineTakingComboBox.IsEnabled = true;
+            minuteOfMedicineTakingComboBox.IsEnabled = true;
+            FillMedicineTakingComboBoxes();
+        }
+        private void addMedicine_Click(object sender, RoutedEventArgs e)
+        {
+            int medicineIndex;
+            Medicine chosenMedicine;
+            try
+            {
+                medicineIndex = medicationDataGrid.SelectedIndex;
+            }
+            catch
+            {
+                MessageBox.Show("Choose a medicine");
+                return;
+            }
+            chosenMedicine = MedicineRepository.Medicines[medicineIndex];
+            bool isAlergic = checkAlergies(chosenMedicine);
+            if (isAlergic)
+                return;
+            foreach (Medicine medicine in prescriptionService.SelectedMedicine)
+            {
+               if(chosenMedicine.ID == medicine.ID)
+               {
+                    MessageBox.Show("This medicine is already added");
+                    return;
+               }
+            }
+            prescriptionService.SelectedMedicine.Add(chosenMedicine);
+            AddMedicineToTable(chosenMedicine);
+        }
+
+        private bool checkAlergies(Medicine medicine)
+        {
+            foreach(string ingredient in medicine.Ingredients)
+            {
+                if (selectedPatientsHealthRecord.Allergens.Contains(ingredient))
+                {
+                    MessageBox.Show("Patient is allergic to: " + ingredient);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void deleteMedicine_Click(object sender, RoutedEventArgs e)
+        {
+            int medicineIndex;
+            try
+            {
+                medicineIndex = selectedMedicationDataGrid.SelectedIndex;
+            }
+            catch
+            {
+                MessageBox.Show("Choose a medicine");
+                return;
+            }
+            try
+            {
+                prescriptionService.SelectedMedicine.RemoveAt(medicineIndex);
+                DeleteMedicineFromTable(medicineIndex);
+            }
+            catch { }
+        }
+        private void addMedicineConsumptionTime_Click(object sender, RoutedEventArgs e)
+        {
+            string hour = hourOfMedicineTakingComboBox.SelectedItem.ToString();
+            string minute = minuteOfMedicineTakingComboBox.SelectedItem.ToString();
+            bool successful = prescriptionService.AddTime(hour, minute);
+            if (successful)
+                MessageBox.Show("Time added successfuly");
+            else
+                MessageBox.Show("An error happend with time conversion");
+        }
+
+        private void finishPrescriptionCreation_Click(object sender, RoutedEventArgs e)
+        {
+            string instructions = instructionsTextBox.Text.Trim();
+            if (instructions.Length! > 0)
+                instructions = "";
+            int consumptionPeriodIndex = consumptionPeriodComboBox.SelectedIndex;
+            ConsumptionPeriod consumptionPeriod;
+            switch (consumptionPeriodIndex) {
+                case 0: consumptionPeriod = ConsumptionPeriod.AfterEating; break;
+                case 1: consumptionPeriod = ConsumptionPeriod.BeforeEating; break;
+                case 2: consumptionPeriod = ConsumptionPeriod.Any; break;
+                default: consumptionPeriod = ConsumptionPeriod.Any; break;
+            }
+            int consumptionsPerDay = consumptionPerDayComboBox.SelectedIndex;
+            bool successful = prescriptionService.CreateMedicineInstruction(0,instructions,consumptionsPerDay,consumptionPeriod);
+            if (!successful)
+                return;
+            successful = prescriptionService.CreateAPrescription();
+            if (!successful)
+                return;
+            addMedicine.IsEnabled = false ;
+            deleteMedicine.IsEnabled = false;
+            finishPrescriptionCreation.IsEnabled = false;
+            instructionsTextBox.IsEnabled = false;
+            consumptionPerDayComboBox.IsEnabled = false;
+            consumptionPeriodComboBox.IsEnabled = false;
+            addMedicineConsumptionTime.IsEnabled = false;
+            hourOfMedicineTakingComboBox.IsEnabled = false;
+            minuteOfMedicineTakingComboBox.IsEnabled = false;
+            prescriptionService.ClearData();
+            selectedMedicineDataTable.Rows.Clear();
+            MessageBox.Show("Added prescription successfuly");
         }
 
         //---------------------------------------------------------------------------------------
@@ -638,7 +858,7 @@ namespace HealthCareCenter
             int doctorIndex = (int)row["Id"];
             referral.DoctorID = doctorIndex;
             referral.PatientID = selectedPatientID;
-            referrals.Add(referral);
+            ReferralRepository.Referrals.Add(referral);
             doctorReferalGrid.Visibility = Visibility.Collapsed;
             healthRecordGrid.Visibility = Visibility.Visible;
 
@@ -658,7 +878,7 @@ namespace HealthCareCenter
             int doctorIndex = (int)row["Id"];
             referral.DoctorID =  doctorIndex;
             referral.PatientID = selectedPatientID;
-            referrals.Add(referral);
+            ReferralRepository.Referrals.Add(referral);
             doctorReferalGrid.Visibility = Visibility.Collapsed;
             healthRecordGrid.Visibility = Visibility.Visible;
         }
@@ -719,7 +939,8 @@ namespace HealthCareCenter
                 return doctors;
             switch (selectedIndex)
             {
-                case 0: chosenType = "Neuro surgeon"; break;
+                case 0: chosenType = "Neurologist"; break;
+                case 1: chosenType = "Cardiologist"; break;
                 default: return doctors;
             }
             submitAutomaticReferal.IsEnabled = true;
@@ -737,6 +958,9 @@ namespace HealthCareCenter
         {
             HealthRecordRepository.Save();
             AppointmentRepository.Save();
+            PrescriptionRepository.Save();
+            MedicineInstructionRepository.Save();
+            ReferralRepository.Save(); 
             LogOut();
         }
 
@@ -746,9 +970,5 @@ namespace HealthCareCenter
             loginWindow.Show();
         }
 
-        private void sumbitAutomaticReferal_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }
