@@ -16,6 +16,16 @@
     "Password": "jovan",
     "FirstName": "Jovan",
     "LastName": "Jovanovic",
-    "DateOfBirth": "15/06/1994"
+  {
+    "ID": 4,
+    "Username": "zoran",
+    "Password": "zoran",
+    "FirstName": "Zoran",
+    "LastName": "Zoranovic",
+    "DateOfBirth": "15/06/1994",
+    "Type": "Neurologist",
+    "VacationRequestIDs": [],
+    "MedicineCreationRequestIDs": [],
+    "AppointmentIDs": []
   }
 ]
