@@ -38,6 +38,13 @@
                     <MenuItem Header="Equipment review" Click="EquipmentReviewMenuItemClick"></MenuItem>
                     <MenuItem Header="Arranging equipment" Click="ArrangingEquipmentItemClick"></MenuItem>
                 </MenuItem>
+
+                <MenuItem Header="Renovation">
+                    <MenuItem Header="Simple renovation" Click="SimpleRenovationItemClick"></MenuItem>
+                    <MenuItem Header="Complex renovation - merge" Click="ComplexRenovationMergeItemClick"></MenuItem>
+                    <MenuItem Header="Complex renovation - split" Click="ComplexRenovationSplitItemClick"></MenuItem>
+                </MenuItem>
+
                 <MenuItem Header="Log off" Click="LogOffItemClick"></MenuItem>
             </Menu>
         </StackPanel>
