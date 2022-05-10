@@ -27,6 +27,7 @@
     "Type": 2,
     "Name": "Room4",
     "AppointmentIDs": [
+      1
     ],
     "ID": 3,
     "EquipmentAmounts": {

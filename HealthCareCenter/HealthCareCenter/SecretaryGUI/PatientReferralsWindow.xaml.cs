@@ -52,21 +52,53 @@ namespace HealthCareCenter.SecretaryGUI
                     ID = referral.ID
                 };
 
-                foreach (Doctor doctor in UserRepository.Doctors)
-                {
-                    if (doctor.ID != referral.DoctorID)
-                    {
-                        continue;
-                    }
-                    patientReferral.DoctorUsername = doctor.Username;
-                    patientReferral.DoctorFirstName = doctor.FirstName;
-                    patientReferral.DoctorLastName = doctor.LastName;
-                    break;
-                }
+                LinkDoctor(referral, patientReferral);
                 _referrals.Add(patientReferral);
             }
 
             referralsDataGrid.ItemsSource = _referrals;
+        }
+
+        private static void LinkDoctor(Referral referral, PatientReferral patientReferral)
+        {
+            foreach (Doctor doctor in UserRepository.Doctors)
+            {
+                if (doctor.ID != referral.DoctorID)
+                {
+                    continue;
+                }
+                patientReferral.DoctorUsername = doctor.Username;
+                patientReferral.DoctorFirstName = doctor.FirstName;
+                patientReferral.DoctorLastName = doctor.LastName;
+                break;
+            }
+        }
+
+        private void UseReferralButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (referralsDataGrid.SelectedItem == null)
+            {
+                MessageBox.Show("You must first select a referral from the table to use!");
+                return;
+            }
+
+            Referral selectedReferral = FindReferral();
+
+            ScheduleAppointmentReferralWindow window = new ScheduleAppointmentReferralWindow(_patient, selectedReferral);
+            window.ShowDialog();
+            Refresh();
+        }
+
+        private Referral FindReferral()
+        {
+            foreach (Referral referral in ReferralRepository.Referrals)
+            {
+                if (referral.ID == ((PatientReferral)referralsDataGrid.SelectedItem).ID)
+                {
+                    return referral;
+                }
+            }
+            return null;
         }
     }
 }

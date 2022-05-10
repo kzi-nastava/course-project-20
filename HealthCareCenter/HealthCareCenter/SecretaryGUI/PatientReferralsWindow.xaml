@@ -26,7 +26,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <Button x:Name="useReferralButton" Grid.Row="1" Grid.Column="0" Margin="7.5" Content="Use referral" FontSize="18" />
+        <Button x:Name="useReferralButton" Grid.Row="1" Grid.Column="0" Margin="7.5" Content="Use referral" FontSize="18" Click="UseReferralButton_Click" />
 
     </Grid>
 </Window>

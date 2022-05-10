@@ -64,5 +64,26 @@ namespace HealthCareCenter.Model
                 throw ex;
             }
         }
+
+        public static void SaveDoctors()
+        {
+            try
+            {
+                JsonSerializer serializer = new JsonSerializer
+                {
+                    Formatting = Formatting.Indented,
+                    DateFormatString = Constants.DateFormat
+                };
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\doctors.json"))
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    serializer.Serialize(writer, Doctors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

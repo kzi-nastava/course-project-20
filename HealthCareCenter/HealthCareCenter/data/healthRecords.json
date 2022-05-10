@@ -6,6 +6,8 @@
     "PreviousDiseases": [],
     "Allergens": [],
     "PatientID": 2,
-    "AppointmentIDs": []
+    "AppointmentIDs": [
+      1
+    ]
   }
 ]
