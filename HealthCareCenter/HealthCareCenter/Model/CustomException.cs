@@ -27,4 +27,20 @@ namespace HealthCareCenter.Model
             Console.WriteLine("Error, equipment rearrangement not found!");
         }
     }
+
+    public class RenovationScheduleNotFound : Exception
+    {
+        public RenovationScheduleNotFound()
+        {
+            Console.WriteLine("Error, renovation schedule not found!");
+        }
+    }
+
+    public class HospitalPremisesNotFound : Exception
+    {
+        public HospitalPremisesNotFound()
+        {
+            Console.WriteLine("Error, hospital premises not found!");
+        }
+    }
 }

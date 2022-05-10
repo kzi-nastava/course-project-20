@@ -39,7 +39,9 @@ namespace HealthCareCenter.Service
                 foreach (EquipmentRearrangement rearrangement in EquipmentRearrangementRepository.Rearrangements)
                 {
                     if (rearrangement.ID == id)
+                    {
                         return rearrangement;
+                    }
                 }
 
                 throw new EquipmentRearrangementNotFound();
@@ -66,7 +68,10 @@ namespace HealthCareCenter.Service
                 List<EquipmentRearrangement> rearrangements = EquipmentRearrangementRepository.Rearrangements;
                 rearrangements.Sort((x, y) => x.ID.CompareTo(y.ID));
                 if (rearrangements.Count == 0)
+                {
                     return -1;
+                }
+
                 return rearrangements[rearrangements.Count - 1].ID;
             }
             catch (Exception ex)

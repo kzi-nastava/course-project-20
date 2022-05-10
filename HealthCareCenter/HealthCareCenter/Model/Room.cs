@@ -17,7 +17,9 @@ namespace HealthCareCenter.Model
         public bool IsStorage()
         {
             if (this.ID == 0)
+            {
                 return true;
+            }
 
             return false;
         }
@@ -29,7 +31,9 @@ namespace HealthCareCenter.Model
         public bool ContainAnyEquipment()
         {
             if (EquipmentAmounts.Count != 0)
+            {
                 return true;
+            }
 
             return false;
         }
@@ -41,7 +45,10 @@ namespace HealthCareCenter.Model
         public bool Contains(string equipmentName)
         {
             if (!EquipmentAmounts.ContainsKey(equipmentName) || (EquipmentAmounts[equipmentName] == 0))
+            {
                 return false;
+            }
+
             return true;
         }
 
@@ -53,7 +60,9 @@ namespace HealthCareCenter.Model
         public int GetEquipmentAmount(string equipmentName)
         {
             if (!this.Contains(equipmentName))
+            {
                 return 0;
+            }
 
             return EquipmentAmounts[equipmentName];
         }
@@ -71,7 +80,9 @@ namespace HealthCareCenter.Model
                 if (equipment.CurrentRoomID == ID)
                 {
                     if (equipment.ID == specificEquipment.ID)
+                    {
                         return true;
+                    }
                 }
             }
             return false;

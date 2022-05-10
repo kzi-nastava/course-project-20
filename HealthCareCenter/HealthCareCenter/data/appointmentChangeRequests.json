@@ -3,7 +3,7 @@
     "ID": 1,
     "AppointmentID": 1,
     "RequestType": 1,
-    "State": 2,
+    "State": 1,
     "NewDate": "06/05/2022 08:00",
     "NewAppointmentType": 1,
     "NewDoctorID": 1,
@@ -19,6 +19,28 @@
     "NewAppointmentType": 0,
     "NewDoctorID": 1,
     "DateSent": "28/04/2022 18:50",
+    "PatientID": 2
+  },
+  {
+    "ID": 5,
+    "AppointmentID": 3,
+    "RequestType": 1,
+    "State": 1,
+    "NewDate": "13/05/2022 15:15",
+    "NewAppointmentType": 1,
+    "NewDoctorID": 1,
+    "DateSent": "06/05/2022 18:33",
+    "PatientID": 2
+  },
+  {
+    "ID": 6,
+    "AppointmentID": 2,
+    "RequestType": 0,
+    "State": 0,
+    "NewDate": "01/01/0001 00:00",
+    "NewAppointmentType": 0,
+    "NewDoctorID": 0,
+    "DateSent": "07/05/2022 00:07",
     "PatientID": 2
   }
 ]
