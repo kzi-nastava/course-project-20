@@ -251,7 +251,7 @@ namespace HealthCareCenter
             appointment.CreatedDate = currentDate;
             if (isBeingCreated)
             {
-                appointment.ID = AppointmentRepository.LargestID + 1;
+                appointment.ID = ++AppointmentRepository.LargestID;
                 AppointmentRepository.Appointments.Add(appointment);
             }
             FillAppointmentsTable(AppointmentRepository.Appointments);

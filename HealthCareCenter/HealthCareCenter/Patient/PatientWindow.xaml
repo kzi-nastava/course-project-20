@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HealthCareCenter"
         mc:Ignorable="d"
-        Title="Patient Window" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+        Title="Patient Window" Height="450" Width="800" 
+        WindowStartupLocation="CenterScreen"
+        >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
@@ -64,7 +66,7 @@
             <Button x:Name="createAppointmentButton" Margin="5 10 5 0" Content="Create" Grid.Row="2" Grid.Column="1" Click="createAppointmentButton_Click"/>
             <Button x:Name="makeChangeAppointmentButton" Margin="5 10 5 0" Content="Make changes" Grid.Row="2" Grid.Column="2" Click="makeChangeAppointmentButton_Click"/>
             <Button x:Name="cancelAppointmentButton" Margin="5 10 5 0" Content="Cancel" Grid.Row="2" Grid.Column="3" Click="cancelAppointmentButton_Click"/>
-            <Button x:Name="accessAnamnesisAppointmentButton" Margin="5 10 5 0" Content="Access anamnesis" Grid.Row="2" Grid.Column="4"/>
+            <Button x:Name="prioritySchedulingButton" Margin="5 10 5 0" Content="Priority schedule" Grid.Row="2" Grid.Column="4" Click="prioritySchedulingButton_Click"/>
         </Grid>
 
         <Grid x:Name="searchDoctorsGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
@@ -87,7 +89,7 @@
 
         </Grid>
 
-        <Grid x:Name="createAppointmentGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Visible">
+        <Grid x:Name="createAppointmentGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*" />
@@ -106,25 +108,79 @@
                 <RowDefinition Height="10" />
             </Grid.RowDefinitions>
 
-            <DataGrid Margin="5 10 5 0" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" x:Name ="allDoctorsDataGrid" ScrollViewer.CanContentScroll="True" 
+            <DataGrid Margin="5 10 5 0" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" x:Name ="allDoctorsCUDDataGrid" ScrollViewer.CanContentScroll="True" 
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                           IsReadOnly="True" />
 
-            <DataGrid Margin="5 10 5 0" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" x:Name ="allAvailableTimeDataGrid" ScrollViewer.CanContentScroll="True" 
+            <DataGrid Margin="5 10 5 0" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" x:Name ="allAvailableTimeCUDDataGrid" ScrollViewer.CanContentScroll="True" 
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                           IsReadOnly="True" />
 
-            <Button x:Name="chooseDoctorButton" Margin="5 10 5 0" Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Content="Choose doctor" Click="chooseDoctorButton_Click" />
+            <Button x:Name="chooseDoctorCUDButton" Margin="5 10 5 0" Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Content="Choose doctor" Click="chooseDoctorCUDButton_Click" />
             <TextBlock Grid.Row="2" Grid.Column="2" Text="Choose day" Margin="15 5 2 0"  />
-            <ComboBox x:Name="dayChoiceComboBox" Margin="5 5 5 0" Grid.Row="3" Grid.Column="2" />
+            <ComboBox x:Name="dayChoiceCUDComboBox" Margin="5 5 5 0" Grid.Row="3" Grid.Column="2" />
             <TextBlock Grid.Row="2" Grid.Column="3" Text="Choose month" Margin="15 5 2 0"  />
-            <ComboBox x:Name="monthChoiceComboBox" Margin="5 5 5 0" Grid.Row="3" Grid.Column="3" />
+            <ComboBox x:Name="monthChoiceCUDComboBox" Margin="5 5 5 0" Grid.Row="3" Grid.Column="3" />
             <TextBlock Grid.Row="2" Grid.Column="4" Text="Choose year" Margin="15 5 2 0"  />
-            <ComboBox x:Name="yearChoiceComboBox" Margin="5 5 5 0" Grid.Row="3" Grid.Column="4" />
-            <Button x:Name="scheduleAppointmentButton" Margin="5 10 5 0" Grid.Row="2" Grid.Column="5" Grid.RowSpan="2" Content="Schedule appointment" Click="scheduleAppointmentButton_Click" />
+            <ComboBox x:Name="yearChoiceCUDComboBox" Margin="5 5 5 0" Grid.Row="3" Grid.Column="4" />
+            <Button x:Name="scheduleAppointmentCUDButton" Margin="5 10 5 0" Grid.Row="2" Grid.Column="5" Grid.RowSpan="2" Content="Schedule appointment" Click="scheduleAppointmentCUDButton_Click" />
+        </Grid>
+
+        <Grid x:Name="prioritySchedulingGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Visible">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="50" />
+                <RowDefinition Height="10" />
+            </Grid.RowDefinitions>
+
+            <DataGrid Margin="5 10 5 20" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="3" x:Name ="allDoctorsPriorityDataGrid" ScrollViewer.CanContentScroll="True" 
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          IsReadOnly="True" />
+            
+            <DataGrid Margin="5 10 5 20" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="3" x:Name ="allAppointmentsPriorityDataGrid" ScrollViewer.CanContentScroll="True" 
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          IsReadOnly="True" />
+
+            <TextBlock Text="Priority:" Grid.Row="3" Grid.Column="1" Grid.RowSpan="2" FontSize="18" Margin="0 10 0 0"/>
+            <RadioButton x:Name="doctorPriorityRadioButton" GroupName="priority" IsChecked="True" Content="Doctor" Grid.Row="5" Grid.Column="1" FontSize="15" Margin="0 5 0 0" />
+            <RadioButton x:Name="timePriorityRadioButton" GroupName="priority" Content="Time" Grid.Row="5" FontSize="15" Grid.Column="1" Margin="0 25 0 0"/>
+            
+            <TextBlock Grid.Row="3" Grid.Column="2" Text="Choose latest scheduling date that is most convenient for you:" Grid.ColumnSpan="3" Margin="10 5 0 0" FontWeight="Bold" />
+            <TextBlock Grid.Row="4" Grid.Column="2" Text="Choose day" Margin="15 5 2 0"  />
+            <ComboBox x:Name="dayChoicePriorityComboBox" Margin="5 5 5 0" Grid.Row="5" Grid.Column="2" />
+            <TextBlock Grid.Row="4" Grid.Column="3" Text="Choose month" Margin="15 5 2 0" />
+            <ComboBox x:Name="monthChoicePriorityComboBox" Margin="5 5 5 0" Grid.Row="5" Grid.Column="3" />
+            <TextBlock Grid.Row="4" Grid.Column="4" Text="Choose year" Margin="15 5 2 0"  />
+            <ComboBox x:Name="yearChoicePriorityComboBox" Margin="5 5 5 0" Grid.Row="5" Grid.Column="4" />
+
+            <TextBlock Grid.Row="3" Grid.Column="5" Text="Choose convenient appointment time range:" Grid.ColumnSpan="3" Margin="0 5 0 0" FontWeight="Bold" />
+            <TextBlock Grid.Row="4" Grid.Column="5" Text="Choose start range" Margin="15 5 2 0"  />
+            <ComboBox x:Name="startTimeRangePriorityComboBox" Margin="15 5 1 0" Grid.Row="5" Grid.Column="5" />
+            <TextBlock Grid.Row="4" Grid.Column="6" Text="Choose end range" Margin="2 5 15 0"  />
+            <ComboBox x:Name="endTimeRangePriorityComboBox" Margin="1 5 15 0" Grid.Row="5" Grid.Column="6" />
+
+            <Button x:Name="scheduleAppointmentPriorityButton" Content="Schedule appointment" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="3" Margin="15 0 15 0" Click="scheduleAppointmentPriorityButton_Click" />
         </Grid>
 
     </Grid>
+
 </Window>
