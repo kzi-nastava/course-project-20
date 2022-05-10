@@ -1,1 +1,37 @@
-[{"Type":0,"Name":"Room1","AppointmentIDs":[],"ID":1,"EquipmentAmounts":{"Table":0,"Bad":1,"Chair":1},"EquipmentRearrangementsIDs":[]},{"Type":1,"Name":"Room2","AppointmentIDs":[],"ID":2,"EquipmentAmounts":{},"EquipmentRearrangementsIDs":[]},{"Type":2,"Name":"Room4","AppointmentIDs":[],"ID":3,"EquipmentAmounts":{},"EquipmentRearrangementsIDs":[]},{"Type":1,"Name":"Dosadna","AppointmentIDs":[],"ID":4,"EquipmentAmounts":{},"EquipmentRearrangementsIDs":[]}]
+[
+  {
+    "Type": 0,
+    "Name": "Room1",
+    "AppointmentIDs": [],
+    "ID": 1,
+    "EquipmentAmounts": {
+      "Table": 0,
+      "Bad": 1
+    },
+    "EquipmentRearrangementsIDs": []
+  },
+  {
+    "Type": 1,
+    "Name": "Room2",
+    "AppointmentIDs": [
+    ],
+    "ID": 2,
+    "EquipmentAmounts": {},
+    "EquipmentRearrangementsIDs": []
+  },
+  {
+    "Type": 2,
+    "Name": "Room4",
+    "AppointmentIDs": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "ID": 3,
+    "EquipmentAmounts": {},
+    "EquipmentRearrangementsIDs": []
+  }
+]

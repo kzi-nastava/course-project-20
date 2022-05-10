@@ -20,7 +20,9 @@ namespace HealthCareCenter.Service
                 foreach (Equipment equipment in EquipmentRepository.Equipments)
                 {
                     if (equipment.ID == id)
+                    {
                         return equipment;
+                    }
                 }
 
                 throw new EquipmentNotFound();
@@ -66,7 +68,10 @@ namespace HealthCareCenter.Service
                 List<Equipment> equipments = EquipmentRepository.Equipments;
                 equipments.Sort((x, y) => x.ID.CompareTo(y.ID));
                 if (equipments.Count == 0)
+                {
                     return -1;
+                }
+
                 return equipments[equipments.Count - 1].ID;
             }
             catch (Exception ex)

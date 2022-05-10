@@ -21,11 +21,11 @@ namespace HealthCareCenter
     public partial class HospitalEquipmentReviewWindow : Window
     {
         private string[] _headerDataGridEquipment = new string[] { "Equipment Id", "Current Room Id", "Equipment Type", "Equipment Name", "Move Time", "New Room Id" };
-        private Manager _signedUser;
+        private Manager _signedManager;
 
         public HospitalEquipmentReviewWindow(User user)
         {
-            _signedUser = (Manager)user;
+            _signedManager = (Manager)user;
             InitializeComponent();
             AddDataGridHeader(DataGridEquipments, _headerDataGridEquipment);
             FillDataGridEquipment();
@@ -113,7 +113,10 @@ namespace HealthCareCenter
             dynamic row = new ExpandoObject();
 
             for (int i = 0; i < header.Length; i++)
+            {
                 ((IDictionary<String, Object>)row)[header[i].Replace(' ', '_')] = equipmentAttributesToDisplay[i];
+            }
+
             dataGrid.Items.Add(row);
         }
 
@@ -161,11 +164,16 @@ namespace HealthCareCenter
         {
             string searchContent = SearchEquipmentTextBox.Text;
             if (searchContent == "")
+            {
                 return true;
+            }
+
             foreach (string attribute in equipmentAttributesToDisplay)
             {
                 if (attribute.Contains(searchContent))
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -181,15 +189,21 @@ namespace HealthCareCenter
             string currentRoomId = equipmentAttributesToDisplay[1];
 
             if (roomType == "")
+            {
                 return true;
+            }
 
             if ((roomType == "Storage") && (currentRoomId == "0"))
+            {
                 return true;
+            }
             else if (currentRoomId != "0")
             {
-                HospitalRoom room = HospitalRoomService.GetRoom(Convert.ToInt32(currentRoomId));
+                HospitalRoom room = (HospitalRoom)RoomService.GetRoom(Convert.ToInt32(currentRoomId));
                 if (roomType == room.Type.ToString())
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -204,10 +218,14 @@ namespace HealthCareCenter
             string equipmentType = EquipmentTypeComboBox.Text;
 
             if (equipmentType == "")
+            {
                 return true;
+            }
 
             if (equipmentAttributesToDisplay[2].Contains(equipmentType))
+            {
                 return true;
+            }
 
             return false;
         }
@@ -223,29 +241,44 @@ namespace HealthCareCenter
             string equipmentName = equipmentAttributesToDisplay[3];
 
             if (amount == "")
+            {
                 return true;
+            }
 
             Room storage = StorageRepository.GetStorage();
 
             if (amount == "Out of stock")
+            {
                 if (!storage.Contains(equipmentName))
+                {
                     return true;
+                }
+            }
 
             if (amount == "0-10")
             {
                 if (!storage.Contains(equipmentName))
+                {
                     return false;
+                }
 
                 if (storage.GetEquipmentAmount(equipmentName) > 0 && storage.GetEquipmentAmount(equipmentName) < 10)
+                {
                     return true;
+                }
             }
 
             if (amount == "10+")
             {
                 if (!storage.Contains(equipmentName))
+                {
                     return false;
+                }
+
                 if (storage.GetEquipmentAmount(equipmentName) > 10)
+                {
                     return true;
+                }
             }
 
             return false;
@@ -258,10 +291,18 @@ namespace HealthCareCenter
         private void FilterEquipment(List<string> equipmentAttributesToDisplay)
         {
             if (FilterEquipmentsBySearchTextBox(equipmentAttributesToDisplay))
+            {
                 if (FilterEquipmentsByCurrentRoomType(equipmentAttributesToDisplay))
+                {
                     if (FilterEquipmentsByEquipmentType(equipmentAttributesToDisplay))
+                    {
                         if (FilterEquipmentsByAmount(equipmentAttributesToDisplay))
+                        {
                             AddDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
+                        }
+                    }
+                }
+            }
         }
 
         private void ShowSearchResultButton_Click(object sender, RoutedEventArgs e)
@@ -290,17 +331,32 @@ namespace HealthCareCenter
 
         private void CrudHospitalRoomMenuItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new CrudHospitalRoomWindow(_signedUser));
+            ShowWindow(new CrudHospitalRoomWindow(_signedManager));
         }
 
         private void EquipmentReviewMenuItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new HospitalEquipmentReviewWindow(_signedUser));
+            ShowWindow(new HospitalEquipmentReviewWindow(_signedManager));
         }
 
         private void ArrangingEquipmentItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ArrangingEquipmentWindow(_signedUser));
+            ShowWindow(new ArrangingEquipmentWindow(_signedManager));
+        }
+
+        private void SimpleRenovationItemClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new HospitalRoomRenovationWindow(_signedManager));
+        }
+
+        private void ComplexRenovationMergeItemClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new ComplexHospitalRoomRenovationMergeWindow(_signedManager));
+        }
+
+        private void ComplexRenovationSplitItemClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

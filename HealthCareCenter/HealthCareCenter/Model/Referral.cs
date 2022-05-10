@@ -9,6 +9,5 @@ namespace HealthCareCenter.Model
         public int ID { get; set; }
         public int PatientID { get; set; }
         public int DoctorID { get; set; }
-       
     }
 }

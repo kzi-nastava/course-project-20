@@ -189,7 +189,10 @@ namespace HealthCareCenter
             {
                 string s = i.ToString();
                 if (s.Length == 1)
+                {
                     s = "0" + s;
+                }
+
                 dayComboBox.Items.Add(s);
                 dayChoiceComboBox.Items.Add(s);
             }
@@ -197,7 +200,10 @@ namespace HealthCareCenter
             {
                 string s = i.ToString();
                 if (s.Length == 1)
+                {
                     s = "0" + s;
+                }
+
                 monthComboBox.Items.Add(s);
                 monthChoiceComboBox.Items.Add(s);
             }
@@ -211,14 +217,20 @@ namespace HealthCareCenter
             {
                 string s = i.ToString();
                 if (s.Length == 1)
+                {
                     s = "0" + s;
+                }
+
                 hourComboBox.Items.Add(s);
             }
             for (int i = 0; i <= 45; i += 15)
             {
                 string s = i.ToString();
                 if (s.Length == 1)
+                {
                     s = "0" + s;
+                }
+
                 minuteComboBox.Items.Add(s);
             }
         }
@@ -243,7 +255,9 @@ namespace HealthCareCenter
         {
             appointmentsDataTable.Rows.Clear();
             if (AppointmentRepository.Appointments == null)
+            {
                 appointments = AppointmentRepository.Load();
+            }
 
             foreach (Appointment appointment in appointments)
             {
@@ -333,7 +347,10 @@ namespace HealthCareCenter
             foreach (Appointment appointments in AppointmentRepository.Appointments)
             {
                 if (appointments.ID == appointment.ID)
+                {
                     continue;
+                }
+
                 TimeSpan timeSpan = appointments.ScheduledDate.Subtract(date);
                 if (Math.Abs(timeSpan.TotalMinutes) < 15)
                 {
@@ -375,22 +392,34 @@ namespace HealthCareCenter
             yearComboBox.SelectedIndex = int.Parse(yearAndTime[0]) - 2022;
             int hour = int.Parse(time[0]);
             if (hour <= 12 && yearAndTime[2] == "AM")
+            {
                 hour -= 8;
+            }
             else
+            {
                 hour += 4;
+            }
+
             hourComboBox.SelectedIndex = hour;                               
             minuteComboBox.SelectedIndex = int.Parse(time[1]) / 15;
             emergencyCheckBox.IsChecked = appointment.Emergency;
             if (appointment.Type == AppointmentType.Checkup)
+            {
                 appointmentTypeComboBox.SelectedIndex = 0;
+            }
             else
+            {
                 appointmentTypeComboBox.SelectedIndex = 1;
+            }
+
             int patientIndex = 0;
             foreach (Patient patient in UserRepository.Patients)
             {
                 patientIndex++;
                 if (patient.ID == appointment.HealthRecordID)
+                {
                     break;
+                }
             }
             patientsDataGrid.SelectedIndex = patientIndex;
 
@@ -418,7 +447,10 @@ namespace HealthCareCenter
                 }
             }
             else
+            {
                 previousDiseasesTextBox.Text = "none";
+            }
+
             string alergens = "";
             if (healthRecord.Allergens != null)
             {
@@ -672,7 +704,10 @@ namespace HealthCareCenter
             foreach(string disease in previousDiseases)
             {
                 if (string.IsNullOrWhiteSpace(disease))
+                {
                     continue;
+                }
+
                 HealthRecordRepository.Records[healthRecordIndex].PreviousDiseases.Add(disease);
             }
             HealthRecordRepository.Records[healthRecordIndex].Allergens.Clear();
@@ -680,7 +715,10 @@ namespace HealthCareCenter
             foreach (string allergen in allergens)
             {
                 if (string.IsNullOrWhiteSpace(allergen))
+                {
                     continue;
+                }
+
                 HealthRecordRepository.Records[healthRecordIndex].Allergens.Add(allergen);
             }
         }

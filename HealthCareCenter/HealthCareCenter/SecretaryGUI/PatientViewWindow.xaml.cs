@@ -102,5 +102,11 @@ namespace HealthCareCenter.SecretaryGUI
             ViewChangeRequestsWindow window = new ViewChangeRequestsWindow(_patient);
             window.ShowDialog();
         }
+
+        private void ViewReferralsButton_Click(object sender, RoutedEventArgs e)
+        {
+            PatientReferralsWindow window = new PatientReferralsWindow(_patient);
+            window.ShowDialog();
+        }
     }
 }

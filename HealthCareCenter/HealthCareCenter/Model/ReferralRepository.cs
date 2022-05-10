@@ -12,13 +12,9 @@ namespace HealthCareCenter.Model
         public static int LargestID { get; set; }
         public static List<Referral> Load()
         {
-            var settings = new JsonSerializerSettings
-            {
-                DateFormatString = Constants.TimeFormat
-            };
 
             string JSONTextReferrals = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\referrals.json");
-            Referrals = (List<Referral>)JsonConvert.DeserializeObject<IEnumerable<Referral>>(JSONTextReferrals, settings);
+            Referrals = (List<Referral>)JsonConvert.DeserializeObject<IEnumerable<Referral>>(JSONTextReferrals);
             LargestID = Referrals.Count == 0 ? 0 : Referrals[^1].ID;
             return Referrals;
         }
@@ -28,8 +24,7 @@ namespace HealthCareCenter.Model
             {
                 JsonSerializer serializer = new JsonSerializer
                 {
-                    Formatting = Formatting.Indented,
-                    DateFormatString = Constants.TimeFormat
+                    Formatting = Formatting.Indented
                 };
                 using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\referrals.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
