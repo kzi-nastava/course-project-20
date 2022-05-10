@@ -12,7 +12,8 @@
             <RowDefinition Height="229*" />
             <RowDefinition Height="205*" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.RowSpan="2">
+
+        <StackPanel>
             <Menu IsMainMenu="True">
                 <MenuItem Header="Hospital premises">
                     <MenuItem Header="CRUD hospital rooms" Click="CrudHospitalRoomMenuItemClick"></MenuItem>
@@ -21,6 +22,13 @@
                     <MenuItem Header="Equipment review" Click="EquipmentReviewMenuItemClick"></MenuItem>
                     <MenuItem Header="Arranging equipment" Click="ArrangingEquipmentItemClick"></MenuItem>
                 </MenuItem>
+
+                <MenuItem Header="Renovation">
+                    <MenuItem Header="Simple renovation" Click="SimpleRenovationItemClick"></MenuItem>
+                    <MenuItem Header="Complex renovation - merge" Click="ComplexRenovationMergeItemClick"></MenuItem>
+                    <MenuItem Header="Complex renovation - split" Click="ComplexRenovationSplitItemClick"></MenuItem>
+                </MenuItem>
+
                 <MenuItem Header="Log off" Click="LogOffItemClick"></MenuItem>
             </Menu>
         </StackPanel>
