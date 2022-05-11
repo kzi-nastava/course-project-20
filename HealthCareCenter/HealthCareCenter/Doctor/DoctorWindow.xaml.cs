@@ -375,6 +375,7 @@ namespace HealthCareCenter
             if (isBeingCreated)
             {
                 appointment.ID = ++AppointmentRepository.LargestID;
+                signedUser.AppointmentIDs.Add(appointment.ID);
                 AppointmentRepository.Appointments.Add(appointment);
             }
             FillAppointmentsTable(AppointmentRepository.Appointments);
