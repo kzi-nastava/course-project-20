@@ -108,5 +108,11 @@ namespace HealthCareCenter.SecretaryGUI
             PatientReferralsWindow window = new PatientReferralsWindow(_patient);
             window.ShowDialog();
         }
+
+        private void ScheduleUrgentAppointmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            ScheduleUrgentAppointmentWindow window = new ScheduleUrgentAppointmentWindow(_patient);
+            window.ShowDialog();
+        }
     }
 }

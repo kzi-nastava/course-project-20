@@ -13,8 +13,7 @@
   {
     "Type": 1,
     "Name": "Room2",
-    "AppointmentIDs": [
-    ],
+    "AppointmentIDs": [],
     "ID": 2,
     "EquipmentAmounts": {},
     "EquipmentRearrangementsIDs": []

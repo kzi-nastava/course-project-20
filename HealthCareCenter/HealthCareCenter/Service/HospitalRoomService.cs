@@ -182,6 +182,18 @@ namespace HealthCareCenter.Service
             }
         }
 
+        public static void Update(int roomID, Appointment appointment)
+        {
+            foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
+            {
+                if (room.ID == roomID)
+                {
+                    room.AppointmentIDs.Add(appointment.ID);
+                    return;
+                }
+            }
+        }
+
         public static int GetAvailableRoomID(DateTime scheduledDate, Enums.RoomType roomType)
         {
             int hospitalRoomID = -1;
