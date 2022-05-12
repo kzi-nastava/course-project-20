@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "ID": 0,
+    "EquipmentID": 0,
+    "MoveTime": "2022-05-27T00:00:00",
+    "OldRoomID": 4,
+    "NewRoomID": 5
+  },
+  {
+    "ID": 1,
+    "EquipmentID": 3,
+    "MoveTime": "2022-05-27T00:00:00",
+    "OldRoomID": 4,
+    "NewRoomID": 6
+  }
+]

@@ -87,5 +87,97 @@ namespace HealthCareCenter.Model
             }
             return false;
         }
+
+        private void RemoveEquipment(Equipment equipment)
+        {
+            try
+            {
+                if (this.Contains(equipment))
+                {
+                    this.EquipmentAmounts[equipment.Name]--;
+                    RoomService.UpdateRoom(this);
+                }
+                else
+                {
+                    throw new EquipmentNotFound();
+                }
+            }
+            catch (EquipmentNotFound ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private void AddEquipment(Equipment equipment, Room room)
+        {
+            if (room.Contains(equipment.Name))
+            {
+                room.EquipmentAmounts[equipment.Name]++;
+            }
+            else
+            {
+                if (room.EquipmentAmounts.ContainsKey(equipment.Name) == false)
+                {
+                    room.EquipmentAmounts.Add(equipment.Name, 1);
+                }
+                else
+                {
+                    room.EquipmentAmounts[equipment.Name]++;
+                }
+            }
+            RoomService.UpdateRoom(this);
+            equipment.CurrentRoomID = room.ID;
+            EquipmentService.UpdateEquipment(equipment);
+        }
+
+        public void TransferEquipment(Equipment equipment, Room room)
+        {
+            RemoveEquipment(equipment);
+            AddEquipment(equipment, room);
+        }
+
+        public void TransferAllEquipment(Room room)
+        {
+            List<Equipment> equipments = EquipmentService.GetEquipments();
+            for (int i = 0; i < equipments.Count; i++)
+            {
+                if (equipments[i].CurrentRoomID == this.ID)
+                {
+                    TransferEquipment(equipments[i], room);
+                }
+            }
+        }
+
+        public bool ContaninsAnyRearrangement()
+        {
+            List<EquipmentRearrangement> rearrangements = EquipmentRearrangementService.GetRearrangements();
+            foreach (EquipmentRearrangement rearrangement in rearrangements)
+            {
+                if (rearrangement.OldRoomID == this.ID || rearrangement.NewRoomID == this.ID)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public List<Equipment> GetAllEquipments()
+        {
+            List<Equipment> roomEquipments = new List<Equipment>();
+            List<Equipment> equipments = EquipmentService.GetEquipments();
+            foreach (Equipment equipment in equipments)
+            {
+                if (equipment.CurrentRoomID == this.ID)
+                {
+                    roomEquipments.Add(equipment);
+                }
+            }
+
+            return roomEquipments;
+        }
     }
 }

@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HealthCareCenter"
         mc:Ignorable="d"
-        Title="ComplexHospitalRoomRenovationSplitWindow" Height="450" Width="1110">
+        Title="ComplexHospitalRoomRenovationSplitWindow" Height="500" Width="1110">
     <Grid>
-        <DataGrid x:Name="DataGridHospitalRooms" Margin="10,25,10,265" IsReadOnly="True">
+        <DataGrid x:Name="DataGridHospitalRooms" Margin="10,25,10,305" IsReadOnly="True">
 
             <!-- Font Color / Style of Column Headings-->
             <DataGrid.Resources>
@@ -26,7 +26,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <DataGrid x:Name="DataGridHospitalRoomsRenovationSplit" Margin="10,184,10,95" IsReadOnly="True">
+        <DataGrid x:Name="DataGridHospitalRoomsRenovationSplit" Margin="10,184,10,125" IsReadOnly="True">
 
             <!-- Font Color / Style of Column Headings-->
             <DataGrid.Resources>
@@ -38,19 +38,6 @@
             </DataGrid.Resources>
 
             <!-- Column Header Text & Bindings-->
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Room ID"  Width="100"></DataGridTextColumn>
-                <DataGridTextColumn Header="Room Name"   Width="100"></DataGridTextColumn>
-                <DataGridTextColumn Header="Room Type"   Width="100"></DataGridTextColumn>
-                <DataGridTextColumn Header="Start Date"   Width="100"></DataGridTextColumn>
-                <DataGridTextColumn Header="Finish Date"   Width="100"></DataGridTextColumn>
-                <DataGridTextColumn Header="Room1 ID"  Width="100"></DataGridTextColumn>
-                <DataGridTextColumn Header="Room1 Name"   Width="100"></DataGridTextColumn>
-                <DataGridTextColumn Header="Room1 Type"   Width="100"></DataGridTextColumn>
-                <DataGridTextColumn Header="Room2 ID"  Width="100"></DataGridTextColumn>
-                <DataGridTextColumn Header="Room2 Name"   Width="100"></DataGridTextColumn>
-                <DataGridTextColumn Header="Room2 Type"   Width="100"></DataGridTextColumn>
-            </DataGrid.Columns>
         </DataGrid>
         <Label Content="Room ID" HorizontalAlignment="Left" Margin="10,369,0,0" VerticalAlignment="Top" />
         <TextBox x:Name="RoomIDTextBox" HorizontalAlignment="Left" Margin="71,369,0,0"  TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Height="26" />
@@ -61,7 +48,19 @@
         <Label Content="Room2 Name" HorizontalAlignment="Left" Margin="507,369,0,0" VerticalAlignment="Top" />
         <TextBox x:Name="Room2NameTextBox" HorizontalAlignment="Left" Margin="595,369,0,0"  TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Height="26" />
 
-        <Button x:Name="SplitButton" FontWeight="SemiBold" FontSize="13" Content="Split" HorizontalAlignment="Left" Margin="795,364,0,0" VerticalAlignment="Top" Height="36" Width="85" />
+        <Button x:Name="SplitButton" FontWeight="SemiBold" FontSize="13" Content="Split" HorizontalAlignment="Left" Margin="995,404,0,0" VerticalAlignment="Top" Height="36" Width="85" Click="SplitButton_Click" />
+
+        <Label Content="Start Date" HorizontalAlignment="Left" Margin="10,418,0,0" VerticalAlignment="Top" />
+        <DatePicker x:Name="StartDatePicker" HorizontalAlignment="Left" Margin="78,418,0,0" VerticalAlignment="Top" Width="113" />
+
+        <Label Content="Finish Date" HorizontalAlignment="Left" Margin="240,418,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.132,-0.076" />
+        <DatePicker x:Name="FinishDatePicker" HorizontalAlignment="Left" Margin="335,418,0,0" VerticalAlignment="Top" Width="120" />
+
+        <Label Content="Room1 Type" HorizontalAlignment="Left" Margin="507,418,0,0" VerticalAlignment="Top" />
+        <ComboBox x:Name="Room1TypeComboBox" HorizontalAlignment="Left" Margin="595,418,0,0" VerticalAlignment="Top" Width="120" />
+
+        <Label Content="Room2 Type" HorizontalAlignment="Left" Margin="745,416,0,0" VerticalAlignment="Top" />
+        <ComboBox x:Name="Room2TypeComboBox" HorizontalAlignment="Left" Margin="838,418,0,0" VerticalAlignment="Top" Width="120" />
 
         <StackPanel>
             <Menu IsMainMenu="True">

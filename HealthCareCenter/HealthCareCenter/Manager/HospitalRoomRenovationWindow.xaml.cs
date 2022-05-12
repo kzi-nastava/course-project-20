@@ -178,10 +178,15 @@ namespace HealthCareCenter
                 return;
             }
 
-            HospitalRoomService.DeleteRoom(roomForRenovation);
-            HospitalRoomForRenovationService.AddRoom(roomForRenovation);
+            if (roomForRenovation.ContaninsAnyRearrangement())
+            {
+                MessageBox.Show("Error, hospital room contains rearrangements!");
+                return;
+            }
+
             RenovationSchedule renovation = new RenovationSchedule(parsedStartDate, parsedEndDate, roomForRenovation);
-            RenovationScheduleService.AddRenovation(renovation);
+            renovation.ScheduleSimpleRenovation(roomForRenovation);
+
             FillDataGridHospitalRoomsRenovation();
             FillDataGridHospitalRooms();
         }

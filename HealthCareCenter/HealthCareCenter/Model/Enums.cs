@@ -62,4 +62,11 @@ namespace HealthCareCenter.Enums
         Approved,
         Waiting
     }
+
+    public enum RenovationType
+    {
+        Simple,
+        Merge,
+        Split
+    }
 }

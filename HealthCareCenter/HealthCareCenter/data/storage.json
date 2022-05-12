@@ -1,1 +1,13 @@
-[{"ID":0,"EquipmentAmounts":{"Chair":1,"Bench":1,"Table":1},"EquipmentRearrangementsIDs":[0]}]
+[
+  {
+    "ID": 0,
+    "EquipmentAmounts": {
+      "Chair": 1,
+      "Bench": 1,
+      "Table": 1
+    },
+    "EquipmentRearrangementsIDs": [
+      0
+    ]
+  }
+]

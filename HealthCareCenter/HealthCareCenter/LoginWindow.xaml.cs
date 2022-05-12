@@ -31,10 +31,10 @@ namespace HealthCareCenter
 
         private void FinshPossibleRenovation()
         {
-            List<HospitalRoom> roomsForRenovation = HospitalRoomForRenovationService.GetRooms();
-            for (int i = 0; i < roomsForRenovation.Count; i++)
+            List<RenovationSchedule> renovations = RenovationScheduleService.GetRenovations();
+            for (int i = 0; i < renovations.Count; i++)
             {
-                roomsForRenovation[i].SetToBeAvailable();
+                renovations[i].FinishRenovation();
             }
         }
 
@@ -76,7 +76,7 @@ namespace HealthCareCenter
                         }
                         else if (user.GetType() == typeof(Manager))
                         {
-                            ShowWindow(new HospitalRoomRenovationWindow((Manager)user));
+                            ShowWindow(new ComplexHospitalRoomRenovationSplitWindow((Manager)user));
                         }
                         else if (user.GetType() == typeof(Patient))
                         {

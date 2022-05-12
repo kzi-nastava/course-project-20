@@ -232,6 +232,27 @@ namespace HealthCareCenter
             }
 
             EquipmentRearrangement rearrangement = new EquipmentRearrangement(equipmentToMove.ID, rearrangementDateTime, equipmentToMove.CurrentRoomID, parsedNewRoomId);
+
+            HospitalRoom currentRoom = HospitalRoomService.GetRoom(rearrangement.OldRoomID);
+            HospitalRoom newwRoom = HospitalRoomService.GetRoom(rearrangement.NewRoomID);
+
+            if (currentRoom == null)
+            {
+                if (rearrangement.OldRoomID != 0)
+                {
+                    MessageBox.Show("Error, current room is renovating");
+                    return;
+                }
+            }
+            if (newwRoom == null)
+            {
+                if (rearrangement.NewRoomID != 0)
+                {
+                    MessageBox.Show("Error, new room is renovating!");
+                    return;
+                }
+            }
+
             equipmentToMove.SetRearrangement(rearrangement);
             DataGridEquipments.Items.Clear();
             FillDataGridEquipment();
@@ -254,6 +275,18 @@ namespace HealthCareCenter
             if (!IsEquipmentToMoveFound(equipmentToMove))
             {
                 MessageBox.Show($"Error, equipment with ID {parsedMovingEquipmentId} not found!");
+                return;
+            }
+
+            EquipmentRearrangement rearrangement = EquipmentRearrangementService.GetRearrangement(equipmentToMove.RearrangementID);
+            if (rearrangement == null)
+            {
+                MessageBox.Show("Error, is not on rearrangement list!");
+                return;
+            }
+            if (rearrangement.IsIrrevocable())
+            {
+                MessageBox.Show("Error, rerrangement is irrevocable");
                 return;
             }
 

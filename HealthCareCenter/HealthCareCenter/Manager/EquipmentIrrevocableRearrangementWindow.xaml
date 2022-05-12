@@ -1,0 +1,39 @@
+﻿<Window x:Class="HealthCareCenter.EquipmentIrrevocableRearrangementWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HealthCareCenter"
+        WindowStyle="None"
+        mc:Ignorable="d"
+        Title="EquipmentIrrevocableRearrangementWindow" Height="450" Width="800" Closed="">
+
+    <Grid>
+        <DataGrid x:Name="DataGridRoomEquipment" Margin="10,26,10,214" IsReadOnly="True">
+
+            <!-- Font Color / Style of Column Headings-->
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="FontWeight" Value="SemiBold"></Setter>
+                    <Setter Property="BorderThickness" Value="0,0,1,2"></Setter>
+                    <Setter Property="BorderBrush" Value="Black"></Setter>
+                </Style>
+            </DataGrid.Resources>
+
+            <!-- Column Header Text & Bindings-->
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Equipment ID" Binding="{Binding ID}"  Width="130"></DataGridTextColumn>
+                <DataGridTextColumn Header="Equipment Name" Binding="{Binding Name}"  Width="130"></DataGridTextColumn>
+                <DataGridTextColumn Header="Equipment Type" Binding="{Binding Type}"  Width="*"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Label Content="Equipment ID" HorizontalAlignment="Left" Margin="10,244,0,0" VerticalAlignment="Top" />
+        <TextBox x:Name="EquipmentIdTextBox" HorizontalAlignment="Left" Margin="97,244,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Height="26" />
+
+        <Label Content="Room" HorizontalAlignment="Left" Margin="252,244,0,0" VerticalAlignment="Top" />
+        <ComboBox x:Name="NewRoomComboBox" HorizontalAlignment="Left" Margin="298,244,0,0" VerticalAlignment="Top" Width="120" Height="26" />
+
+        <Button x:Name="TransferButton" Content="Transfer" HorizontalAlignment="Left" Margin="475,244,0,0" VerticalAlignment="Top" Height="26" Width="60" Click="TransferButton_Click" />
+    </Grid>
+</Window>
