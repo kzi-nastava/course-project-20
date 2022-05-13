@@ -44,7 +44,10 @@ namespace HealthCareCenter.Model
         {
             try
             {
-                JsonSerializer serializer = new JsonSerializer();
+                JsonSerializer serializer = new JsonSerializer
+                {
+                    Formatting = Formatting.Indented
+                };
 
                 using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + _fileName))
                 using (JsonWriter writer = new JsonTextWriter(sw))
@@ -58,5 +61,6 @@ namespace HealthCareCenter.Model
                 throw ex;
             }
         }
+
     }
 }

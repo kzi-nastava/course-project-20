@@ -1,12 +1,29 @@
 [
   {
+    "Type": "General practitioner",
+    "VacationRequestIDs": [],
+    "MedicineCreationRequestIDs": [],
+    "AppointmentIDs": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "ID": 1,
     "Username": "jovan",
     "Password": "jovan",
     "FirstName": "Jovan",
     "LastName": "Jovanovic",
+  {
+    "ID": 4,
+    "Username": "zoran",
+    "Password": "zoran",
+    "FirstName": "Zoran",
+    "LastName": "Zoranovic",
     "DateOfBirth": "15/06/1994",
-    "Type": "General practitioner",
+    "Type": "Neurologist",
     "VacationRequestIDs": [],
     "MedicineCreationRequestIDs": [],
     "AppointmentIDs": []
