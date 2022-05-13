@@ -1,19 +1,5 @@
 [
   {
-    "Type": 0,
-    "Name": "Room1",
-    "AppointmentIDs": [
-    ],
-    "ID": 1,
-    "EquipmentAmounts": {
-      "Table": 0,
-      "Bad": 1,
-      "Chair": 1
-    },
-    "EquipmentRearrangementsIDs": [
-    ]
-  },
-  {
     "Type": 2,
     "Name": "asdsa",
     "AppointmentIDs": [

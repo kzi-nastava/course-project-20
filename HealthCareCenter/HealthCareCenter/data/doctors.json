@@ -17,5 +17,18 @@
     "FirstName": "Jovan",
     "LastName": "Jovanovic",
     "DateOfBirth": "15/06/1994"
+  },
+  {
+    "Type": "Cardiology",
+    "VacationRequestIDs": [],
+    "MedicineCreationRequestIDs": [],
+    "AppointmentIDs": [
+    ],
+    "ID": 5,
+    "Username": "marko",
+    "Password": "marko",
+    "FirstName": "Marko",
+    "LastName": "Markovic",
+    "DateOfBirth": "12/04/1992"
   }
 ]

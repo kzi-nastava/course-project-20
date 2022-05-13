@@ -24,6 +24,7 @@ namespace HealthCareCenter.SecretaryGUI
         private Patient _patient;
 
         private List<string> _typesOfDoctors;
+        private List<Appointment> _occupiedAppointments;
 
         public ScheduleUrgentAppointmentWindow()
         {
@@ -63,10 +64,13 @@ namespace HealthCareCenter.SecretaryGUI
 
             List<string> terms = GetTermsWithinTwoHours();
 
+            _occupiedAppointments = new List<Appointment>();
             if (!FindTermsAndSchedule(doctors, type, rooms, terms))
             {
                 MessageBox.Show("No available term was found in the next 2 hours. You can, however, postpone an occupied term in the next window.");
-                //TODO: next window
+                OccupiedAppointmentsWindow window = new OccupiedAppointmentsWindow(_patient, type, doctors, rooms, _occupiedAppointments);
+                window.ShowDialog();
+                this.Close();
             }
         }
 
@@ -81,9 +85,9 @@ namespace HealthCareCenter.SecretaryGUI
                 List<Doctor> availableDoctors = new List<Doctor>(doctors);
                 List<HospitalRoom> availableRooms = new List<HospitalRoom>(rooms);
 
-                RemoveUnavailableDoctorsAndRooms(potentialTime, availableDoctors, availableRooms);
+                bool found = CheckTermAndRemoveUnavailables(potentialTime, availableDoctors, availableRooms, AppointmentRepository.Appointments);
 
-                if (availableDoctors.Count > 0 && availableRooms.Count > 0)
+                if (found && availableDoctors.Count > 0 && availableRooms.Count > 0)
                 {
                     Doctor doctor = availableDoctors[0];
                     HospitalRoom room = availableRooms[0];
@@ -93,22 +97,50 @@ namespace HealthCareCenter.SecretaryGUI
                     MessageBox.Show($"Successfully scheduled urgent appointment at {potentialTime.ToShortTimeString()} with doctor {doctor.FirstName} {doctor.LastName} in room {room.Name}.");
                     this.Close();
                     return true;
+                } 
+                else
+                {
+                    List<Appointment> appointments = new List<Appointment>(AppointmentRepository.Appointments);
+                    for (int i = 0; i < AppointmentRepository.Appointments.Count; i++)
+                    {
+                        if (AppointmentRepository.Appointments[i].ScheduledDate.CompareTo(potentialTime) != 0)
+                            continue;
+
+                        appointments.Remove(AppointmentRepository.Appointments[i]);
+
+                        availableDoctors = new List<Doctor>(doctors);
+                        availableRooms = new List<HospitalRoom>(rooms);
+
+                        bool found2 = CheckTermAndRemoveUnavailables(potentialTime, availableDoctors, availableRooms, appointments);
+
+                        if (found2 && availableDoctors.Count > 0 && availableRooms.Count > 0)
+                        {
+                            _occupiedAppointments.Add(AppointmentRepository.Appointments[i]);
+                        }
+
+                        appointments.Add(AppointmentRepository.Appointments[i]);
+                    }
                 }
             }
             return false;
         }
 
-        private static void RemoveUnavailableDoctorsAndRooms(DateTime potentialTime, List<Doctor> availableDoctors, List<HospitalRoom> availableRooms)
+        private bool CheckTermAndRemoveUnavailables(DateTime potentialTime, List<Doctor> availableDoctors, List<HospitalRoom> availableRooms, List<Appointment> appointments)
         {
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            foreach (Appointment appointment in appointments)
             {
                 if (appointment.ScheduledDate.CompareTo(potentialTime) != 0)
                 {
                     continue;
                 }
+                if (appointment.HealthRecordID == _patient.HealthRecordID)
+                {
+                    return false;
+                }
                 RemoveUnavailableDoctors(availableDoctors, appointment);
                 RemoveUnavailableRooms(availableRooms, appointment);
             }
+            return true;
         }
 
         private static void RemoveUnavailableRooms(List<HospitalRoom> availableRooms, Appointment appointment)
@@ -123,7 +155,7 @@ namespace HealthCareCenter.SecretaryGUI
             }
         }
 
-        private static void RemoveUnavailableDoctors(List<Doctor> availableDoctors, Appointment appointment)
+        private void RemoveUnavailableDoctors(List<Doctor> availableDoctors, Appointment appointment)
         {
             foreach (Doctor doctor in availableDoctors)
             {
