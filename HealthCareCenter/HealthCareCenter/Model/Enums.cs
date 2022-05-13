@@ -64,4 +64,13 @@ namespace HealthCareCenter.Enums
     }
 
 
+    public enum RenovationType
+    {
+        Simple,
+        Merge,
+        Split
+    }
+
+
+
 }

@@ -1,0 +1,24 @@
+[
+  {
+    "Type": 2,
+    "Name": "gdfgdf",
+    "AppointmentIDs": [
+    ],
+    "ID": 5,
+    "EquipmentAmounts": {
+    },
+    "EquipmentRearrangementsIDs": [
+    ]
+  },
+  {
+    "Type": 2,
+    "Name": "hfdghdfgh",
+    "AppointmentIDs": [
+    ],
+    "ID": 6,
+    "EquipmentAmounts": {
+    },
+    "EquipmentRearrangementsIDs": [
+    ]
+  }
+]

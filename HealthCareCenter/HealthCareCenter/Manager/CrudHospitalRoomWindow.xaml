@@ -30,7 +30,7 @@
 
         <Button x:Name="AddHospitalRoomButton"   Content="Add new hospital room" FontWeight="SemiBold" HorizontalAlignment="Left" Margin="10,192,0,0" VerticalAlignment="Top" Height="27" Click="AddHospitalRoomButton_Click" />
         <Button x:Name="DeleteHospitalRoomButton" Content="Delete hospital room" FontWeight="SemiBold" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top" Width="132" Height="25" Click="DeleteHospitalRoomButton_Click" />
-        <Button x:Name="UpdateHospitalRoom" Content="Update hospital room" FontWeight="SemiBold" HorizontalAlignment="Left" Margin="10,287,0,0" VerticalAlignment="Top" Width="132" Height="25" Click="UpdateHospitalRoom_Click" />
+        <Button x:Name="UpdateHospitalRoomButton" Content="Update hospital room" FontWeight="SemiBold" HorizontalAlignment="Left" Margin="10,287,0,0" VerticalAlignment="Top" Width="132" Height="25" Click="UpdateHospitalRoomButton_Click" />
 
         <Label Content="Room ID" HorizontalAlignment="Left" Margin="236,237,0,0" VerticalAlignment="Top" RenderTransformOrigin="0,0.618" Height="25" />
         <TextBox x:Name="HospitalRoomIdTextBox" HorizontalAlignment="Left" Margin="315,237,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="75" Height="25" />
@@ -47,6 +47,13 @@
                     <MenuItem Header="Equipment review" Click="EquipmentReviewMenuItemClick"></MenuItem>
                     <MenuItem Header="Arranging equipment" Click="ArrangingEquipmentItemClick"></MenuItem>
                 </MenuItem>
+
+                <MenuItem Header="Renovation">
+                    <MenuItem Header="Simple renovation" Click="SimpleRenovationItemClick"></MenuItem>
+                    <MenuItem Header="Complex renovation - merge" Click="ComplexRenovationMergeItemClick"></MenuItem>
+                    <MenuItem Header="Complex renovation - split" Click="ComplexRenovationSplitItemClick"></MenuItem>
+                </MenuItem>
+
                 <MenuItem Header="Log off" Click="LogOffItemClick"></MenuItem>
             </Menu>
         </StackPanel>

@@ -44,9 +44,9 @@ namespace HealthCareCenter.Service
                 List<RenovationSchedule> renovations = GetRenovations();
                 foreach (RenovationSchedule renovation in renovations)
                 {
-                    if (room.ID == renovation.PrimaryRoomID)
+                    if (room.ID == renovation.Room1ID)
                         return renovation;
-                    else if (room.ID == renovation.SecondaryRoomID)
+                    else if (room.ID == renovation.Room2ID)
                         return renovation;
                 }
                 throw new RenovationScheduleNotFound();

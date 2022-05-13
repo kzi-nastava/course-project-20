@@ -6,15 +6,11 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    public class HospitalRoomRepository
+    internal class HospitalRoomUnderConstructionRepository
     {
-        private const string _fileName = "hospitalRooms.json";
+        private const string fileName = "hospitalRoomsUnderConstruction.json";
         public static List<HospitalRoom> Rooms = LoadRooms();
 
-        /// <summary>
-        /// Loads all hospital rooms from file hospitalRooms.json.
-        /// </summary>
-        /// <returns>List of all hospital rooms.</returns>
         private static List<HospitalRoom> LoadRooms()
         {
             try
@@ -25,7 +21,7 @@ namespace HealthCareCenter.Model
                     DateFormatString = Constants.DateFormat
                 };
 
-                string JSONTextHospitalRooms = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\" + _fileName);
+                string JSONTextHospitalRooms = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\" + fileName);
                 rooms = (List<HospitalRoom>)JsonConvert.DeserializeObject<IEnumerable<HospitalRoom>>(JSONTextHospitalRooms, settings);
                 return rooms;
             }
@@ -35,21 +31,13 @@ namespace HealthCareCenter.Model
             }
         }
 
-        /// <summary>
-        /// Replace all data from file hospitalRooms.json with list rooms.
-        /// </summary>
-        /// <param name="rooms">Data that will replace the old ones.</param>
-        /// <returns>true if data update performed properly.</returns>
         public static bool SaveRooms(List<HospitalRoom> rooms)
         {
             try
             {
-                JsonSerializer serializer = new JsonSerializer
-                {
-                    Formatting = Formatting.Indented
-                };
+                JsonSerializer serializer = new JsonSerializer();
 
-                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + _fileName))
+                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + fileName))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, rooms);
@@ -61,6 +49,5 @@ namespace HealthCareCenter.Model
                 throw ex;
             }
         }
-
     }
 }

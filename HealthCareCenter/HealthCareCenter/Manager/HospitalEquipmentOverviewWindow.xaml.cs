@@ -20,7 +20,11 @@ namespace HealthCareCenter
     /// </summary>
     public partial class HospitalEquipmentReviewWindow : Window
     {
-        private string[] _headerDataGridEquipment = new string[] { "Equipment Id", "Current Room Id", "Equipment Type", "Equipment Name", "Move Time", "New Room Id" };
+        private string[] _headerDataGridEquipment = new string[] {
+            "Equipment Id", "Current Room Id", "Equipment Type",
+            "Equipment Name", "Move Time", "New Room Id"
+        };
+
         private Manager _signedManager;
 
         public HospitalEquipmentReviewWindow(User user)
@@ -32,15 +36,6 @@ namespace HealthCareCenter
             FillAllComboBoxes();
         }
 
-        private void ShowWindow(Window window)
-        {
-            window.Show();
-            Close();
-        }
-
-        /// <summary>
-        /// Fill RoomTypeComboBox with room type constants from Enum RoomType.
-        /// </summary>
         private void FillRoomTypeComboBox(ComboBox RoomTypeComboBox)
         {
             RoomTypeComboBox.Items.Add(new ComboBoxItem() { Content = "" });
@@ -52,9 +47,6 @@ namespace HealthCareCenter
             RoomTypeComboBox.SelectedItem = RoomTypeComboBox.Items[0];
         }
 
-        /// <summary>
-        ///  Fill EquipmentTypeComboBox with equipment type constants from Enum EquipmentType.
-        /// </summary>
         private void FillEquipmentTypeComboBox(ComboBox EquipmentTypeComboBox)
         {
             EquipmentTypeComboBox.Items.Add(new ComboBoxItem() { Content = "" });
@@ -65,9 +57,6 @@ namespace HealthCareCenter
             EquipmentTypeComboBox.SelectedItem = EquipmentTypeComboBox.Items[0];
         }
 
-        /// <summary>
-        ///  Fill EquipmentAmountComboBox with amount constants given in project specification #1.2.
-        /// </summary>
         private void FillEquipmentAmountComboBox(ComboBox EquipmentAmountComboBox)
         {
             EquipmentAmountComboBox.Items.Add(new ComboBoxItem() { Content = "" });
@@ -77,9 +66,6 @@ namespace HealthCareCenter
             EquipmentAmountComboBox.SelectedItem = EquipmentAmountComboBox.Items[0];
         }
 
-        /// <summary>
-        /// This method behaves like a container that calls only the other  methods for filling all comboBoxes.
-        /// </summary>
         private void FillAllComboBoxes()
         {
             FillRoomTypeComboBox(RoomTypeComboBox);
@@ -87,10 +73,6 @@ namespace HealthCareCenter
             FillEquipmentAmountComboBox(EquipmentAmountComboBox);
         }
 
-        /// <summary>
-        /// Adding DataGridEquipment header
-        /// </summary>
-        /// <param name="header"></param>
         private void AddDataGridHeader(DataGrid dataGrid, string[] header)
         {
             foreach (string label in header)
@@ -130,9 +112,6 @@ namespace HealthCareCenter
             equipmentAttributesToDisplay.Add("");
         }
 
-        /// <summary>
-        /// Filling DataGridEquipment with content
-        /// </summary>
         private void FillDataGridEquipment()
         {
             List<Equipment> equipments = EquipmentService.GetEquipments();
@@ -249,7 +228,7 @@ namespace HealthCareCenter
 
             if (amount == "Out of stock")
             {
-                if (!storage.Contains(equipmentName))
+                if (!storage.ContainsEquipment(equipmentName))
                 {
                     return true;
                 }
@@ -257,7 +236,7 @@ namespace HealthCareCenter
 
             if (amount == "0-10")
             {
-                if (!storage.Contains(equipmentName))
+                if (!storage.ContainsEquipment(equipmentName))
                 {
                     return false;
                 }
@@ -270,7 +249,7 @@ namespace HealthCareCenter
 
             if (amount == "10+")
             {
-                if (!storage.Contains(equipmentName))
+                if (!storage.ContainsEquipment(equipmentName))
                 {
                     return false;
                 }
@@ -327,6 +306,12 @@ namespace HealthCareCenter
                     FilterEquipment(equipmentAttributesToDisplay);
                 }
             }
+        }
+
+        private void ShowWindow(Window window)
+        {
+            window.Show();
+            Close();
         }
 
         private void CrudHospitalRoomMenuItemClick(object sender, RoutedEventArgs e)

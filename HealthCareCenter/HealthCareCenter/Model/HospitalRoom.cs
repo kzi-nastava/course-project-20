@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using HealthCareCenter.Enums;
 using HealthCareCenter.Service;
+using System.Linq;
 
 namespace HealthCareCenter.Model
 {
@@ -22,14 +23,9 @@ namespace HealthCareCenter.Model
         /// </summary>
         public HospitalRoom(RoomType type, string name)
         {
-            if (HospitalRoomService.GetLargestRoomId() > HospitalRoomForRenovationService.GetLargestRoomId())
-            {
-                this.ID = HospitalRoomService.GetLargestRoomId() + 1;
-            }
-            else
-            {
-                this.ID = HospitalRoomForRenovationService.GetLargestRoomId() + 1;
-            }
+            List<int> largestIDs = new List<int> { HospitalRoomService.GetLargestRoomId(), HospitalRoomForRenovationService.GetLargestRoomId(), HospitalRoomUnderConstructionService.GetLargestRoomId() };
+
+            this.ID = largestIDs.Max() + 1;
             this.Name = name;
             this.EquipmentAmounts = new Dictionary<string, int>();
             this.EquipmentRearrangementsIDs = new List<int>();
@@ -62,32 +58,6 @@ namespace HealthCareCenter.Model
             }
 
             return false;
-        }
-
-        private bool IsDateBeforeToday(DateTime date)
-        {
-            int value = DateTime.Compare(date, DateTime.Now);
-            return value < 0;
-        }
-
-        /// <summary>
-        /// If hospital room is scheduled for renovation, if finish date is passe, then just set room to be avalible
-        /// </summary>
-        public void SetToBeAvailable()
-        {
-            if (IsCurrentlyRenovating())
-            {
-                RenovationSchedule renovation = RenovationScheduleService.GetRenovation(this);
-                if (!renovation.IsComplexRenovation())
-                {
-                    if (IsDateBeforeToday(renovation.FinishDate))
-                    {
-                        HospitalRoomService.InsertRoom(this);
-                        HospitalRoomForRenovationService.DeleteRoom(this);
-                        RenovationScheduleService.DeleteRenovation(renovation);
-                    }
-                }
-            }
         }
     }
 }

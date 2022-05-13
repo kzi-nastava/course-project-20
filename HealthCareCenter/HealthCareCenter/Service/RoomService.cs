@@ -84,15 +84,18 @@ namespace HealthCareCenter.Service
                 {
                     room = StorageRepository.GetStorage();
                 }
-                else
+                if (room == null)
                 {
                     room = HospitalRoomService.GetRoom(roomId);
-                    if (room == null)
-                    {
-                        room = HospitalRoomForRenovationService.GetRoom(roomId);
-                    }
                 }
-
+                if (room == null)
+                {
+                    room = HospitalRoomForRenovationService.GetRoom(roomId);
+                }
+                if (room == null)
+                {
+                    room = HospitalRoomUnderConstructionService.GetRoom(roomId);
+                }
                 if (room == null)
                 {
                     throw new HospitalPremisesNotFound();

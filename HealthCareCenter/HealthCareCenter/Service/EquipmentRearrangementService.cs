@@ -46,7 +46,7 @@ namespace HealthCareCenter.Service
 
                 throw new EquipmentRearrangementNotFound();
             }
-            catch (EquipmentNotFound ex)
+            catch (EquipmentRearrangementNotFound ex)
             {
                 Console.WriteLine(ex.Message);
                 return null;
