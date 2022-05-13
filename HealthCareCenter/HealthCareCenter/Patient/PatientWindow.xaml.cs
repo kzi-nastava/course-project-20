@@ -67,6 +67,21 @@ namespace HealthCareCenter
             FillUnfinishedAppointmentsTable();
             currentActionTextBlock.Text = "My appointments";
 
+            DisplayNotifications();
+        }
+
+        private void DisplayNotifications()
+        {
+            List<Notification> notifications = NotificationService.FindUnopened(signedPatient);
+            if (notifications.Count == 0)
+            {
+                return;
+            }
+            MessageBox.Show("You have new notifications.");
+            foreach (Notification notification in notifications)
+            {
+                MessageBox.Show(notification.Message);
+            }
         }
 
         private void ClearWindow()

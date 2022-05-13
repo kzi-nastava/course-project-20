@@ -52,6 +52,8 @@ namespace HealthCareCenter
             {
                 MessageBox.Show(ex.Message);
             }
+
+            NotificationRepository.Load();
         }
 
         private void ShowWindow(Window window)

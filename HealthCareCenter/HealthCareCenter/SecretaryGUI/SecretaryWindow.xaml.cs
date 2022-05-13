@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using HealthCareCenter.Model;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter.SecretaryGUI
 {
@@ -23,7 +24,23 @@ namespace HealthCareCenter.SecretaryGUI
         {
             _signedUser = (Secretary)user;
             InitializeComponent();
+            DisplayNotifications();
         }
+
+        private void DisplayNotifications()
+        {
+            List<Notification> notifications = NotificationService.FindUnopened(_signedUser);
+            if (notifications.Count == 0)
+            {
+                return;
+            }
+            MessageBox.Show("You have new notifications.");
+            foreach (Notification notification in notifications)
+            {
+                MessageBox.Show(notification.Message);
+            }
+        }
+
         private PatientManipulationWindow patientManipulationWindow;
         private void PatientButton_Click(object sender, RoutedEventArgs e)
         {

@@ -45,6 +45,22 @@ namespace HealthCareCenter
             ReferralRepository.Load();
             InitializeComponent();
             FillDateTimeComboBoxes();
+
+            DisplayNotifications();
+        }
+
+        private void DisplayNotifications()
+        {
+            List<Notification> notifications = NotificationService.FindUnopened(signedUser);
+            if (notifications.Count == 0)
+            {
+                return;
+            }
+            MessageBox.Show("You have new notifications.");
+            foreach (Notification notification in notifications)
+            {
+                MessageBox.Show(notification.Message);
+            }
         }
 
         private void CreateMedicineTable()

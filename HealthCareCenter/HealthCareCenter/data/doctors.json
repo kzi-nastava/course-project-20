@@ -16,16 +16,19 @@
     "Password": "jovan",
     "FirstName": "Jovan",
     "LastName": "Jovanovic",
+    "DateOfBirth": "15/06/1994"
+  },
   {
-    "ID": 4,
-    "Username": "zoran",
-    "Password": "zoran",
-    "FirstName": "Zoran",
-    "LastName": "Zoranovic",
-    "DateOfBirth": "15/06/1994",
-    "Type": "Neurologist",
+    "Type": "Cardiology",
     "VacationRequestIDs": [],
     "MedicineCreationRequestIDs": [],
-    "AppointmentIDs": []
+    "AppointmentIDs": [
+    ],
+    "ID": 5,
+    "Username": "marko",
+    "Password": "marko",
+    "FirstName": "Marko",
+    "LastName": "Markovic",
+    "DateOfBirth": "12/04/1992"
   }
 ]

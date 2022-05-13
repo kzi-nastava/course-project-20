@@ -1,5 +1,6 @@
 ﻿using HealthCareCenter.Enums;
 using HealthCareCenter.Model;
+using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -130,75 +131,23 @@ namespace HealthCareCenter.SecretaryGUI
         private void ScheduleAppointment(DateTime scheduledDate)
         {
             int roomID = ((HospitalRoomDisplay)roomsDataGrid.SelectedItem).ID;
-            Appointment appointment = CreateAppointment(scheduledDate, roomID);
+            Appointment appointment = new Appointment(scheduledDate, roomID, _referral.DoctorID, _patient.HealthRecordID, SelectedAppointmentType(), false);
             AppointmentRepository.Appointments.Add(appointment);
             AppointmentRepository.Save();
 
-            UpdateRoom(roomID, appointment);
+            HospitalRoomService.Update(roomID, appointment);
             HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
 
-            UpdateHealthRecord(appointment);
+            HealthRecordService.Update(_patient.HealthRecordID, appointment);
             HealthRecordRepository.Save();
 
             _patient.ReferralIDs.Remove(_referral.ID);
-            UpdateDoctor(appointment);
+            UserService.UpdateDoctor(_referral.DoctorID, appointment);
             UserRepository.SavePatients();
             UserRepository.SaveDoctors();
 
             ReferralRepository.Referrals.Remove(_referral);
             ReferralRepository.Save();
-        }
-
-        private void UpdateDoctor(Appointment appointment)
-        {
-            foreach (Doctor doctor in UserRepository.Doctors)
-            {
-                if (doctor.ID == _referral.DoctorID)
-                {
-                    doctor.AppointmentIDs.Add(appointment.ID);
-                    break;
-                }
-            }
-        }
-
-        private void UpdateHealthRecord(Appointment appointment)
-        {
-            foreach (HealthRecord record in HealthRecordRepository.Records)
-            {
-                if (record.ID == _patient.HealthRecordID)
-                {
-                    record.AppointmentIDs.Add(appointment.ID);
-                    break;
-                }
-            }
-        }
-
-        private Appointment CreateAppointment(DateTime scheduledDate, int roomID)
-        {
-            return new Appointment()
-            {
-                ID = ++AppointmentRepository.LargestID,
-                CreatedDate = DateTime.Now,
-                ScheduledDate = scheduledDate,
-                DoctorID = _referral.DoctorID,
-                HospitalRoomID = roomID,
-                Emergency = false,
-                Type = SelectedAppointmentType(),
-                HealthRecordID = _patient.HealthRecordID,
-                PatientAnamnesis = new Anamnesis()
-            };
-        }
-
-        private static void UpdateRoom(int roomID, Appointment appointment)
-        {
-            foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
-            {
-                if (room.ID == roomID)
-                {
-                    room.AppointmentIDs.Add(appointment.ID);
-                    break;
-                }
-            }
         }
 
         private AppointmentType SelectedAppointmentType()
