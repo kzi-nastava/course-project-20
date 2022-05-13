@@ -21,11 +21,11 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="auto"/>
                 <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="auto"/>
-                <DataGridTextColumn Header="Scheduled date" Binding="{Binding ScheduledDate}" Width="auto"/>
+                <DataGridTextColumn Header="Scheduled date" Binding="{Binding ScheduledDate, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="auto"/>
                 <DataGridTextColumn Header="Emergency" Binding="{Binding Emergency}" Width="auto"/>
                 <DataGridTextColumn Header="Doctor's name" Binding="{Binding DoctorName}" Width="auto"/>
                 <DataGridTextColumn Header="Patient's name" Binding="{Binding PatientName}" Width="auto"/>
-                <DataGridTextColumn Header="Postponed time" Binding="{Binding PostponedTime}" Width="*"/>
+                <DataGridTextColumn Header="Postponed time" Binding="{Binding PostponedTime, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
 

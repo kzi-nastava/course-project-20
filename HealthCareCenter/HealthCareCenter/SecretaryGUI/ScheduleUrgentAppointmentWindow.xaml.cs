@@ -25,6 +25,7 @@ namespace HealthCareCenter.SecretaryGUI
 
         private List<string> _typesOfDoctors;
         private List<Appointment> _occupiedAppointments;
+        private Dictionary<int, Appointment> _newAppointmentsInfo;
 
         public ScheduleUrgentAppointmentWindow()
         {
@@ -65,10 +66,12 @@ namespace HealthCareCenter.SecretaryGUI
             List<string> terms = GetTermsWithinTwoHours();
 
             _occupiedAppointments = new List<Appointment>();
+            _newAppointmentsInfo = new Dictionary<int, Appointment>();
+
             if (!FindTermsAndSchedule(doctors, type, rooms, terms))
             {
                 MessageBox.Show("No available term was found in the next 2 hours. You can, however, postpone an occupied term in the next window.");
-                OccupiedAppointmentsWindow window = new OccupiedAppointmentsWindow(_patient, type, doctors, rooms, _occupiedAppointments);
+                OccupiedAppointmentsWindow window = new OccupiedAppointmentsWindow(_patient, type, doctors, rooms, _occupiedAppointments, _newAppointmentsInfo);
                 window.ShowDialog();
                 this.Close();
             }
@@ -116,6 +119,8 @@ namespace HealthCareCenter.SecretaryGUI
                         if (found2 && availableDoctors.Count > 0 && availableRooms.Count > 0)
                         {
                             _occupiedAppointments.Add(AppointmentRepository.Appointments[i]);
+                            _newAppointmentsInfo.Add(AppointmentRepository.Appointments[i].ID,
+                                new Appointment { DoctorID = availableDoctors[0].ID, HospitalRoomID = availableRooms[0].ID });
                         }
 
                         appointments.Add(AppointmentRepository.Appointments[i]);

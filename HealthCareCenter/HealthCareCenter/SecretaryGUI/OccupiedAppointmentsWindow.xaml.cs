@@ -28,19 +28,21 @@ namespace HealthCareCenter.SecretaryGUI
         private List<Appointment> _occupiedAppointments;
         private List<AppointmentDisplay> _appointmentsForDisplay;
         private Dictionary<int, DateTime> _newDateOf;
+        private Dictionary<int, Appointment> _newAppointmentsInfo;
 
         public OccupiedAppointmentsWindow()
         {
             InitializeComponent();
         }
 
-        public OccupiedAppointmentsWindow(Patient patient, AppointmentType appointmentType, List<Doctor> doctors, List<HospitalRoom> rooms, List<Appointment> occupiedAppointments)
+        public OccupiedAppointmentsWindow(Patient patient, AppointmentType appointmentType, List<Doctor> doctors, List<HospitalRoom> rooms, List<Appointment> occupiedAppointments, Dictionary<int, Appointment> newAppointmentsInfo)
         {
             _patient = patient;
             _appointmentType = appointmentType;
             _doctors = doctors;
             _rooms = rooms;
             _occupiedAppointments = occupiedAppointments;
+            _newAppointmentsInfo = newAppointmentsInfo;
 
             InitializeComponent();
 
@@ -177,7 +179,8 @@ namespace HealthCareCenter.SecretaryGUI
                     break;
                 }
             }
-            Appointment newAppointment = new Appointment(appointmentDisplay.ScheduledDate, postponedAppointment.HospitalRoomID, postponedAppointment.DoctorID, _patient.HealthRecordID, _appointmentType, true);
+            
+            Appointment newAppointment = new Appointment(appointmentDisplay.ScheduledDate, _newAppointmentsInfo[postponedAppointment.ID].HospitalRoomID, _newAppointmentsInfo[postponedAppointment.ID].DoctorID, _patient.HealthRecordID, _appointmentType, true);
             AppointmentRepository.Appointments.Add(newAppointment);
             postponedAppointment.ScheduledDate = appointmentDisplay.PostponedTime;
             AppointmentRepository.Save();
@@ -191,8 +194,36 @@ namespace HealthCareCenter.SecretaryGUI
             UserService.UpdateDoctor(newAppointment.DoctorID, newAppointment);
             UserRepository.SaveDoctors();
 
+            HealthRecord postponedPatientsRecord = FindHealthRecord(postponedAppointment);
+
+            NotificationService.CalculateMaxID();
+            Notification postponedPatientNotification = new Notification($"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedPatientsRecord.PatientID);
+            Notification postponedDoctorNotification = new Notification($"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedAppointment.DoctorID);
+            Notification newDoctorNotification = new Notification($"A new urgent appointment has been scheduled for you at {newAppointment.ScheduledDate} in room {HospitalRoomService.GetRoom(newAppointment.HospitalRoomID).Name}.", newAppointment.DoctorID);
+
+            if (postponedPatientsRecord.PatientID == _patient.ID)
+            {
+                postponedPatientNotification.Opened = true;
+                MessageBox.Show(postponedPatientNotification.Message);
+            }
+
+            NotificationRepository.Notifications.AddRange(new Notification[] { postponedPatientNotification, postponedDoctorNotification, newDoctorNotification });
+            NotificationRepository.Save();
+
             MessageBox.Show($"Successfully postponed appointment {postponedAppointment.ID} and scheduled a new urgent appointment in its place.");
             this.Close();
+        }
+
+        private static HealthRecord FindHealthRecord(Appointment appointment)
+        {
+            foreach (HealthRecord record in HealthRecordRepository.Records)
+            {
+                if (record.ID == appointment.HealthRecordID)
+                {
+                    return record;
+                }
+            }
+            return null;
         }
     }
 }

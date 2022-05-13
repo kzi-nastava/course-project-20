@@ -7,6 +7,7 @@ using System.Data;
 using HealthCareCenter.Enums;
 using System.Globalization;
 using System.ComponentModel;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter
 {
@@ -28,6 +29,22 @@ namespace HealthCareCenter
             AppointmentRepository.Load();
             InitializeComponent();
             FillDateTimeComboBoxes();
+
+            DisplayNotifications();
+        }
+
+        private void DisplayNotifications()
+        {
+            List<Notification> notifications = NotificationService.FindUnopened(signedUser);
+            if (notifications.Count == 0)
+            {
+                return;
+            }
+            MessageBox.Show("You have new notifications.");
+            foreach (Notification notification in notifications)
+            {
+                MessageBox.Show(notification.Message);
+            }
         }
         //Creating tables(table headers)
         private void CreateAppointmentTable()
