@@ -8,6 +8,7 @@ namespace HealthCareCenter.Model
 {
     internal class EquipmentRepository
     {
+        private const string _fileName = "equipments.json";
         public static List<Equipment> Equipments = LoadEquipments();
 
         /// <summary>
@@ -24,7 +25,7 @@ namespace HealthCareCenter.Model
                     DateFormatString = Constants.DateFormat
                 };
 
-                string JSONTextEquipments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\equipments.json");
+                string JSONTextEquipments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\" + _fileName);
                 equipments = (List<Equipment>)JsonConvert.DeserializeObject<IEnumerable<Equipment>>(JSONTextEquipments, settings);
                 return equipments;
             }
@@ -45,7 +46,7 @@ namespace HealthCareCenter.Model
             {
                 JsonSerializer serializer = new JsonSerializer();
 
-                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\equipments.json"))
+                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + _fileName))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, equipments);

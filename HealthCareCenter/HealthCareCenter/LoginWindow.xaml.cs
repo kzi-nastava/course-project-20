@@ -76,7 +76,7 @@ namespace HealthCareCenter
                         }
                         else if (user.GetType() == typeof(Manager))
                         {
-                            ShowWindow(new ComplexHospitalRoomRenovationSplitWindow((Manager)user));
+                            ShowWindow(new CrudHospitalRoomWindow((Manager)user));
                         }
                         else if (user.GetType() == typeof(Patient))
                         {

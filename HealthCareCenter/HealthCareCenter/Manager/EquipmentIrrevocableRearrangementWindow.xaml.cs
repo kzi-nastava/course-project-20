@@ -58,14 +58,14 @@ namespace HealthCareCenter
             _splitRoomEquipments = _splitRoom.GetAllEquipments();
 
             InitializeComponent();
-            FillComboBox();
+            FillNewRoomComboBox();
             FillDataGridEquipment();
         }
 
-        private void FillComboBox()
+        private void FillNewRoomComboBox()
         {
-            NewRoomComboBox.Items.Add(new ComboBoxItem() { Content = "Room1" });
-            NewRoomComboBox.Items.Add(new ComboBoxItem() { Content = "Room2" });
+            NewRoomComboBox.Items.Add(new ComboBoxItem() { Content = _room1.Name });
+            NewRoomComboBox.Items.Add(new ComboBoxItem() { Content = _room2.Name });
             NewRoomComboBox.SelectedItem = NewRoomComboBox.Items[0];
         }
 
@@ -84,36 +84,51 @@ namespace HealthCareCenter
             Close();
         }
 
+        private bool IsEquipmentValide(string equipmentId)
+        {
+            if (!IsEqupmentIdInputValide(equipmentId))
+            {
+                MessageBox.Show("Error, bad input for equipment Id!");
+                return false;
+            }
+            int parsedEquipmentId = Convert.ToInt32(equipmentId);
+            Equipment equipment = EquipmentService.GetEquipment(parsedEquipmentId);
+            if (!IsEquipmentFound(equipment))
+            {
+                MessageBox.Show("Error, equipment not found!");
+                return false;
+            }
+            return true;
+        }
+
+        private void SetIrrevocableRearrangement(Equipment equipment, int roomId)
+        {
+            _splitRoomEquipments.Remove(equipment);
+            EquipmentRearrangement rearrangement = new EquipmentRearrangement(equipment, _finishDate, roomId);
+            equipment.SetRearrangement(rearrangement);
+        }
+
         private void TransferButton_Click(object sender, RoutedEventArgs e)
         {
             if (IsSplitRoomContainsEquipment())
             {
                 string equipmentId = EquipmentIdTextBox.Text;
-                string roomToMove = NewRoomComboBox.Text;
-                if (!IsEqupmentIdInputValide(equipmentId))
+                string newRoom = NewRoomComboBox.Text;
+
+                if (!IsEquipmentValide(equipmentId))
                 {
-                    MessageBox.Show("Error, bad input for equipment Id");
                     return;
                 }
                 int parsedEquipmentId = Convert.ToInt32(equipmentId);
                 Equipment equipment = EquipmentService.GetEquipment(parsedEquipmentId);
-                if (!IsEquipmentFound(equipment))
-                {
-                    MessageBox.Show("Error, equipment not found");
-                    return;
-                }
 
-                if (roomToMove == "Room1")
+                if (newRoom == _room1.Name)
                 {
-                    _splitRoomEquipments.Remove(equipment);
-                    EquipmentRearrangement rearrangement = new EquipmentRearrangement(equipment, _finishDate, _room1.ID);
-                    equipment.SetRearrangement(rearrangement);
+                    SetIrrevocableRearrangement(equipment, _room1.ID);
                 }
-                else if (roomToMove == "Room2")
+                else if (newRoom == _room2.Name)
                 {
-                    _splitRoomEquipments.Remove(equipment);
-                    EquipmentRearrangement rearrangement = new EquipmentRearrangement(equipment, _finishDate, _room2.ID);
-                    equipment.SetRearrangement(rearrangement);
+                    SetIrrevocableRearrangement(equipment, _room2.ID);
                 }
             }
 

@@ -42,7 +42,7 @@ namespace HealthCareCenter.Model
         /// Checking does room contains equipment. For example is room contains chair.
         /// </summary>
         /// <returns>True if contains or false if not</returns>
-        public bool Contains(string equipmentName)
+        public bool ContainsEquipment(string equipmentName)
         {
             if (!EquipmentAmounts.ContainsKey(equipmentName) || (EquipmentAmounts[equipmentName] == 0))
             {
@@ -59,7 +59,7 @@ namespace HealthCareCenter.Model
         /// <returns></returns>
         public int GetEquipmentAmount(string equipmentName)
         {
-            if (!this.Contains(equipmentName))
+            if (!this.ContainsEquipment(equipmentName))
             {
                 return 0;
             }
@@ -88,14 +88,18 @@ namespace HealthCareCenter.Model
             return false;
         }
 
-        private void RemoveEquipment(Equipment equipment)
+        /// <summary>
+        /// Reduce equipment amount in dictionary
+        /// </summary>
+        /// <param name="equipment"></param>
+        private void ReduceEquipmentAmount(Equipment equipment, Room room)
         {
             try
             {
-                if (this.Contains(equipment))
+                if (room.Contains(equipment))
                 {
-                    this.EquipmentAmounts[equipment.Name]--;
-                    RoomService.UpdateRoom(this);
+                    room.EquipmentAmounts[equipment.Name]--;
+                    RoomService.UpdateRoom(room);
                 }
                 else
                 {
@@ -112,9 +116,9 @@ namespace HealthCareCenter.Model
             }
         }
 
-        private void AddEquipment(Equipment equipment, Room room)
+        private void IncreaseEquipmentAmount(Equipment equipment, Room room)
         {
-            if (room.Contains(equipment.Name))
+            if (room.ContainsEquipment(equipment.Name))
             {
                 room.EquipmentAmounts[equipment.Name]++;
             }
@@ -129,14 +133,19 @@ namespace HealthCareCenter.Model
                     room.EquipmentAmounts[equipment.Name]++;
                 }
             }
+        }
+
+        private void AddEquipment(Equipment equipment, Room room)
+        {
+            IncreaseEquipmentAmount(equipment, room);
             RoomService.UpdateRoom(this);
             equipment.CurrentRoomID = room.ID;
             EquipmentService.UpdateEquipment(equipment);
         }
 
-        public void TransferEquipment(Equipment equipment, Room room)
+        private void TransferEquipment(Equipment equipment, Room room)
         {
-            RemoveEquipment(equipment);
+            ReduceEquipmentAmount(equipment, this);
             AddEquipment(equipment, room);
         }
 

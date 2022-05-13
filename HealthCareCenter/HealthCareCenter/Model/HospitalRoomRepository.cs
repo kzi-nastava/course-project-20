@@ -8,6 +8,7 @@ namespace HealthCareCenter.Model
 {
     public class HospitalRoomRepository
     {
+        private const string _fileName = "hospitalRooms.json";
         public static List<HospitalRoom> Rooms = LoadRooms();
 
         /// <summary>
@@ -24,7 +25,7 @@ namespace HealthCareCenter.Model
                     DateFormatString = Constants.DateFormat
                 };
 
-                string JSONTextHospitalRooms = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\hospitalRooms.json");
+                string JSONTextHospitalRooms = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\" + _fileName);
                 rooms = (List<HospitalRoom>)JsonConvert.DeserializeObject<IEnumerable<HospitalRoom>>(JSONTextHospitalRooms, settings);
                 return rooms;
             }
@@ -45,7 +46,7 @@ namespace HealthCareCenter.Model
             {
                 JsonSerializer serializer = new JsonSerializer();
 
-                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\hospitalRooms.json"))
+                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + _fileName))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, rooms);

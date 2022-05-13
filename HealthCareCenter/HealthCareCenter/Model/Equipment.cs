@@ -39,7 +39,7 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Checking does equipment contain rearrangment.
+        /// Checking does equipment contains rearrangment.
         /// </summary>
         /// <returns></returns>
         public bool IsScheduledRearrangement()
@@ -80,7 +80,7 @@ namespace HealthCareCenter.Model
         }
 
         /// <summary>
-        /// Setting rearrangement for equipment.
+        /// Setting rearrangement for equipment. (if rearrangemnt is not scheduled).
         /// </summary>
         /// <param name="rearrangement"></param>
         public void SetRearrangement(EquipmentRearrangement rearrangement)
@@ -113,7 +113,7 @@ namespace HealthCareCenter.Model
             EquipmentService.UpdateEquipment(this);
         }
 
-        private bool IsEquipmentRearrangementTimeBeforeCurrentTime(DateTime rearrangementDate)
+        private bool IsDateTimeBeforeCurrentTime(DateTime rearrangementDate)
         {
             DateTime now = DateTime.Now;
             int value = DateTime.Compare(rearrangementDate, now);
@@ -129,7 +129,7 @@ namespace HealthCareCenter.Model
             {
                 EquipmentRearrangement rearrangement = EquipmentRearrangementService.GetRearrangement(this.RearrangementID);
 
-                if (IsEquipmentRearrangementTimeBeforeCurrentTime(rearrangement.MoveTime))
+                if (IsDateTimeBeforeCurrentTime(rearrangement.MoveTime))
                 {
                     Room currentRoom = RoomService.GetRoom(this.CurrentRoomID);
                     Room newRoomOfRearrangement = RoomService.GetRoom(rearrangement.NewRoomID);

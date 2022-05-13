@@ -8,6 +8,7 @@ namespace HealthCareCenter.Model
 {
     public class EquipmentRearrangementRepository
     {
+        private const string _fileName = "equipmentRearrangement.json";
         public static List<EquipmentRearrangement> Rearrangements = LoadRearrangments();
 
         /// <summary>
@@ -24,7 +25,7 @@ namespace HealthCareCenter.Model
                     DateFormatString = Constants.DateFormat
                 };
 
-                string JSONTextEquipmentRearrangments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\equipmentRearrangement.json");
+                string JSONTextEquipmentRearrangments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\" + _fileName);
                 rearrangments = (List<EquipmentRearrangement>)JsonConvert.DeserializeObject<IEnumerable<EquipmentRearrangement>>(JSONTextEquipmentRearrangments, settings);
                 return rearrangments;
             }
@@ -45,7 +46,7 @@ namespace HealthCareCenter.Model
             {
                 JsonSerializer serializer = new JsonSerializer();
 
-                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\equipmentRearrangement.json"))
+                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + _fileName))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, rearrangements);
