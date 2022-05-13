@@ -42,7 +42,7 @@ namespace HealthCareCenter.Model
         /// Checking does room contains equipment. For example is room contains chair.
         /// </summary>
         /// <returns>True if contains or false if not</returns>
-        public bool Contains(string equipmentName)
+        public bool ContainsEquipment(string equipmentName)
         {
             if (!EquipmentAmounts.ContainsKey(equipmentName) || (EquipmentAmounts[equipmentName] == 0))
             {
@@ -59,7 +59,7 @@ namespace HealthCareCenter.Model
         /// <returns></returns>
         public int GetEquipmentAmount(string equipmentName)
         {
-            if (!this.Contains(equipmentName))
+            if (!this.ContainsEquipment(equipmentName))
             {
                 return 0;
             }
@@ -86,6 +86,107 @@ namespace HealthCareCenter.Model
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// Reduce equipment amount in dictionary
+        /// </summary>
+        /// <param name="equipment"></param>
+        private void ReduceEquipmentAmount(Equipment equipment, Room room)
+        {
+            try
+            {
+                if (room.Contains(equipment))
+                {
+                    room.EquipmentAmounts[equipment.Name]--;
+                    RoomService.UpdateRoom(room);
+                }
+                else
+                {
+                    throw new EquipmentNotFound();
+                }
+            }
+            catch (EquipmentNotFound ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private void IncreaseEquipmentAmount(Equipment equipment, Room room)
+        {
+            if (room.ContainsEquipment(equipment.Name))
+            {
+                room.EquipmentAmounts[equipment.Name]++;
+            }
+            else
+            {
+                if (room.EquipmentAmounts.ContainsKey(equipment.Name) == false)
+                {
+                    room.EquipmentAmounts.Add(equipment.Name, 1);
+                }
+                else
+                {
+                    room.EquipmentAmounts[equipment.Name]++;
+                }
+            }
+        }
+
+        private void AddEquipment(Equipment equipment, Room room)
+        {
+            IncreaseEquipmentAmount(equipment, room);
+            RoomService.UpdateRoom(this);
+            equipment.CurrentRoomID = room.ID;
+            EquipmentService.UpdateEquipment(equipment);
+        }
+
+        private void TransferEquipment(Equipment equipment, Room room)
+        {
+            ReduceEquipmentAmount(equipment, this);
+            AddEquipment(equipment, room);
+        }
+
+        public void TransferAllEquipment(Room room)
+        {
+            List<Equipment> equipments = EquipmentService.GetEquipments();
+            for (int i = 0; i < equipments.Count; i++)
+            {
+                if (equipments[i].CurrentRoomID == this.ID)
+                {
+                    TransferEquipment(equipments[i], room);
+                }
+            }
+        }
+
+        public bool ContaninsAnyRearrangement()
+        {
+            List<EquipmentRearrangement> rearrangements = EquipmentRearrangementService.GetRearrangements();
+            foreach (EquipmentRearrangement rearrangement in rearrangements)
+            {
+                if (rearrangement.OldRoomID == this.ID || rearrangement.NewRoomID == this.ID)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public List<Equipment> GetAllEquipments()
+        {
+            List<Equipment> roomEquipments = new List<Equipment>();
+            List<Equipment> equipments = EquipmentService.GetEquipments();
+            foreach (Equipment equipment in equipments)
+            {
+                if (equipment.CurrentRoomID == this.ID)
+                {
+                    roomEquipments.Add(equipment);
+                }
+            }
+
+            return roomEquipments;
         }
     }
 }

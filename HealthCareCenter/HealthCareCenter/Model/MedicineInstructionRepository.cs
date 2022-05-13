@@ -1,0 +1,46 @@
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+
+namespace HealthCareCenter.Model
+{
+    public static class MedicineInstructionRepository
+    {
+        public static List<MedicineInstruction> MedicineInstructions { get; set; }
+        public static int LargestID { get; set; }
+        public static List<MedicineInstruction> Load()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                DateFormatString = Constants.DateTimeFormat
+            };
+
+            string JSONTextMedicineInstructions = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\medicineInstructions.json");
+            MedicineInstructions = (List<MedicineInstruction>)JsonConvert.DeserializeObject<IEnumerable<MedicineInstruction>>(JSONTextMedicineInstructions, settings);
+            LargestID = MedicineInstructions.Count == 0 ? 0 : MedicineInstructions[^1].ID;
+            return MedicineInstructions;
+        }
+        public static void Save()
+        {
+            try
+            {
+                JsonSerializer serializer = new JsonSerializer
+                {
+                    Formatting = Formatting.Indented,
+                    DateFormatString = Constants.DateTimeFormat
+                };
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\medicineInstructions.json"))
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    serializer.Serialize(writer, MedicineInstructions);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+}

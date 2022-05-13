@@ -1,4 +1,4 @@
-﻿using HealthCareCenter.Model;
+using HealthCareCenter.Model;
 using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;
@@ -31,10 +31,96 @@ namespace HealthCareCenter
             return room != null;
         }
 
-        private void ShowWindow(Window window)
+        private bool IsDateInputValide(string date)
         {
-            window.Show();
-            Close();
+            return DateTime.TryParse(date, out DateTime _);
+        }
+
+        private bool IsDateBeforeCurrentTime(DateTime date)
+        {
+            DateTime now = DateTime.Now;
+            int value = DateTime.Compare(date, now);
+            return value < 0;
+        }
+
+        private bool IsFinishDateBeforeStartDate(DateTime startDate, DateTime finishDate)
+        {
+            int value = DateTime.Compare(finishDate, startDate);
+            return value < 0;
+        }
+
+        private bool IsDateValide(string startDate, string finishDate)
+        {
+            if (!IsDateInputValide(startDate))
+            {
+                MessageBox.Show("Error, bad input for start date!");
+                return false;
+            }
+            DateTime parsedStartDate = Convert.ToDateTime(startDate);
+
+            if (!IsDateInputValide(finishDate))
+            {
+                MessageBox.Show("Error, bad input for end date!");
+                return false;
+            }
+            DateTime parsedFinishDate = Convert.ToDateTime(finishDate);
+
+            if (IsDateBeforeCurrentTime(parsedStartDate))
+            {
+                MessageBox.Show("Error, bad input for start date!");
+                return false;
+            }
+
+            if (IsDateBeforeCurrentTime(parsedFinishDate))
+            {
+                MessageBox.Show("Error, bad input for end date!");
+                return false;
+            }
+
+            if (IsFinishDateBeforeStartDate(parsedStartDate, parsedFinishDate))
+            {
+                MessageBox.Show("Error, end date is before start date!");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsHospitalRoomValide(string roomId)
+        {
+            if (!IsHospitalRoomIdInputValide(roomId))
+            {
+                MessageBox.Show("Error, bad hospital room ID input!");
+                return false;
+            }
+
+            int parsedHospitalRoomId = Convert.ToInt32(roomId);
+
+            HospitalRoom roomForRenovation = HospitalRoomService.GetRoom(parsedHospitalRoomId);
+
+            if (!IsHospitalRoomFound(roomForRenovation))
+            {
+                MessageBox.Show($"Error, hospital room with id={parsedHospitalRoomId} not found!");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsPossibleRenovation(HospitalRoom roomForRenovation)
+        {
+            if (roomForRenovation.ContainsAnyAppointment())
+            {
+                MessageBox.Show("Error, hospital room contains appointments!");
+                return false;
+            }
+            if (roomForRenovation.ContaninsAnyRearrangement())
+            {
+                MessageBox.Show("Error, hospital room contains rearrangements!");
+                return false;
+            }
+
+            return true;
         }
 
         private void FillDataGridHospitalRooms()
@@ -57,34 +143,16 @@ namespace HealthCareCenter
             }
         }
 
-        private bool IsDateInputValide(string date)
-        {
-            return DateTime.TryParse(date, out DateTime _);
-        }
-
-        private bool IsDateInputBeforeCurrentTime(DateTime date)
-        {
-            DateTime now = DateTime.Now;
-            int value = DateTime.Compare(date, now);
-            return value < 0;
-        }
-
-        private bool IsEndDateBeforeStartDate(DateTime startDate, DateTime endDate)
-        {
-            int value = DateTime.Compare(endDate, startDate);
-            return value < 0;
-        }
-
         public HospitalRoomRenovationWindow(Manager manager)
         {
             _signedManager = manager;
             InitializeComponent();
             FillDataGridHospitalRooms();
             FillDataGridHospitalRoomsRenovation();
-
+            
             DisplayNotifications();
         }
-
+        
         private void DisplayNotifications()
         {
             List<Notification> notifications = NotificationService.FindUnopened(_signedManager);
@@ -97,6 +165,43 @@ namespace HealthCareCenter
             {
                 MessageBox.Show(notification.Message);
             }
+        }
+
+        private void ScheduleRenovationButton_Click(object sender, RoutedEventArgs e)
+        {
+            string hospitalRoomForRenovationId = HospitalRoomIdTextBox.Text;
+            string startDate = StartDatePicker.Text;
+            string finishDate = EndDatePicker.Text;
+
+            if (!IsHospitalRoomValide(hospitalRoomForRenovationId))
+            {
+                return;
+            }
+            int parsedHospitalRoomForRenovationId = Convert.ToInt32(hospitalRoomForRenovationId);
+            HospitalRoom roomForRenovation = HospitalRoomService.GetRoom(parsedHospitalRoomForRenovationId);
+
+            if (!IsDateValide(startDate, finishDate))
+            {
+                return;
+            }
+            DateTime parsedStartDate = Convert.ToDateTime(startDate);
+            DateTime parsedFinishDate = Convert.ToDateTime(finishDate);
+
+            if (!IsPossibleRenovation(roomForRenovation))
+            {
+                return;
+            }
+            RenovationSchedule renovation = new RenovationSchedule(parsedStartDate, parsedFinishDate, roomForRenovation);
+            renovation.ScheduleSimpleRenovation(roomForRenovation);
+
+            FillDataGridHospitalRoomsRenovation();
+            FillDataGridHospitalRooms();
+        }
+
+        private void ShowWindow(Window window)
+        {
+            window.Show();
+            Close();
         }
 
         private void CrudHospitalRoomMenuItemClick(object sender, RoutedEventArgs e)
@@ -132,74 +237,6 @@ namespace HealthCareCenter
         private void LogOffItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new LoginWindow());
-        }
-
-        private void ScheduleRenovationButton_Click(object sender, RoutedEventArgs e)
-        {
-            string hospitalRoomId = HospitalRoomIdTextBox.Text;
-
-            if (!IsHospitalRoomIdInputValide(hospitalRoomId))
-            {
-                MessageBox.Show("Error, bad hospital room ID input!");
-                return;
-            }
-
-            int parsedHospitalRoomId = Convert.ToInt32(hospitalRoomId);
-
-            HospitalRoom roomForRenovation = HospitalRoomService.GetRoom(parsedHospitalRoomId);
-
-            if (!IsHospitalRoomFound(roomForRenovation))
-            {
-                MessageBox.Show($"Error, hospital room with id={parsedHospitalRoomId} not found!");
-                return;
-            }
-
-            string startDate = StartDatePicker.Text;
-            if (!IsDateInputValide(startDate))
-            {
-                MessageBox.Show("Error, bad input for start date!");
-                return;
-            }
-            DateTime parsedStartDate = Convert.ToDateTime(startDate);
-
-            string endDate = EndDatePicker.Text;
-            if (!IsDateInputValide(endDate))
-            {
-                MessageBox.Show("Error, bad input for end date!");
-                return;
-            }
-            DateTime parsedEndDate = Convert.ToDateTime(endDate);
-
-            if (IsDateInputBeforeCurrentTime(parsedStartDate))
-            {
-                MessageBox.Show("Error, bad input for start date!");
-                return;
-            }
-
-            if (IsDateInputBeforeCurrentTime(parsedEndDate))
-            {
-                MessageBox.Show("Error, bad input for end date!");
-                return;
-            }
-
-            if (IsEndDateBeforeStartDate(parsedStartDate, parsedEndDate))
-            {
-                MessageBox.Show("Error, end date is before start date!");
-                return;
-            }
-
-            if (roomForRenovation.ContainsAnyAppointment())
-            {
-                MessageBox.Show("Error, hospital room contains appointments!");
-                return;
-            }
-
-            HospitalRoomService.DeleteRoom(roomForRenovation);
-            HospitalRoomForRenovationService.AddRoom(roomForRenovation);
-            RenovationSchedule renovation = new RenovationSchedule(parsedStartDate, parsedEndDate, roomForRenovation);
-            RenovationScheduleService.AddRenovation(renovation);
-            FillDataGridHospitalRoomsRenovation();
-            FillDataGridHospitalRooms();
         }
     }
 }

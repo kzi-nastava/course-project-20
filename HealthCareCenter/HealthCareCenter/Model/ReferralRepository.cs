@@ -9,20 +9,15 @@ namespace HealthCareCenter.Model
     public static class ReferralRepository
     {
         public static List<Referral> Referrals { get; set; }
-
-        public static void Load()
+        public static int LargestID { get; set; }
+        public static List<Referral> Load()
         {
-            try
-            {
-                string JSONTextReferrals = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\referrals.json");
-                Referrals = (List<Referral>)JsonConvert.DeserializeObject<IEnumerable<Referral>>(JSONTextReferrals);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
 
+            string JSONTextReferrals = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\referrals.json");
+            Referrals = (List<Referral>)JsonConvert.DeserializeObject<IEnumerable<Referral>>(JSONTextReferrals);
+            LargestID = Referrals.Count == 0 ? 0 : Referrals[^1].ID;
+            return Referrals;
+        }
         public static void Save()
         {
             try
@@ -31,7 +26,6 @@ namespace HealthCareCenter.Model
                 {
                     Formatting = Formatting.Indented
                 };
-
                 using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\referrals.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
