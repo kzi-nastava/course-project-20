@@ -51,7 +51,7 @@ namespace HealthCareCenter
 
         private void DisplayNotifications()
         {
-            List<Notification> notifications = NotificationService.FindUnopened(signedUser);
+            List<Notification> notifications = NotificationService.FindUnopened(signedUser);    
             if (notifications.Count == 0)
             {
                 return;
@@ -324,39 +324,10 @@ namespace HealthCareCenter
                 return;
             }
             bool emergency = (bool)emergencyCheckBox.IsChecked;
-            string day, month, year, hour, minute;
-            if(dayComboBox.SelectedItem == null)
-            {
-                MessageBox.Show("Select day from combo box");
+            bool error = ValidateDateTimeComboBoxes();
+            if (error)
                 return;
-            }
-            if (monthComboBox.SelectedItem == null)
-            {
-                MessageBox.Show("Select month from combo box");
-                return;
-            }
-            if (yearComboBox.SelectedItem == null)
-            {
-                MessageBox.Show("Select year from combo box");
-                return;
-            }
-            if (hourComboBox.SelectedItem == null)
-            {
-                MessageBox.Show("Select hour from combo box");
-                return;
-            }
-            if (minuteComboBox.SelectedItem == null)
-            {
-                MessageBox.Show("Select minute from combo box");
-                return;
-            }
-
-            day = dayComboBox.SelectedItem.ToString();
-            month = monthComboBox.SelectedItem.ToString();
-            year = yearComboBox.SelectedItem.ToString();
-            hour = hourComboBox.SelectedItem.ToString();
-            minute = minuteComboBox.SelectedItem.ToString();
-            string unparsedDate = day + "/" + month + "/" + year + " " + hour + ":" + minute;
+            string unparsedDate = ParseDateTimeComboBoxes();
             DateTime date = DateTime.ParseExact(unparsedDate,
                     Constants.DateTimeFormat,
                     CultureInfo.InvariantCulture);
@@ -396,6 +367,45 @@ namespace HealthCareCenter
             FillAppointmentsTable(AppointmentRepository.Appointments);
             appointmentCreationGrid.Visibility = Visibility.Collapsed;
             scheduleGrid.Visibility = Visibility.Visible;
+        }
+        private string ParseDateTimeComboBoxes()
+        {
+            string day, month, year, hour, minute;
+            day = dayComboBox.SelectedItem.ToString();
+            month = monthComboBox.SelectedItem.ToString();
+            year = yearComboBox.SelectedItem.ToString();
+            hour = hourComboBox.SelectedItem.ToString();
+            minute = minuteComboBox.SelectedItem.ToString();
+            return  day + "/" + month + "/" + year + " " + hour + ":" + minute;
+        }
+        private bool ValidateDateTimeComboBoxes()
+        {
+            if (dayComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Select day from combo box");
+                return true;
+            }
+            if (monthComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Select month from combo box");
+                return true;
+            }
+            if (yearComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Select year from combo box");
+                return true;
+            }
+            if (hourComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Select hour from combo box");
+                return true;
+            }
+            if (minuteComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Select minute from combo box");
+                return true;
+            }
+            return false;
         }
         private void FillAppointmentWithDefaultValues(Appointment appointment)
         {
@@ -445,28 +455,21 @@ namespace HealthCareCenter
             idLable.Content = healthRecord.ID.ToString();
             heightTextBox.Text = healthRecord.Height.ToString();
             weigthTextBox.Text = healthRecord.Weight.ToString();
-            string previousDiseases = "";
-            if (healthRecord.PreviousDiseases != null)
+            CheckPreviousDiseases(healthRecord);
+            CheckAlergens(healthRecord);
+            if(AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis == null)
             {
-                foreach (string s in healthRecord.PreviousDiseases)
-                {
-                    previousDiseases += "," + s;
-                }
-                
-                if (healthRecord.PreviousDiseases.Count == 0)
-                {
-                    previousDiseasesTextBox.Text = "";
-                }
-                else
-                {
-                    previousDiseasesTextBox.Text = previousDiseases.Substring(1, previousDiseases.Length - 1);
-                }
+                anamnesisLabel.Content = "No anamnesis";
+                createAPrescription.IsEnabled = false;
             }
             else
             {
-                previousDiseasesTextBox.Text = "none";
+                anamnesisLabel.Content = AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis.Comment;
+                createAPrescription.IsEnabled = true;
             }
-
+        }
+        private void CheckAlergens(HealthRecord healthRecord)
+        {
             string alergens = "";
             if (healthRecord.Allergens != null)
             {
@@ -488,15 +491,29 @@ namespace HealthCareCenter
             {
                 alergensTextBox.Text = "none";
             }
-            if(AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis == null)
+        }
+        private void CheckPreviousDiseases(HealthRecord healthRecord)
+        {
+            string previousDiseases = "";
+            if (healthRecord.PreviousDiseases != null)
             {
-                anamnesisLabel.Content = "No anamnesis";
-                createAPrescription.IsEnabled = false;
+                foreach (string s in healthRecord.PreviousDiseases)
+                {
+                    previousDiseases += "," + s;
+                }
+
+                if (healthRecord.PreviousDiseases.Count == 0)
+                {
+                    previousDiseasesTextBox.Text = "";
+                }
+                else
+                {
+                    previousDiseasesTextBox.Text = previousDiseases.Substring(1, previousDiseases.Length - 1);
+                }
             }
             else
             {
-                anamnesisLabel.Content = AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis.Comment;
-                createAPrescription.IsEnabled = true;
+                previousDiseasesTextBox.Text = "none";
             }
         }
 
@@ -568,21 +585,7 @@ namespace HealthCareCenter
         private void Search_Click(object sender, RoutedEventArgs e)
         {
             string day, month, year;
-            if(dayChoiceComboBox.SelectedItem == null)
-            {
-                MessageBox.Show("select a day");
-                return;
-            }
-            if (monthChoiceComboBox.SelectedItem == null)
-            {
-                MessageBox.Show("select a month");
-                return;
-            }
-            if (yearChoiceComboBox.SelectedItem == null)
-            {
-                MessageBox.Show("select a year");
-                return;
-            }
+            CheckDateComboBoxes();
 
             day = dayChoiceComboBox.SelectedItem.ToString();
             month = monthChoiceComboBox.SelectedItem.ToString();
@@ -666,6 +669,26 @@ namespace HealthCareCenter
                     selectedPatientsHealthRecord = healthRecord;
                     break;
                 }
+            }
+        }
+        //---------------------------------------------------------------------------------------
+        //Schedule rewiew menu functions
+        private void CheckDateComboBoxes()
+        {
+            if (dayChoiceComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("select a day");
+                return;
+            }
+            if (monthChoiceComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("select a month");
+                return;
+            }
+            if (yearChoiceComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("select a year");
+                return;
             }
         }
 
@@ -789,7 +812,7 @@ namespace HealthCareCenter
                 return;
             }
             chosenMedicine = MedicineRepository.Medicines[medicineIndex];
-            bool isAlergic = checkAlergies(chosenMedicine);
+            bool isAlergic = CheckAlergies(chosenMedicine);
             if (isAlergic)
                 return;
             foreach (Medicine medicine in prescriptionService.SelectedMedicine)
@@ -802,19 +825,6 @@ namespace HealthCareCenter
             }
             prescriptionService.SelectedMedicine.Add(chosenMedicine);
             AddMedicineToTable(chosenMedicine);
-        }
-
-        private bool checkAlergies(Medicine medicine)
-        {
-            foreach(string ingredient in medicine.Ingredients)
-            {
-                if (selectedPatientsHealthRecord.Allergens.Contains(ingredient))
-                {
-                    MessageBox.Show("Patient is allergic to: " + ingredient);
-                    return true;
-                }
-            }
-            return false;
         }
 
         private void deleteMedicine_Click(object sender, RoutedEventArgs e)
@@ -879,6 +889,20 @@ namespace HealthCareCenter
             prescriptionService.ClearData();
             selectedMedicineDataTable.Rows.Clear();
             MessageBox.Show("Added prescription successfuly");
+        }
+        //---------------------------------------------------------------------------------------
+        //Health record functions
+        private bool CheckAlergies(Medicine medicine)
+        {
+            foreach (string ingredient in medicine.Ingredients)
+            {
+                if (selectedPatientsHealthRecord.Allergens.Contains(ingredient))
+                {
+                    MessageBox.Show("Patient is allergic to: " + ingredient);
+                    return true;
+                }
+            }
+            return false;
         }
 
         //---------------------------------------------------------------------------------------
