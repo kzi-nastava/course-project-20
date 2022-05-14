@@ -188,12 +188,6 @@ namespace HealthCareCenter.SecretaryGUI
             HospitalRoomService.Update(newAppointment.HospitalRoomID, newAppointment);
             HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
 
-            HealthRecordService.Update(_patient.HealthRecordID, newAppointment);
-            HealthRecordRepository.Save();
-
-            UserService.UpdateDoctor(newAppointment.DoctorID, newAppointment);
-            UserRepository.SaveDoctors();
-
             HealthRecord postponedPatientsRecord = FindHealthRecord(postponedAppointment);
 
             NotificationService.CalculateMaxID();

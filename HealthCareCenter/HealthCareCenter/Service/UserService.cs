@@ -19,17 +19,5 @@ namespace HealthCareCenter.Service
                 }
             }
         }
-
-        public static void UpdateDoctor(int doctorID, Appointment appointment)
-        {
-            foreach (Doctor doctor in UserRepository.Doctors)
-            {
-                if (doctor.ID == doctorID)
-                {
-                    doctor.AppointmentIDs.Add(appointment.ID);
-                    break;
-                }
-            }
-        }
     }
 }

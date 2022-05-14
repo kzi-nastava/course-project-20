@@ -32,17 +32,5 @@ namespace HealthCareCenter.Service
             }
             return null;
         }
-
-        public static void Update(int recordID, Appointment appointment)
-        {
-            foreach (HealthRecord record in HealthRecordRepository.Records)
-            {
-                if (record.ID == recordID)
-                {
-                    record.AppointmentIDs.Add(appointment.ID);
-                    break;
-                }
-            }
-        }
     }
 }

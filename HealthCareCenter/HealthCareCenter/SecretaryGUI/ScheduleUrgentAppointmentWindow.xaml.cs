@@ -180,12 +180,6 @@ namespace HealthCareCenter.SecretaryGUI
 
             HospitalRoomService.Update(room.ID, appointment);
             HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
-
-            HealthRecordService.Update(_patient.HealthRecordID, appointment);
-            HealthRecordRepository.Save();
-
-            UserService.UpdateDoctor(doctor.ID, appointment);
-            UserRepository.SaveDoctors();
         }
 
         private List<string> GetTermsWithinTwoHours()

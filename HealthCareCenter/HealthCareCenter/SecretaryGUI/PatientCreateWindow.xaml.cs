@@ -215,8 +215,8 @@ namespace HealthCareCenter.SecretaryGUI
             HealthRecordService.maxID++;
             UserService.maxID++;
             //create record and patient
-            HealthRecord record = new HealthRecord(HealthRecordService.maxID, height, weight, previousDiseasesListBox.Items.Cast<String>().ToList(), allergensListBox.Items.Cast<String>().ToList(), UserService.maxID, new List<int>());
-            Patient patient = new Patient(UserService.maxID, usernameTextBox.Text, passwordTextBox.Text, firstNameTextBox.Text, lastNameTextBox.Text, (DateTime)birthDatePicker.SelectedDate, false, Enums.Blocker.None, new List<int>(), new List<int>(), HealthRecordService.maxID);
+            HealthRecord record = new HealthRecord(HealthRecordService.maxID, height, weight, previousDiseasesListBox.Items.Cast<String>().ToList(), allergensListBox.Items.Cast<String>().ToList(), UserService.maxID);
+            Patient patient = new Patient(UserService.maxID, usernameTextBox.Text, passwordTextBox.Text, firstNameTextBox.Text, lastNameTextBox.Text, (DateTime)birthDatePicker.SelectedDate, false, Enums.Blocker.None, new List<int>(), HealthRecordService.maxID);
             //add to repositories
             HealthRecordRepository.Records.Add(record);
             UserRepository.Patients.Add(patient);

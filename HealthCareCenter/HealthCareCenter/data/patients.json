@@ -2,7 +2,6 @@
   {
     "IsBlocked": false,
     "BlockedBy": 0,
-    "ReferralIDs": [],
     "PrescriptionIDs": [],
     "HealthRecordID": 1,
     "ID": 2,
@@ -15,7 +14,6 @@
   {
     "IsBlocked": false,
     "BlockedBy": 0,
-    "ReferralIDs": [],
     "PrescriptionIDs": [],
     "HealthRecordID": 2,
     "ID": 4,

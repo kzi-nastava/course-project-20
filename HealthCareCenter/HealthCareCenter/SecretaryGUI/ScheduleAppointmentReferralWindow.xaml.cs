@@ -138,14 +138,6 @@ namespace HealthCareCenter.SecretaryGUI
             HospitalRoomService.Update(roomID, appointment);
             HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
 
-            HealthRecordService.Update(_patient.HealthRecordID, appointment);
-            HealthRecordRepository.Save();
-
-            _patient.ReferralIDs.Remove(_referral.ID);
-            UserService.UpdateDoctor(_referral.DoctorID, appointment);
-            UserRepository.SavePatients();
-            UserRepository.SaveDoctors();
-
             ReferralRepository.Referrals.Remove(_referral);
             ReferralRepository.Save();
         }

@@ -3,10 +3,5 @@
     "ID": 0,
     "PatientID": 2,
     "DoctorID": 1
-  },
-  {
-    "ID": 1,
-    "PatientID": 2,
-    "DoctorID": 1
   }
 ]

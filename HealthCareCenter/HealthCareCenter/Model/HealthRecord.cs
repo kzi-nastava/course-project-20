@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace HealthCareCenter.Model
 {
@@ -12,10 +10,9 @@ namespace HealthCareCenter.Model
         public List<string> PreviousDiseases { get; set; }
         public List<string> Allergens { get; set; }
         public int PatientID { get; set; }
-        public List<int> AppointmentIDs { get; set; }
 
         public HealthRecord() { }
-        public HealthRecord(int id, double height, double weight, List<string> previousDiseases, List<string> allergens, int patientID, List<int> appointmentIDs)
+        public HealthRecord(int id, double height, double weight, List<string> previousDiseases, List<string> allergens, int patientID)
         {
             ID = id;
             Height = height;
@@ -23,7 +20,6 @@ namespace HealthCareCenter.Model
             PreviousDiseases = previousDiseases;
             Allergens = allergens;
             PatientID = patientID;
-            AppointmentIDs = appointmentIDs;
         }
     }
 }

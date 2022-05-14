@@ -14,7 +14,7 @@
     "ID": 2,
     "AppointmentID": 1,
     "RequestType": 0,
-    "State": 2,
+    "State": 1,
     "NewDate": "01/01/0001 00:00",
     "NewAppointmentType": 0,
     "NewDoctorID": 1,

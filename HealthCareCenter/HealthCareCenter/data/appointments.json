@@ -1,19 +1,5 @@
 [
   {
-    "ID": 1,
-    "Type": 1,
-    "ScheduledDate": "29/07/2022 13:45",
-    "CreatedDate": "29/04/2022 00:01",
-    "Emergency": false,
-    "DoctorID": 1,
-    "HealthRecordID": 1,
-    "HospitalRoomID": 3,
-    "PatientAnamnesis": {
-      "ID": 1,
-      "Comment": "This is comment"
-    }
-  },
-  {
     "ID": 2,
     "Type": 1,
     "ScheduledDate": "10/04/2022 09:45",
@@ -76,5 +62,47 @@
     "HealthRecordID": 1,
     "HospitalRoomID": 3,
     "PatientAnamnesis": null
+  },
+  {
+    "ID": 7,
+    "Type": 1,
+    "ScheduledDate": "14/05/2022 15:45",
+    "CreatedDate": "14/05/2022 15:44",
+    "Emergency": true,
+    "DoctorID": 5,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": {
+      "ID": 0,
+      "Comment": null
+    }
+  },
+  {
+    "ID": 8,
+    "Type": 1,
+    "ScheduledDate": "15/05/2022 11:00",
+    "CreatedDate": "14/05/2022 15:45",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": {
+      "ID": 0,
+      "Comment": null
+    }
+  },
+  {
+    "ID": 9,
+    "Type": 1,
+    "ScheduledDate": "14/05/2022 16:00",
+    "CreatedDate": "14/05/2022 15:45",
+    "Emergency": true,
+    "DoctorID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": {
+      "ID": 0,
+      "Comment": null
+    }
   }
 ]

@@ -9,6 +9,5 @@ namespace HealthCareCenter.Model
         public string Type { get; set; }
         public List<int> VacationRequestIDs { get; set; }
         public List<int> MedicineCreationRequestIDs { get; set; }
-        public List<int> AppointmentIDs { get; set; }
     }
 }
