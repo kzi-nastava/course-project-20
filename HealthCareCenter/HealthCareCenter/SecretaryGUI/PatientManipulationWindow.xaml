@@ -48,7 +48,7 @@
         <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" FontSize="18" Content="*To view a patient's edit appointment requests, schedule urgent or referral appointments, use the &#10; view button on the appropriate patient, then press the appropriate button in the new window." />
         <Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" FontSize="18" Content="**Select a patient by clicking on his corresponding row, then press the appropriate button above." />
         
-        <DataGrid x:Name="patientsDataGrid" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Margin="5" 
+        <DataGrid x:Name="patientsDataGrid" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Margin="5" IsReadOnly="True"
                   AutoGenerateColumns="False" FontSize="16" SelectionMode="Single" SelectionUnit="FullRow">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="auto"/>

@@ -47,16 +47,17 @@ namespace HealthCareCenter.SecretaryGUI
                     continue;
                 }
 
-                PatientReferral patientReferral = new PatientReferral
-                {
-                    ID = referral.ID
-                };
-
-                LinkDoctor(referral, patientReferral);
-                _referrals.Add(patientReferral);
+                Add(referral);
             }
-
             referralsDataGrid.ItemsSource = _referrals;
+        }
+
+        private void Add(Referral referral)
+        {
+            PatientReferral patientReferral = new PatientReferral(referral.ID);
+
+            LinkDoctor(referral, patientReferral);
+            _referrals.Add(patientReferral);
         }
 
         private static void LinkDoctor(Referral referral, PatientReferral patientReferral)
@@ -70,7 +71,7 @@ namespace HealthCareCenter.SecretaryGUI
                 patientReferral.DoctorUsername = doctor.Username;
                 patientReferral.DoctorFirstName = doctor.FirstName;
                 patientReferral.DoctorLastName = doctor.LastName;
-                break;
+                return;
             }
         }
 

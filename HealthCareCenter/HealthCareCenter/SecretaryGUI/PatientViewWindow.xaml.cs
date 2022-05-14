@@ -58,12 +58,7 @@ namespace HealthCareCenter.SecretaryGUI
         {
             if (!_patient.IsBlocked)
             {
-                _patient.IsBlocked = true;
-                _patient.BlockedBy = Enums.Blocker.Secretary;
-                UserRepository.SavePatients();
-                isBlockedCheckBox.IsChecked = true;
-                blockedByTextBox.Text = Enums.Blocker.Secretary.ToString();
-                MessageBox.Show("Patient successfully blocked.");
+                Block();
             }
             else
             {
@@ -71,21 +66,36 @@ namespace HealthCareCenter.SecretaryGUI
             }
         }
 
+        private void Block()
+        {
+            _patient.IsBlocked = true;
+            _patient.BlockedBy = Enums.Blocker.Secretary;
+            UserRepository.SavePatients();
+            isBlockedCheckBox.IsChecked = true;
+            blockedByTextBox.Text = Enums.Blocker.Secretary.ToString();
+            MessageBox.Show("Patient successfully blocked.");
+        }
+
         private void UnblockButton_Click(object sender, RoutedEventArgs e)
         {
             if (_patient.IsBlocked)
             {
-                _patient.IsBlocked = false;
-                _patient.BlockedBy = Enums.Blocker.None;
-                UserRepository.SavePatients();
-                isBlockedCheckBox.IsChecked = false;
-                blockedByTextBox.Text = Enums.Blocker.None.ToString();
-                MessageBox.Show("Patient successfully unblocked.");
+                Unblock();
             }
             else
             {
                 MessageBox.Show("Patient is not blocked.");
             }
+        }
+
+        private void Unblock()
+        {
+            _patient.IsBlocked = false;
+            _patient.BlockedBy = Enums.Blocker.None;
+            UserRepository.SavePatients();
+            isBlockedCheckBox.IsChecked = false;
+            blockedByTextBox.Text = Enums.Blocker.None.ToString();
+            MessageBox.Show("Patient successfully unblocked.");
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)

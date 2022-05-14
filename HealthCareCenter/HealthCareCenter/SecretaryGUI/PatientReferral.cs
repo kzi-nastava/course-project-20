@@ -13,5 +13,11 @@ namespace HealthCareCenter.SecretaryGUI
         public string DoctorUsername { get; set; }
         public string DoctorFirstName { get; set; }
         public string DoctorLastName { get; set; }
+
+        public PatientReferral() { }
+        public PatientReferral(int id)
+        {
+            ID = id;
+        }
     }
 }

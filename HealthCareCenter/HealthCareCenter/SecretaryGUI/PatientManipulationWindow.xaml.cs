@@ -41,9 +41,14 @@ namespace HealthCareCenter.SecretaryGUI
         private void Window_Initialized(object sender, EventArgs e)
         {
             patientsDataGrid.ItemsSource = UserRepository.Patients;
-            patientsDataGrid.IsReadOnly = true;
             LoadBlockedPatients();
+
             HealthRecordRepository.Load();
+            UpdateMaxIDsIfNeeded();
+        }
+
+        private static void UpdateMaxIDsIfNeeded()
+        {
             if (UserService.maxID == -1)
             {
                 UserService.CalculateMaxID();
@@ -75,17 +80,22 @@ namespace HealthCareCenter.SecretaryGUI
             Patient selectedPatient = (Patient)patientsDataGrid.SelectedItem;
             if (!selectedPatient.IsBlocked)
             {
-                selectedPatient.IsBlocked = true;
-                selectedPatient.BlockedBy = Enums.Blocker.Secretary;
-                _blockedPatients.Add(selectedPatient);
-                UserRepository.SavePatients();
-                patientsDataGrid.Items.Refresh();
-                MessageBox.Show("Patient successfully blocked.");
+                Block(selectedPatient);
             }
             else
             {
                 MessageBox.Show("Patient is already blocked.");
             }
+        }
+
+        private void Block(Patient selectedPatient)
+        {
+            selectedPatient.IsBlocked = true;
+            selectedPatient.BlockedBy = Enums.Blocker.Secretary;
+            _blockedPatients.Add(selectedPatient);
+            UserRepository.SavePatients();
+            patientsDataGrid.Items.Refresh();
+            MessageBox.Show("Patient successfully blocked.");
         }
 
         private void UnblockButton_Click(object sender, RoutedEventArgs e)
@@ -99,17 +109,22 @@ namespace HealthCareCenter.SecretaryGUI
             Patient selectedPatient = (Patient)patientsDataGrid.SelectedItem;
             if (selectedPatient.IsBlocked)
             {
-                selectedPatient.IsBlocked = false;
-                selectedPatient.BlockedBy = Enums.Blocker.None;
-                _blockedPatients.Remove(selectedPatient);
-                UserRepository.SavePatients();
-                patientsDataGrid.Items.Refresh();
-                MessageBox.Show("Patient successfully unblocked.");
+                Unblock(selectedPatient);
             }
             else
             {
                 MessageBox.Show("Patient is not blocked.");
             }
+        }
+
+        private void Unblock(Patient selectedPatient)
+        {
+            selectedPatient.IsBlocked = false;
+            selectedPatient.BlockedBy = Enums.Blocker.None;
+            _blockedPatients.Remove(selectedPatient);
+            UserRepository.SavePatients();
+            patientsDataGrid.Items.Refresh();
+            MessageBox.Show("Patient successfully unblocked.");
         }
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
@@ -128,33 +143,43 @@ namespace HealthCareCenter.SecretaryGUI
             }
 
             Patient patient = (Patient)patientsDataGrid.SelectedItem;
-            
-            foreach (HealthRecord record in HealthRecordRepository.Records)
-            {
-                if (patient.HealthRecordID == record.ID)
-                {
-                    HealthRecordRepository.Records.Remove(record);
-                    if (patient.HealthRecordID == HealthRecordService.maxID)
-                    {
-                        HealthRecordService.CalculateMaxID();
-                    }
-                    break;
-                }
-            }
+
+            DeleteHealthRecord(patient);
             HealthRecordRepository.Save();
 
-            UserRepository.Patients.Remove(patient);
-            UserRepository.Users.Remove(patient);
+            DeletePatient(patient);
             UserRepository.SavePatients();
 
             patientsDataGrid.Items.Refresh();
+            MessageBox.Show("Successfully deleted patient and the corresponding health record.");
+        }
+
+        private static void DeletePatient(Patient patient)
+        {
+            UserRepository.Patients.Remove(patient);
+            UserRepository.Users.Remove(patient);
 
             if (patient.ID == UserService.maxID)
             {
                 UserService.CalculateMaxID();
             }
+        }
 
-            MessageBox.Show("Successfully deleted patient and the corresponding health record.");
+        private static void DeleteHealthRecord(Patient patient)
+        {
+            foreach (HealthRecord record in HealthRecordRepository.Records)
+            {
+                if (patient.HealthRecordID != record.ID)
+                {
+                    continue;
+                }
+                HealthRecordRepository.Records.Remove(record);
+                if (patient.HealthRecordID == HealthRecordService.maxID)
+                {
+                    HealthRecordService.CalculateMaxID();
+                }
+                break;
+            }
         }
 
         private void ViewButton_Click(object sender, RoutedEventArgs e)
@@ -165,6 +190,11 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
+            OpenViewWindow();
+        }
+
+        private void OpenViewWindow()
+        {
             Patient patient = (Patient)patientsDataGrid.SelectedItem;
             HealthRecord record = HealthRecordService.FindRecord(patient);
 
@@ -182,6 +212,11 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
+            OpenEditWindow();
+        }
+
+        private void OpenEditWindow()
+        {
             Patient patient = (Patient)patientsDataGrid.SelectedItem;
             HealthRecord record = HealthRecordService.FindRecord(patient);
 
