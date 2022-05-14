@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "ID": 1,
+    "MedicineIDs": [
+      1
+    ],
+    "DoctorID": 1,
+    "MedicineInstructionID": 1
+  },
+  {
+    "ID": 2,
+    "MedicineIDs": [
+      1
+    ],
+    "DoctorID": 1,
+    "MedicineInstructionID": 2
+  },
+  {
+    "ID": 3,
+    "MedicineIDs": [
+      1
+    ],
+    "DoctorID": 1,
+    "MedicineInstructionID": 3
+  }
+]
