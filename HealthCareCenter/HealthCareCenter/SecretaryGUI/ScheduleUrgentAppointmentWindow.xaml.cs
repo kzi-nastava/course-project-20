@@ -79,6 +79,11 @@ namespace HealthCareCenter.SecretaryGUI
 
         private void OpenPostponingWindow(List<Doctor> doctors, AppointmentType type, List<HospitalRoom> rooms)
         {
+            if (_occupiedAppointments.Count == 0)
+            {
+                MessageBox.Show("No available term was found in the next 2 hours. Unfortunately, there are no terms to postpone at this time neither.");
+                return;
+            }
             MessageBox.Show("No available term was found in the next 2 hours. You can, however, postpone an occupied term in the next window.");
             OccupiedAppointmentsWindow window = new OccupiedAppointmentsWindow(_patient, type, doctors, rooms, _occupiedAppointments, _newAppointmentsInfo);
             window.ShowDialog();
