@@ -55,8 +55,8 @@
                 <DataGridTextColumn Header="New doctor" Binding="{Binding NewDoctorUsername}" Width="auto"/>
                 <DataGridTextColumn Header="Orig. App. time" Binding="{Binding OriginalAppointmentTime, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="auto"/>
                 <DataGridTextColumn Header="New App. time" Binding="{Binding NewAppointmentTime, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="auto"/>
-                <DataGridTextColumn Header="Orig. App. type" Binding="{Binding OriginalAppointmentType}"  Width="auto"/>
-                <DataGridTextColumn Header="New App. type" Binding="{Binding NewAppointmentType}" Width="*"/>
+                <DataGridTextColumn Header="Orig. App. type" Binding="{Binding OriginalType}"  Width="auto"/>
+                <DataGridTextColumn Header="New App. type" Binding="{Binding NewType}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
 

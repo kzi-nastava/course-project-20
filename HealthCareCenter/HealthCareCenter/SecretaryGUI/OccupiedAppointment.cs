@@ -17,5 +17,16 @@ namespace HealthCareCenter.SecretaryGUI
         public string DoctorName { get; set; }
         public string PatientName { get; set; }
         public DateTime PostponedTime { get; set; }
+
+        public AppointmentDisplay() { }
+
+        public AppointmentDisplay(int id, AppointmentType type, DateTime scheduledDate, bool emergency, DateTime postponedTime)
+        {
+            ID = id;
+            Type = type;
+            ScheduledDate = scheduledDate;
+            Emergency = emergency;
+            PostponedTime = postponedTime;
+        }
     }
 }

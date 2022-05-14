@@ -16,7 +16,7 @@ namespace HealthCareCenter.SecretaryGUI
         public string NewDoctorUsername { get; set; }
         public DateTime OriginalAppointmentTime { get; set; }
         public DateTime NewAppointmentTime { get; set; }
-        public AppointmentType OriginalAppointmentType { get; set; }
-        public AppointmentType NewAppointmentType { get; set; }
+        public AppointmentType OriginalType { get; set; }
+        public AppointmentType NewType { get; set; }
     }
 }

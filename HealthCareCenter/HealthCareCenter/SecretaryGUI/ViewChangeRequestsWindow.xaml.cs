@@ -110,12 +110,12 @@ namespace HealthCareCenter.SecretaryGUI
                                     }
                                 }
                                 editRequest.OriginalAppointmentTime = appointment.ScheduledDate;
-                                editRequest.OriginalAppointmentType = appointment.Type;
+                                editRequest.OriginalType = appointment.Type;
                                 break;
                             }
                         }
                         editRequest.NewAppointmentTime = request.NewDate;
-                        editRequest.NewAppointmentType = request.NewAppointmentType;
+                        editRequest.NewType = request.NewAppointmentType;
                         _editRequests.Add(editRequest);
                     }
                 }

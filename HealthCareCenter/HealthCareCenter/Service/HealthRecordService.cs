@@ -32,5 +32,17 @@ namespace HealthCareCenter.Service
             }
             return null;
         }
+
+        public static HealthRecord FindRecord(Appointment appointment)
+        {
+            foreach (HealthRecord record in HealthRecordRepository.Records)
+            {
+                if (appointment.HealthRecordID == record.ID)
+                {
+                    return record;
+                }
+            }
+            return null;
+        }
     }
 }

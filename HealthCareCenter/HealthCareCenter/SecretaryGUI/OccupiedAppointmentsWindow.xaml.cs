@@ -22,7 +22,7 @@ namespace HealthCareCenter.SecretaryGUI
     public partial class OccupiedAppointmentsWindow : Window
     {
         private Patient _patient;
-        private AppointmentType _appointmentType;
+        private AppointmentType _type;
         private List<Doctor> _doctors;
         private List<HospitalRoom> _rooms;
         private List<Appointment> _occupiedAppointments;
@@ -35,10 +35,10 @@ namespace HealthCareCenter.SecretaryGUI
             InitializeComponent();
         }
 
-        public OccupiedAppointmentsWindow(Patient patient, AppointmentType appointmentType, List<Doctor> doctors, List<HospitalRoom> rooms, List<Appointment> occupiedAppointments, Dictionary<int, Appointment> newAppointmentsInfo)
+        public OccupiedAppointmentsWindow(Patient patient, AppointmentType type, List<Doctor> doctors, List<HospitalRoom> rooms, List<Appointment> occupiedAppointments, Dictionary<int, Appointment> newAppointmentsInfo)
         {
             _patient = patient;
-            _appointmentType = appointmentType;
+            _type = type;
             _doctors = doctors;
             _rooms = rooms;
             _occupiedAppointments = occupiedAppointments;
@@ -46,45 +46,30 @@ namespace HealthCareCenter.SecretaryGUI
 
             InitializeComponent();
 
-            Sort();
-            Refresh();
+            SortAppointments();
+            RefreshTable();
         }
 
-        private void Sort()
+        private void SortAppointments()
         {
             List<string> allPossibleTerms = Utils.GetPossibleDailyTerms();
             List<string> terms = FormTodaysPossibleTerms(allPossibleTerms);
             List<Appointment> sortedAppointments = new List<Appointment>();
             Dictionary<int, DateTime> newDateOf = new Dictionary<int, DateTime>();
             bool foundAll = false;
-            DateTime startDate = DateTime.Now;
+            DateTime current = DateTime.Now;
 
             for (int i = 0; i < 365; i++)
             {
                 foreach (string term in terms)
                 {
-                    int hrs = int.Parse(term.Split(":")[0]);
-                    int mins = int.Parse(term.Split(":")[1]);
-                    DateTime newTime = startDate.Date.AddHours(hrs).AddMinutes(mins);
+                    int hours = int.Parse(term.Split(":")[0]);
+                    int minutes = int.Parse(term.Split(":")[1]);
+                    DateTime newTime = current.Date.AddHours(hours).AddMinutes(minutes);
 
                     foreach (Appointment occupiedAppointment in _occupiedAppointments.ToList())
                     {
-                        bool postponable = true;
-
-                        foreach (Appointment appointment in AppointmentRepository.Appointments)
-                        {
-                            if (appointment.ScheduledDate.CompareTo(newTime) != 0)
-                            {
-                                continue;
-                            }
-
-                            if (appointment.DoctorID == occupiedAppointment.DoctorID || appointment.HospitalRoomID == occupiedAppointment.HospitalRoomID || appointment.HealthRecordID == occupiedAppointment.HealthRecordID)
-                            {
-                                postponable = false;
-                                break;
-                            }
-                        }
-                        if (!postponable)
+                        if (!IsPostponableTo(newTime, occupiedAppointment))
                             continue;
 
                         sortedAppointments.Add(occupiedAppointment);
@@ -97,19 +82,34 @@ namespace HealthCareCenter.SecretaryGUI
                             break;
                         }
                     }
-
                     if (foundAll)
                         break;
                 }
-
                 if (foundAll)
                     break;
 
-                startDate = startDate.AddDays(1);
+                current = current.AddDays(1);
                 terms = new List<string>(allPossibleTerms);
             }
             _occupiedAppointments = new List<Appointment>(sortedAppointments);
             _newDateOf = new Dictionary<int, DateTime>(newDateOf);
+        }
+
+        private static bool IsPostponableTo(DateTime newTime, Appointment occupiedAppointment)
+        {
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            {
+                if (appointment.ScheduledDate.CompareTo(newTime) != 0)
+                {
+                    continue;
+                }
+
+                if (appointment.DoctorID == occupiedAppointment.DoctorID || appointment.HospitalRoomID == occupiedAppointment.HospitalRoomID || appointment.HealthRecordID == occupiedAppointment.HealthRecordID)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private static List<string> FormTodaysPossibleTerms(List<string> allPossibleTerms)
@@ -127,38 +127,41 @@ namespace HealthCareCenter.SecretaryGUI
             return terms;
         }
 
-        private void Refresh()
+        private void RefreshTable()
         {
             _appointmentsForDisplay = new List<AppointmentDisplay>();
             foreach (Appointment appointment in _occupiedAppointments)
             {
-                AppointmentDisplay appointmentDisplay = new AppointmentDisplay
-                {
-                    ID = appointment.ID,
-                    Type = appointment.Type,
-                    ScheduledDate = appointment.ScheduledDate,
-                    Emergency = appointment.Emergency,
-                    PostponedTime = _newDateOf[appointment.ID]
-                };
-                foreach (Doctor doctor in UserRepository.Doctors)
-                {
-                    if (appointment.DoctorID == doctor.ID)
-                    {
-                        appointmentDisplay.DoctorName = doctor.FirstName + " " + doctor.LastName;
-                        break;
-                    }
-                }
-                foreach (Patient patient in UserRepository.Patients)
-                {
-                    if (appointment.HealthRecordID == patient.HealthRecordID)
-                    {
-                        appointmentDisplay.PatientName = patient.FirstName + " " + patient.LastName;
-                        break;
-                    }
-                }
+                AppointmentDisplay appointmentDisplay = new AppointmentDisplay(appointment.ID, appointment.Type, appointment.ScheduledDate, appointment.Emergency, _newDateOf[appointment.ID]);
+                LinkDoctor(appointment, appointmentDisplay);
+                LinkPatient(appointment, appointmentDisplay);
                 _appointmentsForDisplay.Add(appointmentDisplay);
             }
             occupiedAppointmentsDataGrid.ItemsSource = _appointmentsForDisplay;
+        }
+
+        private static void LinkPatient(Appointment appointment, AppointmentDisplay appointmentDisplay)
+        {
+            foreach (Patient patient in UserRepository.Patients)
+            {
+                if (appointment.HealthRecordID == patient.HealthRecordID)
+                {
+                    appointmentDisplay.PatientName = patient.FirstName + " " + patient.LastName;
+                    return;
+                }
+            }
+        }
+
+        private static void LinkDoctor(Appointment appointment, AppointmentDisplay appointmentDisplay)
+        {
+            foreach (Doctor doctor in UserRepository.Doctors)
+            {
+                if (appointment.DoctorID == doctor.ID)
+                {
+                    appointmentDisplay.DoctorName = doctor.FirstName + " " + doctor.LastName;
+                    return;
+                }
+            }
         }
 
         private void PostponeButton_Click(object sender, RoutedEventArgs e)
@@ -169,33 +172,38 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
+            Appointment postponedAppointment = Postpone();
+
+            MessageBox.Show($"Successfully postponed appointment {postponedAppointment.ID} and scheduled a new urgent appointment in its place.");
+            this.Close();
+        }
+
+        private Appointment Postpone()
+        {
             AppointmentDisplay appointmentDisplay = (AppointmentDisplay)occupiedAppointmentsDataGrid.SelectedItem;
-            Appointment postponedAppointment = null;
-            foreach (Appointment app in AppointmentRepository.Appointments)
-            {
-                if (app.ID == appointmentDisplay.ID)
-                {
-                    postponedAppointment = app;
-                    break;
-                }
-            }
-            
-            Appointment newAppointment = new Appointment(appointmentDisplay.ScheduledDate, _newAppointmentsInfo[postponedAppointment.ID].HospitalRoomID, _newAppointmentsInfo[postponedAppointment.ID].DoctorID, _patient.HealthRecordID, _appointmentType, true);
+            Appointment postponedAppointment = AppointmentService.Find(appointmentDisplay);
+
+            Appointment newAppointment = new Appointment(appointmentDisplay.ScheduledDate, _newAppointmentsInfo[postponedAppointment.ID].HospitalRoomID, _newAppointmentsInfo[postponedAppointment.ID].DoctorID, _patient.HealthRecordID, _type, true);
             AppointmentRepository.Appointments.Add(newAppointment);
             postponedAppointment.ScheduledDate = appointmentDisplay.PostponedTime;
             AppointmentRepository.Save();
 
             HospitalRoomService.Update(newAppointment.HospitalRoomID, newAppointment);
             HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
+            SendNotifications(postponedAppointment, newAppointment);
+            return postponedAppointment;
+        }
 
-            HealthRecord postponedPatientsRecord = FindHealthRecord(postponedAppointment);
+        private void SendNotifications(Appointment postponedAppointment, Appointment newAppointment)
+        {
+            HealthRecord postponedRecord = HealthRecordService.FindRecord(postponedAppointment);
 
             NotificationService.CalculateMaxID();
-            Notification postponedPatientNotification = new Notification($"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedPatientsRecord.PatientID);
+            Notification postponedPatientNotification = new Notification($"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedRecord.PatientID);
             Notification postponedDoctorNotification = new Notification($"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedAppointment.DoctorID);
             Notification newDoctorNotification = new Notification($"A new urgent appointment has been scheduled for you at {newAppointment.ScheduledDate} in room {HospitalRoomService.GetRoom(newAppointment.HospitalRoomID).Name}.", newAppointment.DoctorID);
 
-            if (postponedPatientsRecord.PatientID == _patient.ID)
+            if (postponedRecord.PatientID == _patient.ID)
             {
                 postponedPatientNotification.Opened = true;
                 MessageBox.Show(postponedPatientNotification.Message);
@@ -203,21 +211,6 @@ namespace HealthCareCenter.SecretaryGUI
 
             NotificationRepository.Notifications.AddRange(new Notification[] { postponedPatientNotification, postponedDoctorNotification, newDoctorNotification });
             NotificationRepository.Save();
-
-            MessageBox.Show($"Successfully postponed appointment {postponedAppointment.ID} and scheduled a new urgent appointment in its place.");
-            this.Close();
-        }
-
-        private static HealthRecord FindHealthRecord(Appointment appointment)
-        {
-            foreach (HealthRecord record in HealthRecordRepository.Records)
-            {
-                if (record.ID == appointment.HealthRecordID)
-                {
-                    return record;
-                }
-            }
-            return null;
         }
     }
 }
