@@ -62,47 +62,54 @@ namespace HealthCareCenter
             Close();
         }
 
-        private void Login()
+        private bool Login(User user)
+        {
+            if (user.GetType() == typeof(Doctor))
+            {
+                ShowWindow(new DoctorWindow(user));
+            }
+            else if (user.GetType() == typeof(Manager))
+            {
+                ShowWindow(new CrudHospitalRoomWindow((Manager)user));
+            }
+            else if (user.GetType() == typeof(Patient))
+            {
+                Patient patient = (Patient)user;
+                if (patient.IsBlocked)
+                {
+                    MessageBox.Show("This user is blocked");
+                    usernameTextBox.Clear();
+                    passwordBox.Clear();
+                    return false;
+                }
+                ShowWindow(new PatientWindow(user));
+            }
+            else if (user.GetType() == typeof(Secretary))
+            {
+                ShowWindow(new SecretaryWindow(user));
+            }
+            return true;
+        }
+
+        private void TryLogin()
         {
             bool foundUser = false;
             foreach (User user in UserRepository.Users)
             {
-                if (user.Username == usernameTextBox.Text)
+                if (user.Username != usernameTextBox.Text)
                 {
-                    foundUser = true;
-                    if (user.Password == passwordBox.Password)
-                    {
-                        if (user.GetType() == typeof(Doctor))
-                        {
-                            ShowWindow(new DoctorWindow(user));
-                        }
-                        else if (user.GetType() == typeof(Manager))
-                        {
-                            ShowWindow(new CrudHospitalRoomWindow((Manager)user));
-                        }
-                        else if (user.GetType() == typeof(Patient))
-                        {
-                            Patient patient = (Patient)user;
-                            if (patient.IsBlocked)
-                            {
-                                MessageBox.Show("This user is blocked");
-                                usernameTextBox.Clear();
-                                passwordBox.Clear();
-                                return;
-                            }
-                            ShowWindow(new PatientWindow(user));
-                        }
-                        else if (user.GetType() == typeof(Secretary))
-                        {
-                            ShowWindow(new SecretaryWindow(user));
-                        }
-                    }
-                    else
-                    {
-                        passwordBox.Clear();
-
-                        MessageBox.Show("Invalid password.");
-                    }
+                    continue;
+                }
+                foundUser = true;
+                if (user.Password == passwordBox.Password)
+                {
+                    if (!Login(user))
+                        return;
+                }
+                else
+                {
+                    passwordBox.Clear();
+                    MessageBox.Show("Invalid password.");
                 }
             }
             if (!foundUser)
@@ -113,14 +120,14 @@ namespace HealthCareCenter
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            Login();
+            TryLogin();
         }
 
         private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                Login();
+                TryLogin();
             }
         }
     }
