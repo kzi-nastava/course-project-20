@@ -91,7 +91,8 @@ namespace HealthCareCenter.SecretaryGUI
             _rooms = new List<HospitalRoomDisplay>();
             foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
             {
-                if ((room.Type == Enums.RoomType.Checkup && (bool)checkupRadioButton.IsChecked) || (room.Type == Enums.RoomType.Operation && (bool)operationRadioButton.IsChecked))
+                bool correctRoom = (room.Type == Enums.RoomType.Checkup && (bool)checkupRadioButton.IsChecked) || (room.Type == Enums.RoomType.Operation && (bool)operationRadioButton.IsChecked);
+                if (correctRoom)
                 {
                     _rooms.Add(new HospitalRoomDisplay() { ID = room.ID, Name = room.Name });
                 }
@@ -116,6 +117,7 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
 
             DateTime scheduledDate = GetScheduledDate();
+
             if (!TimePassed(scheduledDate))
                 return;
 

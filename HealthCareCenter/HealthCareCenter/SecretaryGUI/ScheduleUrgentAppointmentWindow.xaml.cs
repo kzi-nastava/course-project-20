@@ -55,14 +55,17 @@ namespace HealthCareCenter.SecretaryGUI
             if (!EnteredData())
                 return;
 
-            List<Doctor> doctors = GetDoctorsOfSelectedType();
+            TryScheduling();
+        }
 
+        private void TryScheduling()
+        {
+            List<Doctor> doctors = GetDoctorsOfSelectedType();
             AppointmentType type = AppointmentType.Checkup;
             if ((bool)operationRadioButton.IsChecked)
                 type = AppointmentType.Operation;
 
             List<HospitalRoom> rooms = GetRoomsOfSelectedType(type);
-
             List<string> terms = GetTermsWithinTwoHours();
 
             _occupiedAppointments = new List<Appointment>();
@@ -70,64 +73,94 @@ namespace HealthCareCenter.SecretaryGUI
 
             if (!FindTermsAndSchedule(doctors, type, rooms, terms))
             {
-                MessageBox.Show("No available term was found in the next 2 hours. You can, however, postpone an occupied term in the next window.");
-                OccupiedAppointmentsWindow window = new OccupiedAppointmentsWindow(_patient, type, doctors, rooms, _occupiedAppointments, _newAppointmentsInfo);
-                window.ShowDialog();
-                this.Close();
+                OpenPostponingWindow(doctors, type, rooms);
             }
+        }
+
+        private void OpenPostponingWindow(List<Doctor> doctors, AppointmentType type, List<HospitalRoom> rooms)
+        {
+            MessageBox.Show("No available term was found in the next 2 hours. You can, however, postpone an occupied term in the next window.");
+            OccupiedAppointmentsWindow window = new OccupiedAppointmentsWindow(_patient, type, doctors, rooms, _occupiedAppointments, _newAppointmentsInfo);
+            window.ShowDialog();
+            this.Close();
         }
 
         private bool FindTermsAndSchedule(List<Doctor> doctors, AppointmentType type, List<HospitalRoom> rooms, List<string> terms)
         {
             foreach (string term in terms)
             {
-                int termHour = int.Parse(term.Split(":")[0]);
-                int termMinute = int.Parse(term.Split(":")[1]);
-                DateTime potentialTime = DateTime.Now.Date.AddHours(termHour).AddMinutes(termMinute);
+                DateTime potentialTime = CreatePotentialTime(term);
 
                 List<Doctor> availableDoctors = new List<Doctor>(doctors);
                 List<HospitalRoom> availableRooms = new List<HospitalRoom>(rooms);
 
-                bool found = CheckTermAndRemoveUnavailables(potentialTime, availableDoctors, availableRooms, AppointmentRepository.Appointments);
+                bool isValid = CheckTermAndRemoveUnavailables(potentialTime, availableDoctors, availableRooms, AppointmentRepository.Appointments);
 
-                if (found && availableDoctors.Count > 0 && availableRooms.Count > 0)
+                if (isValid && availableDoctors.Count > 0 && availableRooms.Count > 0)
                 {
-                    Doctor doctor = availableDoctors[0];
-                    HospitalRoom room = availableRooms[0];
-
-                    ScheduleAppointment(type, potentialTime, doctor, room);
-
-                    MessageBox.Show($"Successfully scheduled urgent appointment at {potentialTime.ToShortTimeString()} with doctor {doctor.FirstName} {doctor.LastName} in room {room.Name}.");
+                    ScheduleAppointment(type, potentialTime, availableDoctors, availableRooms);
                     this.Close();
                     return true;
-                } 
+                }
                 else
                 {
-                    List<Appointment> appointments = new List<Appointment>(AppointmentRepository.Appointments);
-                    for (int i = 0; i < AppointmentRepository.Appointments.Count; i++)
-                    {
-                        if (AppointmentRepository.Appointments[i].ScheduledDate.CompareTo(potentialTime) != 0)
-                            continue;
-
-                        appointments.Remove(AppointmentRepository.Appointments[i]);
-
-                        availableDoctors = new List<Doctor>(doctors);
-                        availableRooms = new List<HospitalRoom>(rooms);
-
-                        bool found2 = CheckTermAndRemoveUnavailables(potentialTime, availableDoctors, availableRooms, appointments);
-
-                        if (found2 && availableDoctors.Count > 0 && availableRooms.Count > 0)
-                        {
-                            _occupiedAppointments.Add(AppointmentRepository.Appointments[i]);
-                            _newAppointmentsInfo.Add(AppointmentRepository.Appointments[i].ID,
-                                new Appointment { DoctorID = availableDoctors[0].ID, HospitalRoomID = availableRooms[0].ID });
-                        }
-
-                        appointments.Add(AppointmentRepository.Appointments[i]);
-                    }
+                    PrepareForPotentialPostponing(doctors, rooms, potentialTime, ref availableDoctors, ref availableRooms);
                 }
             }
             return false;
+        }
+
+        private void PrepareForPotentialPostponing(List<Doctor> doctors, List<HospitalRoom> rooms, DateTime potentialTime, ref List<Doctor> availableDoctors, ref List<HospitalRoom> availableRooms)
+        {
+            List<Appointment> appointments = new List<Appointment>(AppointmentRepository.Appointments);
+            for (int i = 0; i < AppointmentRepository.Appointments.Count; i++)
+            {
+                if (AppointmentRepository.Appointments[i].ScheduledDate.CompareTo(potentialTime) != 0)
+                    continue;
+
+                appointments.Remove(AppointmentRepository.Appointments[i]);
+
+                availableDoctors = new List<Doctor>(doctors);
+                availableRooms = new List<HospitalRoom>(rooms);
+
+                bool isValid = CheckTermAndRemoveUnavailables(potentialTime, availableDoctors, availableRooms, appointments);
+                if (isValid && availableDoctors.Count > 0 && availableRooms.Count > 0)
+                {
+                    AddPostponingInfo(availableDoctors, availableRooms, i);
+                }
+
+                appointments.Add(AppointmentRepository.Appointments[i]);
+            }
+        }
+
+        private static DateTime CreatePotentialTime(string term)
+        {
+            int termHour = int.Parse(term.Split(":")[0]);
+            int termMinute = int.Parse(term.Split(":")[1]);
+            DateTime potentialTime = DateTime.Now.Date.AddHours(termHour).AddMinutes(termMinute);
+            return potentialTime;
+        }
+
+        private void AddPostponingInfo(List<Doctor> availableDoctors, List<HospitalRoom> availableRooms, int i)
+        {
+            _occupiedAppointments.Add(AppointmentRepository.Appointments[i]);
+            _newAppointmentsInfo.Add(AppointmentRepository.Appointments[i].ID,
+                new Appointment { DoctorID = availableDoctors[0].ID, HospitalRoomID = availableRooms[0].ID });
+        }
+
+        private void ScheduleAppointment(AppointmentType type, DateTime potentialTime, List<Doctor> availableDoctors, List<HospitalRoom> availableRooms)
+        {
+            Doctor doctor = availableDoctors[0];
+            HospitalRoom room = availableRooms[0];
+
+            Appointment appointment = new Appointment(potentialTime, room.ID, doctor.ID, _patient.HealthRecordID, type, true);
+            AppointmentRepository.Appointments.Add(appointment);
+            AppointmentRepository.Save();
+
+            HospitalRoomService.Update(room.ID, appointment);
+            HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
+
+            MessageBox.Show($"Successfully scheduled urgent appointment at {potentialTime.ToShortTimeString()} with doctor {doctor.FirstName} {doctor.LastName} in room {room.Name}.");
         }
 
         private bool CheckTermAndRemoveUnavailables(DateTime potentialTime, List<Doctor> availableDoctors, List<HospitalRoom> availableRooms, List<Appointment> appointments)
@@ -172,16 +205,6 @@ namespace HealthCareCenter.SecretaryGUI
             }
         }
 
-        private void ScheduleAppointment(AppointmentType type, DateTime potentialTime, Doctor doctor, HospitalRoom room)
-        {
-            Appointment appointment = new Appointment(potentialTime, room.ID, doctor.ID, _patient.HealthRecordID, type, true);
-            AppointmentRepository.Appointments.Add(appointment);
-            AppointmentRepository.Save();
-
-            HospitalRoomService.Update(room.ID, appointment);
-            HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
-        }
-
         private List<string> GetTermsWithinTwoHours()
         {
             List<string> possibleTerms = Utils.GetPossibleDailyTerms();
@@ -193,7 +216,9 @@ namespace HealthCareCenter.SecretaryGUI
                 int termHour = int.Parse(term.Split(":")[0]);
                 int termMinute = int.Parse(term.Split(":")[1]);
                 int diff = termHour - currHour;
-                if (diff == 1 || (diff == 0 && termMinute >= currMinute) || (diff == 2 && termMinute <= currMinute))
+
+                bool withinTwoHours = diff == 1 || (diff == 0 && termMinute >= currMinute) || (diff == 2 && termMinute <= currMinute);
+                if (withinTwoHours)
                 {
                     termsWithinTwoHours.Add(term);
                 }
@@ -206,7 +231,8 @@ namespace HealthCareCenter.SecretaryGUI
             List<HospitalRoom> rooms = new List<HospitalRoom>();
             foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
             {
-                if ((type == AppointmentType.Checkup && room.Type == RoomType.Checkup) || (type == AppointmentType.Operation && room.Type == RoomType.Operation))
+                bool correctRoom = (type == AppointmentType.Checkup && room.Type == RoomType.Checkup) || (type == AppointmentType.Operation && room.Type == RoomType.Operation);
+                if (correctRoom)
                 {
                     rooms.Add(room);
                 }
