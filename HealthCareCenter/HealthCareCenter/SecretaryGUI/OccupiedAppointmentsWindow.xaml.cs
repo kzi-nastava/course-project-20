@@ -78,7 +78,7 @@ namespace HealthCareCenter.SecretaryGUI
                                 continue;
                             }
 
-                            if (appointment.DoctorID == occupiedAppointment.DoctorID || appointment.HospitalRoomID == occupiedAppointment.HospitalRoomID)
+                            if (appointment.DoctorID == occupiedAppointment.DoctorID || appointment.HospitalRoomID == occupiedAppointment.HospitalRoomID || appointment.HealthRecordID == occupiedAppointment.HealthRecordID)
                             {
                                 postponable = false;
                                 break;
