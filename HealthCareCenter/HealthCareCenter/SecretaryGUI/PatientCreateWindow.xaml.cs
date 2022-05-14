@@ -36,6 +36,7 @@ namespace HealthCareCenter.SecretaryGUI
             allergenTextBox.Clear();
             previousDiseasesListBox.Items.Clear();
             allergensListBox.Items.Clear();
+            idTextBox.Text = (UserService.maxID + 1).ToString();
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
@@ -150,84 +151,141 @@ namespace HealthCareCenter.SecretaryGUI
             }
         }
 
-        private void CreateButton_Click(object sender, RoutedEventArgs e)
+        private bool EnteredData()
         {
             if (string.IsNullOrWhiteSpace(firstNameTextBox.Text))
             {
                 MessageBox.Show("You must enter a first name.");
-                return;
+                return false;
             }
             if (string.IsNullOrWhiteSpace(usernameTextBox.Text))
             {
                 MessageBox.Show("You must enter a username.");
-                return;
+                return false;
             }
             if (string.IsNullOrWhiteSpace(lastNameTextBox.Text))
             {
                 MessageBox.Show("You must enter a last name.");
-                return;
+                return false;
             }
             if (string.IsNullOrWhiteSpace(passwordTextBox.Text))
             {
                 MessageBox.Show("You must enter a password.");
-                return;
+                return false;
             }
             if (string.IsNullOrWhiteSpace(heightTextBox.Text))
             {
                 MessageBox.Show("You must enter a height.");
-                return;
+                return false;
             }
             if (string.IsNullOrWhiteSpace(weightTextBox.Text))
             {
                 MessageBox.Show("You must enter a weight.");
-                return;
+                return false;
             }
             if (birthDatePicker.SelectedDate == null)
             {
                 MessageBox.Show("You must enter a date of birth.");
-                return;
+                return false;
             }
-            if (birthDatePicker.SelectedDate > DateTime.Now)
-            {
-                MessageBox.Show("You cannot enter a date in the future.");
-                return;
-            }
-            //check if username already in use
+            return true;
+        }
+
+        private bool UsernameInUse()
+        {
             foreach (User user in UserRepository.Users)
             {
                 if (user.Username == usernameTextBox.Text)
                 {
                     MessageBox.Show("Username is already in use. Choose a different one.");
-                    return;
+                    return true;
                 }
             }
+            return false;
+        }
+
+        private bool BirthDateInFuture()
+        {
+            if (birthDatePicker.SelectedDate > DateTime.Now)
+            {
+                MessageBox.Show("You cannot enter a date in the future.");
+                return true;
+            }
+            return false;
+        }
+
+        private bool ValidHeight()
+        {
             if (!Double.TryParse(heightTextBox.Text, out double height))
             {
                 MessageBox.Show("Height must be a number.");
-                return;
+                return false;
             }
+            return true;
+        }
+
+        private bool ValidWeight()
+        {
             if (!Double.TryParse(weightTextBox.Text, out double weight))
             {
                 MessageBox.Show("Weight must be a number.");
-                return;
+                return false;
             }
-            //update max user and health record ID
+            return true;
+        }
+
+        private bool ValidData()
+        {
+            if (BirthDateInFuture())
+                return false;
+
+            if (UsernameInUse())
+                return false;
+
+            if (!ValidHeight())
+                return false;
+
+            if (!ValidWeight())
+                return false;
+
+            return true;
+        }
+
+        private void CreateButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!EnteredData())
+                return;
+
+            if (!ValidData())
+                return;
+
+            double height = Double.Parse(heightTextBox.Text);
+            double weight = Double.Parse(weightTextBox.Text);
+
             HealthRecordService.maxID++;
             UserService.maxID++;
-            //create record and patient
+            
             HealthRecord record = new HealthRecord(HealthRecordService.maxID, height, weight, previousDiseasesListBox.Items.Cast<String>().ToList(), allergensListBox.Items.Cast<String>().ToList(), UserService.maxID);
             Patient patient = new Patient(UserService.maxID, usernameTextBox.Text, passwordTextBox.Text, firstNameTextBox.Text, lastNameTextBox.Text, (DateTime)birthDatePicker.SelectedDate, false, Enums.Blocker.None, new List<int>(), HealthRecordService.maxID);
-            //add to repositories
+
+            AddToRepositories(record, patient);
+            SaveRepositories();
+
+            Reset();
+            MessageBox.Show("Successfully created the patient and health record.");
+        }
+
+        private static void SaveRepositories()
+        {
+            HealthRecordRepository.Save();
+            UserRepository.SavePatients();
+        }
+
+        private static void AddToRepositories(HealthRecord record, Patient patient)
+        {
             HealthRecordRepository.Records.Add(record);
             UserRepository.Patients.Add(patient);
             UserRepository.Users.Add(patient);
-            //save to files
-            HealthRecordRepository.Save();
-            UserRepository.SavePatients();
-
-            Reset();
-            idTextBox.Text = (UserService.maxID + 1).ToString();
-            MessageBox.Show("Successfully created the patient and health record.");
         }
     }
 }

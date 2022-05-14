@@ -175,85 +175,147 @@ namespace HealthCareCenter.SecretaryGUI
             allergensListBox.ItemsSource = _allergens;
         }
 
-        private void EditButton_Click(object sender, RoutedEventArgs e)
+        private bool EnteredData()
         {
             if (string.IsNullOrWhiteSpace(firstNameTextBox.Text))
             {
                 MessageBox.Show("You must enter a first name.");
-                return;
+                return false;
             }
             if (string.IsNullOrWhiteSpace(usernameTextBox.Text))
             {
                 MessageBox.Show("You must enter a username.");
-                return;
+                return false;
             }
             if (string.IsNullOrWhiteSpace(lastNameTextBox.Text))
             {
                 MessageBox.Show("You must enter a last name.");
-                return;
+                return false;
             }
             if (string.IsNullOrWhiteSpace(passwordTextBox.Text))
             {
                 MessageBox.Show("You must enter a password.");
-                return;
+                return false;
             }
             if (string.IsNullOrWhiteSpace(heightTextBox.Text))
             {
                 MessageBox.Show("You must enter a height.");
-                return;
+                return false;
             }
             if (string.IsNullOrWhiteSpace(weightTextBox.Text))
             {
                 MessageBox.Show("You must enter a weight.");
-                return;
+                return false;
             }
             if (birthDatePicker.SelectedDate == null)
             {
                 MessageBox.Show("You must enter a date of birth.");
-                return;
+                return false;
             }
+            return true;
+        }
+
+        private bool BirthDateInFuture()
+        {
             if (birthDatePicker.SelectedDate > DateTime.Now)
             {
                 MessageBox.Show("You cannot enter a date in the future.");
-                return;
+                return true;
             }
-            //check if username already in use
-            if (_patient.Username != usernameTextBox.Text)
-            {
-                foreach (User user in UserRepository.Users)
-                {
-                    if (user.Username == usernameTextBox.Text)
-                    {
-                        MessageBox.Show("Username is already in use. Choose a different one.");
-                        return;
-                    }
-                }
-            }
+            return false;
+        }
+
+        private bool ValidHeight()
+        {
             if (!Double.TryParse(heightTextBox.Text, out double height))
             {
                 MessageBox.Show("Height must be a number.");
-                return;
+                return false;
             }
+            return true;
+        }
+
+        private bool ValidWeight()
+        {
             if (!Double.TryParse(weightTextBox.Text, out double weight))
             {
                 MessageBox.Show("Weight must be a number.");
-                return;
+                return false;
             }
-            //edit health record and patient
-            _record.Height = height;
-            _record.Weight = weight;
-            _record.PreviousDiseases = _previousDiseases.Cast<String>().ToList();
-            _record.Allergens = _allergens.Cast<String>().ToList();
+            return true;
+        }
+
+        private bool UsernameInUse()
+        {
+            if (_patient.Username == usernameTextBox.Text)
+            {
+                return false;
+            }
+            foreach (User user in UserRepository.Users)
+            {
+                if (user.Username == usernameTextBox.Text)
+                {
+                    MessageBox.Show("Username is already in use. Choose a different one.");
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool ValidData()
+        {
+            if (BirthDateInFuture())
+                return false;
+
+            if (UsernameInUse())
+                return false;
+
+            if (!ValidHeight())
+                return false;
+
+            if (!ValidWeight())
+                return false;
+
+            return true;
+        }
+
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!EnteredData())
+                return;
+
+            if (!ValidData())
+                return;
+
+            EditHealthRecord();
+            EditPatient();
+
+            SaveToRepositories();
+
+            MessageBox.Show("Successfully edited the patient and health record.");
+        }
+
+        private static void SaveToRepositories()
+        {
+            HealthRecordRepository.Save();
+            UserRepository.SavePatients();
+        }
+
+        private void EditPatient()
+        {
             _patient.Username = usernameTextBox.Text;
             _patient.Password = passwordTextBox.Text;
             _patient.FirstName = firstNameTextBox.Text;
             _patient.LastName = lastNameTextBox.Text;
             _patient.DateOfBirth = (DateTime)birthDatePicker.SelectedDate;
-            //save to files
-            HealthRecordRepository.Save();
-            UserRepository.SavePatients();
+        }
 
-            MessageBox.Show("Successfully edited the patient and health record.");
+        private void EditHealthRecord()
+        {
+            _record.Height = Double.Parse(heightTextBox.Text);
+            _record.Weight = Double.Parse(weightTextBox.Text);
+            _record.PreviousDiseases = _previousDiseases.Cast<String>().ToList();
+            _record.Allergens = _allergens.Cast<String>().ToList();
         }
     }
 }
