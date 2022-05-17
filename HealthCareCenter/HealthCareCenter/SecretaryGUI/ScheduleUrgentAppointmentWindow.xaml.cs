@@ -109,13 +109,13 @@ namespace HealthCareCenter.SecretaryGUI
                 }
                 else
                 {
-                    PrepareForPotentialPostponing(doctors, rooms, potentialTime, ref availableDoctors, ref availableRooms);
+                    PrepareForPotentialPostponing(doctors, rooms, potentialTime);
                 }
             }
             return false;
         }
 
-        private void PrepareForPotentialPostponing(List<Doctor> doctors, List<HospitalRoom> rooms, DateTime potentialTime, ref List<Doctor> availableDoctors, ref List<HospitalRoom> availableRooms)
+        private void PrepareForPotentialPostponing(List<Doctor> doctors, List<HospitalRoom> rooms, DateTime potentialTime)
         {
             List<Appointment> appointments = new List<Appointment>(AppointmentRepository.Appointments);
             for (int i = 0; i < AppointmentRepository.Appointments.Count; i++)
@@ -125,8 +125,8 @@ namespace HealthCareCenter.SecretaryGUI
 
                 appointments.Remove(AppointmentRepository.Appointments[i]);
 
-                availableDoctors = new List<Doctor>(doctors);
-                availableRooms = new List<HospitalRoom>(rooms);
+                List<Doctor> availableDoctors = new List<Doctor>(doctors);
+                List<HospitalRoom> availableRooms = new List<HospitalRoom>(rooms);
 
                 bool isValid = CheckTermAndRemoveUnavailables(potentialTime, availableDoctors, availableRooms, appointments);
                 if (isValid && availableDoctors.Count > 0 && availableRooms.Count > 0)
