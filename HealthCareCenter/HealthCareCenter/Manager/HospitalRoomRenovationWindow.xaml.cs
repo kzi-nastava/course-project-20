@@ -96,7 +96,7 @@ namespace HealthCareCenter
 
             int parsedHospitalRoomId = Convert.ToInt32(roomId);
 
-            HospitalRoom roomForRenovation = HospitalRoomService.GetRoom(parsedHospitalRoomId);
+            HospitalRoom roomForRenovation = HospitalRoomService.Get(parsedHospitalRoomId);
 
             if (!IsHospitalRoomFound(roomForRenovation))
             {
@@ -178,7 +178,7 @@ namespace HealthCareCenter
                 return;
             }
             int parsedHospitalRoomForRenovationId = Convert.ToInt32(hospitalRoomForRenovationId);
-            HospitalRoom roomForRenovation = HospitalRoomService.GetRoom(parsedHospitalRoomForRenovationId);
+            HospitalRoom roomForRenovation = HospitalRoomService.Get(parsedHospitalRoomForRenovationId);
 
             if (!IsDateValide(startDate, finishDate))
             {

@@ -189,7 +189,7 @@ namespace HealthCareCenter.SecretaryGUI
             AppointmentRepository.Save();
 
             HospitalRoomService.Update(newAppointment.HospitalRoomID, newAppointment);
-            HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
+            HospitalRoomRepository.Save();
             SendNotifications(postponedAppointment, newAppointment);
             return postponedAppointment;
         }
@@ -201,7 +201,7 @@ namespace HealthCareCenter.SecretaryGUI
             NotificationService.CalculateMaxID();
             Notification postponedPatientNotification = new Notification($"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedRecord.PatientID);
             Notification postponedDoctorNotification = new Notification($"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedAppointment.DoctorID);
-            Notification newDoctorNotification = new Notification($"A new urgent appointment has been scheduled for you at {newAppointment.ScheduledDate} in room {HospitalRoomService.GetRoom(newAppointment.HospitalRoomID).Name}.", newAppointment.DoctorID);
+            Notification newDoctorNotification = new Notification($"A new urgent appointment has been scheduled for you at {newAppointment.ScheduledDate} in room {HospitalRoomService.Get(newAppointment.HospitalRoomID).Name}.", newAppointment.DoctorID);
 
             if (postponedRecord.PatientID == _patient.ID)
             {

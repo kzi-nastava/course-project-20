@@ -33,7 +33,10 @@
       9
     ],
     "ID": 3,
-    "EquipmentAmounts": {},
+    "EquipmentAmounts": {
+      "Bed": 1,
+      "Chair":  1
+    },
     "EquipmentRearrangementsIDs": []
   }
 ]

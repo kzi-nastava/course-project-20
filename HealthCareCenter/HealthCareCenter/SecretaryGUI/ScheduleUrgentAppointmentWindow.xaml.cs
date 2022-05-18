@@ -163,7 +163,7 @@ namespace HealthCareCenter.SecretaryGUI
             AppointmentRepository.Save();
 
             HospitalRoomService.Update(room.ID, appointment);
-            HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
+            HospitalRoomRepository.Save();
 
             MessageBox.Show($"Successfully scheduled urgent appointment at {potentialTime.ToShortTimeString()} with doctor {doctor.FirstName} {doctor.LastName} in room {room.Name}.");
         }

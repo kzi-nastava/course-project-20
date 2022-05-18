@@ -35,7 +35,7 @@ namespace HealthCareCenter
             }
 
             int parsedRoomId = Convert.ToInt32(roomId);
-            Room room = RoomService.GetRoom(parsedRoomId);
+            Room room = RoomService.Get(parsedRoomId);
 
             if (room.IsStorage())
             {
@@ -85,7 +85,7 @@ namespace HealthCareCenter
                 return false;
             }
 
-            Room room = RoomService.GetRoom(parsedRoomId);
+            Room room = RoomService.Get(parsedRoomId);
             if (room.IsStorage())
             {
                 MessageBox.Show($"You have entered id of storage");
@@ -133,14 +133,14 @@ namespace HealthCareCenter
 
         private void DeleteHospitalRoom(HospitalRoom room)
         {
-            HospitalRoomService.DeleteRoom(room);
+            HospitalRoomService.Delete(room);
             FillDataGridHospitalRooms();
             SetAllTextBoxesToBeBlank();
         }
 
         private void CreateNewHospitalRoom(HospitalRoom room)
         {
-            HospitalRoomService.AddRoom(room);
+            HospitalRoomService.Add(room);
             DataGridHospitalRooms.Items.Add(room);
             SetAllTextBoxesToBeBlank();
         }
@@ -149,7 +149,7 @@ namespace HealthCareCenter
         {
             room.Name = newRoomName;
             room.Type = newType;
-            RoomService.UpdateRoom(room);
+            RoomService.Update(room);
             FillDataGridHospitalRooms();
             SetAllTextBoxesToBeBlank();
         }
@@ -185,7 +185,7 @@ namespace HealthCareCenter
                 return;
             }
             int parsedRoomId = Convert.ToInt32(roomId);
-            HospitalRoom hospitalRoom = HospitalRoomService.GetRoom(parsedRoomId);
+            HospitalRoom hospitalRoom = HospitalRoomService.Get(parsedRoomId);
 
             DeleteHospitalRoom(hospitalRoom);
         }
@@ -201,7 +201,7 @@ namespace HealthCareCenter
             }
 
             int parsedRoomId = Convert.ToInt32(roomId);
-            HospitalRoom hospitalRoom = HospitalRoomService.GetRoom(parsedRoomId);
+            HospitalRoom hospitalRoom = HospitalRoomService.Get(parsedRoomId);
             UpdateHospitalRoom(hospitalRoom, newRoomName, newType);
         }
 

@@ -138,7 +138,7 @@ namespace HealthCareCenter.SecretaryGUI
             AppointmentRepository.Save();
 
             HospitalRoomService.Update(roomID, appointment);
-            HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
+            HospitalRoomRepository.Save();
 
             ReferralRepository.Referrals.Remove(_referral);
             ReferralRepository.Save();

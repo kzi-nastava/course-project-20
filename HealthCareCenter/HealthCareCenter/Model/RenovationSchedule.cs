@@ -69,33 +69,33 @@ namespace HealthCareCenter.Model
 
         public void ScheduleSimpleRenovation(HospitalRoom roomForRenovation)
         {
-            RenovationScheduleService.AddRenovation(this);
-            HospitalRoomService.DeleteRoom(roomForRenovation);
-            HospitalRoomForRenovationService.AddRoom(roomForRenovation);
+            RenovationScheduleService.Add(this);
+            HospitalRoomService.Delete(roomForRenovation);
+            HospitalRoomForRenovationService.Add(roomForRenovation);
         }
 
         public void ScheduleMergeRenovation(HospitalRoom room1, HospitalRoom room2, HospitalRoom newRoom)
         {
-            HospitalRoomUnderConstructionService.AddRoom(newRoom);
+            HospitalRoomUnderConstructionService.Add(newRoom);
 
-            HospitalRoomService.DeleteRoom(room1);
-            HospitalRoomService.DeleteRoom(room2);
+            HospitalRoomService.Delete(room1);
+            HospitalRoomService.Delete(room2);
 
-            HospitalRoomForRenovationService.AddRoom(room1);
-            HospitalRoomForRenovationService.AddRoom(room2);
+            HospitalRoomForRenovationService.Add(room1);
+            HospitalRoomForRenovationService.Add(room2);
 
-            RenovationScheduleService.AddRenovation(this);
+            RenovationScheduleService.Add(this);
         }
 
         public void ScheduleSplitRenovation(HospitalRoom newRoom1, HospitalRoom newRoom2, HospitalRoom splitRoom)
         {
-            HospitalRoomForRenovationService.AddRoom(splitRoom);
-            HospitalRoomService.DeleteRoom(splitRoom);
+            HospitalRoomForRenovationService.Add(splitRoom);
+            HospitalRoomService.Delete(splitRoom);
 
-            HospitalRoomUnderConstructionService.AddRoom(newRoom1);
-            HospitalRoomUnderConstructionService.AddRoom(newRoom2);
+            HospitalRoomUnderConstructionService.Add(newRoom1);
+            HospitalRoomUnderConstructionService.Add(newRoom2);
 
-            RenovationScheduleService.AddRenovation(this);
+            RenovationScheduleService.Add(this);
         }
 
         private bool IsDateBeforeToday(DateTime date)
@@ -106,42 +106,42 @@ namespace HealthCareCenter.Model
 
         private void FinishSimpleRenovation()
         {
-            HospitalRoom renovatedRoom = HospitalRoomForRenovationService.GetRoom(this.MainRoomID);
-            HospitalRoomService.InsertRoom(renovatedRoom);
-            HospitalRoomForRenovationService.DeleteRoom(renovatedRoom);
-            RenovationScheduleService.DeleteRenovation(this);
+            HospitalRoom renovatedRoom = HospitalRoomForRenovationService.Get(this.MainRoomID);
+            HospitalRoomService.Insert(renovatedRoom);
+            HospitalRoomForRenovationService.Delete(renovatedRoom);
+            RenovationScheduleService.Delete(this);
         }
 
         private void FinishMergeRenovation()
         {
-            HospitalRoom newRoom = HospitalRoomUnderConstructionService.GetRoom(this.MainRoomID);
-            HospitalRoom room1 = HospitalRoomForRenovationService.GetRoom(this.Room1ID);
-            HospitalRoom room2 = HospitalRoomForRenovationService.GetRoom(this.Room2ID);
-            HospitalRoomService.InsertRoom(newRoom);
+            HospitalRoom newRoom = HospitalRoomUnderConstructionService.Get(this.MainRoomID);
+            HospitalRoom room1 = HospitalRoomForRenovationService.Get(this.Room1ID);
+            HospitalRoom room2 = HospitalRoomForRenovationService.Get(this.Room2ID);
+            HospitalRoomService.Insert(newRoom);
             // -----
             room1.TransferAllEquipment(newRoom);
             room2.TransferAllEquipment(newRoom);
             // -----
-            HospitalRoomForRenovationService.DeleteRoom(room1);
-            HospitalRoomForRenovationService.DeleteRoom(room2);
-            HospitalRoomUnderConstructionService.DeleteRoom(newRoom.ID);
-            RenovationScheduleService.DeleteRenovation(this);
+            HospitalRoomForRenovationService.Delete(room1);
+            HospitalRoomForRenovationService.Delete(room2);
+            HospitalRoomUnderConstructionService.Delete(newRoom.ID);
+            RenovationScheduleService.Delete(this);
         }
 
         private void FinishSplitRenovation()
         {
-            HospitalRoom mainRoom = HospitalRoomForRenovationService.GetRoom(this.MainRoomID);
-            HospitalRoom room1 = HospitalRoomUnderConstructionService.GetRoom(this.Room1ID);
-            HospitalRoom room2 = HospitalRoomUnderConstructionService.GetRoom(this.Room2ID);
+            HospitalRoom mainRoom = HospitalRoomForRenovationService.Get(this.MainRoomID);
+            HospitalRoom room1 = HospitalRoomUnderConstructionService.Get(this.Room1ID);
+            HospitalRoom room2 = HospitalRoomUnderConstructionService.Get(this.Room2ID);
 
-            HospitalRoomUnderConstructionService.DeleteRoom(room1.ID);
-            HospitalRoomUnderConstructionService.DeleteRoom(room2.ID);
-            HospitalRoomForRenovationService.DeleteRoom(mainRoom.ID);
+            HospitalRoomUnderConstructionService.Delete(room1.ID);
+            HospitalRoomUnderConstructionService.Delete(room2.ID);
+            HospitalRoomForRenovationService.Delete(mainRoom.ID);
 
-            HospitalRoomService.InsertRoom(room1);
-            HospitalRoomService.InsertRoom(room2);
+            HospitalRoomService.Insert(room1);
+            HospitalRoomService.Insert(room2);
 
-            RenovationScheduleService.DeleteRenovation(this);
+            RenovationScheduleService.Delete(this);
         }
 
         // dodati za split

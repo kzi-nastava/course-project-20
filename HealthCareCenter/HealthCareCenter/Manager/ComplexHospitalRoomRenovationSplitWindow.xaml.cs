@@ -129,9 +129,9 @@ namespace HealthCareCenter
             {
                 if (renovation.RenovationType == Enums.RenovationType.Split)
                 {
-                    HospitalRoom room1 = HospitalRoomUnderConstructionService.GetRoom(renovation.Room1ID);
-                    HospitalRoom room2 = HospitalRoomUnderConstructionService.GetRoom(renovation.Room2ID);
-                    HospitalRoom splitRoom = HospitalRoomForRenovationService.GetRoom(renovation.MainRoomID);
+                    HospitalRoom room1 = HospitalRoomUnderConstructionService.Get(renovation.Room1ID);
+                    HospitalRoom room2 = HospitalRoomUnderConstructionService.Get(renovation.Room2ID);
+                    HospitalRoom splitRoom = HospitalRoomForRenovationService.Get(renovation.MainRoomID);
 
                     List<string> row = new List<string> {
                     room1.ID.ToString(),room1.Name,room1.Type.ToString(),
@@ -232,7 +232,7 @@ namespace HealthCareCenter
             }
 
             int parsedSplitRoomId = Convert.ToInt32(splitRoomId);
-            HospitalRoom splitRoom = HospitalRoomService.GetRoom(parsedSplitRoomId);
+            HospitalRoom splitRoom = HospitalRoomService.Get(parsedSplitRoomId);
 
             if (!IsHospitalRoomFound(splitRoom))
             {
@@ -280,7 +280,7 @@ namespace HealthCareCenter
                 return;
             }
             int parsedSplitRoomId = Convert.ToInt32(splitRoomId);
-            HospitalRoom splitRoom = HospitalRoomService.GetRoom(parsedSplitRoomId);
+            HospitalRoom splitRoom = HospitalRoomService.Get(parsedSplitRoomId);
             if (!IsPossibleRenovation(splitRoom))
             {
                 return;

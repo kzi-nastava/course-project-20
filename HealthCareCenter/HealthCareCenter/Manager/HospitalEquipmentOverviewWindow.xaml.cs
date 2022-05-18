@@ -178,7 +178,7 @@ namespace HealthCareCenter
             }
             else if (currentRoomId != "0")
             {
-                HospitalRoom room = (HospitalRoom)RoomService.GetRoom(Convert.ToInt32(currentRoomId));
+                HospitalRoom room = (HospitalRoom)RoomService.Get(Convert.ToInt32(currentRoomId));
                 if (roomType == room.Type.ToString())
                 {
                     return true;
@@ -224,7 +224,7 @@ namespace HealthCareCenter
                 return true;
             }
 
-            Room storage = StorageRepository.GetStorage();
+            Room storage = StorageRepository.Load();
 
             if (amount == "Out of stock")
             {

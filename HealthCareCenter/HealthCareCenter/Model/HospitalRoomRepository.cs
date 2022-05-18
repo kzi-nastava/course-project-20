@@ -9,13 +9,13 @@ namespace HealthCareCenter.Model
     public class HospitalRoomRepository
     {
         private const string _fileName = "hospitalRooms.json";
-        public static List<HospitalRoom> Rooms = LoadRooms();
+        public static List<HospitalRoom> Rooms = Load();
 
         /// <summary>
         /// Loads all hospital rooms from file hospitalRooms.json.
         /// </summary>
         /// <returns>List of all hospital rooms.</returns>
-        private static List<HospitalRoom> LoadRooms()
+        private static List<HospitalRoom> Load()
         {
             try
             {
@@ -40,7 +40,7 @@ namespace HealthCareCenter.Model
         /// </summary>
         /// <param name="rooms">Data that will replace the old ones.</param>
         /// <returns>true if data update performed properly.</returns>
-        public static bool SaveRooms(List<HospitalRoom> rooms)
+        public static bool Save()
         {
             try
             {
@@ -52,7 +52,7 @@ namespace HealthCareCenter.Model
                 using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + _fileName))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
-                    serializer.Serialize(writer, rooms);
+                    serializer.Serialize(writer, Rooms);
                 }
                 return true;
             }

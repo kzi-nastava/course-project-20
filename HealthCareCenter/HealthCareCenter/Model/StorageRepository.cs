@@ -14,7 +14,7 @@ namespace HealthCareCenter.Model
         /// Get storage data.
         /// </summary>
         /// <returns>Storage as room object.</returns>
-        public static Room GetStorage()
+        public static Room Load()
         {
             try
             {
@@ -39,7 +39,7 @@ namespace HealthCareCenter.Model
         /// </summary>
         /// <param name="storage"></param>
         /// <returns></returns>
-        public static bool SaveStorage(Room storage)
+        public static bool Save(Room storage)
         {
             try
             {
