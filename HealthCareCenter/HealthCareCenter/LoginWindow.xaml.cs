@@ -54,6 +54,7 @@ namespace HealthCareCenter
             }
 
             NotificationRepository.Load();
+            DynamicEquipmentRequestRepository.Load();
         }
 
         private void ShowWindow(Window window)

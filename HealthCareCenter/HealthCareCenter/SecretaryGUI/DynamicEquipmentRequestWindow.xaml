@@ -27,15 +27,15 @@
         <ListBox x:Name="missingEquipmentListBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Margin="10" />
 
         <Label Grid.Row="2" Grid.Column="0" Content="Select equipment to request:" Margin="10" FontSize="12"/>
-        <ComboBox x:Name="allEquipmentComboBox" Grid.Row="2" Grid.Column="1" Margin="10"/>
+        <ComboBox x:Name="allEquipmentComboBox" Grid.Row="2" Grid.Column="1" Margin="10" VerticalContentAlignment="Center"/>
         <Label Grid.Row="2" Grid.Column="2" Content="Quantity:" Margin="10" FontSize="12"/>
         <TextBox x:Name="quantityTextBox" Grid.Row="2" Grid.Column="3" Margin="10" VerticalContentAlignment="Center"/>
 
-        <Button x:Name="addButton" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="7.5" Content="Add" FontSize="16"/>
-        <Button x:Name="removeButton" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Margin="7.5" Content="Remove" FontSize="16"/>
+        <Button x:Name="addButton" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="7.5" Content="Add" FontSize="16" Click="AddButton_Click"/>
+        <Button x:Name="removeButton" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Margin="7.5" Content="Remove" FontSize="16" Click="RemoveButton_Click"/>
 
         <ListBox x:Name="requestedEquipmentListBox" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Margin="10" />
 
-        <Button x:Name="sendRequestButton" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Margin="7.5" Content="Send request" FontSize="16"/>
+        <Button x:Name="sendRequestButton" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Margin="7.5" Content="Send request" FontSize="16" Click="SendRequestButton_Click"/>
     </Grid>
 </Window>

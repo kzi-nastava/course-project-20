@@ -4,7 +4,9 @@
     "EquipmentAmounts": {
       "Chair": 1,
       "Bench": 1,
-      "Table": 1
+      "Table": 1,
+      "Paper": 0,
+      "Pen": 1
     },
     "EquipmentRearrangementsIDs": [
       0
