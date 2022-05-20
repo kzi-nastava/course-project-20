@@ -45,7 +45,10 @@ namespace HealthCareCenter.Model
             {
                 List<Room> rooms = new List<Room>();
                 rooms.Add(storage);
-                JsonSerializer serializer = new JsonSerializer();
+                JsonSerializer serializer = new JsonSerializer
+                {
+                    Formatting = Formatting.Indented
+                };
 
                 using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + _fileName))
                 using (JsonWriter writer = new JsonTextWriter(sw))

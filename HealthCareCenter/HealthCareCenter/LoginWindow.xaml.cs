@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +22,7 @@ namespace HealthCareCenter
 {
     public partial class LoginWindow : Window
     {
+        private static BackgroundWorker _backgroundWorker = null;
         private void DoEquipmentRearrangements()
         {
             List<Equipment> equipments = EquipmentService.GetEquipments();
@@ -55,6 +58,32 @@ namespace HealthCareCenter
 
             NotificationRepository.Load();
             DynamicEquipmentRequestRepository.Load();
+            StartBackgroundWorkerIfNeeded();
+        }
+
+        private void StartBackgroundWorkerIfNeeded()
+        {
+            if (_backgroundWorker == null)
+            {
+                _backgroundWorker = new BackgroundWorker();
+                _backgroundWorker.DoWork += new DoWorkEventHandler(BackgroundWorker_DoWork);
+                _backgroundWorker.RunWorkerAsync(30 * Constants.Minute);
+            }
+        }
+
+        private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int timeBetweenWork = (int)e.Argument;
+            BackgroundWork(timeBetweenWork);
+        }
+
+        private void BackgroundWork(int timeBetweenWork)
+        {
+            while (true)
+            {
+                DynamicEquipmentRequestService.FulfillRequestsIfNeeded();
+                Thread.Sleep(timeBetweenWork);
+            }
         }
 
         private void ShowWindow(Window window)

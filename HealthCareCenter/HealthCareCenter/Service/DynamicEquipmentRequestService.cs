@@ -20,5 +20,36 @@ namespace HealthCareCenter.Service
                 }
             }
         }
+
+        public static void FulfillRequestsIfNeeded()
+        {
+            Room storage = StorageRepository.Load();
+            foreach (DynamicEquipmentRequest request in DynamicEquipmentRequestRepository.Requests)
+            {
+                if (request.Fulfilled || request.Created.AddDays(1).CompareTo(DateTime.Now) > 0)
+                {
+                    continue;
+                }
+                FulfillRequest(storage, request);
+            }
+            DynamicEquipmentRequestRepository.Save();
+            StorageRepository.Save(storage);
+        }
+
+        private static void FulfillRequest(Room storage, DynamicEquipmentRequest request)
+        {
+            foreach (string equipment in request.AmountOfEquipment.Keys)
+            {
+                if (storage.EquipmentAmounts.ContainsKey(equipment))
+                {
+                    storage.EquipmentAmounts[equipment] += request.AmountOfEquipment[equipment];
+                }
+                else
+                {
+                    storage.EquipmentAmounts.Add(equipment, request.AmountOfEquipment[equipment]);
+                }
+            }
+            request.Fulfilled = true;
+        }
     }
 }
