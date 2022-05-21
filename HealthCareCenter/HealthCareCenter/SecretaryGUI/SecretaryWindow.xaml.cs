@@ -58,5 +58,11 @@ namespace HealthCareCenter.SecretaryGUI
             LoginWindow window = new LoginWindow();
             window.Show();
         }
+
+        private void EquipmentDistributionButton_Click(object sender, RoutedEventArgs e)
+        {
+            DistributeDynamicEquipmentWindow window = new DistributeDynamicEquipmentWindow();
+            window.ShowDialog();
+        }
     }
 }
