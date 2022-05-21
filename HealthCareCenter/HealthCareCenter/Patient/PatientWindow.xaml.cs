@@ -208,7 +208,7 @@ namespace HealthCareCenter
 
         private void FillAvailableTimeTable()
         {
-            List<string> allPossibleSchedules = GetDailySchedulesFromRange(Constants.StartWorkTime, 0, Constants.EndWorkTime, 0);
+            List<TimeSchedule> allPossibleSchedules = TimeScheduleService.GetDailySchedulesFromRange(Constants.StartWorkTime, 0, Constants.EndWorkTime, 0);
             foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
                 int chosenDoctorID = Convert.ToInt32(chosenDoctor[0]);
@@ -216,22 +216,21 @@ namespace HealthCareCenter
                 {
                     if (appointment.ScheduledDate.Date.CompareTo(chosenScheduleDate.Date) == 0)
                     {
-                        string unavailableSchedule = appointment.ScheduledDate.Hour + ":" + appointment.ScheduledDate.Minute;
+                        TimeSchedule unavailableSchedule = new TimeSchedule(appointment.ScheduledDate.Hour, appointment.ScheduledDate.Minute);
                         allPossibleSchedules.Remove(unavailableSchedule);
                     }
                 }
             }
 
             DataRow row;
-            foreach (string availableTime in allPossibleSchedules)
+            foreach (TimeSchedule availableTime in allPossibleSchedules)
             {
-                string[] time = availableTime.Split(":");
                 row = allAvailableTimeTable.NewRow();
                 row[0] = chosenScheduleDate.Day;
                 row[1] = chosenScheduleDate.Month;
                 row[2] = chosenScheduleDate.Year;
-                row[3] = Convert.ToInt32(time[0]);
-                row[4] = Convert.ToInt32(time[1]);
+                row[3] = Convert.ToInt32(availableTime.Hours);
+                row[4] = Convert.ToInt32(availableTime.Minutes);
                 allAvailableTimeTable.Rows.Add(row);
             }
             allAvailableTimeCUDDataGrid.ItemsSource = allAvailableTimeTable.DefaultView;
@@ -516,10 +515,10 @@ namespace HealthCareCenter
         //=======================================================================================
         private void FillAppointmentRangeComboBoxes()
         {
-            foreach (string scheduleTime in GetDailySchedulesFromRange(Constants.StartWorkTime, 0, Constants.EndWorkTime, 0))
+            foreach (TimeSchedule scheduleTime in TimeScheduleService.GetDailySchedulesFromRange(Constants.StartWorkTime, 0, Constants.EndWorkTime, 0))
             {
-                startTimeRangePriorityComboBox.Items.Add(scheduleTime);
-                endTimeRangePriorityComboBox.Items.Add(scheduleTime);
+                startTimeRangePriorityComboBox.Items.Add(scheduleTime.ToString());
+                endTimeRangePriorityComboBox.Items.Add(scheduleTime.ToString());
             }
         }
 
@@ -561,22 +560,9 @@ namespace HealthCareCenter
 
         private bool IsTimeRangeValid()
         {
-            int[] startRange = GetHoursMinutesFromTime(startRangePriorityTime);
-            int[] endRange = GetHoursMinutesFromTime(endRangePriorityTime);
-
-            if (startRange[0] > endRange[0])
-            {
-                return false;
-            }
-            else if (startRange[0] == endRange[0])
-            {
-                if (startRange[1] >= endRange[1])
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            TimeSchedule startRange = new TimeSchedule(startRangePriorityTime);
+            TimeSchedule endRange = new TimeSchedule(endRangePriorityTime);
+            return startRange < endRange;
         }
 
         private void CreateAvailablePriorityAppointmentsTable()
@@ -640,7 +626,7 @@ namespace HealthCareCenter
             return newAppointmentRequest;
         }
 
-        private AppointmentChangeRequest PrioritySearch(int doctorID, List<string> possibleSchedules)
+        private AppointmentChangeRequest PrioritySearch(int doctorID, List<TimeSchedule> possibleSchedules)
         {
             AppointmentChangeRequest newAppointmentRequest = null;
             DateTime date = DateTime.Now;
@@ -648,13 +634,15 @@ namespace HealthCareCenter
             bool appointmentFound = false;
             while (date.Date.CompareTo(chosenScheduleDate.Date) <= 0 && !appointmentFound)
             {
-                foreach (string time in possibleSchedules)
+                foreach (TimeSchedule timeSchedule in possibleSchedules)
                 {
-                    int[] timeHoursMinutes = GetHoursMinutesFromTime(time);
                     bool isAvailable = true;
                     foreach (Appointment appointment in AppointmentRepository.Appointments)
                     {
-                        if (doctorID == appointment.DoctorID && timeHoursMinutes[0] == appointment.ScheduledDate.Hour && timeHoursMinutes[1] == appointment.ScheduledDate.Minute && appointment.ScheduledDate.Date.CompareTo(date.Date) == 0)
+                        if (doctorID == appointment.DoctorID &&
+                            timeSchedule.Hours == appointment.ScheduledDate.Hour &&
+                            timeSchedule.Minutes == appointment.ScheduledDate.Minute &&
+                            appointment.ScheduledDate.Date.CompareTo(date.Date) == 0)
                         {
                             isAvailable = false;
                             break;
@@ -663,12 +651,11 @@ namespace HealthCareCenter
 
                     if (isAvailable)
                     {
-                        string scheduleDateParse = date.ToString().Split(" ")[0];
-                        scheduleDateParse += time;
+                        string scheduleDateParse = date.ToString().Split(" ")[0] + " " + timeSchedule.ToString();
                         DateTime scheduleDate = Convert.ToDateTime(scheduleDateParse);
 
                         int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(scheduleDate, Enums.RoomType.Checkup);
-                        if (isAvailable && hospitalRoomID == -1)
+                        if (hospitalRoomID == -1)
                         {
                             continue;
                         }
@@ -699,9 +686,9 @@ namespace HealthCareCenter
         {
             // searches for an appointment based on both priorities
 
-            int[] startRange = GetHoursMinutesFromTime(startRangePriorityTime);
-            int[] endRange = GetHoursMinutesFromTime(endRangePriorityTime);
-            List<string> possibleSchedules = GetDailySchedulesFromRange(startRange[0], startRange[1], endRange[0], endRange[1]);
+            TimeSchedule startRange = new TimeSchedule(startRangePriorityTime);
+            TimeSchedule endRange = new TimeSchedule(endRangePriorityTime);
+            List<TimeSchedule> possibleSchedules = TimeScheduleService.GetDailySchedulesFromRange(startRange, endRange);
 
             return PrioritySearch(Convert.ToInt32(chosenDoctor[0]), possibleSchedules);
 
@@ -712,9 +699,9 @@ namespace HealthCareCenter
             // searches for an available appointment in the selected time span
             // for any doctor except the doctor that the patient chose
 
-            int[] startRange = GetHoursMinutesFromTime(startRangePriorityTime);
-            int[] endRange = GetHoursMinutesFromTime(endRangePriorityTime);
-            List<string> possibleSchedules = GetDailySchedulesFromRange(startRange[0], startRange[1], endRange[0], endRange[1]);
+            TimeSchedule startRange = new TimeSchedule(startRangePriorityTime);
+            TimeSchedule endRange = new TimeSchedule(endRangePriorityTime);
+            List<TimeSchedule> possibleSchedules = TimeScheduleService.GetDailySchedulesFromRange(startRange, endRange);
             foreach (Doctor doctor in UserRepository.Doctors)
             {
                 if (doctor.ID == Convert.ToInt32(chosenDoctor[0]))
@@ -736,9 +723,9 @@ namespace HealthCareCenter
         {
             // searches the chosen doctor with every time range except the one given
 
-            int[] startRange = GetHoursMinutesFromTime(startRangePriorityTime);
-            int[] endRange = GetHoursMinutesFromTime(endRangePriorityTime);
-            List<string> possibleSchedules = GetDailySchedulesOppositeOfRange(startRange[0], startRange[1], endRange[0], endRange[1]);
+            TimeSchedule startRange = new TimeSchedule(startRangePriorityTime);
+            TimeSchedule endRange = new TimeSchedule(endRangePriorityTime);
+            List<TimeSchedule> possibleSchedules = TimeScheduleService.GetDailySchedulesOppositeOfRange(startRange, endRange);
 
             return PrioritySearch(Convert.ToInt32(chosenDoctor[0]), possibleSchedules);
         }
@@ -747,10 +734,10 @@ namespace HealthCareCenter
         {
             List<AppointmentChangeRequest> similarAppointments = new List<AppointmentChangeRequest>();
 
-            int[] startRange = GetHoursMinutesFromTime(startRangePriorityTime);
-            int[] endRange = GetHoursMinutesFromTime(endRangePriorityTime);
-            List<string> possibleSchedules = GetDailySchedulesFromRange(startRange[0], startRange[1], endRange[0], endRange[1]);
-            List<string> oppositePossibleSchedules = GetDailySchedulesOppositeOfRange(startRange[0], startRange[1], endRange[0], endRange[1]);
+            TimeSchedule startRange = new TimeSchedule(startRangePriorityTime);
+            TimeSchedule endRange = new TimeSchedule(endRangePriorityTime);
+            List<TimeSchedule> possibleSchedules = TimeScheduleService.GetDailySchedulesFromRange(startRange, endRange);
+            List<TimeSchedule> oppositePossibleSchedules = TimeScheduleService.GetDailySchedulesOppositeOfRange(startRange, endRange);
 
             if (Convert.ToBoolean(doctorPriorityRadioButton.IsChecked))
             {
@@ -777,20 +764,22 @@ namespace HealthCareCenter
             return similarAppointments;
         }
 
-        private List<AppointmentChangeRequest> AppointmentsSimilarToPrioritySearch(int doctorID, List<string> possibleSchedules)
+        private List<AppointmentChangeRequest> AppointmentsSimilarToPrioritySearch(int doctorID, List<TimeSchedule> possibleSchedules)
         {
             List<AppointmentChangeRequest> similarAppointments = new List<AppointmentChangeRequest>();
             DateTime date = DateTime.Now;
             date = date.AddDays(1);
             while (date.Date.CompareTo(chosenScheduleDate.Date) <= 0 && similarAppointments.Count < 3)
             {
-                foreach (string time in possibleSchedules)
+                foreach (TimeSchedule timeSchedule in possibleSchedules)
                 {
-                    int[] timeHoursMinutes = GetHoursMinutesFromTime(time);
                     bool isAvailable = true;
                     foreach (Appointment appointment in AppointmentRepository.Appointments)
                     {
-                        if (doctorID == appointment.DoctorID && timeHoursMinutes[0] == appointment.ScheduledDate.Hour && timeHoursMinutes[1] == appointment.ScheduledDate.Minute && appointment.ScheduledDate.Date.CompareTo(date.Date) == 0)
+                        if (doctorID == appointment.DoctorID &&
+                            timeSchedule.Hours == appointment.ScheduledDate.Hour &&
+                            timeSchedule.Minutes == appointment.ScheduledDate.Minute &&
+                            appointment.ScheduledDate.Date.CompareTo(date.Date) == 0)
                         {
                             isAvailable = false;
                             break;
@@ -799,12 +788,11 @@ namespace HealthCareCenter
 
                     if (isAvailable)
                     {
-                        string scheduleDateParse = date.ToString().Split(" ")[0];
-                        scheduleDateParse += " " + time;
+                        string scheduleDateParse = date.ToString().Split(" ")[0] + " " + timeSchedule.ToString();
                         DateTime scheduleDate = Convert.ToDateTime(scheduleDateParse);
 
                         int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(scheduleDate, Enums.RoomType.Checkup);
-                        if (isAvailable && hospitalRoomID == -1)
+                        if (hospitalRoomID == -1)
                         {
                             continue;
                         }
@@ -1080,7 +1068,7 @@ namespace HealthCareCenter
             searchDoctorSortCriteriaComboBox.Items.Add("Search parameter");
             searchDoctorSortCriteriaComboBox.Items.Add("Rating");
         }
-        
+
         //=======================================================================================
 
         // helper methods
@@ -1280,68 +1268,6 @@ namespace HealthCareCenter
             }
 
             return true;
-        }
-
-        private List<string> GetDailySchedulesFromRange(int startHours, int startMinutes, int endHours, int endMinutes)
-        {
-            // returns all schedules from 8:00 to 21:00 knowing that an appointment lasts 15 minutes
-
-            int hours = startHours;
-            int minutes = startMinutes;
-            List<string> possibleSchedules = new List<string>();
-            while (hours < endHours || minutes < endMinutes)
-            {
-                string schedule = hours + ":" + minutes;
-                possibleSchedules.Add(schedule);
-                minutes += 15;
-                if (minutes >= 60)
-                {
-                    ++hours;
-                    minutes = 0;
-                }
-            }
-
-            return possibleSchedules;
-        }
-
-        private List<string> GetDailySchedulesOppositeOfRange(int startHours, int startMinutes, int endHours, int endMinutes)
-        {
-            List<string> possibleSchedules;
-
-            if (startHours == Constants.StartWorkTime && startMinutes == 0)
-            {
-                possibleSchedules = GetDailySchedulesFromRange(endHours, endHours, Constants.EndWorkTime, 0);
-            }
-            else
-            {
-                if (endHours == Constants.EndWorkTime && endMinutes == 0)
-                {
-                    possibleSchedules = GetDailySchedulesFromRange(Constants.StartWorkTime, 0, startHours, startMinutes);
-                }
-                else
-                {
-                    List<string> beforeStartRangeSchedules = GetDailySchedulesFromRange(Constants.StartWorkTime, 0, startHours, startMinutes);
-                    List<string> afterStartRangeSchedules = GetDailySchedulesFromRange(endHours, endMinutes, Constants.EndWorkTime, 0);
-                    possibleSchedules = beforeStartRangeSchedules;
-                    possibleSchedules.AddRange(afterStartRangeSchedules);
-                }
-            }
-
-            return possibleSchedules;
-        }
-
-        private int[] GetHoursMinutesFromTime(string timeAsWord)
-        {
-            // takes in a string with the format HH:mm and returns an int array with 
-            // hours and minutes as integers
-
-            int[] hoursAndMinutes = new int[2];
-            string[] time = timeAsWord.Split(":");
-
-            hoursAndMinutes[0] = Convert.ToInt32(time[0]);
-            hoursAndMinutes[1] = Convert.ToInt32(time[1]);
-
-            return hoursAndMinutes;
         }
         //=======================================================================================
 
