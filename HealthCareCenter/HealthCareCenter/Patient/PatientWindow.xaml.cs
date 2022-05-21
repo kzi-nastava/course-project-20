@@ -84,14 +84,30 @@ namespace HealthCareCenter
             }
         }
 
+        // clear window methods
+        //==============================================================================
         private void ClearWindow()
+        {
+            ClearMyAppointmentGrid();
+            ClearCreateAppointmentGrid();
+            ClearPrioritySchedulingGrid();
+            ClearSearchDoctorGrid();
+            ClearMyNotificationGrid();
+            ClearMyHealthRecordGrid();
+            ClearSurveyGrids();
+        }
+
+        private void ClearMyAppointmentGrid()
         {
             myAppointmentsGrid.Visibility = Visibility.Collapsed;
             if (appointmentsDataTable != null)
             {
                 appointmentsDataTable.Clear();
             }
-            //==
+        }
+
+        private void ClearCreateAppointmentGrid()
+        {
             createAppointmentGrid.Visibility = Visibility.Collapsed;
             if (allAvailableTimeTable != null)
             {
@@ -104,7 +120,10 @@ namespace HealthCareCenter
             yearChoiceCUDComboBox.Items.Clear();
             isModification = false;
             shouldSendRequestToSecretary = false;
-            //==
+        }
+
+        private void ClearPrioritySchedulingGrid()
+        {
             dayChoicePriorityComboBox.Items.Clear();
             monthChoicePriorityComboBox.Items.Clear();
             yearChoicePriorityComboBox.Items.Clear();
@@ -116,19 +135,33 @@ namespace HealthCareCenter
                 availablePriorityAppointmentsDataTable.Clear();
             }
             availablePriorityAppointmentsDataTable = null;
+        }
 
+        private void ClearSearchDoctorGrid()
+        {
             searchDoctorsGrid.Visibility = Visibility.Collapsed;
+            searchDoctorSortCriteriaComboBox.Items.Clear();
+            searchDoctorKeyWordSearchComboBox.Items.Clear();
+        }
 
+        private void ClearMyNotificationGrid()
+        {
             myNotificationGrid.Visibility = Visibility.Collapsed;
+        }
 
+        private void ClearMyHealthRecordGrid()
+        {
             myHealthRecordGrid.Visibility = Visibility.Collapsed;
             healthRecordAppointmentsSortCriteriaComboBox.Items.Clear();
+        }
 
+        private void ClearSurveyGrids()
+        {
             doctorSurveyGrid.Visibility = Visibility.Collapsed;
 
             healthCenterGrid.Visibility = Visibility.Collapsed;
-
         }
+        //==============================================================================
 
         // create/modify appointment methods
         //==============================================================================
@@ -304,6 +337,8 @@ namespace HealthCareCenter
             ClearWindow();
             searchDoctorsGrid.Visibility = Visibility.Visible;
             currentActionTextBlock.Text = "Search for doctor";
+            FillSearchDoctorKeyWordCriteriaComboBox();
+            FillSearchDoctorSortComboBox();
         }
 
         private void myNotificationMenuItem_Click(object sender, RoutedEventArgs e)
@@ -619,19 +654,10 @@ namespace HealthCareCenter
                     bool isAvailable = true;
                     foreach (Appointment appointment in AppointmentRepository.Appointments)
                     {
-                        if (doctorID == appointment.DoctorID)
+                        if (doctorID == appointment.DoctorID && timeHoursMinutes[0] == appointment.ScheduledDate.Hour && timeHoursMinutes[1] == appointment.ScheduledDate.Minute && appointment.ScheduledDate.Date.CompareTo(date.Date) == 0)
                         {
-                            if (timeHoursMinutes[0] == appointment.ScheduledDate.Hour)
-                            {
-                                if (timeHoursMinutes[1] == appointment.ScheduledDate.Minute)
-                                {
-                                    if (appointment.ScheduledDate.Date.CompareTo(date.Date) == 0)
-                                    {
-                                        isAvailable = false;
-                                        break;
-                                    }
-                                }
-                            }
+                            isAvailable = false;
+                            break;
                         }
                     }
 
@@ -640,6 +666,13 @@ namespace HealthCareCenter
                         string scheduleDateParse = date.ToString().Split(" ")[0];
                         scheduleDateParse += time;
                         DateTime scheduleDate = Convert.ToDateTime(scheduleDateParse);
+
+                        int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(scheduleDate, Enums.RoomType.Checkup);
+                        if (isAvailable && hospitalRoomID == -1)
+                        {
+                            continue;
+                        }
+
                         newAppointmentRequest = new AppointmentChangeRequest
                         {
                             ID = ++AppointmentChangeRequestRepository.LargestID,
@@ -757,19 +790,10 @@ namespace HealthCareCenter
                     bool isAvailable = true;
                     foreach (Appointment appointment in AppointmentRepository.Appointments)
                     {
-                        if (doctorID == appointment.DoctorID)
+                        if (doctorID == appointment.DoctorID && timeHoursMinutes[0] == appointment.ScheduledDate.Hour && timeHoursMinutes[1] == appointment.ScheduledDate.Minute && appointment.ScheduledDate.Date.CompareTo(date.Date) == 0)
                         {
-                            if (timeHoursMinutes[0] == appointment.ScheduledDate.Hour)
-                            {
-                                if (timeHoursMinutes[1] == appointment.ScheduledDate.Minute)
-                                {
-                                    if (appointment.ScheduledDate.Date.CompareTo(date.Date) == 0)
-                                    {
-                                        isAvailable = false;
-                                        break;
-                                    }
-                                }
-                            }
+                            isAvailable = false;
+                            break;
                         }
                     }
 
@@ -778,6 +802,13 @@ namespace HealthCareCenter
                         string scheduleDateParse = date.ToString().Split(" ")[0];
                         scheduleDateParse += " " + time;
                         DateTime scheduleDate = Convert.ToDateTime(scheduleDateParse);
+
+                        int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(scheduleDate, Enums.RoomType.Checkup);
+                        if (isAvailable && hospitalRoomID == -1)
+                        {
+                            continue;
+                        }
+
                         AppointmentChangeRequest possibleAppointmentRequest = new AppointmentChangeRequest
                         {
                             ID = ++AppointmentChangeRequestRepository.LargestID,
@@ -811,6 +842,8 @@ namespace HealthCareCenter
                 {
                     MessageBox.Show("There are no appointments available that match the selected parameters");
                     ClearWindow();
+                    CreateAppointmentTable();
+                    FillUnfinishedAppointmentsTable();
                     myAppointmentsGrid.Visibility = Visibility.Visible;
                     return;
                 }
@@ -890,7 +923,6 @@ namespace HealthCareCenter
 
         private void scheduleAppointmentPriorityButton_Click(object sender, RoutedEventArgs e)
         {
-            AppointmentChangeRequest newAppointmentRequest;
             if (availablePriorityAppointmentsDataTable != null)
             {
                 PriorityNotFoundScheduling();
@@ -921,6 +953,11 @@ namespace HealthCareCenter
             {
                 if (appointment.ID == Convert.ToInt32(chosenAppointment[0]))
                 {
+                    if (appointment.PatientAnamnesis == null)
+                    {
+                        MessageBox.Show("This appointment doesn't have a filled anamnesis");
+                        return;
+                    }
                     anamnesisTextBox.Text = appointment.PatientAnamnesis.Comment;
                     return;
                 }
@@ -1026,6 +1063,24 @@ namespace HealthCareCenter
             healthRecordAppointmentsSortCriteriaComboBox.Items.Add("Doctor");
             healthRecordAppointmentsSortCriteriaComboBox.Items.Add("Professional area");
         }
+        //=======================================================================================
+
+
+        // doctor search methods
+        //=======================================================================================
+        private void FillSearchDoctorKeyWordCriteriaComboBox()
+        {
+            searchDoctorKeyWordSearchComboBox.Items.Add("First name");
+            searchDoctorKeyWordSearchComboBox.Items.Add("Last name");
+            searchDoctorKeyWordSearchComboBox.Items.Add("Professional area");
+        }
+
+        private void FillSearchDoctorSortComboBox()
+        {
+            searchDoctorSortCriteriaComboBox.Items.Add("Search parameter");
+            searchDoctorSortCriteriaComboBox.Items.Add("Rating");
+        }
+        
         //=======================================================================================
 
         // helper methods
@@ -1148,21 +1203,21 @@ namespace HealthCareCenter
         {
             for (int i = 1; i <= 31; i++)
             {
-                string s = i.ToString();
-                if (s.Length == 1)
+                string day = i.ToString();
+                if (day.Length == 1)
                 {
-                    s = "0" + s;
+                    day = "0" + day;
                 }
-                dayChoiceComboBox.Items.Add(s);
+                dayChoiceComboBox.Items.Add(day);
             }
             for (int i = 1; i <= 12; i++)
             {
-                string s = i.ToString();
-                if (s.Length == 1)
+                string month = i.ToString();
+                if (month.Length == 1)
                 {
-                    s = "0" + s;
+                    month = "0" + month;
                 }
-                monthChoiceComboBox.Items.Add(s);
+                monthChoiceComboBox.Items.Add(month);
             }
             int currentYear = DateTime.Now.Year;
             int nextYear = currentYear + 1;

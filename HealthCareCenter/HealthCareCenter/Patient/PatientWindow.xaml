@@ -69,15 +69,51 @@
             <Button x:Name="prioritySchedulingButton" Margin="5 10 5 0" Content="Priority schedule" Grid.Row="2" Grid.Column="4" Click="prioritySchedulingButton_Click"/>
         </Grid>
 
-        <Grid x:Name="searchDoctorsGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
+        <Grid x:Name="searchDoctorsGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Visible">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10" />
+            </Grid.ColumnDefinitions>
 
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="10" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Key word search" Grid.Row="1" Grid.Column="1" Margin="5 0 0 0" FontSize="15" FontWeight="Bold" />
+            <TextBox x:Name="searchDoctorKeyWordSearchTextBox" Grid.Row="2" Grid.Column="1" Margin="5 10 5 0"/>
+            <TextBlock Text="Key word criteria" Grid.Row="1" Grid.Column="2" Margin="5 0 0 0" FontSize="15" FontWeight="Bold" />
+            <ComboBox x:Name="searchDoctorKeyWordSearchComboBox" Margin="5 10 5 0" Grid.Row="2" Grid.Column="2" />
+            <Button x:Name="searchDoctorSearchButton" Content="Search" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 10 5 0" />
+
+            <TextBlock Text="Sort by" Grid.Row="1" Grid.Column="3" Margin="5 0 0 0" FontSize="15" FontWeight="Bold" />
+            <ComboBox x:Name="searchDoctorSortCriteriaComboBox" Margin="5 10 5 0" Grid.Row="2" Grid.Column="3" />
+            <Button x:Name="searchDoctorSortButton" Content="Sort" Grid.Row="3" Grid.Column="3" Margin="5 10 5 0" />
+
+            <Button x:Name="searchDoctorSelectDoctorButton" Content="Select doctor" Grid.Row="2" Grid.Column="4" Grid.RowSpan="2" Margin="5 10 5 0" />
+
+
+            <DataGrid Margin="5 10 5 0" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="5" x:Name ="searchDoctorsDataGrid" ScrollViewer.CanContentScroll="True" 
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          IsReadOnly="True" />
+            
+            
         </Grid>
 
         <Grid x:Name="myNotificationGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
 
         </Grid>
 
-        <Grid x:Name="myHealthRecordGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Visible">
+        <Grid x:Name="myHealthRecordGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*"/>
