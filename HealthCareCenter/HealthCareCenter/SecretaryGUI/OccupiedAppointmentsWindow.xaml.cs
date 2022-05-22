@@ -196,7 +196,7 @@ namespace HealthCareCenter.SecretaryGUI
 
         private void SendNotifications(Appointment postponedAppointment, Appointment newAppointment)
         {
-            HealthRecord postponedRecord = HealthRecordService.FindRecord(postponedAppointment);
+            HealthRecord postponedRecord = HealthRecordService.Find(postponedAppointment);
 
             NotificationService.CalculateMaxID();
             Notification postponedPatientNotification = new Notification($"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedRecord.PatientID);

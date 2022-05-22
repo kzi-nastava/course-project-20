@@ -196,7 +196,7 @@ namespace HealthCareCenter.SecretaryGUI
         private void OpenViewWindow()
         {
             Patient patient = (Patient)patientsDataGrid.SelectedItem;
-            HealthRecord record = HealthRecordService.FindRecord(patient);
+            HealthRecord record = HealthRecordService.Find(patient);
 
             PatientViewWindow window = new PatientViewWindow(patient, record);
             window.ShowDialog();
@@ -218,7 +218,7 @@ namespace HealthCareCenter.SecretaryGUI
         private void OpenEditWindow()
         {
             Patient patient = (Patient)patientsDataGrid.SelectedItem;
-            HealthRecord record = HealthRecordService.FindRecord(patient);
+            HealthRecord record = HealthRecordService.Find(patient);
 
             PatientEditWindow window = new PatientEditWindow(patient, record);
             window.ShowDialog();

@@ -19,5 +19,50 @@ namespace HealthCareCenter.Service
             }
             return null;
         }
+
+
+        public static List<Appointment> GetPatientUnfinishedAppointments(int patientHealthRecordID)
+        {
+            if (AppointmentRepository.Appointments == null)
+            {
+                return new List<Appointment>();
+            }
+
+            List<Appointment> unfinishedAppointments = new List<Appointment>();
+            foreach (Appointment potentialAppointment in AppointmentRepository.Appointments)
+            {
+                if (potentialAppointment.HealthRecordID == patientHealthRecordID)
+                {
+                    if (potentialAppointment.ScheduledDate.CompareTo(DateTime.Now) > 0)
+                    {
+                        unfinishedAppointments.Add(potentialAppointment);
+                    }
+                }
+            }
+
+            return unfinishedAppointments;
+        }
+
+        public static List<Appointment> GetPatientFinishedAppointments(int patientHealthRecordID)
+        {
+            if (AppointmentRepository.Appointments == null)
+            {
+                return new List<Appointment>();
+            }
+
+            List<Appointment> finishedAppointments = new List<Appointment>();
+            foreach (Appointment potentialAppointment in AppointmentRepository.Appointments)
+            {
+                if (potentialAppointment.HealthRecordID == patientHealthRecordID)
+                {
+                    if (potentialAppointment.ScheduledDate.CompareTo(DateTime.Now) < 0)
+                    {
+                        finishedAppointments.Add(potentialAppointment);
+                    }
+                }
+            }
+
+            return finishedAppointments;
+        }
     }
 }

@@ -8,7 +8,8 @@ namespace HealthCareCenter.Model
     public class MedicineInstruction
     {
         public MedicineInstruction() { }
-        public MedicineInstruction(int _id,string _comment,List<DateTime> _consumptionTime,int _dailyConsumption, ConsumptionPeriod _consumptionPeriod) {
+        public MedicineInstruction(int _id, string _comment, List<DateTime> _consumptionTime, int _dailyConsumption, ConsumptionPeriod _consumptionPeriod)
+        {
             this.ID = _id;
             this.Comment = _comment;
             this.ConsumptionTime = new List<DateTime>(_consumptionTime);
@@ -16,6 +17,7 @@ namespace HealthCareCenter.Model
             this.ConsumptionPeriod = _consumptionPeriod;
         }
         public int ID { get; set; }
+        public int MedicineID { get; set; }
         public string Comment { get; set; }
         public List<DateTime> ConsumptionTime { get; set; }
         public int DailyConsumption { get; set; }

@@ -33,9 +33,9 @@
             <Button x:Name="scheduleRewiew" Content="Schedule rewiew" Grid.Row="1" Grid.Column="1" Margin="10" Click="ScheduleRewiewButton_Click"/>
             <Button x:Name="drugMenagment" Content="Drug menagment" Grid.Row="2" Grid.Column="1" Margin="10" Click="DrugMenagmentButton_Click"/>
         </Grid>
-        
-        
-        
+
+
+
         <Grid Grid.Row="1" Grid.Column="1" Name ="scheduleGrid" Visibility="Collapsed" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" />
@@ -54,29 +54,29 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-                <DataGrid Grid.Row="0" Grid.Column="0" Name ="scheduleDataGrid" Grid.ColumnSpan="8" ScrollViewer.CanContentScroll="True" 
+            <DataGrid Grid.Row="0" Grid.Column="0" Name ="scheduleDataGrid" Grid.ColumnSpan="8" ScrollViewer.CanContentScroll="True" 
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                           IsReadOnly="True">
-              
-                </DataGrid>
-                <Button x:Name="healthRecord" Content="Health record" Grid.Row="2" Grid.Column="1" Margin="10" Click="HealthRecord_Click"/>
-                <Button x:Name="add" Content="Add" Grid.Row="2" Grid.Column="2" Margin="10" Click="Add_Click"/>
-                <Button x:Name="delete" Content="Delete" Grid.Row="2" Grid.Column="3" Margin="10" Click="Delete_Click"/>
-                <Button x:Name="alter" Content="Alter" Grid.Row="2" Grid.Column="4" Margin="10" Click="Alter_Click"/>
-                <Button x:Name="startAppointment" Content="Start an appointment" Grid.Row="2" Grid.Column="5" Grid.ColumnSpan="2" Margin="10" Click="StartAppointment_Click"/>
-                <Label x:Name="dateLabel" Content="Date dd/mm/yyyy" Grid.Row="3" Grid.Column="1" Margin="10"/>
-                <ComboBox x:Name="dayChoiceComboBox" Grid.Row="3" Grid.Column="2" Margin="10">
-                </ComboBox>
-                <ComboBox x:Name="monthChoiceComboBox" Grid.Row="3" Grid.Column="3" Margin="10">
-                </ComboBox>
-                <ComboBox x:Name="yearChoiceComboBox" Grid.Row="3" Grid.Column="4" Margin="10">
-                </ComboBox>
-                <Button x:Name="search" Content="Search" Grid.Row="3" Grid.Column="5" Grid.ColumnSpan="2" Margin="10" Click="Search_Click"/>
+
+            </DataGrid>
+            <Button x:Name="healthRecord" Content="Health record" Grid.Row="2" Grid.Column="1" Margin="10" Click="HealthRecord_Click"/>
+            <Button x:Name="add" Content="Add" Grid.Row="2" Grid.Column="2" Margin="10" Click="Add_Click"/>
+            <Button x:Name="delete" Content="Delete" Grid.Row="2" Grid.Column="3" Margin="10" Click="Delete_Click"/>
+            <Button x:Name="alter" Content="Alter" Grid.Row="2" Grid.Column="4" Margin="10" Click="Alter_Click"/>
+            <Button x:Name="startAppointment" Content="Start an appointment" Grid.Row="2" Grid.Column="5" Grid.ColumnSpan="2" Margin="10" Click="StartAppointment_Click"/>
+            <Label x:Name="dateLabel" Content="Date dd/mm/yyyy" Grid.Row="3" Grid.Column="1" Margin="10"/>
+            <ComboBox x:Name="dayChoiceComboBox" Grid.Row="3" Grid.Column="2" Margin="10">
+            </ComboBox>
+            <ComboBox x:Name="monthChoiceComboBox" Grid.Row="3" Grid.Column="3" Margin="10">
+            </ComboBox>
+            <ComboBox x:Name="yearChoiceComboBox" Grid.Row="3" Grid.Column="4" Margin="10">
+            </ComboBox>
+            <Button x:Name="search" Content="Search" Grid.Row="3" Grid.Column="5" Grid.ColumnSpan="2" Margin="10" Click="Search_Click"/>
         </Grid>
-        
-        
-        
+
+
+
         <Grid Grid.Row="1" Grid.Column="1" Name ="appointmentCreationGrid" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" />
@@ -100,7 +100,7 @@
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto">
             </DataGrid>
-     
+
             <Label x:Name="dateTextBlock" Content="Date" Grid.Row="0" Grid.Column="2" Margin="10"/>
             <Label x:Name="emergencyTextBlock" Content="Emergency" Grid.Row="1" Grid.Column="2" Margin="10"/>
             <Label x:Name= "appointmentTypeTextBlock" Content="Type" Grid.Row="2" Grid.Column="2" Margin="10"/>
@@ -123,9 +123,9 @@
             <Button x:Name="sumbitAppointment" Content="Add" Grid.Row="5" Grid.ColumnSpan ="8"  Grid.Column="0" Visibility="Collapsed" Margin="10" Click="SubmitAppointment_Click"/>
             <Button x:Name="alterAppointment" Content="Alter" Grid.Row="5" Grid.ColumnSpan ="8"  Grid.Column="0" Visibility="Collapsed" Margin="10" Click="AlterAppointment_Click"/>
         </Grid>
-        
-        
-        
+
+
+
         <Grid Grid.Row="1" Grid.Column="1" Name ="healthRecordGrid" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
@@ -179,6 +179,7 @@
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
                 <Button Name ="createAPrescription" Content="Create a prescription" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="0 0 0 10" Click="createAPrescription_Click"/>
 
@@ -209,13 +210,14 @@
                     <ComboBoxItem Content="4"/>
                 </ComboBox>
                 <ComboBox Name="hourOfMedicineTakingComboBox" SelectedIndex="0" Grid.Row="7" Grid.Column="0" Margin="0 10 10 0" IsEnabled="false">
-                    
+
                 </ComboBox>
                 <ComboBox Name="minuteOfMedicineTakingComboBox" SelectedIndex="0" Grid.Row="7" Grid.Column="1" Margin="0 10 10 0" IsEnabled="false">
-        
+
                 </ComboBox>
                 <Button Name ="addMedicineConsumptionTime" Content="Add" Grid.Row="7"  Margin ="0 10 0 0" Grid.Column="2" IsEnabled="false" Click="addMedicineConsumptionTime_Click"/>
-                <Button Name ="finishPrescriptionCreation" Content="Finish" Grid.Row="8" Grid.ColumnSpan="3" Margin ="0 10 0 10" Grid.Column="0" IsEnabled="false" Click="finishPrescriptionCreation_Click"/>
+                <Button Name ="addMedicineToPrescription" Content="Add to prescription" Grid.Row="8" Grid.ColumnSpan="3"  Margin ="0 10 0 0" Grid.Column="0" IsEnabled="false" Click="addMedicineToPrescription_Click"/>
+                <Button Name ="finishPrescriptionCreation" Content="Finish" Grid.Row="9" Grid.ColumnSpan="3" Margin ="0 10 0 10" Grid.Column="0" IsEnabled="false" Click="finishPrescriptionCreation_Click"/>
             </Grid>
         </Grid>
 
@@ -233,7 +235,7 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
-            </Grid.RowDefinitions> 
+            </Grid.RowDefinitions>
             <ComboBox Name="doctorTypeComboBox" Grid.Row="0" Grid.Column="1" Margin="10" SelectedIndex="0" SelectionChanged="doctorTypeComboBox_SelectionChanged"  >
                 <ComboBoxItem Content="General practitioner"></ComboBoxItem>
                 <ComboBoxItem Content="Specialist"></ComboBoxItem>
@@ -251,7 +253,7 @@
             <Button Name ="submitAutomaticReferal" Content="I don't want to choose a doctor" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" IsEnabled="False" Margin="10" Visibility= "Visible" Click="submitAutomaticReferal_Click"/>
             <Button Name ="submitReferal" Content="Submit referal" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Margin="10" Visibility= "Visible" Click="submitReferal_Click"/>
             <Button Name ="doctorReferalBack" Content="Back" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Margin="10" Visibility= "Visible" Click="doctorReferalBack_Click"/>
-    
+
         </Grid>
 
 
@@ -268,7 +270,7 @@
             <TextBox Name="anamnesisTextBox" Text="Anamnesis" Grid.Row="0" Grid.Column="0"/>
             <Button Name="submitAnamnesis" Content="Submit" Grid.Row="2" Grid.Column="0" Click="SubmitAnamnesis_Click"/>
         </Grid>
-    
+
 
 
 

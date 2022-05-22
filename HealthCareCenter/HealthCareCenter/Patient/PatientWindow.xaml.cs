@@ -54,16 +54,17 @@ namespace HealthCareCenter
         {
             signedPatient = (Patient)user;
             HealthRecordRepository.Load();
-            patientHealthRecord = HealthRecordService.FindRecord(signedPatient);
+            patientHealthRecord = HealthRecordService.Find(signedPatient);
             HealthRecordRepository.Records = null;
-            
+
             // loading all necessary information
             //============================================
             AppointmentRepository.Load();
             AppointmentChangeRequestRepository.Load();
+            PrescriptionRepository.Load();
             //============================================
 
-            unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
+            unfinishedAppointments = AppointmentService.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
             InitializeComponent();
 
             // creating the appointment table and making that window visible
@@ -153,11 +154,13 @@ namespace HealthCareCenter
             {
                 allDoctorsDataTable.Clear();
             }
+            searchDoctorKeyWordSearchTextBox.Text = "";
+
         }
 
         private void ClearMyNotificationGrid()
         {
-            myNotificationGrid.Visibility = Visibility.Collapsed;
+            myPrescriptionsGrid.Visibility = Visibility.Collapsed;
         }
 
         private void ClearMyHealthRecordGrid()
@@ -165,13 +168,15 @@ namespace HealthCareCenter
             myHealthRecordGrid.Visibility = Visibility.Collapsed;
             healthRecordAppointmentsSortCriteriaComboBox.Items.Clear();
             appointmentsByKeyword = null;
+            searchAnamnesisByKeywordTextBox.Text = "";
+            anamnesisTextBox.Text = "";
         }
 
         private void ClearSurveyGrids()
         {
             doctorSurveyGrid.Visibility = Visibility.Collapsed;
 
-            healthCenterGrid.Visibility = Visibility.Collapsed;
+            healthCenterSurveyGrid.Visibility = Visibility.Collapsed;
         }
         //==============================================================================
 
@@ -351,10 +356,10 @@ namespace HealthCareCenter
             FillSearchDoctorSortComboBox();
         }
 
-        private void myNotificationMenuItem_Click(object sender, RoutedEventArgs e)
+        private void myPrescriptionsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             ClearWindow();
-            myNotificationGrid.Visibility = Visibility.Visible;
+            myPrescriptionsGrid.Visibility = Visibility.Visible;
             currentActionTextBlock.Text = "My notifications";
         }
 
@@ -373,10 +378,10 @@ namespace HealthCareCenter
             currentActionTextBlock.Text = "Doctor survey";
         }
 
-        private void healthCenterMenuItem_Click(object sender, RoutedEventArgs e)
+        private void healthCenterSurveyMenuItem_Click(object sender, RoutedEventArgs e)
         {
             ClearWindow();
-            healthCenterGrid.Visibility = Visibility.Visible;
+            healthCenterSurveyGrid.Visibility = Visibility.Visible;
             currentActionTextBlock.Text = "Health center survey";
         }
 
@@ -948,7 +953,7 @@ namespace HealthCareCenter
                 return;
             }
 
-            foreach (Appointment appointment in AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID))
+            foreach (Appointment appointment in AppointmentService.GetPatientFinishedAppointments(signedPatient.HealthRecordID))
             {
                 if (appointment.ID == Convert.ToInt32(chosenAppointment[0]))
                 {
@@ -1005,7 +1010,7 @@ namespace HealthCareCenter
 
             FillHealthRecordAppointmentsSortCriteriaComboBoxes();
 
-            appointmentsByKeyword = AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
+            appointmentsByKeyword = AppointmentService.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
             CreateAppointmentTable();
             FillHealthRecordAppointmentTable();
         }
@@ -1062,7 +1067,7 @@ namespace HealthCareCenter
 
         private void SearchAnamnesisByKeyword(string searchKeyword)
         {
-            List<Appointment> finishedAppointments = AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
+            List<Appointment> finishedAppointments = AppointmentService.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
             if (searchKeyword == "")
             {
                 appointmentsByKeyword = finishedAppointments;
@@ -1291,6 +1296,11 @@ namespace HealthCareCenter
         }
         //=======================================================================================
 
+        // my prescription methods
+        //=======================================================================================
+        
+        //=======================================================================================
+
         // helper methods
         //=======================================================================================
         private void AddAppointmentToSchedule(AppointmentChangeRequest newChangeRequest, int hospitalRoomID)
@@ -1326,7 +1336,7 @@ namespace HealthCareCenter
                 {
                     HospitalRoomService.AddAppointmentToRoom(hospitalRoomID, newChangeRequest.AppointmentID);
                     AppointmentChangeRequestService.EditAppointment(newChangeRequest);
-                    unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
+                    unfinishedAppointments = AppointmentService.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
                 }
             }
             else
@@ -1350,7 +1360,7 @@ namespace HealthCareCenter
                 };
                 HospitalRoomService.AddAppointmentToRoom(hospitalRoomID, newChangeRequest.AppointmentID);
                 AppointmentRepository.Appointments.Add(newAppointment);
-                unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
+                unfinishedAppointments = AppointmentService.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
             }
 
             AppointmentRepository.Save();
@@ -1390,7 +1400,7 @@ namespace HealthCareCenter
             {
                 AppointmentChangeRequestService.DeleteAppointment(newChangeRequest);
                 AppointmentRepository.Save();
-                unfinishedAppointments = AppointmentRepository.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
+                unfinishedAppointments = AppointmentService.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
             }
             CreateAppointmentTable();
             FillUnfinishedAppointmentsTable();

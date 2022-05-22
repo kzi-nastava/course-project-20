@@ -1,27 +1,3 @@
 [
-  {
-    "ID": 1,
-    "Comment": "",
-    "ConsumptionTime": [],
-    "DailyConsumption": 0,
-    "ConsumptionPeriod": 0
-  },
-  {
-    "ID": 2,
-    "Comment": "",
-    "ConsumptionTime": [
-      "14/05/2022 12:00"
-    ],
-    "DailyConsumption": 1,
-    "ConsumptionPeriod": 0
-  },
-  {
-    "ID": 3,
-    "Comment": "",
-    "ConsumptionTime": [
-      "14/05/2022 14:00"
-    ],
-    "DailyConsumption": 1,
-    "ConsumptionPeriod": 1
-  }
+
 ]

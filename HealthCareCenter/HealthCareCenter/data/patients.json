@@ -9,7 +9,8 @@
     "Password": "eva",
     "FirstName": "Eva",
     "LastName": "Evic",
-    "DateOfBirth": "13/07/1940"
+    "DateOfBirth": "13/07/1940",
+    "NotificationRecieveTime": 2
   },
   {
     "IsBlocked": false,
@@ -21,6 +22,7 @@
     "Password": "iva",
     "FirstName": "iva",
     "LastName": "drugopreyime",
-    "DateOfBirth": "09/01/2013"
+    "DateOfBirth": "09/01/2013",
+    "NotificationRecieveTime": 2
   }
 ]
