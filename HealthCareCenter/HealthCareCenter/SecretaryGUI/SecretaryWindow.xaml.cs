@@ -41,16 +41,10 @@ namespace HealthCareCenter.SecretaryGUI
             }
         }
 
-        private PatientManipulationWindow patientManipulationWindow;
         private void PatientButton_Click(object sender, RoutedEventArgs e)
         {
-            if (patientManipulationWindow != null && patientManipulationWindow.IsVisible == true)
-            {
-                MessageBox.Show("You have already opened this window.", "Window already opened");
-                return;
-            }
-            patientManipulationWindow = new PatientManipulationWindow();
-            patientManipulationWindow.Show();
+            PatientManipulationWindow window = new PatientManipulationWindow();
+            window.ShowDialog();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -62,6 +56,12 @@ namespace HealthCareCenter.SecretaryGUI
         private void EquipmentDistributionButton_Click(object sender, RoutedEventArgs e)
         {
             DistributeDynamicEquipmentWindow window = new DistributeDynamicEquipmentWindow();
+            window.ShowDialog();
+        }
+        
+        private void EquipmentAcquisitionButton_Click(object sender, RoutedEventArgs e)
+        {
+            DynamicEquipmentRequestWindow window = new DynamicEquipmentRequestWindow(_signedUser);
             window.ShowDialog();
         }
     }

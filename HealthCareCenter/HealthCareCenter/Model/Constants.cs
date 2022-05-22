@@ -12,6 +12,9 @@ namespace HealthCareCenter.Model
         public static int StartWorkTime = 8;
         public static int EndWorkTime = 21;
 
-        public static List<string> DynamicEquipment = new List<string>() { "Gauze", "Buckle", "Band aid", "Syringe", "Paper", "Pen" };
+        public static List<string> DynamicEquipment = new List<string>() { "Gauze", "Buckle", "Band aid", "Syringe", "Paper", "Pen"};
+
+        public static int Second = 1000;
+        public static int Minute = 60 * Second;
     }
 }
