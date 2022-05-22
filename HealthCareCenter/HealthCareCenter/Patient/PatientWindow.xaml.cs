@@ -1172,7 +1172,8 @@ namespace HealthCareCenter
             }
             else
             {
-                // decide how to store doctor ratings and then implement rating sort
+                allDoctorsDataTable.Clear();
+                SortAndFillSearchDoctorsByRating();
             }
         }
 
@@ -1186,7 +1187,6 @@ namespace HealthCareCenter
 
         private void SortAndFillSearchDoctorsByLastName()
         {
-
             DoctorLastNameCompare doctorComparison = new DoctorLastNameCompare();
             doctorsByKeyword.Sort(doctorComparison);
 
@@ -1195,8 +1195,15 @@ namespace HealthCareCenter
 
         private void SortAndFillSearchDoctorsByProfessionalArea()
         {
-
             DoctorProfessionalAreaCompare doctorComparison = new DoctorProfessionalAreaCompare();
+            doctorsByKeyword.Sort(doctorComparison);
+
+            FillDoctorTable(searchDoctorsDataGrid, doctorsByKeyword);
+        }
+
+        private void SortAndFillSearchDoctorsByRating()
+        {
+            DoctorRatingsCompare doctorComparison = new DoctorRatingsCompare();
             doctorsByKeyword.Sort(doctorComparison);
 
             FillDoctorTable(searchDoctorsDataGrid, doctorsByKeyword);

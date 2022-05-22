@@ -90,4 +90,11 @@ namespace HealthCareCenter.Model
         }
     }
 
+    class DoctorRatingsCompare : IComparer<Doctor>
+    {
+        public int Compare(Doctor doc1, Doctor doc2)
+        {
+            return doc1.GetAverageRating().CompareTo(doc2.GetAverageRating());
+        }
+    }
 }
