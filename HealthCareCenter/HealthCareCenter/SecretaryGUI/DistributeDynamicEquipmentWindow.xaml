@@ -23,17 +23,35 @@
         </Grid.RowDefinitions>
         
         <Label Grid.Row="0" Grid.Column="0" Content="Select a room with an equipment shortage:" Margin="10, 6, 10, 2.5" />
-        <ComboBox Grid.Row="0" Grid.Column="1" x:Name="roomsWithShortageComboBox" Margin="10, 10, 10, 0"/>
-        
-        <ListBox x:Name="equipmentFromRoomWithShortageListBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10, 5, 10, 5"/>
-        
-        <Label Grid.Row="2" Grid.Column="0" Content="Select a room below, equipment from the room and the quantity to transfer it to the above selected room, then click on transfer."  Grid.ColumnSpan="2" Margin="10, 2.5, 2.5, 2.5" />
+        <ComboBox Grid.Row="0" Grid.Column="1" x:Name="roomsWithShortageComboBox" Margin="10, 10, 10, 0" DisplayMemberPath="Name" SelectedValuePath="ID" VerticalContentAlignment="Center" SelectionChanged="RoomsWithShortageComboBox_SelectionChanged"/>
+
+        <ListBox x:Name="equipmentFromRoomWithShortageListBox" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10, 5, 10, 5">
+            <ListBox.Resources>
+                <local:StringToForegroundConverter x:Key="ForegroundConverter"/>
+            </ListBox.Resources>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Foreground="{Binding Converter={StaticResource ForegroundConverter}}" Margin="2"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Label Grid.Row="2" Grid.Column="0" Content="Select a room below, equipment from the room and the quantity, then click on transfer to transfer it to the above selected room."  Grid.ColumnSpan="2" Margin="10, 2.5, 2.5, 2.5" />
 
         <Label Grid.Row="3" Grid.Column="0" Content="Select a room to transfer equipment from:" Margin="10, 5, 10, 5" />
-        <ComboBox Grid.Row="3" Grid.Column="1" x:Name="roomsToTransferFromComboBox" Margin="10, 5, 10, 5" />
-        
-        <ListBox x:Name="equipmentFromOtherRoomListBox" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="10, 5, 10, 5"/>
-        
+        <ComboBox Grid.Row="3" Grid.Column="1" x:Name="roomsToTransferFromComboBox" Margin="10, 5, 10, 5" DisplayMemberPath="Name" SelectedValuePath="ID" VerticalContentAlignment="Center" SelectionChanged="RoomsToTransferFromComboBox_SelectionChanged"/>
+
+        <ListBox x:Name="equipmentFromOtherRoomListBox" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="10, 5, 10, 5">
+            <ListBox.Resources>
+                <local:StringToForegroundConverter x:Key="ForegroundConverter"/>
+            </ListBox.Resources>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Foreground="{Binding Converter={StaticResource ForegroundConverter}}" Margin="2"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
         <Label Grid.Row="5" Grid.Column="0" Content="Quantity:" Margin="10, 5, 10, 5" />
         <TextBox x:Name="quantityTextBox" Grid.Row="5" Grid.Column="1" Margin="10, 5, 10, 5" VerticalContentAlignment="Center"/>
         
