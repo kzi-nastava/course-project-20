@@ -12,18 +12,19 @@ namespace HealthCareCenter.Service
         public PrescriptionService(int _doctorID)
         {
             this._doctorID = _doctorID;
-            SelectedMedicine = new List<Medicine>();
+            MedicineInstructions = new Dictionary<int, int>();
         }
         private List<DateTime>_times = new List<DateTime>();
-        private MedicineInstruction _medicineInstruction;
-        public List<Medicine> SelectedMedicine { get; set; }
+        public Medicine SelectedMedicine { get; set; }
+        public  Dictionary<int,int> MedicineInstructions { get; set; }
         private int _doctorID;
 
-        public bool ClearData()
+        public bool ClearData(bool finishing)
         {
             _times.Clear();
-            _medicineInstruction = null;
-            SelectedMedicine.Clear();
+            if (finishing)
+                MedicineInstructions.Clear();
+            SelectedMedicine = null;
             return true;
         }
         public bool AddTime(string hour,string minute) {
@@ -46,16 +47,20 @@ namespace HealthCareCenter.Service
                 return false;
             }
         }
-        public bool CreateMedicineInstruction(int id,string comment,int dailyConsumption,ConsumptionPeriod consumptionPeriod) {
-            if (SelectedMedicine.Count == 0)
+        public bool CreateMedicineInstruction(int id,string comment,int dailyConsumption,ConsumptionPeriod consumptionPeriod, int medicineID) {
+            if (MedicineInstructions.ContainsKey(medicineID))
             {
-                MessageBox.Show("Add times at which the medicine should be taken");
+                MessageBox.Show("This medicine has already been added to the prescription");
                 return false;
             }
+            bool sucessfull = checkData(false);
+            if (!sucessfull)
+                return false;
             try
             {
-                _medicineInstruction = new MedicineInstruction(++MedicineInstructionRepository.LargestID, comment, _times, dailyConsumption, consumptionPeriod);
+                MedicineInstruction _medicineInstruction = new MedicineInstruction(++MedicineInstructionRepository.LargestID, comment, _times, dailyConsumption, consumptionPeriod);
                 MedicineInstructionRepository.MedicineInstructions.Add(_medicineInstruction);
+                MedicineInstructions[medicineID] = _medicineInstruction.ID; 
                 return true;
             }
             catch
@@ -65,14 +70,34 @@ namespace HealthCareCenter.Service
         }
         public bool CreateAPrescription()
         {
+            bool sucessfull = checkData(true);
+            if (!sucessfull)
+                return false;
             List<int> medicineIDs = new List<int>();
-            foreach(Medicine medicine in SelectedMedicine)
-            {
-                medicineIDs.Add(medicine.ID);
-            }
-            Prescription prescription = new Prescription(++PrescriptionRepository.LargestID,medicineIDs,_doctorID,_medicineInstruction.ID);
+            Dictionary<int,int> medicineInstructions = new Dictionary<int, int>(MedicineInstructions);
+            Prescription prescription = new Prescription(++PrescriptionRepository.LargestID,_doctorID,medicineInstructions);
             
             PrescriptionRepository.Prescriptions.Add(prescription);
+            return true;
+        }
+
+        private bool checkData(bool finishing)
+        {
+            if(_times.Count == 0 && !finishing)
+            {
+                MessageBox.Show("Add a time");
+                return false;
+            }
+            if (SelectedMedicine == null && !finishing)
+            {
+                MessageBox.Show("Select a medicine");
+                return false;
+            }
+            if (MedicineInstructions.Count == 0 && finishing)
+            {
+                MessageBox.Show("Create a instruction for the medicine");
+                return false;
+            }
             return true;
         }
         public bool AddPrescription(Prescription prescription)

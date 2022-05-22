@@ -28,6 +28,7 @@ namespace HealthCareCenter
         private int healthRecordIndex;
         private int comboBoxChangeCounter = 0;
         HealthRecord selectedPatientsHealthRecord;
+        Medicine chosenMedicine;
         DataRow dr;
         public DoctorWindow(Model.User user)
         {
@@ -785,23 +786,32 @@ namespace HealthCareCenter
             createAPrescription.Visibility = Visibility.Collapsed;
             medicineGrid.Visibility = Visibility.Collapsed;
         }
+
+        private void enableMedicineGrid(bool enable) {
+            addMedicine.IsEnabled = enable;
+            deleteMedicine.IsEnabled = enable;
+            finishPrescriptionCreation.IsEnabled = enable;
+            instructionsTextBox.IsEnabled = enable;
+            consumptionPerDayComboBox.IsEnabled = enable;
+            consumptionPeriodComboBox.IsEnabled = enable;
+            addMedicineConsumptionTime.IsEnabled = enable;
+            hourOfMedicineTakingComboBox.IsEnabled = enable;
+            minuteOfMedicineTakingComboBox.IsEnabled = enable;
+            addMedicineToPrescription.IsEnabled = enable;
+        }
         private void createAPrescription_Click(object sender, RoutedEventArgs e)
         {
-            addMedicine.IsEnabled = true;  
-            deleteMedicine.IsEnabled = true;
-            finishPrescriptionCreation.IsEnabled = true;
-            instructionsTextBox.IsEnabled = true;
-            consumptionPerDayComboBox.IsEnabled = true;
-            consumptionPeriodComboBox.IsEnabled = true;
-            addMedicineConsumptionTime.IsEnabled = true;
-            hourOfMedicineTakingComboBox.IsEnabled = true;
-            minuteOfMedicineTakingComboBox.IsEnabled = true;
+            enableMedicineGrid(true);
             FillMedicineTakingComboBoxes();
         }
         private void addMedicine_Click(object sender, RoutedEventArgs e)
         {
+            if(prescriptionService.SelectedMedicine != null)
+            {
+                MessageBox.Show("U already selected a medicine");
+                return;
+            }
             int medicineIndex;
-            Medicine chosenMedicine;
             try
             {
                 medicineIndex = medicationDataGrid.SelectedIndex;
@@ -815,15 +825,7 @@ namespace HealthCareCenter
             bool isAlergic = CheckAlergies(chosenMedicine);
             if (isAlergic)
                 return;
-            foreach (Medicine medicine in prescriptionService.SelectedMedicine)
-            {
-               if(chosenMedicine.ID == medicine.ID)
-               {
-                    MessageBox.Show("This medicine is already added");
-                    return;
-               }
-            }
-            prescriptionService.SelectedMedicine.Add(chosenMedicine);
+            prescriptionService.SelectedMedicine = chosenMedicine;
             AddMedicineToTable(chosenMedicine);
         }
 
@@ -841,7 +843,7 @@ namespace HealthCareCenter
             }
             try
             {
-                prescriptionService.SelectedMedicine.RemoveAt(medicineIndex);
+                prescriptionService.SelectedMedicine = null;
                 DeleteMedicineFromTable(medicineIndex);
             }
             catch { }
@@ -857,37 +859,36 @@ namespace HealthCareCenter
                 MessageBox.Show("An error happend with time conversion");
         }
 
-        private void finishPrescriptionCreation_Click(object sender, RoutedEventArgs e)
+        private void addMedicineToPrescription_Click(object sender, RoutedEventArgs e)
         {
             string instructions = instructionsTextBox.Text.Trim();
-            if (instructions.Length! > 0)
+            if (instructions.Length == 0)
                 instructions = "";
             int consumptionPeriodIndex = consumptionPeriodComboBox.SelectedIndex;
             ConsumptionPeriod consumptionPeriod;
-            switch (consumptionPeriodIndex) {
+            switch (consumptionPeriodIndex)
+            {
                 case 0: consumptionPeriod = ConsumptionPeriod.AfterEating; break;
                 case 1: consumptionPeriod = ConsumptionPeriod.BeforeEating; break;
                 case 2: consumptionPeriod = ConsumptionPeriod.Any; break;
                 default: consumptionPeriod = ConsumptionPeriod.Any; break;
             }
-            int consumptionsPerDay = consumptionPerDayComboBox.SelectedIndex;
-            bool successful = prescriptionService.CreateMedicineInstruction(0,instructions,consumptionsPerDay,consumptionPeriod);
+            int consumptionsPerDay = consumptionPerDayComboBox.SelectedIndex + 1;
+            bool successful = prescriptionService.CreateMedicineInstruction(0, instructions, consumptionsPerDay, consumptionPeriod, chosenMedicine.ID);
             if (!successful)
                 return;
-            successful = prescriptionService.CreateAPrescription();
+            prescriptionService.ClearData(false);
+            selectedMedicineDataTable.Clear();
+        }
+        private void finishPrescriptionCreation_Click(object sender, RoutedEventArgs e)
+        {
+
+            bool successful = prescriptionService.CreateAPrescription();
             if (!successful)
                 return;
-            addMedicine.IsEnabled = false ;
-            deleteMedicine.IsEnabled = false;
-            finishPrescriptionCreation.IsEnabled = false;
-            instructionsTextBox.IsEnabled = false;
-            consumptionPerDayComboBox.IsEnabled = false;
-            consumptionPeriodComboBox.IsEnabled = false;
-            addMedicineConsumptionTime.IsEnabled = false;
-            hourOfMedicineTakingComboBox.IsEnabled = false;
-            minuteOfMedicineTakingComboBox.IsEnabled = false;
-            prescriptionService.ClearData();
+            enableMedicineGrid(false);
             selectedMedicineDataTable.Rows.Clear();
+            prescriptionService.ClearData(true);
             MessageBox.Show("Added prescription successfuly");
         }
         //---------------------------------------------------------------------------------------
@@ -1047,6 +1048,5 @@ namespace HealthCareCenter
             LoginWindow loginWindow = new LoginWindow();
             loginWindow.Show();
         }
-
     }
 }

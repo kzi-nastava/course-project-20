@@ -16,6 +16,7 @@ namespace HealthCareCenter.Model
             this.ConsumptionPeriod = _consumptionPeriod;
         }
         public int ID { get; set; }
+        public int MedicineID { get; set; }
         public string Comment { get; set; }
         public List<DateTime> ConsumptionTime { get; set; }
         public int DailyConsumption { get; set; }
