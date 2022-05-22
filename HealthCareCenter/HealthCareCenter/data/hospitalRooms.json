@@ -7,7 +7,13 @@
     "EquipmentAmounts": {
       "Table": 0,
       "Bad": 1,
-      "Chair": 1
+      "Chair": 1,
+      "Gauze": 8,
+      "Buckle": 10,
+      "Band aid": 8,
+      "Syringe": 0,
+      "Paper": 24,
+      "Pen": 22
     },
     "EquipmentRearrangementsIDs": []
   },
@@ -16,7 +22,14 @@
     "Name": "Room2",
     "AppointmentIDs": [],
     "ID": 2,
-    "EquipmentAmounts": {},
+    "EquipmentAmounts": {
+      "Syringe": 6,
+      "Paper": 10,
+      "Buckle": 5,
+      "Band aid": 7,
+      "Pen": 5,
+      "Gauze": 7
+    },
     "EquipmentRearrangementsIDs": []
   },
   {
@@ -55,7 +68,13 @@
     "ID": 3,
     "EquipmentAmounts": {
       "Bed": 1,
-      "Chair": 1
+      "Chair": 1,
+      "Syringe": 5,
+      "Buckle": 0,
+      "Gauze": 0,
+      "Paper": 0,
+      "Pen": 5,
+      "Band aid": 5
     },
     "EquipmentRearrangementsIDs": []
   }

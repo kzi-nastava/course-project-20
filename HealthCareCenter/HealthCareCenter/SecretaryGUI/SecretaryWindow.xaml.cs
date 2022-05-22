@@ -53,6 +53,12 @@ namespace HealthCareCenter.SecretaryGUI
             window.Show();
         }
 
+        private void EquipmentDistributionButton_Click(object sender, RoutedEventArgs e)
+        {
+            DistributeDynamicEquipmentWindow window = new DistributeDynamicEquipmentWindow();
+            window.ShowDialog();
+        }
+        
         private void EquipmentAcquisitionButton_Click(object sender, RoutedEventArgs e)
         {
             DynamicEquipmentRequestWindow window = new DynamicEquipmentRequestWindow(_signedUser);
