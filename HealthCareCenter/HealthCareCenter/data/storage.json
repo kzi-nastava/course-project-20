@@ -4,7 +4,11 @@
     "EquipmentAmounts": {
       "Chair": 1,
       "Bench": 1,
-      "Table": 1
+      "Table": 1,
+      "Gauze": 16,
+      "Band aid": 34,
+      "Paper": 14,
+      "Pen": 0
     },
     "EquipmentRearrangementsIDs": [
       0

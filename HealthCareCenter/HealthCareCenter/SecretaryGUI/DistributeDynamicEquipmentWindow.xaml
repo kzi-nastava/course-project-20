@@ -55,6 +55,6 @@
         <Label Grid.Row="5" Grid.Column="0" Content="Quantity:" Margin="10, 5, 10, 5" />
         <TextBox x:Name="quantityTextBox" Grid.Row="5" Grid.Column="1" Margin="10, 5, 10, 5" VerticalContentAlignment="Center"/>
         
-        <Button x:Name="transferButton" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Content="Transfer" Margin="10, 6.5, 10, 6.5"/>
+        <Button x:Name="transferButton" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Content="Transfer" Margin="10, 6.5, 10, 6.5" Click="TransferButton_Click"/>
     </Grid>
 </Window>

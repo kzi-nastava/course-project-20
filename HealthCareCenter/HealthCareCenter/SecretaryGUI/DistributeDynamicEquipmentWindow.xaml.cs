@@ -31,6 +31,8 @@ namespace HealthCareCenter.SecretaryGUI
 
         void Refresh()
         {
+            roomsToTransferFromComboBox.Items.Clear();
+            roomsWithShortageComboBox.Items.Clear();
             RefreshRoomsWithShortage();
             RefreshTransferFromRooms();
         }
@@ -145,6 +147,79 @@ namespace HealthCareCenter.SecretaryGUI
                 room = _storage;
             }
             return room;
+        }
+
+        private void TransferButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ValidData())
+                return;
+
+            if (!int.TryParse(quantityTextBox.Text, out int quantity) || quantity <= 0)
+            {
+                MessageBox.Show("Quantity must be a positive number.");
+                return;
+            }
+
+            string[] equipmentAndAmount = equipmentFromOtherRoomListBox.SelectedItem.ToString().Split(":");
+            string selectedEquipment = equipmentAndAmount[0];
+            int selectedEquipmentAmount = int.Parse(equipmentAndAmount[1]);
+
+            if (quantity > selectedEquipmentAmount)
+            {
+                MessageBox.Show("You cannot enter a quantity bigger than the amount of equipment available in the room.");
+                return;
+            }
+
+            Transfer(quantity, selectedEquipment);
+            Reset();
+            MessageBox.Show("Successfully transfered the equipment.");
+        }
+
+        private void Transfer(int quantity, string selectedEquipment)
+        {
+            Room roomWithEquipment = GetSelectedRoom(roomsToTransferFromComboBox);
+            Room roomWithShortage = GetSelectedRoom(roomsWithShortageComboBox);
+
+            roomWithEquipment.EquipmentAmounts[selectedEquipment] -= quantity;
+
+            if (roomWithShortage.EquipmentAmounts.ContainsKey(selectedEquipment))
+                roomWithShortage.EquipmentAmounts[selectedEquipment] += quantity;
+            else
+                roomWithShortage.EquipmentAmounts.Add(selectedEquipment, quantity);
+
+            StorageRepository.Save(_storage);
+            HospitalRoomRepository.Save();
+        }
+
+        private bool ValidData()
+        {
+            if (roomsToTransferFromComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("You must select a room to transfer equipment from.");
+                return false;
+            }
+            if (roomsWithShortageComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("You must select a room with an equipment shortage.");
+                return false;
+            }
+            if (roomsToTransferFromComboBox.Text == roomsWithShortageComboBox.Text)
+            {
+                MessageBox.Show("You must select different rooms.");
+                return false;
+            }
+            if (equipmentFromOtherRoomListBox.SelectedItem == null)
+            {
+                MessageBox.Show("You must select equipment to transfer.");
+                return false;
+            }
+            return true;
+        }
+
+        private void Reset()
+        {
+            quantityTextBox.Clear();
+            Refresh();
         }
     }
 
