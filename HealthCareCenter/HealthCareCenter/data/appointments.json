@@ -226,34 +226,6 @@
     }
   },
   {
-    "ID": 20,
-    "Type": 1,
-    "ScheduledDate": "21/05/2022 08:00",
-    "CreatedDate": "20/05/2022 17:59",
-    "Emergency": true,
-    "DoctorID": 1,
-    "HealthRecordID": 2,
-    "HospitalRoomID": 3,
-    "PatientAnamnesis": {
-      "ID": 0,
-      "Comment": null
-    }
-  },
-  {
-    "ID": 21,
-    "Type": 1,
-    "ScheduledDate": "20/05/2022 18:30",
-    "CreatedDate": "20/05/2022 18:00",
-    "Emergency": true,
-    "DoctorID": 1,
-    "HealthRecordID": 2,
-    "HospitalRoomID": 3,
-    "PatientAnamnesis": {
-      "ID": 0,
-      "Comment": null
-    }
-  },
-  {
     "ID": 22,
     "Type": 1,
     "ScheduledDate": "21/05/2022 14:00",
@@ -326,10 +298,32 @@
   {
     "ID": 27,
     "Type": 1,
-    "ScheduledDate": "22/05/2022 09:00",
-    "CreatedDate": "21/05/2022 09:28",
+    "ScheduledDate": "13/06/2022 09:30",
+    "CreatedDate": "22/05/2022 14:16",
     "Emergency": false,
     "DoctorID": 1,
+    "HealthRecordID": 2,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 28,
+    "Type": 1,
+    "ScheduledDate": "28/07/2022 10:15",
+    "CreatedDate": "22/05/2022 14:24",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 2,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 29,
+    "Type": 1,
+    "ScheduledDate": "13/06/2022 09:45",
+    "CreatedDate": "22/05/2022 14:25",
+    "Emergency": false,
+    "DoctorID": 5,
     "HealthRecordID": 2,
     "HospitalRoomID": 3,
     "PatientAnamnesis": null

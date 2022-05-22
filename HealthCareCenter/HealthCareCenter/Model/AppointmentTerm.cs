@@ -4,18 +4,18 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    class TimeSchedule
+    class AppointmentTerm
     {
         public int Hours { get; }
         public int Minutes { get; }
 
-        public TimeSchedule(int hours, int minutes)
+        public AppointmentTerm(int hours, int minutes)
         {
             Hours = hours;
             Minutes = minutes;
         }
 
-        public TimeSchedule(string time)
+        public AppointmentTerm(string time)
         {
             string[] hoursAndMinutes = time.Split(":");
 
@@ -30,7 +30,7 @@ namespace HealthCareCenter.Model
             return time;
         }
 
-        public static bool operator <(TimeSchedule ts1, TimeSchedule ts2)
+        public static bool operator <(AppointmentTerm ts1, AppointmentTerm ts2)
         {
             if (ts1.Hours < ts2.Hours)
             {
@@ -38,30 +38,13 @@ namespace HealthCareCenter.Model
             }
             else
             {
-                if (ts1.Hours == ts2.Hours && ts1.Minutes < ts2.Minutes)
-                {
-                    return true;
-                }
+                return ts1.Hours == ts2.Hours && ts1.Minutes < ts2.Minutes;
             }
-
-            return false;
         }
 
-        public static bool operator >(TimeSchedule ts1, TimeSchedule ts2)
+        public static bool operator >(AppointmentTerm ts1, AppointmentTerm ts2)
         {
-            if (ts1.Hours > ts2.Hours)
-            {
-                return true;
-            }
-            else
-            {
-                if (ts1.Hours == ts2.Hours && ts1.Minutes > ts2.Minutes)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return !(ts1 < ts2);
         }
 
         public override bool Equals(object obj)
@@ -70,12 +53,12 @@ namespace HealthCareCenter.Model
             {
                 return false;
             }
-            if (!(obj is TimeSchedule))
+            if (!(obj is AppointmentTerm))
             {
                 return false;
             }
-            return (Hours == ((TimeSchedule)obj).Hours)
-                && (Minutes == ((TimeSchedule)obj).Minutes);
+            return (Hours == ((AppointmentTerm)obj).Hours)
+                && (Minutes == ((AppointmentTerm)obj).Minutes);
         }
     }
 }

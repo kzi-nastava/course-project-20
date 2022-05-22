@@ -40,6 +40,9 @@ namespace HealthCareCenter
         private string endRangePriorityTime;
         private DataTable availablePriorityAppointmentsDataTable;
 
+        // search doctors items
+        List<Doctor> doctorsByKeyword;
+
         // trolling limits
         private const int creationTrollLimit = 8;
         private const int modificationTrollLimit = 5;
@@ -142,6 +145,11 @@ namespace HealthCareCenter
             searchDoctorsGrid.Visibility = Visibility.Collapsed;
             searchDoctorSortCriteriaComboBox.Items.Clear();
             searchDoctorKeyWordSearchComboBox.Items.Clear();
+            doctorsByKeyword = null;
+            if (allDoctorsDataTable != null)
+            {
+                allDoctorsDataTable.Clear();
+            }
         }
 
         private void ClearMyNotificationGrid()
@@ -202,43 +210,42 @@ namespace HealthCareCenter
             allAvailableTimeTable.Columns.Add(new DataColumn("Day", typeof(int)));
             allAvailableTimeTable.Columns.Add(new DataColumn("Month", typeof(int)));
             allAvailableTimeTable.Columns.Add(new DataColumn("Year", typeof(int)));
-            allAvailableTimeTable.Columns.Add(new DataColumn("Hour", typeof(int)));
-            allAvailableTimeTable.Columns.Add(new DataColumn("Minutes", typeof(int)));
+            allAvailableTimeTable.Columns.Add(new DataColumn("Schedule", typeof(string)));
         }
 
         private void FillAvailableTimeTable()
         {
-            List<TimeSchedule> allPossibleSchedules = TimeScheduleService.GetDailySchedulesFromRange(Constants.StartWorkTime, 0, Constants.EndWorkTime, 0);
+            List<AppointmentTerm> allPossibleTerms = AppointmentTermService.GetDailyTermsFromRange(Constants.StartWorkTime, 0, Constants.EndWorkTime, 0);
             foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
                 int chosenDoctorID = Convert.ToInt32(chosenDoctor[0]);
-                if (appointment.DoctorID == chosenDoctorID)
+                if (appointment.DoctorID == chosenDoctorID &&
+                    appointment.ScheduledDate.Date.CompareTo(chosenScheduleDate.Date) == 0)
                 {
-                    if (appointment.ScheduledDate.Date.CompareTo(chosenScheduleDate.Date) == 0)
-                    {
-                        TimeSchedule unavailableSchedule = new TimeSchedule(appointment.ScheduledDate.Hour, appointment.ScheduledDate.Minute);
-                        allPossibleSchedules.Remove(unavailableSchedule);
-                    }
+                    AppointmentTerm unavailableSchedule = new AppointmentTerm(appointment.ScheduledDate.Hour, appointment.ScheduledDate.Minute);
+                    allPossibleTerms.Remove(unavailableSchedule);
                 }
             }
 
             DataRow row;
-            foreach (TimeSchedule availableTime in allPossibleSchedules)
+            foreach (AppointmentTerm availableTerm in allPossibleTerms)
             {
                 row = allAvailableTimeTable.NewRow();
                 row[0] = chosenScheduleDate.Day;
                 row[1] = chosenScheduleDate.Month;
                 row[2] = chosenScheduleDate.Year;
-                row[3] = Convert.ToInt32(availableTime.Hours);
-                row[4] = Convert.ToInt32(availableTime.Minutes);
+                row[3] = availableTerm.ToString();
                 allAvailableTimeTable.Rows.Add(row);
             }
             allAvailableTimeCUDDataGrid.ItemsSource = allAvailableTimeTable.DefaultView;
         }
 
-        private void chooseDoctorCUDButton_Click(object sender, RoutedEventArgs e)
+        private void showAvailableSchedulesCUDButton_Click(object sender, RoutedEventArgs e)
         {
-            chosenDoctor = allDoctorsCUDDataGrid.SelectedItem as DataRowView;
+            // checks if the doctor was chosen using the search doctor grid, if it was then chosenDoctor remains the same
+            // and if it wasn't, chosenDoctor is selected from allDoctorsCUDDataGrid
+            chosenDoctor = chosenDoctor == null ? allDoctorsCUDDataGrid.SelectedItem as DataRowView : chosenDoctor;
+
             if (chosenDoctor == null)
             {
                 MessageBox.Show("No doctor selected");
@@ -285,7 +292,7 @@ namespace HealthCareCenter
                 confirmationMessage = "Schedule appointment";
             }
 
-            string newAppointmentDateParsed = chosenScheduleTime[0].ToString() + "/" + chosenScheduleTime[1].ToString() + "/" + chosenScheduleTime[2].ToString() + " " + chosenScheduleTime[3].ToString() + ":" + chosenScheduleTime[4].ToString();
+            string newAppointmentDateParsed = chosenScheduleTime[0].ToString() + "/" + chosenScheduleTime[1].ToString() + "/" + chosenScheduleTime[2].ToString() + " " + chosenScheduleTime[3].ToString();
             AppointmentChangeRequest newChangeRequest = new AppointmentChangeRequest
             {
                 ID = ++AppointmentChangeRequestRepository.LargestID,
@@ -382,7 +389,7 @@ namespace HealthCareCenter
             myAppointmentsGrid.Visibility = Visibility.Collapsed;
             createAppointmentGrid.Visibility = Visibility.Visible;
             CreateDoctorTable();
-            FillDoctorTable(allDoctorsCUDDataGrid);
+            FillDoctorTable(allDoctorsCUDDataGrid, UserRepository.Doctors);
             FillDateComboBoxes(dayChoiceCUDComboBox, monthChoiceCUDComboBox, yearChoiceCUDComboBox);
             chosenAppointment = null;
         }
@@ -402,7 +409,7 @@ namespace HealthCareCenter
             myAppointmentsGrid.Visibility = Visibility.Collapsed;
             createAppointmentGrid.Visibility = Visibility.Visible;
             CreateDoctorTable();
-            FillDoctorTable(allDoctorsCUDDataGrid);
+            FillDoctorTable(allDoctorsCUDDataGrid, UserRepository.Doctors);
             FillDateComboBoxes(dayChoiceCUDComboBox, monthChoiceCUDComboBox, yearChoiceCUDComboBox);
         }
 
@@ -433,7 +440,7 @@ namespace HealthCareCenter
             FillDateComboBoxes(dayChoicePriorityComboBox, monthChoicePriorityComboBox, yearChoicePriorityComboBox);
             FillAppointmentRangeComboBoxes();
             CreateDoctorTable();
-            FillDoctorTable(allDoctorsPriorityDataGrid);
+            FillDoctorTable(allDoctorsPriorityDataGrid, UserRepository.Doctors);
         }
         //=======================================================================================
 
@@ -515,7 +522,7 @@ namespace HealthCareCenter
         //=======================================================================================
         private void FillAppointmentRangeComboBoxes()
         {
-            foreach (TimeSchedule scheduleTime in TimeScheduleService.GetDailySchedulesFromRange(Constants.StartWorkTime, 0, Constants.EndWorkTime, 0))
+            foreach (AppointmentTerm scheduleTime in AppointmentTermService.GetDailyTermsFromRange(Constants.StartWorkTime, 0, Constants.EndWorkTime, 0))
             {
                 startTimeRangePriorityComboBox.Items.Add(scheduleTime.ToString());
                 endTimeRangePriorityComboBox.Items.Add(scheduleTime.ToString());
@@ -560,8 +567,8 @@ namespace HealthCareCenter
 
         private bool IsTimeRangeValid()
         {
-            TimeSchedule startRange = new TimeSchedule(startRangePriorityTime);
-            TimeSchedule endRange = new TimeSchedule(endRangePriorityTime);
+            AppointmentTerm startRange = new AppointmentTerm(startRangePriorityTime);
+            AppointmentTerm endRange = new AppointmentTerm(endRangePriorityTime);
             return startRange < endRange;
         }
 
@@ -626,7 +633,7 @@ namespace HealthCareCenter
             return newAppointmentRequest;
         }
 
-        private AppointmentChangeRequest PrioritySearch(int doctorID, List<TimeSchedule> possibleSchedules)
+        private AppointmentChangeRequest PrioritySearch(int doctorID, List<AppointmentTerm> possibleSchedules)
         {
             AppointmentChangeRequest newAppointmentRequest = null;
             DateTime date = DateTime.Now;
@@ -634,14 +641,14 @@ namespace HealthCareCenter
             bool appointmentFound = false;
             while (date.Date.CompareTo(chosenScheduleDate.Date) <= 0 && !appointmentFound)
             {
-                foreach (TimeSchedule timeSchedule in possibleSchedules)
+                foreach (AppointmentTerm term in possibleSchedules)
                 {
                     bool isAvailable = true;
                     foreach (Appointment appointment in AppointmentRepository.Appointments)
                     {
                         if (doctorID == appointment.DoctorID &&
-                            timeSchedule.Hours == appointment.ScheduledDate.Hour &&
-                            timeSchedule.Minutes == appointment.ScheduledDate.Minute &&
+                            term.Hours == appointment.ScheduledDate.Hour &&
+                            term.Minutes == appointment.ScheduledDate.Minute &&
                             appointment.ScheduledDate.Date.CompareTo(date.Date) == 0)
                         {
                             isAvailable = false;
@@ -651,7 +658,7 @@ namespace HealthCareCenter
 
                     if (isAvailable)
                     {
-                        string scheduleDateParse = date.ToString().Split(" ")[0] + " " + timeSchedule.ToString();
+                        string scheduleDateParse = date.ToString().Split(" ")[0] + " " + term.ToString();
                         DateTime scheduleDate = Convert.ToDateTime(scheduleDateParse);
 
                         int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(scheduleDate, Enums.RoomType.Checkup);
@@ -686,9 +693,9 @@ namespace HealthCareCenter
         {
             // searches for an appointment based on both priorities
 
-            TimeSchedule startRange = new TimeSchedule(startRangePriorityTime);
-            TimeSchedule endRange = new TimeSchedule(endRangePriorityTime);
-            List<TimeSchedule> possibleSchedules = TimeScheduleService.GetDailySchedulesFromRange(startRange, endRange);
+            AppointmentTerm startRange = new AppointmentTerm(startRangePriorityTime);
+            AppointmentTerm endRange = new AppointmentTerm(endRangePriorityTime);
+            List<AppointmentTerm> possibleSchedules = AppointmentTermService.GetDailyTermsFromRange(startRange, endRange);
 
             return PrioritySearch(Convert.ToInt32(chosenDoctor[0]), possibleSchedules);
 
@@ -699,9 +706,9 @@ namespace HealthCareCenter
             // searches for an available appointment in the selected time span
             // for any doctor except the doctor that the patient chose
 
-            TimeSchedule startRange = new TimeSchedule(startRangePriorityTime);
-            TimeSchedule endRange = new TimeSchedule(endRangePriorityTime);
-            List<TimeSchedule> possibleSchedules = TimeScheduleService.GetDailySchedulesFromRange(startRange, endRange);
+            AppointmentTerm startRange = new AppointmentTerm(startRangePriorityTime);
+            AppointmentTerm endRange = new AppointmentTerm(endRangePriorityTime);
+            List<AppointmentTerm> possibleTerms = AppointmentTermService.GetDailyTermsFromRange(startRange, endRange);
             foreach (Doctor doctor in UserRepository.Doctors)
             {
                 if (doctor.ID == Convert.ToInt32(chosenDoctor[0]))
@@ -709,7 +716,7 @@ namespace HealthCareCenter
                     continue;
                 }
 
-                AppointmentChangeRequest newAppoinmentRequest = PrioritySearch(doctor.ID, possibleSchedules);
+                AppointmentChangeRequest newAppoinmentRequest = PrioritySearch(doctor.ID, possibleTerms);
                 if (newAppoinmentRequest != null)
                 {
                     return newAppoinmentRequest;
@@ -723,21 +730,21 @@ namespace HealthCareCenter
         {
             // searches the chosen doctor with every time range except the one given
 
-            TimeSchedule startRange = new TimeSchedule(startRangePriorityTime);
-            TimeSchedule endRange = new TimeSchedule(endRangePriorityTime);
-            List<TimeSchedule> possibleSchedules = TimeScheduleService.GetDailySchedulesOppositeOfRange(startRange, endRange);
+            AppointmentTerm startRange = new AppointmentTerm(startRangePriorityTime);
+            AppointmentTerm endRange = new AppointmentTerm(endRangePriorityTime);
+            List<AppointmentTerm> possibleTerms = AppointmentTermService.GetDailyTermsOppositeOfRange(startRange, endRange);
 
-            return PrioritySearch(Convert.ToInt32(chosenDoctor[0]), possibleSchedules);
+            return PrioritySearch(Convert.ToInt32(chosenDoctor[0]), possibleTerms);
         }
 
         private List<AppointmentChangeRequest> GetAppointmentsSimilarToPriorites()
         {
             List<AppointmentChangeRequest> similarAppointments = new List<AppointmentChangeRequest>();
 
-            TimeSchedule startRange = new TimeSchedule(startRangePriorityTime);
-            TimeSchedule endRange = new TimeSchedule(endRangePriorityTime);
-            List<TimeSchedule> possibleSchedules = TimeScheduleService.GetDailySchedulesFromRange(startRange, endRange);
-            List<TimeSchedule> oppositePossibleSchedules = TimeScheduleService.GetDailySchedulesOppositeOfRange(startRange, endRange);
+            AppointmentTerm startRange = new AppointmentTerm(startRangePriorityTime);
+            AppointmentTerm endRange = new AppointmentTerm(endRangePriorityTime);
+            List<AppointmentTerm> possibleSchedules = AppointmentTermService.GetDailyTermsFromRange(startRange, endRange);
+            List<AppointmentTerm> oppositePossibleSchedules = AppointmentTermService.GetDailyTermsOppositeOfRange(startRange, endRange);
 
             if (Convert.ToBoolean(doctorPriorityRadioButton.IsChecked))
             {
@@ -764,21 +771,21 @@ namespace HealthCareCenter
             return similarAppointments;
         }
 
-        private List<AppointmentChangeRequest> AppointmentsSimilarToPrioritySearch(int doctorID, List<TimeSchedule> possibleSchedules)
+        private List<AppointmentChangeRequest> AppointmentsSimilarToPrioritySearch(int doctorID, List<AppointmentTerm> possibleSchedules)
         {
             List<AppointmentChangeRequest> similarAppointments = new List<AppointmentChangeRequest>();
             DateTime date = DateTime.Now;
             date = date.AddDays(1);
             while (date.Date.CompareTo(chosenScheduleDate.Date) <= 0 && similarAppointments.Count < 3)
             {
-                foreach (TimeSchedule timeSchedule in possibleSchedules)
+                foreach (AppointmentTerm term in possibleSchedules)
                 {
                     bool isAvailable = true;
                     foreach (Appointment appointment in AppointmentRepository.Appointments)
                     {
                         if (doctorID == appointment.DoctorID &&
-                            timeSchedule.Hours == appointment.ScheduledDate.Hour &&
-                            timeSchedule.Minutes == appointment.ScheduledDate.Minute &&
+                            term.Hours == appointment.ScheduledDate.Hour &&
+                            term.Minutes == appointment.ScheduledDate.Minute &&
                             appointment.ScheduledDate.Date.CompareTo(date.Date) == 0)
                         {
                             isAvailable = false;
@@ -788,7 +795,7 @@ namespace HealthCareCenter
 
                     if (isAvailable)
                     {
-                        string scheduleDateParse = date.ToString().Split(" ")[0] + " " + timeSchedule.ToString();
+                        string scheduleDateParse = date.ToString().Split(" ")[0] + " " + term.ToString();
                         DateTime scheduleDate = Convert.ToDateTime(scheduleDateParse);
 
                         int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(scheduleDate, Enums.RoomType.Checkup);
@@ -964,13 +971,13 @@ namespace HealthCareCenter
             switch (sortCriteriaChosen.ToString())
             {
                 case "Date":
-                    FillHealthRecordAppointmentTableSortedDate();
+                    SortAndFillHealthRecordAppointmentTableByDate();
                     break;
                 case "Doctor":
-                    FillHealthRecordAppointmentTableSortedDoctor();
+                    SortAndFillHealthRecordAppointmentTableByDoctor();
                     break;
                 case "Professional area":
-                    FillHealthRecordAppointmentTableSortedProfessionalArea();
+                    SortAndFillHealthRecordAppointmentTableByProfessionalArea();
                     break;
             }
         }
@@ -1018,29 +1025,29 @@ namespace HealthCareCenter
             healthRecordAppointmentsDataGrid.ItemsSource = appointmentsDataTable.DefaultView;
         }
 
-        private void FillHealthRecordAppointmentTableSortedDate()
+        private void SortAndFillHealthRecordAppointmentTableByDate()
         {
             List<Appointment> finishedAppointments = AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
-            AppointmentDateCompare appointmentComparation = new AppointmentDateCompare();
-            finishedAppointments.Sort(appointmentComparation);
+            AppointmentDateCompare appointmentComparison = new AppointmentDateCompare();
+            finishedAppointments.Sort(appointmentComparison);
 
             FillHealthRecordAppointmentTable(finishedAppointments);
         }
 
-        private void FillHealthRecordAppointmentTableSortedDoctor()
+        private void SortAndFillHealthRecordAppointmentTableByDoctor()
         {
             List<Appointment> finishedAppointments = AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
-            AppointmentDoctorCompare appointmentComparation = new AppointmentDoctorCompare();
-            finishedAppointments.Sort(appointmentComparation);
+            AppointmentDoctorCompare appointmentComparison = new AppointmentDoctorCompare();
+            finishedAppointments.Sort(appointmentComparison);
 
             FillHealthRecordAppointmentTable(finishedAppointments);
         }
 
-        private void FillHealthRecordAppointmentTableSortedProfessionalArea()
+        private void SortAndFillHealthRecordAppointmentTableByProfessionalArea()
         {
             List<Appointment> finishedAppointments = AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
-            AppointmentProfessionalAreaCompare appointmentComparation = new AppointmentProfessionalAreaCompare();
-            finishedAppointments.Sort(appointmentComparation);
+            AppointmentProfessionalAreaCompare appointmentComparison = new AppointmentProfessionalAreaCompare();
+            finishedAppointments.Sort(appointmentComparison);
 
             FillHealthRecordAppointmentTable(finishedAppointments);
         }
@@ -1052,7 +1059,6 @@ namespace HealthCareCenter
             healthRecordAppointmentsSortCriteriaComboBox.Items.Add("Professional area");
         }
         //=======================================================================================
-
 
         // doctor search methods
         //=======================================================================================
@@ -1069,6 +1075,183 @@ namespace HealthCareCenter
             searchDoctorSortCriteriaComboBox.Items.Add("Rating");
         }
 
+        private void SearchDoctorByKeyword(string searchKeyword, string searchCriteria)
+        {
+            switch (searchCriteria.ToString())
+            {
+                case "First name":
+                    doctorsByKeyword = SearchDoctorByFirstName(searchKeyword);
+                    break;
+                case "Last name":
+                    doctorsByKeyword = SearchDoctorByLastName(searchKeyword);
+                    break;
+                case "Professional area":
+                    doctorsByKeyword = SearchDoctorByProfessionalArea(searchKeyword);
+                    break;
+                default:
+                    doctorsByKeyword = new List<Doctor>();
+                    break;
+            }
+
+            if (doctorsByKeyword.Count == 0)
+            {
+                MessageBox.Show("Nothing found based on the keyword");
+                return;
+            }
+
+            CreateDoctorTable();
+            FillDoctorTable(searchDoctorsDataGrid, doctorsByKeyword);
+        }
+
+        private List<Doctor> SearchDoctorByFirstName(string firstName)
+        {
+            List<Doctor> doctorsByKeyword = new List<Doctor>();
+            foreach (Doctor doctor in UserRepository.Doctors)
+            {
+                if (doctor.FirstName.ToLower().Contains(firstName))
+                {
+                    doctorsByKeyword.Add(doctor);
+                }
+            }
+
+            return doctorsByKeyword;
+        }
+
+        private List<Doctor> SearchDoctorByLastName(string lastName)
+        {
+            List<Doctor> doctorsByKeyword = new List<Doctor>();
+            foreach (Doctor doctor in UserRepository.Doctors)
+            {
+                if (doctor.LastName.ToLower().Contains(lastName))
+                {
+                    doctorsByKeyword.Add(doctor);
+                }
+            }
+
+            return doctorsByKeyword;
+        }
+
+        private List<Doctor> SearchDoctorByProfessionalArea(string professionalArea)
+        {
+            List<Doctor> doctorsByKeyword = new List<Doctor>();
+            foreach (Doctor doctor in UserRepository.Doctors)
+            {
+                if (doctor.Type.ToLower().Contains(professionalArea))
+                {
+                    doctorsByKeyword.Add(doctor);
+                }
+            }
+
+            return doctorsByKeyword;
+        }
+
+        private void SortSearchDoctors(string sortCriteria)
+        {
+            if (sortCriteria == "Search parameter")
+            {
+                var searchCriteria = searchDoctorKeyWordSearchComboBox.SelectedItem;
+                if (searchCriteria == null)
+                {
+                    MessageBox.Show("No search criteria selected");
+                    return;
+                }
+
+                allDoctorsDataTable.Clear();
+                switch (searchCriteria.ToString())
+                {
+                    case "First name":
+                        SortAndFillSearchDoctorsByFirstName();
+                        break;
+                    case "Last name":
+                        SortAndFillSearchDoctorsByLastName();
+                        break;
+                    case "Professional area":
+                        SortAndFillSearchDoctorsByProfessionalArea();
+                        break;
+                }
+            }
+            else
+            {
+                // decide how to store doctor ratings and then implement rating sort
+            }
+        }
+
+        private void SortAndFillSearchDoctorsByFirstName()
+        {
+            DoctorFirstNameCompare doctorComparison = new DoctorFirstNameCompare();
+            doctorsByKeyword.Sort(doctorComparison);
+
+            FillDoctorTable(searchDoctorsDataGrid, doctorsByKeyword);
+        }
+
+        private void SortAndFillSearchDoctorsByLastName()
+        {
+
+            DoctorLastNameCompare doctorComparison = new DoctorLastNameCompare();
+            doctorsByKeyword.Sort(doctorComparison);
+
+            FillDoctorTable(searchDoctorsDataGrid, doctorsByKeyword);
+        }
+
+        private void SortAndFillSearchDoctorsByProfessionalArea()
+        {
+
+            DoctorProfessionalAreaCompare doctorComparison = new DoctorProfessionalAreaCompare();
+            doctorsByKeyword.Sort(doctorComparison);
+
+            FillDoctorTable(searchDoctorsDataGrid, doctorsByKeyword);
+        }
+
+        private void searchDoctorSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            var searchCriteria = searchDoctorKeyWordSearchComboBox.SelectedItem;
+            if (searchCriteria == null)
+            {
+                MessageBox.Show("No search criteria selected");
+                return;
+            }
+
+            string searchKeyword = searchDoctorKeyWordSearchTextBox.Text.Trim().ToLower();
+            if (searchKeyword == "")
+            {
+                MessageBox.Show("Searchbox empty");
+                return;
+            }
+
+            SearchDoctorByKeyword(searchKeyword, searchCriteria.ToString());
+        }
+
+        private void searchDoctorSortButton_Click(object sender, RoutedEventArgs e)
+        {
+            var sortCriteria = searchDoctorSortCriteriaComboBox.SelectedItem;
+            if (sortCriteria == null)
+            {
+                MessageBox.Show("No sort criteria selected");
+                return;
+            }
+
+            if (doctorsByKeyword == null)
+            {
+                MessageBox.Show("No doctors searched for yet");
+                return;
+            }
+
+            SortSearchDoctors(sortCriteria.ToString());
+        }
+
+        private void searchDoctorSelectDoctorButton_Click(object sender, RoutedEventArgs e)
+        {
+            chosenDoctor = searchDoctorsDataGrid.SelectedItem as DataRowView;
+            if (chosenDoctor == null)
+            {
+                MessageBox.Show("No doctor selected");
+                return;
+            }
+
+            searchDoctorsGrid.Visibility = Visibility.Collapsed;
+            createAppointmentGrid.Visibility = Visibility.Visible;
+            FillDateComboBoxes(dayChoiceCUDComboBox, monthChoiceCUDComboBox, yearChoiceCUDComboBox);
+        }
         //=======================================================================================
 
         // helper methods
@@ -1222,10 +1405,10 @@ namespace HealthCareCenter
             allDoctorsDataTable.Columns.Add(new DataColumn("Type", typeof(string)));
         }
 
-        private void FillDoctorTable(DataGrid doctorGrid)
+        private void FillDoctorTable(DataGrid doctorGrid, List<Doctor> doctors)
         {
             DataRow row;
-            foreach (Doctor doctor in UserRepository.Doctors)
+            foreach (Doctor doctor in doctors)
             {
                 row = allDoctorsDataTable.NewRow();
                 row[0] = doctor.ID;
