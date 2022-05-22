@@ -207,12 +207,9 @@ namespace HealthCareCenter.Service
                 hospitalRoomID = hospitalRoom.ID;
                 foreach (Appointment appointment in AppointmentRepository.Appointments)
                 {
-                    if (hospitalRoom.AppointmentIDs.Contains(appointment.ID))
+                    if (hospitalRoom.AppointmentIDs.Contains(appointment.ID) && appointment.ScheduledDate.CompareTo(scheduledDate) == 0)
                     {
-                        if (appointment.ScheduledDate.CompareTo(scheduledDate) == 0)
-                        {
-                            hospitalRoomID = -1;
-                        }
+                        hospitalRoomID = -1;
                     }
                 }
                 if (hospitalRoomID != -1)
