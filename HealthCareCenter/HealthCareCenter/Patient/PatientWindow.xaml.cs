@@ -43,6 +43,9 @@ namespace HealthCareCenter
         // search doctors items
         List<Doctor> doctorsByKeyword;
 
+        // health record items
+        List<Appointment> appointmentsByKeyword;
+
         // trolling limits
         private const int creationTrollLimit = 8;
         private const int modificationTrollLimit = 5;
@@ -161,6 +164,7 @@ namespace HealthCareCenter
         {
             myHealthRecordGrid.Visibility = Visibility.Collapsed;
             healthRecordAppointmentsSortCriteriaComboBox.Items.Clear();
+            appointmentsByKeyword = null;
         }
 
         private void ClearSurveyGrids()
@@ -1001,16 +1005,16 @@ namespace HealthCareCenter
 
             FillHealthRecordAppointmentsSortCriteriaComboBoxes();
 
+            appointmentsByKeyword = AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
             CreateAppointmentTable();
-            FillHealthRecordAppointmentTable(AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID));
-
+            FillHealthRecordAppointmentTable();
         }
 
-        private void FillHealthRecordAppointmentTable(List<Appointment> finishedAppointments)
+        private void FillHealthRecordAppointmentTable()
         {
             appointmentsDataTable.Clear();
             DataRow row;
-            foreach (Appointment appointment in finishedAppointments)
+            foreach (Appointment appointment in appointmentsByKeyword)
             {
                 row = appointmentsDataTable.NewRow();
                 row[0] = appointment.ID;
@@ -1027,29 +1031,26 @@ namespace HealthCareCenter
 
         private void SortAndFillHealthRecordAppointmentTableByDate()
         {
-            List<Appointment> finishedAppointments = AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
             AppointmentDateCompare appointmentComparison = new AppointmentDateCompare();
-            finishedAppointments.Sort(appointmentComparison);
+            appointmentsByKeyword.Sort(appointmentComparison);
 
-            FillHealthRecordAppointmentTable(finishedAppointments);
+            FillHealthRecordAppointmentTable();
         }
 
         private void SortAndFillHealthRecordAppointmentTableByDoctor()
         {
-            List<Appointment> finishedAppointments = AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
             AppointmentDoctorCompare appointmentComparison = new AppointmentDoctorCompare();
-            finishedAppointments.Sort(appointmentComparison);
+            appointmentsByKeyword.Sort(appointmentComparison);
 
-            FillHealthRecordAppointmentTable(finishedAppointments);
+            FillHealthRecordAppointmentTable();
         }
 
         private void SortAndFillHealthRecordAppointmentTableByProfessionalArea()
         {
-            List<Appointment> finishedAppointments = AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
             AppointmentProfessionalAreaCompare appointmentComparison = new AppointmentProfessionalAreaCompare();
-            finishedAppointments.Sort(appointmentComparison);
+            appointmentsByKeyword.Sort(appointmentComparison);
 
-            FillHealthRecordAppointmentTable(finishedAppointments);
+            FillHealthRecordAppointmentTable();
         }
 
         private void FillHealthRecordAppointmentsSortCriteriaComboBoxes()
@@ -1057,6 +1058,35 @@ namespace HealthCareCenter
             healthRecordAppointmentsSortCriteriaComboBox.Items.Add("Date");
             healthRecordAppointmentsSortCriteriaComboBox.Items.Add("Doctor");
             healthRecordAppointmentsSortCriteriaComboBox.Items.Add("Professional area");
+        }
+
+        private void SearchAnamnesisByKeyword(string searchKeyword)
+        {
+            List<Appointment> finishedAppointments = AppointmentRepository.GetPatientFinishedAppointments(signedPatient.HealthRecordID);
+            if (searchKeyword == "")
+            {
+                appointmentsByKeyword = finishedAppointments;
+                FillHealthRecordAppointmentTable();
+                return;
+            }
+
+            appointmentsByKeyword = new List<Appointment>();
+            foreach (Appointment appointment in finishedAppointments)
+            {
+                if (appointment.PatientAnamnesis != null &&
+                    appointment.PatientAnamnesis.Comment.ToLower().Contains(searchKeyword))
+                {
+                    appointmentsByKeyword.Add(appointment);
+                }
+            }
+
+            FillHealthRecordAppointmentTable();
+        }
+
+        private void searchAnamnesisByKeywordButton_Click(object sender, RoutedEventArgs e)
+        {
+            string searchKeyword = searchAnamnesisByKeywordTextBox.Text.Trim().ToLower();
+            SearchAnamnesisByKeyword(searchKeyword);
         }
         //=======================================================================================
 
