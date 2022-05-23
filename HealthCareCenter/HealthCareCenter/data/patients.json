@@ -4,25 +4,25 @@
     "BlockedBy": 0,
     "PrescriptionIDs": [],
     "HealthRecordID": 1,
+    "NotificationReceiveTime": 4,
     "ID": 2,
     "Username": "eva",
     "Password": "eva",
     "FirstName": "Eva",
     "LastName": "Evic",
-    "DateOfBirth": "13/07/1940",
-    "NotificationRecieveTime": 2
+    "DateOfBirth": "13/07/1940"
   },
   {
     "IsBlocked": false,
     "BlockedBy": 0,
     "PrescriptionIDs": [],
     "HealthRecordID": 2,
+    "NotificationReceiveTime": 0,
     "ID": 4,
     "Username": "iva",
     "Password": "iva",
     "FirstName": "iva",
     "LastName": "drugopreyime",
-    "DateOfBirth": "09/01/2013",
-    "NotificationRecieveTime": 2
+    "DateOfBirth": "09/01/2013"
   }
 ]

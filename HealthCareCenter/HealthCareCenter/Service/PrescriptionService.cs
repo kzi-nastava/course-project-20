@@ -114,5 +114,24 @@ namespace HealthCareCenter.Service
                 return false;
             }
         }
+
+        public static List<Prescription> GetPatientPrescriptions(int healthRecordID)
+        {
+            if (PrescriptionRepository.Prescriptions == null)
+            {
+                return new List<Prescription>();
+            }
+
+            List<Prescription> patientPrescriptions = new List<Prescription>();
+            foreach (Prescription prescription in patientPrescriptions)
+            {
+                if (prescription.HealthRecordID == healthRecordID)
+                {
+                    patientPrescriptions.Add(prescription);
+                }
+            }
+
+            return patientPrescriptions;
+        }
     }
 }

@@ -16,6 +16,6 @@ namespace HealthCareCenter.Model
         public int ID { get; set; }
         public int DoctorID { get; set; }
         public Dictionary<int, int> MedicineInstructions { get; set; }
-
+        public int HealthRecordID { get; set; }
     }
 }

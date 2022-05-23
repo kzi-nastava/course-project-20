@@ -46,9 +46,14 @@ namespace HealthCareCenter
         // health record items
         List<Appointment> appointmentsByKeyword;
 
+        // my prescriptions items
+        private DataTable myPrescriptionMedicineDataTable;
+        private List<Prescription> patientPrescriptions;
+        private DataRowView chosenMedicine;
+
         // trolling limits
-        private const int creationTrollLimit = 8;
-        private const int modificationTrollLimit = 5;
+        private const int creationTrollLimit = 100;
+        private const int modificationTrollLimit = 100;
 
         public PatientWindow(User user)
         {
@@ -62,6 +67,8 @@ namespace HealthCareCenter
             AppointmentRepository.Load();
             AppointmentChangeRequestRepository.Load();
             PrescriptionRepository.Load();
+            MedicineInstructionRepository.Load();
+            MedicineRepository.Load();
             //============================================
 
             unfinishedAppointments = AppointmentService.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
@@ -77,20 +84,6 @@ namespace HealthCareCenter
             DisplayNotifications();
         }
 
-        private void DisplayNotifications()
-        {
-            List<Notification> notifications = NotificationService.FindUnopened(signedPatient);
-            if (notifications.Count == 0)
-            {
-                return;
-            }
-            MessageBox.Show("You have new notifications.");
-            foreach (Notification notification in notifications)
-            {
-                MessageBox.Show(notification.Message);
-            }
-        }
-
         // clear window methods
         //==============================================================================
         private void ClearWindow()
@@ -99,9 +92,10 @@ namespace HealthCareCenter
             ClearCreateAppointmentGrid();
             ClearPrioritySchedulingGrid();
             ClearSearchDoctorGrid();
-            ClearMyNotificationGrid();
+            ClearMyPrescriptionsGrid();
             ClearMyHealthRecordGrid();
             ClearSurveyGrids();
+            SendNotificationForMedicine();
         }
 
         private void ClearMyAppointmentGrid()
@@ -158,9 +152,11 @@ namespace HealthCareCenter
 
         }
 
-        private void ClearMyNotificationGrid()
+        private void ClearMyPrescriptionsGrid()
         {
             myPrescriptionsGrid.Visibility = Visibility.Collapsed;
+            patientPrescriptions = null;
+            chosenMedicine = null;
         }
 
         private void ClearMyHealthRecordGrid()
@@ -359,8 +355,12 @@ namespace HealthCareCenter
         private void myPrescriptionsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             ClearWindow();
+            patientPrescriptions = PrescriptionService.GetPatientPrescriptions(patientHealthRecord.ID);
             myPrescriptionsGrid.Visibility = Visibility.Visible;
-            currentActionTextBlock.Text = "My notifications";
+            currentActionTextBlock.Text = "My prescriptions";
+            notificationReceiveTimeTextBlock.Text = $"Notification recieve time: {signedPatient.NotificationReceiveTime}h";
+            CreateMyPrescriptionsDataTable();
+            FillMyPrescriptionsDataTable();
         }
 
         private void myHealthRecordMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1298,7 +1298,181 @@ namespace HealthCareCenter
 
         // my prescription methods
         //=======================================================================================
-        
+        private void CreateMyPrescriptionsDataTable()
+        {
+            myPrescriptionMedicineDataTable = new DataTable("Prescription medicine");
+            myPrescriptionMedicineDataTable.Columns.Add(new DataColumn("Prescription ID", typeof(int)));
+            myPrescriptionMedicineDataTable.Columns.Add(new DataColumn("Doctor ID", typeof(int)));
+            myPrescriptionMedicineDataTable.Columns.Add(new DataColumn("Doctor name", typeof(string)));
+            myPrescriptionMedicineDataTable.Columns.Add(new DataColumn("Instruction ID", typeof(int)));
+            myPrescriptionMedicineDataTable.Columns.Add(new DataColumn("Medicine ID", typeof(int)));
+            myPrescriptionMedicineDataTable.Columns.Add(new DataColumn("Medicine name", typeof(string)));
+        }
+
+        private void FillMyPrescriptionsDataTable()
+        {
+            DataRow row;
+            foreach (Prescription prescription in patientPrescriptions)
+            {
+                foreach (KeyValuePair<int, int> kvp in prescription.MedicineInstructions)
+                {
+                    row = allDoctorsDataTable.NewRow();
+                    row[0] = prescription.ID;
+                    row[1] = prescription.DoctorID;
+                    row[2] = UserService.GetUserFullName(prescription.DoctorID);
+                    row[3] = kvp.Value;
+                    row[4] = kvp.Key;
+                    row[5] = MedicineService.GetName(kvp.Key);
+                    myPrescriptionMedicineDataTable.Rows.Add(row);
+                }
+            }
+
+            myPrescriptionMedicineDataGrid.ItemsSource = myPrescriptionMedicineDataTable.DefaultView;
+        }
+
+        private bool IsNotificationTimeValid()
+        {
+            try
+            {
+                int notificationTime = Convert.ToInt32(notificationReceiveTimeTextBox.Text);
+                if (notificationTime > 8 || notificationTime < 1)
+                {
+                    MessageBox.Show("Notification for taking medicine can only be set to be sent between 2h and 8h");
+                    return false;
+                }
+
+                return true;
+            }
+            catch
+            {
+                MessageBox.Show("Expected a number... Notification for taking medicine can only be set to be sent between 2h and 8h");
+            }
+
+            return false;
+        }
+
+        private void SendNotificationForMedicine()
+        {
+            foreach (Prescription prescription in patientPrescriptions)
+            {
+                ShowMedicineNotificationFromPrescription(prescription);
+            }
+        }
+
+        private void ShowMedicineNotificationFromPrescription(Prescription prescription)
+        {
+            foreach (KeyValuePair<int, int> kvp in prescription.MedicineInstructions)
+            {
+                MedicineInstruction instruction = MedicineInstructionService.GetSingle(kvp.Value);
+                string medicineName = MedicineService.GetName(kvp.Key);
+                ShowMedicineNotificationFromMedicineInstruction(instruction, medicineName, prescription.ID);
+            }
+        }
+
+        private void ShowMedicineNotificationFromMedicineInstruction(MedicineInstruction instruction, string medicineName, int prescriptionID)
+        {
+            foreach (DateTime takingTime in instruction.ConsumptionTime)
+            {
+                TimeSpan timePassedTakingMedicine = takingTime.TimeOfDay.Subtract(DateTime.Now.TimeOfDay);
+                if (timePassedTakingMedicine.TotalSeconds >= 0 &&
+                    timePassedTakingMedicine.TotalSeconds < signedPatient.NotificationReceiveTime * 60 * 60)
+                {
+                    MessageBox.Show($"Medicine consumption notification! Medicine: {medicineName} Time to take: {takingTime.TimeOfDay} Prescription ID: {prescriptionID}");
+                }
+            }
+        }
+
+        private void FillMedicineInstructionTextBox(MedicineInstruction instruction)
+        {
+            string medicineInstruction = "";
+            medicineInstruction += "Comment:\n";
+            medicineInstruction += "- " + instruction.Comment + "\n";
+            medicineInstruction += "Consumption time:\n";
+            foreach (DateTime consumptionTime in instruction.ConsumptionTime)
+            {
+                medicineInstruction += "- " + consumptionTime.TimeOfDay.ToString() + "\n";
+            }
+            medicineInstruction += "Daily consumption amount:\n";
+            medicineInstruction += "- " + instruction.DailyConsumption + "\n";
+            medicineInstruction += "Consumption period:\n";
+            medicineInstruction += instruction.ConsumptionPeriod;
+
+            medicineInstructionTextBox.Text = medicineInstruction;
+
+        }
+
+        private void setReceiveTimeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsNotificationTimeValid())
+            {
+                MessageBox.Show("Notification time updated successfully");
+                int notificationTime = Convert.ToInt32(notificationReceiveTimeTextBox.Text);
+                signedPatient.NotificationReceiveTime = notificationTime;
+                notificationReceiveTimeTextBlock.Text = $"Notification recieve time: {signedPatient.NotificationReceiveTime}h";
+                UserRepository.SavePatients();
+            }
+        }
+
+        private void searchByMedicineNameButton_Click(object sender, RoutedEventArgs e)
+        {
+            CreateMyPrescriptionsDataTable();
+
+            string medicineSearchName = searchByMedicineNameTextBox.Text.Trim().ToLower();
+            if (medicineSearchName == "")
+            {
+                FillMyPrescriptionsDataTable();
+                return;
+            }
+
+            DataRow row;
+            foreach (Prescription prescription in patientPrescriptions)
+            {
+                foreach (KeyValuePair<int, int> kvp in prescription.MedicineInstructions)
+                {
+                    if (MedicineService.GetName(kvp.Key).ToLower().Contains(medicineSearchName))
+                    {
+                        row = allDoctorsDataTable.NewRow();
+                        row[0] = prescription.ID;
+                        row[1] = prescription.DoctorID;
+                        row[2] = UserService.GetUserFullName(prescription.DoctorID);
+                        row[3] = kvp.Value;
+                        row[4] = kvp.Key;
+                        row[5] = MedicineService.GetName(kvp.Key);
+                        myPrescriptionMedicineDataTable.Rows.Add(row);
+                    }
+                }
+            }
+
+            myPrescriptionMedicineDataGrid.ItemsSource = myPrescriptionMedicineDataTable.DefaultView;
+        }
+
+        private void showInstructionButton_Click(object sender, RoutedEventArgs e)
+        {
+            chosenMedicine = myPrescriptionMedicineDataGrid.SelectedItem as DataRowView;
+            if (chosenMedicine == null)
+            {
+                MessageBox.Show("No medicine selected");
+                return;
+            }
+
+            foreach (Prescription prescription in patientPrescriptions)
+            {
+                if (prescription.ID != Convert.ToInt32(chosenMedicine[0]))
+                {
+                    continue;
+                }
+
+                foreach (KeyValuePair<int, int> kvp in prescription.MedicineInstructions)
+                {
+                    MedicineInstruction instruction = MedicineInstructionService.GetSingle(kvp.Value);
+                    if (instruction.ID == Convert.ToInt32(chosenMedicine[3]))
+                    {
+                        FillMedicineInstructionTextBox(instruction);
+                        return;
+                    }
+                }
+            }
+        }
         //=======================================================================================
 
         // helper methods
@@ -1500,6 +1674,20 @@ namespace HealthCareCenter
             return true;
         }
         //=======================================================================================
+
+        private void DisplayNotifications()
+        {
+            List<Notification> notifications = NotificationService.FindUnopened(signedPatient);
+            if (notifications.Count == 0)
+            {
+                return;
+            }
+            MessageBox.Show("You have new notifications.");
+            foreach (Notification notification in notifications)
+            {
+                MessageBox.Show(notification.Message);
+            }
+        }
 
         private void LogOut()
         {
