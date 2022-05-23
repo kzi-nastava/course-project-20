@@ -70,43 +70,7 @@
         </Grid>
 
         <Grid x:Name="searchDoctorsGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="10" />
-            </Grid.ColumnDefinitions>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="10" />
-                <RowDefinition Height="20" />
-                <RowDefinition Height="40" />
-                <RowDefinition Height="40" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="10" />
-            </Grid.RowDefinitions>
-
-            <TextBlock Text="Key word search" Grid.Row="1" Grid.Column="1" Margin="5 0 0 0" FontSize="15" FontWeight="Bold" />
-            <TextBox x:Name="searchDoctorKeyWordSearchTextBox" Grid.Row="2" Grid.Column="1" Margin="5 10 5 0" FontSize="15" />
-            <TextBlock Text="Key word criteria" Grid.Row="1" Grid.Column="2" Margin="5 0 0 0" FontSize="15" FontWeight="Bold" />
-            <ComboBox x:Name="searchDoctorKeyWordSearchComboBox" Margin="5 10 5 0" Grid.Row="2" Grid.Column="2" />
-            <Button x:Name="searchDoctorSearchButton" Content="Search" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 10 5 0" Click="searchDoctorSearchButton_Click" />
-
-            <TextBlock Text="Sort by" Grid.Row="1" Grid.Column="3" Margin="5 0 0 0" FontSize="15" FontWeight="Bold" />
-            <ComboBox x:Name="searchDoctorSortCriteriaComboBox" Margin="5 10 5 0" Grid.Row="2" Grid.Column="3" />
-            <Button x:Name="searchDoctorSortButton" Content="Sort" Grid.Row="3" Grid.Column="3" Margin="5 10 5 0" Click="searchDoctorSortButton_Click" />
-
-            <Button x:Name="searchDoctorSelectDoctorButton" Content="Select doctor" Grid.Row="2" Grid.Column="4" Grid.RowSpan="2" Margin="5 10 5 0" Click="searchDoctorSelectDoctorButton_Click" />
-
-
-            <DataGrid Margin="5 10 5 0" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" x:Name ="searchDoctorsDataGrid" ScrollViewer.CanContentScroll="True" 
-                ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                          IsReadOnly="True" />
-            
-            
         </Grid>
 
         <Grid x:Name="myNotificationGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
@@ -128,7 +92,6 @@
                 <RowDefinition Height="10" />
                 <RowDefinition Height="20" />
                 <RowDefinition Height="30" />
-                <RowDefinition Height="50" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="10" />
             </Grid.RowDefinitions>
@@ -139,23 +102,22 @@
             <TextBox x:Name="patientWeightTextBox" Grid.Row="2" Grid.Column="2" IsEnabled="False" FontSize="20" Margin="0 0 10 0"/>
 
             <TextBlock Text="Previous diseases" Grid.Column="1" Grid.Row="3" FontSize="15" Margin="0 5 0 0" />
-            <TextBox x:Name="previousDiseasesTextBox" Grid.Row="3" Grid.Column="1" Grid.RowSpan="2" BorderThickness="2" IsEnabled="False" Margin="0 25 10 0" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+            <TextBox x:Name="previousDiseasesTextBox" Grid.Row="3" Grid.Column="1" BorderThickness="2" IsEnabled="False" Margin="0 25 10 0" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
             <TextBlock Text="Allergens" Grid.Column="2" Grid.Row="3" FontSize="15" Margin="0 5 0 0" />
-            <TextBox x:Name="allergensTextBox" Grid.Row="3" Grid.Column="2" Grid.RowSpan="2" BorderThickness="2" IsEnabled="False" Margin="0 25 10 0" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
+            <TextBox x:Name="allergensTextBox" Grid.Row="3" Grid.Column="2" BorderThickness="2" IsEnabled="False" Margin="0 25 10 0" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
 
             <TextBlock Text="Appointments from health record" Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" FontWeight="Normal" FontSize="15" Margin="5 0 0 0"/>
             <ComboBox x:Name="healthRecordAppointmentsSortCriteriaComboBox" Margin="10 5 10 0" Grid.Row="2" Grid.Column="3" />
-            <Button x:Name="sortHealthRecordAppointmentsButton" Content="Sort" Grid.Row="2" Grid.Column="4" Margin="10 5 10 0" Click="sortHealthRecordAppointmentsButton_Click" /><TextBlock Text="Appointments from health record" Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" FontWeight="Normal" FontSize="15" Margin="5 0 0 0" />
-            <TextBlock Text="Search by keyword" Grid.Row="3" Grid.Column="3" FontWeight="Normal" FontSize="15" Margin="5 5 0 0" />
-            <TextBox x:Name="searchAnamnesisByKeywordTextBox" Grid.Row="3" Grid.Column="3" BorderThickness="2" Margin="10 25 10 0" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" FontSize="15" />
-            <Button x:Name="searchAnamnesisByKeywordButton" Content="Search" Grid.Row="3" Grid.Column="4" Margin="10 25 10 0" Click="searchAnamnesisByKeywordButton_Click" />
-            <DataGrid Margin="5 5 5 0" Grid.Row="4" Grid.Column="3" Grid.ColumnSpan="2" x:Name="healthRecordAppointmentsDataGrid" ScrollViewer.CanContentScroll="True" 
+            <Button x:Name="sortHealthRecordAppointmentsButton" Content="Sort" Grid.Row="2" Grid.Column="4" Margin="10 5 10 0" Click="sortHealthRecordAppointmentsButton_Click" />
+            <DataGrid Margin="5 5 5 0" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" x:Name="healthRecordAppointmentsDataGrid" ScrollViewer.CanContentScroll="True" 
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                           IsReadOnly="True" />
 
             <Button x:Name="showAnamnesisButton" Content="Show anamnesis" Grid.Row="2" Grid.Column="5" Margin="10 5 10 0" Click="showAnamnesisButton_Click"/>
-            <TextBox x:Name="anamnesisTextBox" Grid.Row="3" Grid.Column="5" Grid.RowSpan="2" Margin="5 10 5 0" BorderThickness="2" IsEnabled="False" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
+            <TextBox x:Name="anamnesisTextBox" Grid.Row="3" Grid.Column="5" Margin="5 10 5 0" BorderThickness="2" IsEnabled="False" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
+            
+
 
         </Grid>
 
@@ -196,7 +158,7 @@
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                           IsReadOnly="True" />
 
-            <Button x:Name="showAvailableSchedulesCUDButton" Margin="5 10 5 0" Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Content="Show available schedules" Click="showAvailableSchedulesCUDButton_Click" />
+            <Button x:Name="chooseDoctorCUDButton" Margin="5 10 5 0" Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Content="Choose doctor" Click="chooseDoctorCUDButton_Click" />
             <TextBlock Grid.Row="2" Grid.Column="2" Text="Choose day" Margin="15 5 2 0"  />
             <ComboBox x:Name="dayChoiceCUDComboBox" Margin="5 5 5 0" Grid.Row="3" Grid.Column="2" />
             <TextBlock Grid.Row="2" Grid.Column="3" Text="Choose month" Margin="15 5 2 0"  />

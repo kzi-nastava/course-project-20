@@ -54,6 +54,11 @@
                     <MenuItem Header="Complex renovation - split" Click="ComplexRenovationSplitItemClick"></MenuItem>
                 </MenuItem>
 
+                <MenuItem Header="Medicine">
+                    <MenuItem Header="Create medicine" Click="CreateMedicineClick"></MenuItem>
+                    <!--<MenuItem Header="Change reffused medicine - merge" Click="ChangeReffusedMedicine"></MenuItem>-->
+                </MenuItem>
+
                 <MenuItem Header="Log off" Click="LogOffItemClick"></MenuItem>
             </Menu>
         </StackPanel>

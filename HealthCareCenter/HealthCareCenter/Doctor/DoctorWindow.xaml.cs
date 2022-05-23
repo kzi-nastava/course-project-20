@@ -15,6 +15,7 @@ namespace HealthCareCenter
     {
         PrescriptionService prescriptionService;
         private int selectedPatientID;
+        
         private Doctor signedUser;
         private DataTable appointmentsDataTable;
         private DataTable patientsDataTable;
@@ -61,6 +62,7 @@ namespace HealthCareCenter
                 MessageBox.Show(notification.Message);
             }
         }
+
         private void CreateMedicineTable()
         {
             medicineDataTable = new DataTable("Medicines");
@@ -321,7 +323,6 @@ namespace HealthCareCenter
                 MessageBox.Show(ex.Message);
                 return;
             }
-
             bool emergency = (bool)emergencyCheckBox.IsChecked;
             bool error = ValidateDateTimeComboBoxes();
             if (error)
@@ -367,7 +368,6 @@ namespace HealthCareCenter
             appointmentCreationGrid.Visibility = Visibility.Collapsed;
             scheduleGrid.Visibility = Visibility.Visible;
         }
-
         private string ParseDateTimeComboBoxes()
         {
             string day, month, year, hour, minute;
@@ -407,7 +407,6 @@ namespace HealthCareCenter
             }
             return false;
         }
-
         private void FillAppointmentWithDefaultValues(Appointment appointment)
         {
             string[] timeFragments = appointment.ScheduledDate.ToString().Split("/");
@@ -493,7 +492,6 @@ namespace HealthCareCenter
                 alergensTextBox.Text = "none";
             }
         }
-
         private void CheckPreviousDiseases(HealthRecord healthRecord)
         {
             string previousDiseases = "";
@@ -862,7 +860,7 @@ namespace HealthCareCenter
         private void finishPrescriptionCreation_Click(object sender, RoutedEventArgs e)
         {
             string instructions = instructionsTextBox.Text.Trim();
-            if (instructions.Length == 0)
+            if (instructions.Length! > 0)
                 instructions = "";
             int consumptionPeriodIndex = consumptionPeriodComboBox.SelectedIndex;
             ConsumptionPeriod consumptionPeriod;
@@ -872,7 +870,7 @@ namespace HealthCareCenter
                 case 2: consumptionPeriod = ConsumptionPeriod.Any; break;
                 default: consumptionPeriod = ConsumptionPeriod.Any; break;
             }
-            int consumptionsPerDay = consumptionPerDayComboBox.SelectedIndex + 1;
+            int consumptionsPerDay = consumptionPerDayComboBox.SelectedIndex;
             bool successful = prescriptionService.CreateMedicineInstruction(0,instructions,consumptionsPerDay,consumptionPeriod);
             if (!successful)
                 return;
