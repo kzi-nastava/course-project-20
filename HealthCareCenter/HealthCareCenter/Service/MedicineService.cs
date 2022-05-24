@@ -11,7 +11,7 @@ namespace HealthCareCenter.Service
         {
             if (MedicineRepository.Medicines == null)
             {
-                return "";
+                return null;
             }
 
             foreach (Medicine medicine in MedicineRepository.Medicines)

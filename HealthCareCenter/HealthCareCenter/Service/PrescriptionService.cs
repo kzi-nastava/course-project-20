@@ -119,11 +119,11 @@ namespace HealthCareCenter.Service
         {
             if (PrescriptionRepository.Prescriptions == null)
             {
-                return new List<Prescription>();
+                return null;
             }
 
             List<Prescription> patientPrescriptions = new List<Prescription>();
-            foreach (Prescription prescription in patientPrescriptions)
+            foreach (Prescription prescription in PrescriptionRepository.Prescriptions)
             {
                 if (prescription.HealthRecordID == healthRecordID)
                 {

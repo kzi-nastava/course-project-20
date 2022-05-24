@@ -50,6 +50,7 @@ namespace HealthCareCenter
         private DataTable myPrescriptionMedicineDataTable;
         private List<Prescription> patientPrescriptions;
         private DataRowView chosenMedicine;
+        DateTime lastNotificationSent;
 
         // trolling limits
         private const int creationTrollLimit = 100;
@@ -72,6 +73,7 @@ namespace HealthCareCenter
             //============================================
 
             unfinishedAppointments = AppointmentService.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
+            patientPrescriptions = PrescriptionService.GetPatientPrescriptions(signedPatient.HealthRecordID);
             InitializeComponent();
 
             // creating the appointment table and making that window visible
@@ -82,6 +84,7 @@ namespace HealthCareCenter
             currentActionTextBlock.Text = "My appointments";
 
             DisplayNotifications();
+            lastNotificationSent = DateTime.Now;
         }
 
         // clear window methods
@@ -155,7 +158,7 @@ namespace HealthCareCenter
         private void ClearMyPrescriptionsGrid()
         {
             myPrescriptionsGrid.Visibility = Visibility.Collapsed;
-            patientPrescriptions = null;
+            medicineInstructionTextBox.Clear();
             chosenMedicine = null;
         }
 
@@ -355,7 +358,6 @@ namespace HealthCareCenter
         private void myPrescriptionsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             ClearWindow();
-            patientPrescriptions = PrescriptionService.GetPatientPrescriptions(patientHealthRecord.ID);
             myPrescriptionsGrid.Visibility = Visibility.Visible;
             currentActionTextBlock.Text = "My prescriptions";
             notificationReceiveTimeTextBlock.Text = $"Notification recieve time: {signedPatient.NotificationReceiveTime}h";
@@ -1316,7 +1318,7 @@ namespace HealthCareCenter
             {
                 foreach (KeyValuePair<int, int> kvp in prescription.MedicineInstructions)
                 {
-                    row = allDoctorsDataTable.NewRow();
+                    row = myPrescriptionMedicineDataTable.NewRow();
                     row[0] = prescription.ID;
                     row[1] = prescription.DoctorID;
                     row[2] = UserService.GetUserFullName(prescription.DoctorID);
@@ -1353,9 +1355,15 @@ namespace HealthCareCenter
 
         private void SendNotificationForMedicine()
         {
-            foreach (Prescription prescription in patientPrescriptions)
+            TimeSpan timePassedLastSentNotification = DateTime.Now.TimeOfDay.Subtract(lastNotificationSent.TimeOfDay);
+            if (timePassedLastSentNotification.TotalSeconds >= signedPatient.NotificationReceiveTime * 60 * 60)
             {
-                ShowMedicineNotificationFromPrescription(prescription);
+                foreach (Prescription prescription in patientPrescriptions)
+                {
+                    ShowMedicineNotificationFromPrescription(prescription);
+                }
+
+                lastNotificationSent = DateTime.Now;
             }
         }
 
@@ -1377,7 +1385,7 @@ namespace HealthCareCenter
                 if (timePassedTakingMedicine.TotalSeconds >= 0 &&
                     timePassedTakingMedicine.TotalSeconds < signedPatient.NotificationReceiveTime * 60 * 60)
                 {
-                    MessageBox.Show($"Medicine consumption notification! Medicine: {medicineName} Time to take: {takingTime.TimeOfDay} Prescription ID: {prescriptionID}");
+                    MessageBox.Show($"Medicine consumption notification! Medicine: {medicineName}, Time to take: {takingTime.TimeOfDay}, Prescription ID: {prescriptionID}");
                 }
             }
         }
@@ -1398,7 +1406,6 @@ namespace HealthCareCenter
             medicineInstruction += instruction.ConsumptionPeriod;
 
             medicineInstructionTextBox.Text = medicineInstruction;
-
         }
 
         private void setReceiveTimeButton_Click(object sender, RoutedEventArgs e)
@@ -1409,6 +1416,7 @@ namespace HealthCareCenter
                 int notificationTime = Convert.ToInt32(notificationReceiveTimeTextBox.Text);
                 signedPatient.NotificationReceiveTime = notificationTime;
                 notificationReceiveTimeTextBlock.Text = $"Notification recieve time: {signedPatient.NotificationReceiveTime}h";
+                notificationReceiveTimeTextBox.Clear();
                 UserRepository.SavePatients();
             }
         }
@@ -1431,7 +1439,7 @@ namespace HealthCareCenter
                 {
                     if (MedicineService.GetName(kvp.Key).ToLower().Contains(medicineSearchName))
                     {
-                        row = allDoctorsDataTable.NewRow();
+                        row = myPrescriptionMedicineDataTable.NewRow();
                         row[0] = prescription.ID;
                         row[1] = prescription.DoctorID;
                         row[2] = UserService.GetUserFullName(prescription.DoctorID);

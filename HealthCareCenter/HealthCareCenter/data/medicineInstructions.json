@@ -1,3 +1,13 @@
 [
-
+  {
+    "ID": 1,
+    "MedicineID": 0,
+    "Comment": "This is the instruction",
+    "ConsumptionTime": [
+      "24/05/2022 12:00",
+      "24/05/2022 23:00"
+    ],
+    "DailyConsumption": 2,
+    "ConsumptionPeriod": 1
+  }
 ]

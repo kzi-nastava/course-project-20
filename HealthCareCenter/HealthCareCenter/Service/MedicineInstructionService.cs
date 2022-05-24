@@ -16,7 +16,7 @@ namespace HealthCareCenter.Service
 
             foreach (MedicineInstruction instruction in MedicineInstructionRepository.MedicineInstructions)
             {
-                if (ID == instruction.ID)
+                if (instruction.ID == ID)
                 {
                     return instruction;
                 }
