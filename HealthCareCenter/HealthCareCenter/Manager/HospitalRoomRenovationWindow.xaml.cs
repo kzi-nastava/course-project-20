@@ -149,10 +149,10 @@ namespace HealthCareCenter
             InitializeComponent();
             FillDataGridHospitalRooms();
             FillDataGridHospitalRoomsRenovation();
-            
+
             DisplayNotifications();
         }
-        
+
         private void DisplayNotifications()
         {
             List<Notification> notifications = NotificationService.FindUnopened(_signedManager);
@@ -232,6 +232,11 @@ namespace HealthCareCenter
         private void ComplexRenovationSplitItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager));
+        }
+
+        private void CreateMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new MedicineCreationWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

@@ -43,4 +43,12 @@ namespace HealthCareCenter.Model
             Console.WriteLine("Error, hospital premises not found!");
         }
     }
+
+    public class MedicineNotFound : Exception
+    {
+        public MedicineNotFound()
+        {
+            Console.WriteLine("Error, medicine not found!");
+        }
+    }
 }

@@ -70,7 +70,7 @@
   },
   {
     "ID": 7,
-    "Fulfilled": false,
+    "Fulfilled": true,
     "SecretaryID": 3,
     "Created": "21/05/2022 00:40",
     "AmountOfEquipment": {
