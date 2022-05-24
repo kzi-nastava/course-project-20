@@ -1,3 +1,9 @@
 [
-
+  {
+    "ID": 1,
+    "DoctorID": 1,
+    "MedicineInstructions": {
+      "1": 1
+    }
+  }
 ]

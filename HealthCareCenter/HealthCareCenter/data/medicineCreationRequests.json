@@ -1,0 +1,13 @@
+[
+  {
+    "ID": 0,
+    "Name": "Proba",
+    "Ingredients": [
+      "Vitamin A",
+      "Tree pollen"
+    ],
+    "Manufacturer": "Proizvodjac",
+    "DenyComment": "Comment",
+    "State": 0
+  }
+]

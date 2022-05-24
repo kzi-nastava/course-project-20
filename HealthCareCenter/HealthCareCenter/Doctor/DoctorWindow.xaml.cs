@@ -22,6 +22,7 @@ namespace HealthCareCenter
         private DataTable doctorsDataTable;
         private DataTable medicineDataTable;
         private DataTable selectedMedicineDataTable;
+        private DataTable medicineCreationRequestDataTable;
         private Referral referral;
         private bool patientsTableIsFilled = false;
         private int appointmentIndex;
@@ -38,12 +39,14 @@ namespace HealthCareCenter
             CreatePatientsTable();
             CreateDoctorsTable();
             CreateMedicineTable();
+            CreateMedicineCreationRequestTable();
             HealthRecordRepository.Load();
             AppointmentRepository.Load();
             MedicineRepository.Load();
             PrescriptionRepository.Load();  
             MedicineInstructionRepository.Load();
             ReferralRepository.Load();
+            MedicineCreationRequestRepository.Load();
             InitializeComponent();
             FillDateTimeComboBoxes();
 
@@ -106,7 +109,7 @@ namespace HealthCareCenter
             DataColumn dc5 = new DataColumn("Emergency", typeof(bool));
             DataColumn dc6 = new DataColumn("Doctors first and last name", typeof(string));
             DataColumn dc7 = new DataColumn("Room", typeof(string));
-            DataColumn dc8 = new DataColumn("Patient ID", typeof(string));
+            DataColumn dc8 = new DataColumn("Patient ID", typeof(int));
             appointmentsDataTable.Columns.Add(dc1);
             appointmentsDataTable.Columns.Add(dc2);
             appointmentsDataTable.Columns.Add(dc3);
@@ -135,6 +138,16 @@ namespace HealthCareCenter
             doctorsDataTable.Columns.Add(dc1);
             doctorsDataTable.Columns.Add(dc2);
             doctorsDataTable.Columns.Add(dc3);
+        }
+        private void CreateMedicineCreationRequestTable()
+        {
+            medicineCreationRequestDataTable = new DataTable("Requests");
+            DataColumn dc1 = new DataColumn("Id",typeof(int));
+            DataColumn dc2 = new DataColumn("Name", typeof(string));
+            DataColumn dc3 = new DataColumn("Manufacturer", typeof(string));
+            medicineCreationRequestDataTable.Columns.Add(dc1);
+            medicineCreationRequestDataTable.Columns.Add(dc2);
+            medicineCreationRequestDataTable.Columns.Add(dc3);
         }
 
 
@@ -169,6 +182,21 @@ namespace HealthCareCenter
                 medicineDataTable.Rows.Add(dr);
             }
             medicationDataGrid.ItemsSource = medicineDataTable.DefaultView;
+        }
+        private void FillMedicineRequestsTable()
+        {
+            medicineCreationRequestDataTable.Rows.Clear();
+            foreach(MedicineCreationRequest request in MedicineCreationRequestRepository.Requests)
+            {
+                if (request.State != RequestState.Waiting)
+                    continue;
+                dr = medicineCreationRequestDataTable.NewRow();
+                dr[0] = request.ID; 
+                dr[1] = request.Name;
+                dr[2] = request.Manufacturer;
+                medicineCreationRequestDataTable.Rows.Add(dr);
+            }
+            medicineCreationRequestDataGrid.ItemsSource = medicineCreationRequestDataTable.DefaultView;
         }
 
         private void AddMedicineToTable(Medicine medicine)
@@ -304,16 +332,8 @@ namespace HealthCareCenter
         }
         private void FillApointmentWithData(Appointment appointment, bool isBeingCreated)
         {
-            DataRowView row;
-            try
-            {
-                row = (DataRowView)patientsDataGrid.SelectedItems[0];
-            }
-            catch
-            {
-                throw new Exception("Choose a patient from the table");
-            }
-            int id = (int)row["Id"];
+            int id = getRowItemID(patientsDataGrid, "Id");
+            if (id == -1) return;
             string selectedValue;
             try
             {
@@ -528,8 +548,11 @@ namespace HealthCareCenter
         }
         private void DrugMenagmentButton_Click(object sender, RoutedEventArgs e)
         {
-
+            startingGrid.Visibility = Visibility.Collapsed;
+            drugManagementGrid.Visibility = Visibility.Visible;
+            FillMedicineRequestsTable();
         }
+
 
         //---------------------------------------------------------------------------------------
         //Buttons on schedule rewiew menu
@@ -609,18 +632,9 @@ namespace HealthCareCenter
         }
         private void HealthRecord_Click(object sender, RoutedEventArgs e)
         {
-            DataRowView row;
-            try
-            {
-                row = (DataRowView)scheduleDataGrid.SelectedItems[0];
-                appointmentIndex = scheduleDataGrid.SelectedIndex;
-            }
-            catch
-            {
-                MessageBox.Show("Select an appointment");
-                return;
-            }
-            int id = int.Parse(row["Patient Id"].ToString());
+            int id = getRowItemID(scheduleDataGrid, "Patient Id");
+            if(id == -1) return;
+            appointmentIndex = scheduleDataGrid.SelectedIndex;
             healthRecordGrid.Visibility = Visibility.Visible;
             scheduleGrid.Visibility = Visibility.Collapsed;
             backButton.Visibility = Visibility.Visible;
@@ -640,17 +654,8 @@ namespace HealthCareCenter
         }
         private void StartAppointment_Click(object sender, RoutedEventArgs e)
         {
-            DataRowView row;
-            try
-            {
-                row = (DataRowView)scheduleDataGrid.SelectedItems[0];
-            }
-            catch 
-            {
-                MessageBox.Show("Select an appointment");
-                return;
-            }
-            int patientID = int.Parse(row["Patient ID"].ToString());
+            int patientID = getRowItemID(scheduleDataGrid, "Patient ID");
+            if(patientID == -1) return;
             selectedPatientID = patientID;
             appointmentIndex = scheduleDataGrid.SelectedIndex;  
             healthRecordGrid.Visibility = Visibility.Visible;
@@ -924,17 +929,8 @@ namespace HealthCareCenter
         //Refferal creation buttons
         private void submitReferal_Click(object sender, RoutedEventArgs e)
         {
-            DataRowView row;
-            try
-            {
-                row = (DataRowView)doctorsDataGrid.SelectedItems[0];
-            }
-            catch
-            {
-                MessageBox.Show("Choose a doctor from the table");
-                return;
-            }
-            int doctorIndex = (int)row["Id"];
+            int doctorIndex = getRowItemID(doctorsDataGrid, "Id");
+            if (doctorIndex == -1) return;
             referral.DoctorID = doctorIndex;
             referral.PatientID = selectedPatientID;
             ReferralRepository.Referrals.Add(referral);
@@ -944,17 +940,8 @@ namespace HealthCareCenter
         }
         private void submitAutomaticReferal_Click(object sender, RoutedEventArgs e)
         {
-            DataRowView row;
-            try
-            {
-                row = (DataRowView)doctorsDataGrid.Items[0];
-            }
-            catch
-            {
-                MessageBox.Show("There are no available doctors");
-                return;
-            }
-            int doctorIndex = (int)row["Id"];
+            int doctorIndex = getRowItemID(doctorsDataGrid, "Id");
+            if(doctorIndex == -1) return;
             referral.DoctorID =  doctorIndex;
             referral.PatientID = selectedPatientID;
             ReferralRepository.Referrals.Add(referral);
@@ -1031,6 +1018,21 @@ namespace HealthCareCenter
             return doctors;
         }
 
+        private int getRowItemID(DataGrid grid,string key)
+        {
+            DataRowView row;
+            try
+            {
+                row = (DataRowView)grid.SelectedItems[0];
+            }
+            catch
+            {
+                MessageBox.Show("Select a row from the table");
+                return -1;
+            }
+            return (int)row[key];
+        }
+
         //---------------------------------------------------------------------------------------
         //Window closing
         private void WindowClosing(object sender, CancelEventArgs e)
@@ -1039,7 +1041,8 @@ namespace HealthCareCenter
             AppointmentRepository.Save();
             PrescriptionRepository.Save();
             MedicineInstructionRepository.Save();
-            ReferralRepository.Save(); 
+            ReferralRepository.Save();
+            MedicineCreationRequestRepository.Save();
             LogOut();
         }
 
@@ -1047,6 +1050,44 @@ namespace HealthCareCenter
         {
             LoginWindow loginWindow = new LoginWindow();
             loginWindow.Show();
+        }
+
+        private void acceptMedicineRequestButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            int medicineCreationRequestID = getRowItemID(medicineCreationRequestDataGrid,"Id");
+            MedicineCreationRequest selectedRequest = MedicineCreationRequestService.getMedicineCreationRequest(medicineCreationRequestID);
+            selectedRequest.State = RequestState.Approved;
+            FillMedicineRequestsTable();
+            MessageBox.Show("Request approved");
+        }
+
+        private void denyMedicineRequestButton_Click(object sender, RoutedEventArgs e)
+        {
+            string denyMessage = medicineRequestDeniedTextBox.Text;
+            if(denyMessage == "")
+            {
+                MessageBox.Show("Please provide a reason");
+                return;
+            }
+            int medicineCreationRequestID = getRowItemID(medicineCreationRequestDataGrid, "Id");
+            MedicineCreationRequest selectedRequest = MedicineCreationRequestService.getMedicineCreationRequest(medicineCreationRequestID);
+            selectedRequest.State = RequestState.Denied;
+            selectedRequest.DenyComment = denyMessage;
+            FillMedicineRequestsTable();
+            MessageBox.Show("Request denied");
+        }
+
+        private void medicineRequestsDataGrid_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            int medicineCreationRequestID = getRowItemID(medicineCreationRequestDataGrid,"Id");
+            MedicineCreationRequest request = MedicineCreationRequestService.getMedicineCreationRequest(medicineCreationRequestID);
+            string ingredients = "";
+            foreach(string ingredient in request.Ingredients){
+                ingredients += ingredient + ",";
+            }
+            ingredients = ingredients.Substring(0,ingredients.Length-1);
+            ingredientsTextBlock.Text = ingredients;
         }
     }
 }
