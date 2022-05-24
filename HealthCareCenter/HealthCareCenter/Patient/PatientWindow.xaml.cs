@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using HealthCareCenter.Model;
 using System.Data;
 using HealthCareCenter.Service;
+using System.Windows.Threading;
 
 namespace HealthCareCenter
 {
@@ -50,7 +51,7 @@ namespace HealthCareCenter
         private DataTable myPrescriptionMedicineDataTable;
         private List<Prescription> patientPrescriptions;
         private DataRowView chosenMedicine;
-        DateTime lastNotificationSentTime;
+        Dictionary<int, Dictionary<int, int>> notificationsFromPrescriptionsToSend;
 
         // trolling limits
         private const int creationTrollLimit = 100;
@@ -74,6 +75,7 @@ namespace HealthCareCenter
 
             unfinishedAppointments = AppointmentService.GetPatientUnfinishedAppointments(signedPatient.HealthRecordID);
             patientPrescriptions = PrescriptionService.GetPatientPrescriptions(signedPatient.HealthRecordID);
+            FillNotificationsSentDict();
             InitializeComponent();
 
             // creating the appointment table and making that window visible
@@ -83,8 +85,9 @@ namespace HealthCareCenter
             FillUnfinishedAppointmentsTable();
             currentActionTextBlock.Text = "My appointments";
 
+            //CheckForMedicineNotification();
             DisplayNotifications();
-            lastNotificationSentTime = DateTime.Now;
+            StartNotificationChecks();
         }
 
         // clear window methods
@@ -98,7 +101,6 @@ namespace HealthCareCenter
             ClearMyPrescriptionsGrid();
             ClearMyHealthRecordGrid();
             ClearSurveyGrids();
-            SendNotificationForMedicine();
         }
 
         private void ClearMyAppointmentGrid()
@@ -1353,41 +1355,75 @@ namespace HealthCareCenter
             return false;
         }
 
-        private void SendNotificationForMedicine()
+        private void FillNotificationsSentDict()
         {
-            TimeSpan timePassedLastSentNotification = DateTime.Now.TimeOfDay.Subtract(lastNotificationSentTime.TimeOfDay);
-            if (timePassedLastSentNotification.TotalSeconds >= signedPatient.NotificationReceiveTime * 60 * 60)
+            // dictionary notificationsSent contains int key and Dictionary<int, int> as value
+            // key is prescription id, and value is Dictionary<int, int> where the key is medicine instruction
+            // id and value is the index of the time in MedicineInstruction.ConsumptionTime that should be checked
+            // if it fulfills the criteria for sending a notification
+
+            notificationsFromPrescriptionsToSend = new Dictionary<int, Dictionary<int, int>>();
+            foreach (Prescription prescription in patientPrescriptions)
             {
-                foreach (Prescription prescription in patientPrescriptions)
+                Dictionary<int, int> notificationsToSend = new Dictionary<int, int>();
+                foreach (KeyValuePair<int, int> prescriptionNotificationsToSend in prescription.MedicineInstructions)
                 {
-                    ShowMedicineNotificationFromPrescription(prescription);
+                    notificationsToSend.Add(prescriptionNotificationsToSend.Value, 0);
+                    MedicineInstruction instruction = MedicineInstructionService.GetSingle(prescriptionNotificationsToSend.Value);
+                    foreach (DateTime takingTime in instruction.ConsumptionTime)
+                    {
+                        TimeSpan timePassedTakingMedicine = takingTime.TimeOfDay.Subtract(DateTime.Now.TimeOfDay);
+                        int hoursTilConsumption = (int)Math.Round(timePassedTakingMedicine.TotalHours);
+                        if (hoursTilConsumption < 0)
+                        {
+                            ++notificationsToSend[prescriptionNotificationsToSend.Value];
+                            continue;
+                        }
+                        break;
+                    }
                 }
 
-                lastNotificationSentTime = DateTime.Now;
+                notificationsFromPrescriptionsToSend.Add(prescription.ID, notificationsToSend);
             }
         }
 
-        private void ShowMedicineNotificationFromPrescription(Prescription prescription)
+        private void CheckForMedicineNotification()
         {
-            foreach (KeyValuePair<int, int> kvp in prescription.MedicineInstructions)
+            foreach (KeyValuePair<int, Dictionary<int, int>> kvp in notificationsFromPrescriptionsToSend)
             {
-                MedicineInstruction instruction = MedicineInstructionService.GetSingle(kvp.Value);
-                string medicineName = MedicineService.GetName(kvp.Key);
-                ShowMedicineNotificationFromMedicineInstruction(instruction, medicineName, prescription.ID);
+                foreach (KeyValuePair<int, int> intructionNotificationTimeIndex in kvp.Value)
+                {
+                    MedicineInstruction instruction = MedicineInstructionService.GetSingle(intructionNotificationTimeIndex.Key);
+                    if (intructionNotificationTimeIndex.Value >= instruction.ConsumptionTime.Count)
+                    {
+                        continue;
+                    }
+
+                    DateTime takingTime = instruction.ConsumptionTime[intructionNotificationTimeIndex.Value];
+                    TimeSpan timePassedTakingMedicine = takingTime.TimeOfDay.Subtract(DateTime.Now.TimeOfDay);
+                    int hoursTilConsumption = (int)Math.Round(timePassedTakingMedicine.TotalHours);
+                    if (hoursTilConsumption <= signedPatient.NotificationReceiveTime)
+                    {
+                        string medicineName = MedicineService.GetName(instruction.MedicineID);
+                        MessageBox.Show($"Medicine consumption notification! Medicine: {medicineName}, Time to take: {takingTime.TimeOfDay}, Prescription ID: {kvp.Key}");
+                        ++kvp.Value[intructionNotificationTimeIndex.Key];
+                    }
+                    break;
+                }
             }
         }
 
-        private void ShowMedicineNotificationFromMedicineInstruction(MedicineInstruction instruction, string medicineName, int prescriptionID)
+        private void StartNotificationChecks()
         {
-            foreach (DateTime takingTime in instruction.ConsumptionTime)
-            {
-                TimeSpan timePassedTakingMedicine = takingTime.TimeOfDay.Subtract(DateTime.Now.TimeOfDay);
-                if (timePassedTakingMedicine.TotalSeconds >= 0 &&
-                    timePassedTakingMedicine.TotalSeconds < signedPatient.NotificationReceiveTime * 60 * 60)
-                {
-                    MessageBox.Show($"Medicine consumption notification! Medicine: {medicineName}, Time to take: {takingTime.TimeOfDay}, Prescription ID: {prescriptionID}");
-                }
-            }
+            DispatcherTimer notificationDispatcherTimer = new DispatcherTimer();
+            notificationDispatcherTimer.Tick += new EventHandler(notificationChecker_Tick);
+            notificationDispatcherTimer.Interval = new TimeSpan(0, 1, 0);
+            notificationDispatcherTimer.Start();
+        }
+
+        private void notificationChecker_Tick(object sender, EventArgs e)
+        {
+            CheckForMedicineNotification();
         }
 
         private void FillMedicineInstructionTextBox(MedicineInstruction instruction)
