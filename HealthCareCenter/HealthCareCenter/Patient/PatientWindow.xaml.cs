@@ -50,7 +50,7 @@ namespace HealthCareCenter
         private DataTable myPrescriptionMedicineDataTable;
         private List<Prescription> patientPrescriptions;
         private DataRowView chosenMedicine;
-        DateTime lastNotificationSent;
+        DateTime lastNotificationSentTime;
 
         // trolling limits
         private const int creationTrollLimit = 100;
@@ -84,7 +84,7 @@ namespace HealthCareCenter
             currentActionTextBlock.Text = "My appointments";
 
             DisplayNotifications();
-            lastNotificationSent = DateTime.Now;
+            lastNotificationSentTime = DateTime.Now;
         }
 
         // clear window methods
@@ -1355,7 +1355,7 @@ namespace HealthCareCenter
 
         private void SendNotificationForMedicine()
         {
-            TimeSpan timePassedLastSentNotification = DateTime.Now.TimeOfDay.Subtract(lastNotificationSent.TimeOfDay);
+            TimeSpan timePassedLastSentNotification = DateTime.Now.TimeOfDay.Subtract(lastNotificationSentTime.TimeOfDay);
             if (timePassedLastSentNotification.TotalSeconds >= signedPatient.NotificationReceiveTime * 60 * 60)
             {
                 foreach (Prescription prescription in patientPrescriptions)
@@ -1363,7 +1363,7 @@ namespace HealthCareCenter
                     ShowMedicineNotificationFromPrescription(prescription);
                 }
 
-                lastNotificationSent = DateTime.Now;
+                lastNotificationSentTime = DateTime.Now;
             }
         }
 
@@ -1403,7 +1403,7 @@ namespace HealthCareCenter
             medicineInstruction += "Daily consumption amount:\n";
             medicineInstruction += "- " + instruction.DailyConsumption + "\n";
             medicineInstruction += "Consumption period:\n";
-            medicineInstruction += instruction.ConsumptionPeriod;
+            medicineInstruction += "- " + instruction.ConsumptionPeriod;
 
             medicineInstructionTextBox.Text = medicineInstruction;
         }
