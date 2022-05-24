@@ -64,5 +64,11 @@ namespace HealthCareCenter.SecretaryGUI
             DynamicEquipmentRequestWindow window = new DynamicEquipmentRequestWindow(_signedUser);
             window.ShowDialog();
         }
+
+        private void VacationButton_Click(object sender, RoutedEventArgs e)
+        {
+            VacationRequestsWindow window = new VacationRequestsWindow();
+            window.ShowDialog();
+        }
     }
 }
