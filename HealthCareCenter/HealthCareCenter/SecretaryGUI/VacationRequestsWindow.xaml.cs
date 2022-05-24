@@ -63,5 +63,66 @@ namespace HealthCareCenter.SecretaryGUI
 
             Refresh();
         }
+
+        private void AcceptButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (vacationRequestsDataGrid.SelectedItem == null)
+            {
+                MessageBox.Show("You must select a vacation request first.");
+                return;
+            }
+
+            int id = ((VacationRequestDisplay)vacationRequestsDataGrid.SelectedItem).ID;
+            AcceptRequest(id);
+            Refresh();
+            MessageBox.Show("Successfully accepted the vacation request.");
+        }
+
+        private void AcceptRequest(int id)
+        {
+            foreach (VacationRequest request in VacationRequestRepository.Requests)
+            {
+                if (request.ID == id)
+                {
+                    request.State = RequestState.Approved;
+                    break;
+                }
+            }
+            VacationRequestRepository.Save();
+        }
+
+        private void DenyButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (vacationRequestsDataGrid.SelectedItem == null)
+            {
+                MessageBox.Show("You must select a vacation request first.");
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(denialReasonTextBox.Text))
+            {
+                MessageBox.Show("You must enter the reason for denial first.");
+                return;
+            }
+
+            int id = ((VacationRequestDisplay)vacationRequestsDataGrid.SelectedItem).ID;
+            DenyRequest(id, denialReasonTextBox.Text);
+            Refresh();
+            denialReasonTextBox.Clear();
+            MessageBox.Show("Successfully denied the vacation request.");
+        }
+
+        private static void DenyRequest(int id, string reason)
+        {
+            foreach (VacationRequest request in VacationRequestRepository.Requests)
+            {
+                if (request.ID == id)
+                {
+                    request.State = RequestState.Denied;
+                    request.DenialReason = reason;
+                    break;
+                }
+            }
+            VacationRequestRepository.Save();
+        }
     }
 }

@@ -41,7 +41,7 @@
         <Label Content="Enter denial reason:" Grid.Row="1" Grid.Column="0" Margin="7.5 0 7.5 0" VerticalAlignment="Center"/>
         <TextBox x:Name="denialReasonTextBox" Grid.Row="2" Grid.Column="0" Margin="5" Grid.ColumnSpan="2" TextWrapping="Wrap" AcceptsReturn="True"/>
         
-        <Button x:Name="acceptButton" Content="Accept" Grid.Row="3" Grid.Column="0" Margin="7.5"/>
-        <Button x:Name="denyButton" Content="Deny" Grid.Row="3" Grid.Column="1" Margin="7.5"/>
+        <Button x:Name="acceptButton" Content="Accept" Grid.Row="3" Grid.Column="0" Margin="7.5" Click="AcceptButton_Click"/>
+        <Button x:Name="denyButton" Content="Deny" Grid.Row="3" Grid.Column="1" Margin="7.5" Click="DenyButton_Click"/>
     </Grid>
 </Window>
