@@ -1318,15 +1318,16 @@ namespace HealthCareCenter
             DataRow row;
             foreach (Prescription prescription in patientPrescriptions)
             {
-                foreach (KeyValuePair<int, int> kvp in prescription.MedicineInstructions)
+                foreach (int medicineInstructionID in prescription.MedicineInstructionIDs)
                 {
+                    MedicineInstruction instruction = MedicineInstructionService.GetSingle(medicineInstructionID);
                     row = myPrescriptionMedicineDataTable.NewRow();
                     row[0] = prescription.ID;
                     row[1] = prescription.DoctorID;
                     row[2] = UserService.GetUserFullName(prescription.DoctorID);
-                    row[3] = kvp.Value;
-                    row[4] = kvp.Key;
-                    row[5] = MedicineService.GetName(kvp.Key);
+                    row[3] = instruction.ID;
+                    row[4] = instruction.MedicineID;
+                    row[5] = MedicineService.GetName(instruction.MedicineID);
                     myPrescriptionMedicineDataTable.Rows.Add(row);
                 }
             }
@@ -1366,17 +1367,17 @@ namespace HealthCareCenter
             foreach (Prescription prescription in patientPrescriptions)
             {
                 Dictionary<int, int> notificationsToSend = new Dictionary<int, int>();
-                foreach (KeyValuePair<int, int> prescriptionNotificationsToSend in prescription.MedicineInstructions)
+                foreach (int medicineInstructionID in prescription.MedicineInstructionIDs)
                 {
-                    notificationsToSend.Add(prescriptionNotificationsToSend.Value, 0);
-                    MedicineInstruction instruction = MedicineInstructionService.GetSingle(prescriptionNotificationsToSend.Value);
+                    MedicineInstruction instruction = MedicineInstructionService.GetSingle(medicineInstructionID);
+                    notificationsToSend.Add(instruction.ID, 0);
                     foreach (DateTime takingTime in instruction.ConsumptionTime)
                     {
                         TimeSpan timePassedTakingMedicine = takingTime.TimeOfDay.Subtract(DateTime.Now.TimeOfDay);
                         int hoursTilConsumption = (int)Math.Round(timePassedTakingMedicine.TotalHours);
                         if (hoursTilConsumption < 0)
                         {
-                            ++notificationsToSend[prescriptionNotificationsToSend.Value];
+                            ++notificationsToSend[instruction.ID];
                             continue;
                         }
                         break;
@@ -1471,17 +1472,19 @@ namespace HealthCareCenter
             DataRow row;
             foreach (Prescription prescription in patientPrescriptions)
             {
-                foreach (KeyValuePair<int, int> kvp in prescription.MedicineInstructions)
+                foreach (int medicineInstructionID in prescription.MedicineInstructionIDs)
                 {
-                    if (MedicineService.GetName(kvp.Key).ToLower().Contains(medicineSearchName))
+                    MedicineInstruction instruction = MedicineInstructionService.GetSingle(medicineInstructionID);
+                    string medicineName = MedicineService.GetName(instruction.MedicineID);
+                    if (medicineName.ToLower().Contains(medicineSearchName))
                     {
                         row = myPrescriptionMedicineDataTable.NewRow();
                         row[0] = prescription.ID;
                         row[1] = prescription.DoctorID;
                         row[2] = UserService.GetUserFullName(prescription.DoctorID);
-                        row[3] = kvp.Value;
-                        row[4] = kvp.Key;
-                        row[5] = MedicineService.GetName(kvp.Key);
+                        row[3] = instruction.ID;
+                        row[4] = instruction.MedicineID;
+                        row[5] = medicineName;
                         myPrescriptionMedicineDataTable.Rows.Add(row);
                     }
                 }
@@ -1506,9 +1509,9 @@ namespace HealthCareCenter
                     continue;
                 }
 
-                foreach (KeyValuePair<int, int> kvp in prescription.MedicineInstructions)
+                foreach (int medicineInstructionID in prescription.MedicineInstructionIDs)
                 {
-                    MedicineInstruction instruction = MedicineInstructionService.GetSingle(kvp.Value);
+                    MedicineInstruction instruction = MedicineInstructionService.GetSingle(medicineInstructionID);
                     if (instruction.ID == Convert.ToInt32(chosenMedicine[3]))
                     {
                         FillMedicineInstructionTextBox(instruction);
