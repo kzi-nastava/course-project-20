@@ -92,15 +92,7 @@ namespace HealthCareCenter.SecretaryGUI
                 }
             }
             VacationRequestRepository.Save();
-            SendAcceptedNotification(acceptedRequest);
-        }
-
-        private static void SendAcceptedNotification(VacationRequest acceptedRequest)
-        {
-            NotificationService.CalculateMaxID();
-            Notification notification = new Notification($"The vacation you had requested is accepted, and starts on {acceptedRequest.StartDate.ToShortDateString()}, lasting until {acceptedRequest.EndDate.ToShortDateString()}.", acceptedRequest.DoctorID);
-            NotificationRepository.Notifications.Add(notification);
-            NotificationRepository.Save();
+            NotificationService.SendNotification(acceptedRequest.DoctorID, $"The vacation you had requested is accepted, and starts on {acceptedRequest.StartDate.ToShortDateString()}, lasting until {acceptedRequest.EndDate.ToShortDateString()}.");
         }
 
         private void DenyButton_Click(object sender, RoutedEventArgs e)
@@ -137,15 +129,7 @@ namespace HealthCareCenter.SecretaryGUI
                 }
             }
             VacationRequestRepository.Save();
-            SendDeniedNotification(deniedRequest);
-        }
-
-        private static void SendDeniedNotification(VacationRequest deniedRequest)
-        {
-            NotificationService.CalculateMaxID();
-            Notification notification = new Notification($"The vacation you had requested, which would have started on {deniedRequest.StartDate.ToShortDateString()} is denied. Reasoning: {deniedRequest.DenialReason}", deniedRequest.DoctorID);
-            NotificationRepository.Notifications.Add(notification);
-            NotificationRepository.Save();
+            NotificationService.SendNotification(deniedRequest.DoctorID, $"The vacation you had requested, which would have started on {deniedRequest.StartDate.ToShortDateString()} is denied. Reasoning: {deniedRequest.DenialReason}");
         }
     }
 }
