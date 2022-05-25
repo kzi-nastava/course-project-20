@@ -44,6 +44,7 @@ namespace HealthCareCenter.SecretaryGUI
             LoadBlockedPatients();
 
             HealthRecordRepository.Load();
+            VacationRequestRepository.Load();
             UpdateMaxIDsIfNeeded();
         }
 

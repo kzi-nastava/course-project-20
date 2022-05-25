@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter.SecretaryGUI
 {
@@ -80,15 +81,26 @@ namespace HealthCareCenter.SecretaryGUI
 
         private void AcceptRequest(int id)
         {
+            VacationRequest acceptedRequest = null;
             foreach (VacationRequest request in VacationRequestRepository.Requests)
             {
                 if (request.ID == id)
                 {
                     request.State = RequestState.Approved;
+                    acceptedRequest = request;
                     break;
                 }
             }
             VacationRequestRepository.Save();
+            SendAcceptedNotification(acceptedRequest);
+        }
+
+        private static void SendAcceptedNotification(VacationRequest acceptedRequest)
+        {
+            NotificationService.CalculateMaxID();
+            Notification notification = new Notification($"The vacation you had requested is accepted, and starts on {acceptedRequest.StartDate.ToShortDateString()}, lasting until {acceptedRequest.EndDate.ToShortDateString()}.", acceptedRequest.DoctorID);
+            NotificationRepository.Notifications.Add(notification);
+            NotificationRepository.Save();
         }
 
         private void DenyButton_Click(object sender, RoutedEventArgs e)
@@ -113,16 +125,27 @@ namespace HealthCareCenter.SecretaryGUI
 
         private static void DenyRequest(int id, string reason)
         {
+            VacationRequest deniedRequest = null;
             foreach (VacationRequest request in VacationRequestRepository.Requests)
             {
                 if (request.ID == id)
                 {
                     request.State = RequestState.Denied;
                     request.DenialReason = reason;
+                    deniedRequest = request;
                     break;
                 }
             }
             VacationRequestRepository.Save();
+            SendDeniedNotification(deniedRequest);
+        }
+
+        private static void SendDeniedNotification(VacationRequest deniedRequest)
+        {
+            NotificationService.CalculateMaxID();
+            Notification notification = new Notification($"The vacation you had requested, which would have started on {deniedRequest.StartDate.ToShortDateString()} is denied. Reasoning: {deniedRequest.DenialReason}", deniedRequest.DoctorID);
+            NotificationRepository.Notifications.Add(notification);
+            NotificationRepository.Save();
         }
     }
 }

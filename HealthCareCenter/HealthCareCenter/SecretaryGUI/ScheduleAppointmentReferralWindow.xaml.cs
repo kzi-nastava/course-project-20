@@ -1,4 +1,5 @@
-﻿using HealthCareCenter.Enums;
+﻿using HealthCareCenter.Controller;
+using HealthCareCenter.Enums;
 using HealthCareCenter.Model;
 using HealthCareCenter.Service;
 using System;
@@ -59,6 +60,7 @@ namespace HealthCareCenter.SecretaryGUI
             }
 
             List<string> terms = Utils.GetPossibleDailyTerms();
+
             RemoveOccupiedTerms(terms);
 
             termsListBox.ItemsSource = terms;
@@ -66,6 +68,12 @@ namespace HealthCareCenter.SecretaryGUI
 
         private void RemoveOccupiedTerms(List<string> terms)
         {
+            if (VacationRequestController.OnVacation(_referral.DoctorID, (DateTime)termDatePicker.SelectedDate))
+            {
+                terms.Clear();
+                MessageBox.Show("The doctor is on vacation at this time.");
+                return;
+            }
             foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
                 if (appointment.DoctorID != _referral.DoctorID || appointment.ScheduledDate.Date.CompareTo(termDatePicker.SelectedDate) != 0)

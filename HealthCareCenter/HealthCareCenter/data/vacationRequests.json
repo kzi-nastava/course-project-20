@@ -6,7 +6,7 @@
     "RequestReason": "Vacation",
     "DenialReason": "",
     "Emergency": false,
-    "State": 2,
+    "State": 1,
     "DoctorID": 1
   },
   {
@@ -14,9 +14,9 @@
     "StartDate": "20/06/2022",
     "EndDate": "28/06/2022",
     "RequestReason": "Vacation too",
-    "DenialReason": "",
+    "DenialReason": "No.",
     "Emergency": false,
-    "State": 2,
+    "State": 0,
     "DoctorID": 5
   },
   {
