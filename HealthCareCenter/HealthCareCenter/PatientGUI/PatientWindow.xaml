@@ -11,9 +11,9 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="48*" />
             <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="697*" />
             <ColumnDefinition Width="20" />
         </Grid.ColumnDefinitions>
 
@@ -39,7 +39,7 @@
         </Menu>
         <TextBlock x:Name="currentActionTextBlock" Grid.Row="1" Grid.Column="2" Margin="15 0 0 0" />
 
-        <Grid x:Name="myAppointmentsGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Visibility="Collapsed">
+        <Grid x:Name="myAppointmentsGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Visibility="Visible">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*" />
@@ -103,10 +103,10 @@
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                           IsReadOnly="True" />
-            
+
         </Grid>
 
-        <Grid x:Name="myPrescriptionsGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Visible">
+        <Grid x:Name="myPrescriptionsGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*"/>
@@ -130,7 +130,7 @@
             <TextBlock x:Name="notificationReceiveTimeTextBlock" Text="Notification recieve time" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" FontSize="15" FontWeight="DemiBold" Margin="5 0 0 0" />
             <TextBox x:Name="notificationReceiveTimeTextBox" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="1" Margin="5 5 5 5" FontSize="15" />
             <Button x:Name="setReceiveTimeButton" Grid.Row="2" Grid.Column="2" Margin="5 5 5 5" Content="Set time" Click="setReceiveTimeButton_Click" />
-            
+
             <Button x:Name="showInstructionButton" Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Grid.ColumnSpan="1" Margin="10 10 10 5" Content="Show instruction" Click="showInstructionButton_Click" />
 
             <TextBlock Text="Search by medicine name:" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="1" FontSize="12" FontWeight="DemiBold" Margin="5 10 0 0" />
@@ -180,7 +180,8 @@
 
             <TextBlock Text="Appointments from health record" Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" FontWeight="Normal" FontSize="15" Margin="5 0 0 0"/>
             <ComboBox x:Name="healthRecordAppointmentsSortCriteriaComboBox" Margin="10 5 10 0" Grid.Row="2" Grid.Column="3" />
-            <Button x:Name="sortHealthRecordAppointmentsButton" Content="Sort" Grid.Row="2" Grid.Column="4" Margin="10 5 10 0" Click="sortHealthRecordAppointmentsButton_Click" /><TextBlock Text="Appointments from health record" Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" FontWeight="Normal" FontSize="15" Margin="5 0 0 0" />
+            <Button x:Name="sortHealthRecordAppointmentsButton" Content="Sort" Grid.Row="2" Grid.Column="4" Margin="10 5 10 0" Click="sortHealthRecordAppointmentsButton_Click" />
+            <TextBlock Text="Appointments from health record" Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" FontWeight="Normal" FontSize="15" Margin="5 0 0 0" />
             <TextBlock Text="Search by keyword" Grid.Row="3" Grid.Column="3" FontWeight="Normal" FontSize="15" Margin="5 5 0 0" />
             <TextBox x:Name="searchAnamnesisByKeywordTextBox" Grid.Row="3" Grid.Column="3" BorderThickness="2" Margin="10 25 10 0" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" FontSize="15" />
             <Button x:Name="searchAnamnesisByKeywordButton" Content="Search" Grid.Row="3" Grid.Column="4" Margin="10 25 10 0" Click="searchAnamnesisByKeywordButton_Click" />
@@ -267,7 +268,7 @@
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                           IsReadOnly="True" />
-            
+
             <DataGrid Margin="5 10 5 20" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="3" x:Name ="allAppointmentsPriorityDataGrid" ScrollViewer.CanContentScroll="True" 
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
@@ -276,7 +277,7 @@
             <TextBlock Text="Priority:" Grid.Row="3" Grid.Column="1" Grid.RowSpan="2" FontSize="18" Margin="0 10 0 0"/>
             <RadioButton x:Name="doctorPriorityRadioButton" GroupName="priority" IsChecked="True" Content="Doctor" Grid.Row="5" Grid.Column="1" FontSize="15" Margin="0 5 0 0" />
             <RadioButton x:Name="timePriorityRadioButton" GroupName="priority" Content="Time" Grid.Row="5" FontSize="15" Grid.Column="1" Margin="0 25 0 0"/>
-            
+
             <TextBlock Grid.Row="3" Grid.Column="2" Text="Choose latest scheduling date that is most convenient for you:" Grid.ColumnSpan="3" Margin="10 5 0 0" FontWeight="Bold" />
             <TextBlock Grid.Row="4" Grid.Column="2" Text="Choose day" Margin="15 5 2 0"  />
             <ComboBox x:Name="dayChoicePriorityComboBox" Margin="5 5 5 0" Grid.Row="5" Grid.Column="2" />

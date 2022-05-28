@@ -53,10 +53,32 @@
       29,
       30,
       31,
-      32
+      32,
+      33,
+      34
     ],
     "ID": 3,
     "EquipmentAmounts": {},
+    "EquipmentRearrangementsIDs": []
+  },
+  {
+    "Type": 2,
+    "Name": "gdfgdf",
+    "AppointmentIDs": [],
+    "ID": 5,
+    "EquipmentAmounts": {
+      "Chair": 1
+    },
+    "EquipmentRearrangementsIDs": []
+  },
+  {
+    "Type": 2,
+    "Name": "hfdghdfgh",
+    "AppointmentIDs": [],
+    "ID": 6,
+    "EquipmentAmounts": {
+      "Bad": 1
+    },
     "EquipmentRearrangementsIDs": []
   }
 ]

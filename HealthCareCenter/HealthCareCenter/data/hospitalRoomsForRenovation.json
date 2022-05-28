@@ -1,17 +1,1 @@
-[
-  {
-    "Type": 2,
-    "Name": "asdasd",
-    "AppointmentIDs": [
-    ],
-    "ID": 4,
-    "EquipmentAmounts": {
-      "Chair": 1,
-      "Bad": 1
-    },
-    "EquipmentRearrangementsIDs": [
-      0,
-      1
-    ]
-  }
-]
+[]

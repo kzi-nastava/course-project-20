@@ -1,11 +1,1 @@
-[
-  {
-    "ID": 1,
-    "StartDate": "2022-05-13T00:00:00",
-    "FinishDate": "2022-05-27T00:00:00",
-    "Room1ID": 5,
-    "Room2ID": 6,
-    "MainRoomID": 4,
-    "RenovationType": 2
-  }
-]
+[]
