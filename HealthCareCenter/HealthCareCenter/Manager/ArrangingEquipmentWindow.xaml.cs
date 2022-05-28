@@ -390,6 +390,11 @@ namespace HealthCareCenter
             ShowWindow(new MedicineCreationWindow(_signedManager));
         }
 
+        private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new ChangeMedicineRequestWindow(_signedManager));
+        }
+
         private void LogOffItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new LoginWindow());

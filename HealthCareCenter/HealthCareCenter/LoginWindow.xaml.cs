@@ -23,6 +23,7 @@ namespace HealthCareCenter
     public partial class LoginWindow : Window
     {
         private static BackgroundWorker _backgroundWorker = null;
+
         private void DoEquipmentRearrangements()
         {
             List<Equipment> equipments = EquipmentService.GetEquipments();
@@ -100,7 +101,7 @@ namespace HealthCareCenter
             }
             else if (user.GetType() == typeof(Manager))
             {
-                ShowWindow(new CrudHospitalRoomWindow((Manager)user));
+                ShowWindow(new ChangeMedicineRequestWindow((Manager)user));
             }
             else if (user.GetType() == typeof(Patient))
             {

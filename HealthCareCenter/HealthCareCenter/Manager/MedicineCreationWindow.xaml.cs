@@ -168,6 +168,7 @@ namespace HealthCareCenter
             ExpirationDatePicker.Text = "";
             MedicineNameTextBox.Text = "";
             IngredientTextBox.Text = "";
+            ManufacturerTextBox.Text = "";
             DataGridIngredient.Items.Clear();
         }
 
@@ -202,10 +203,10 @@ namespace HealthCareCenter
             dataGrid.Items.Add(row);
         }
 
-        private List<string> CreateRow(string ingridient)
+        private List<string> CreateRow(string ingredient)
         {
             List<string> row = new List<string>();
-            row.Add(ingridient);
+            row.Add(ingredient);
             return row;
         }
 
@@ -243,6 +244,18 @@ namespace HealthCareCenter
             FillDataGridIngredient();
         }
 
+        private int GenerateMedicineId()
+        {
+            if (MedicineCreationRequestService.GetLargestId() > MedicineChangeRequsetService.GetLargestId())
+            {
+                return MedicineCreationRequestService.GetLargestId() + 1;
+            }
+            else
+            {
+                return MedicineChangeRequsetService.GetLargestId() + 1;
+            }
+        }
+
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
             string medicineName = MedicineNameTextBox.Text;
@@ -258,14 +271,14 @@ namespace HealthCareCenter
                 return;
             }
 
-            DateTime pCreationDate = Convert.ToDateTime(creationDate);
-            DateTime pExpirationDate = Convert.ToDateTime(expirationDate);
+            DateTime parsedCreationDate = Convert.ToDateTime(creationDate);
+            DateTime parsedExpirationDate = Convert.ToDateTime(expirationDate);
 
-            Medicine medicine = new Medicine(MedicineCreationRequestService.GetLargestId() + 1, medicineName, pCreationDate, pExpirationDate, _ingredients, medicineManufacturer);
+            Medicine medicine = new Medicine(GenerateMedicineId(), medicineName, parsedCreationDate, parsedExpirationDate, _ingredients, medicineManufacturer);
 
             MedicineCreationRequestService.Add(medicine);
             ClearAllElements();
-            MessageBox.Show("you have successfully created a medicine creation request!");
+            MessageBox.Show("You have successfully created a medicine creation request!");
         }
 
         private void ShowWindow(Window window)
@@ -307,6 +320,11 @@ namespace HealthCareCenter
         private void CreateMedicineClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new MedicineCreationWindow(_signedManager));
+        }
+
+        private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new ChangeMedicineRequestWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

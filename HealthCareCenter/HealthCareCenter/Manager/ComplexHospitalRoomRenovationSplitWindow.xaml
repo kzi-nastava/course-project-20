@@ -80,7 +80,7 @@
 
                 <MenuItem Header="Medicine">
                     <MenuItem Header="Create medicine" Click="CreateMedicineClick"></MenuItem>
-                    <!--<MenuItem Header="Change reffused medicine - merge" Click="ChangeReffusedMedicine"></MenuItem>-->
+                    <MenuItem Header="Change reffused medicine - merge" Click="ReffusedMedicineClick"></MenuItem>
                 </MenuItem>
 
                 <MenuItem Header="Log off" Click="LogOffItemClick"></MenuItem>
