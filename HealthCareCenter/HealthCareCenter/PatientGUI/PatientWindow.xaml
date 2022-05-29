@@ -39,7 +39,7 @@
         </Menu>
         <TextBlock x:Name="currentActionTextBlock" Grid.Row="1" Grid.Column="2" Margin="15 0 0 0" />
 
-        <Grid x:Name="myAppointmentsGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Visibility="Visible">
+        <Grid x:Name="myAppointmentsGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*" />
@@ -68,7 +68,7 @@
             <Button x:Name="prioritySchedulingButton" Margin="5 10 5 0" Content="Priority schedule" Grid.Row="2" Grid.Column="4" Click="prioritySchedulingButton_Click"/>
         </Grid>
 
-        <Grid x:Name="searchDoctorsGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Collapsed">
+        <Grid x:Name="searchDoctorsGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="4" Visibility="Visible">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*" />

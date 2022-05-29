@@ -14,11 +14,11 @@ using System.Windows.Shapes;
 namespace HealthCareCenter.PatientGUI.View
 {
     /// <summary>
-    /// Interaction logic for MyView.xaml
+    /// Interaction logic for ModifyAppointmentView.xaml
     /// </summary>
-    public partial class MyView : UserControl
+    public partial class ModifyAppointmentView : UserControl
     {
-        public MyView()
+        public ModifyAppointmentView()
         {
             InitializeComponent();
         }

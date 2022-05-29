@@ -13,6 +13,7 @@ namespace HealthCareCenter.PatientGUI.Models
         MyHealthRecord,
         MyPrescriptions,
         DoctorSurvey,
-        HealthCenterSurvey
+        HealthCenterSurvey,
+        SearchDoctors
     }
 }

@@ -10,112 +10,103 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="10" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="10" />
-            </Grid.RowDefinitions>
+        <ListView Grid.Row="0"
+                  Margin="10"
+                  ItemsSource="{Binding Appointments}">
 
-            <ListView Grid.Row="1"
-                      Margin="10"
-                      ItemsSource="{Binding Appointments}">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
 
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Appointment ID" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding AppointmentID}" 
+                                           Padding="20 5"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Appointment ID" >
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding AppointmentID}" 
-                                               Padding="20 5"/>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
+                    <GridViewColumn Header="Appointment Type">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding AppointmentType}" 
+                                           Padding="20 5" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 
-                        <GridViewColumn Header="Appointment Type">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding AppointmentType}" 
-                                               Padding="20 5" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
+                    <GridViewColumn Header="Appointment date">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding AppointmentDate}"
+                                           Padding="20 5" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 
-                        <GridViewColumn Header="Appointment date">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding AppointmentDate}"
-                                               Padding="20 5" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
+                    <GridViewColumn Header="Creation date">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding CreationDate}" 
+                                           Padding="20 5" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 
-                        <GridViewColumn Header="Creation date">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding CreationDate}" 
-                                               Padding="20 5" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
+                    <GridViewColumn Header="Is emergency">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding IsEmergency}"
+                                           Padding="20 5" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 
-                        <GridViewColumn Header="Is emergency">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding IsEmergency}"
-                                               Padding="20 5" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
+                    <GridViewColumn Header="Doctor ID">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DoctorID}" 
+                                           Padding="20 5" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 
-                        <GridViewColumn Header="Doctor ID">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding DoctorID}" 
-                                               Padding="20 5" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
+                    <GridViewColumn Header="Room ID">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding RoomID}"
+                                           Padding="20 5" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 
-                        <GridViewColumn Header="Room ID">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding RoomID}"
-                                               Padding="20 5" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </Grid>
+                </GridView>
+            </ListView.View>
+        </ListView>
 
         <StackPanel Grid.Row="1" 
                     Orientation="Horizontal">
             <Button Content="Create appoinment" 
-                    Padding="10 20" 
+                    Padding="20 20" 
                     Margin="20 10" 
                     Command="{Binding CreateAppointment}" />
             <Button Content="Modify appoinment" 
-                    Padding="10 20"
+                    Padding="20 20"
                     Margin="20 10"
                     Command="{Binding ModifyAppointment}" />
             <Button Content="Cancel appoinment" 
-                    Padding="10 20"
+                    Padding="20 20"
                     Margin="20 10" 
                     Command="{Binding CancelAppointment}" />
             <Button Content="Priority scheduling" 
-                    Padding="10 20"
+                    Padding="20 20"
                     Margin="20 10" 
                     Command="{Binding PriorityScheduling}" />
         </StackPanel>

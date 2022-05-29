@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace HealthCareCenter.PatientGUI.ViewModels
 {
@@ -12,6 +13,12 @@ namespace HealthCareCenter.PatientGUI.ViewModels
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public override string ToString()
+        {
+            string typeName = GetType().Name[0..^9];
+            return string.Join(" ", Regex.Split(typeName, @"(?<!^)(?=[A-Z])"));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using HealthCareCenter.PatientGUI.Commands;
+﻿using HealthCareCenter.Model;
+using HealthCareCenter.PatientGUI.Commands;
 using HealthCareCenter.PatientGUI.Models;
 using HealthCareCenter.PatientGUI.Stores;
 using System;
@@ -19,18 +20,18 @@ namespace HealthCareCenter.PatientGUI.ViewModels
         public ICommand CancelAppointment { get; }
         public ICommand PriorityScheduling { get; }
 
-        public MyAppointmentsViewModel(NavigationStore navigationStore)
+        public MyAppointmentsViewModel(NavigationStore navigationStore, Patient patient)
         {
             _appointments = new ObservableCollection<AppointmentViewModel>();
-            List<Model.Appointment> allAppointments = Model.AppointmentRepository.Load();
-            foreach (Model.Appointment appointment in allAppointments)
+            List<Appointment> allAppointments = AppointmentRepository.Load();
+            foreach (Appointment appointment in allAppointments)
             {
                 _appointments.Add(new AppointmentViewModel(appointment));
             }
 
-            CreateAppointment = new NavigateCommand(navigationStore, ViewType.CreateAppointment);
-            ModifyAppointment = new NavigateCommand(navigationStore, ViewType.ModifyAppointment);
-            PriorityScheduling = new NavigateCommand(navigationStore, ViewType.PriorityScheduling);
+            CreateAppointment = new NavigateCommand(navigationStore, ViewType.CreateAppointment, patient);
+            ModifyAppointment = new NavigateCommand(navigationStore, ViewType.ModifyAppointment, patient);
+            PriorityScheduling = new NavigateCommand(navigationStore, ViewType.PriorityScheduling, patient);
         }
     }
 }

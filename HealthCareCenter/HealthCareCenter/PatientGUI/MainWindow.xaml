@@ -19,6 +19,15 @@
             <DataTemplate DataType="{x:Type vms:PrioritySchedulingViewModel}">
                 <views:PrioritySchedulingView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:MyHealthRecordViewModel}">
+                <views:MyHealthRecordView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:MyPrescriptionsViewModel}">
+                <views:MyPrescriptionsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:SearchDoctorsViewModel}">
+                <views:SearchDoctorsView />
+            </DataTemplate>
         </Grid.Resources>
 
         <ContentControl Content="{Binding CurrentViewModel}" 
@@ -32,7 +41,7 @@
                 <MenuItem Header="View your appointments" 
                           Command="{Binding ShowMyAppointments}"/>
                 <MenuItem Header="Search for doctor" 
-                          Command="{Binding ShowSearchForDoctor}"/>
+                          Command="{Binding ShowSearchForDoctors}"/>
                 <MenuItem Header="My prescriptions" 
                           Command="{Binding ShowMyPrescriptions}"/>
                 <MenuItem Header="My health record" 
@@ -43,9 +52,14 @@
                     <MenuItem Header="Health center" 
                               Command="{Binding ShowHealthCenterSurvey}"/>
                 </MenuItem>
-                <MenuItem Header="Log out" />
+                <MenuItem Header="Log out"
+                          Command="{Binding LogOut}"/>
             </MenuItem>
         </Menu>
+        <TextBlock Grid.Row="1"
+                   Grid.Column="2"
+                   Margin="20 0 0 0"
+                   Text="{Binding CurrentViewLabel}" />
 
         <Grid.RowDefinitions>
             <RowDefinition Height="20" />
