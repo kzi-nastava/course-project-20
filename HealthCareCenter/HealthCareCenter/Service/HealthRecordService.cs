@@ -21,7 +21,7 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static HealthRecord FindRecord(Patient patient)
+        public static HealthRecord Find(Patient patient)
         {
             foreach (HealthRecord record in HealthRecordRepository.Records)
             {
@@ -33,7 +33,7 @@ namespace HealthCareCenter.Service
             return null;
         }
 
-        public static HealthRecord FindRecord(Appointment appointment)
+        public static HealthRecord Find(Appointment appointment)
         {
             foreach (HealthRecord record in HealthRecordRepository.Records)
             {

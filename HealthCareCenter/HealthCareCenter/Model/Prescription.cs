@@ -7,15 +7,16 @@ namespace HealthCareCenter.Model
     public class Prescription
     {
         public Prescription() { }
-        public Prescription(int _id, List<int> _medicineIDs, int _doctorID, int _medicineInstructionID) {
-            this.ID = _id; 
-            this.MedicineIDs = _medicineIDs;
+        public Prescription(int _id, int _doctorID, Dictionary<int, int> _medicineInstructionIDs)
+        {
+            this.ID = _id;
             this.DoctorID = _doctorID;
-            this.MedicineInstructionID = _medicineInstructionID;
+            this.MedicineInstructions = _medicineInstructionIDs;
         }
         public int ID { get; set; }
-        public List<int> MedicineIDs { get; set; }
         public int DoctorID { get; set; }
-        public int MedicineInstructionID { get; set; }
+        public Dictionary<int, int> MedicineInstructions { get; set; }
+        public List<int> MedicineInstructionIDs { get; set; }
+        public int HealthRecordID { get; set; }
     }
 }

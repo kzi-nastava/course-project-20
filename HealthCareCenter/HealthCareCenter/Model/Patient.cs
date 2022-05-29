@@ -10,6 +10,7 @@ namespace HealthCareCenter.Model
         public Blocker BlockedBy { get; set; }
         public List<int> PrescriptionIDs { get; set; }
         public int HealthRecordID { get; set; }
+        public int NotificationReceiveTime { get; set; }  // how many hours before the patient should take the medicine should they recieve the notification
 
         //public List<Survey> Surveys { get; set; }
         public Patient() : base() { }
@@ -19,6 +20,7 @@ namespace HealthCareCenter.Model
             BlockedBy = blockedBy;
             PrescriptionIDs = prescriptionIDs;
             HealthRecordID = healthRecordID;
+            NotificationReceiveTime = 2;
         }
     }
 }

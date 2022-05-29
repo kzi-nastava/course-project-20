@@ -254,48 +254,6 @@
     }
   },
   {
-    "ID": 24,
-    "Type": 1,
-    "ScheduledDate": "20/05/2022 20:30",
-    "CreatedDate": "20/05/2022 18:46",
-    "Emergency": true,
-    "DoctorID": 1,
-    "HealthRecordID": 1,
-    "HospitalRoomID": 3,
-    "PatientAnamnesis": {
-      "ID": 0,
-      "Comment": "I am perfect. And you will quote. Everything I say."
-    }
-  },
-  {
-    "ID": 25,
-    "Type": 1,
-    "ScheduledDate": "20/05/2022 20:45",
-    "CreatedDate": "20/05/2022 18:46",
-    "Emergency": true,
-    "DoctorID": 1,
-    "HealthRecordID": 1,
-    "HospitalRoomID": 3,
-    "PatientAnamnesis": {
-      "ID": 0,
-      "Comment": "YOU ATE MY GIRLFRIE-aah"
-    }
-  },
-  {
-    "ID": 26,
-    "Type": 1,
-    "ScheduledDate": "20/05/2022 19:45",
-    "CreatedDate": "20/05/2022 18:47",
-    "Emergency": true,
-    "DoctorID": 1,
-    "HealthRecordID": 1,
-    "HospitalRoomID": 3,
-    "PatientAnamnesis": {
-      "ID": 0,
-      "Comment": "Now you shall feel the wrath... OF SUPER VEGE-aah"
-    }
-  },
-  {
     "ID": 27,
     "Type": 1,
     "ScheduledDate": "13/06/2022 09:30",
@@ -325,6 +283,39 @@
     "Emergency": false,
     "DoctorID": 5,
     "HealthRecordID": 2,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 30,
+    "Type": 1,
+    "ScheduledDate": "07/11/2022 18:00",
+    "CreatedDate": "22/05/2022 19:24",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 31,
+    "Type": 1,
+    "ScheduledDate": "14/03/2023 09:30",
+    "CreatedDate": "22/05/2022 19:24",
+    "Emergency": false,
+    "DoctorID": 5,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 32,
+    "Type": 1,
+    "ScheduledDate": "07/06/2022 13:30",
+    "CreatedDate": "23/05/2022 20:10",
+    "Emergency": false,
+    "DoctorID": 5,
+    "HealthRecordID": 1,
     "HospitalRoomID": 3,
     "PatientAnamnesis": null
   }
