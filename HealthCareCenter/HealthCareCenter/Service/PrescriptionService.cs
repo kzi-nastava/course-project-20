@@ -12,11 +12,11 @@ namespace HealthCareCenter.Service
         public PrescriptionService(int _doctorID)
         {
             this._doctorID = _doctorID;
-            MedicineInstructions = new Dictionary<int, int>();
+            MedicineInstructions = new List<int>();
         }
         private List<DateTime>_times = new List<DateTime>();
         public Medicine SelectedMedicine { get; set; }
-        public  Dictionary<int,int> MedicineInstructions { get; set; }
+        public  List<int> MedicineInstructions { get; set; }
         private int _doctorID;
 
         public bool ClearData(bool finishing)
@@ -48,19 +48,14 @@ namespace HealthCareCenter.Service
             }
         }
         public bool CreateMedicineInstruction(int id,string comment,int dailyConsumption,ConsumptionPeriod consumptionPeriod, int medicineID) {
-            if (MedicineInstructions.ContainsKey(medicineID))
-            {
-                MessageBox.Show("This medicine has already been added to the prescription");
-                return false;
-            }
             bool sucessfull = checkData(false);
             if (!sucessfull)
                 return false;
             try
             {
-                MedicineInstruction _medicineInstruction = new MedicineInstruction(++MedicineInstructionRepository.LargestID, comment, _times, dailyConsumption, consumptionPeriod);
+                MedicineInstruction _medicineInstruction = new MedicineInstruction(++MedicineInstructionRepository.LargestID, comment, _times, dailyConsumption, consumptionPeriod, medicineID);
                 MedicineInstructionRepository.MedicineInstructions.Add(_medicineInstruction);
-                MedicineInstructions[medicineID] = _medicineInstruction.ID; 
+                MedicineInstructions.Add(_medicineInstruction.ID); 
                 return true;
             }
             catch
@@ -73,8 +68,7 @@ namespace HealthCareCenter.Service
             bool sucessfull = checkData(true);
             if (!sucessfull)
                 return false;
-            List<int> medicineIDs = new List<int>();
-            Dictionary<int,int> medicineInstructions = new Dictionary<int, int>(MedicineInstructions);
+            List<int> medicineInstructions = new List<int>(MedicineInstructions);
             Prescription prescription = new Prescription(++PrescriptionRepository.LargestID,_doctorID,medicineInstructions);
             
             PrescriptionRepository.Prescriptions.Add(prescription);

@@ -14,7 +14,7 @@ namespace HealthCareCenter
     public partial class DoctorWindow : Window
     {
         PrescriptionService prescriptionService;
-        private int selectedPatientID;
+        private int selectedPatientID,selectedRoomID;
         
         private Doctor signedUser;
         private DataTable appointmentsDataTable;
@@ -23,6 +23,7 @@ namespace HealthCareCenter
         private DataTable medicineDataTable;
         private DataTable selectedMedicineDataTable;
         private DataTable medicineCreationRequestDataTable;
+        private DataTable equipmentDataTable;
         private Referral referral;
         private bool patientsTableIsFilled = false;
         private int appointmentIndex;
@@ -40,6 +41,7 @@ namespace HealthCareCenter
             CreateDoctorsTable();
             CreateMedicineTable();
             CreateMedicineCreationRequestTable();
+            createEquipmentTable();
             HealthRecordRepository.Load();
             AppointmentRepository.Load();
             MedicineRepository.Load();
@@ -108,7 +110,7 @@ namespace HealthCareCenter
             DataColumn dc4 = new DataColumn("Creation date", typeof(string));
             DataColumn dc5 = new DataColumn("Emergency", typeof(bool));
             DataColumn dc6 = new DataColumn("Doctors first and last name", typeof(string));
-            DataColumn dc7 = new DataColumn("Room", typeof(string));
+            DataColumn dc7 = new DataColumn("Room ID", typeof(int));
             DataColumn dc8 = new DataColumn("Patient ID", typeof(int));
             appointmentsDataTable.Columns.Add(dc1);
             appointmentsDataTable.Columns.Add(dc2);
@@ -138,6 +140,12 @@ namespace HealthCareCenter
             doctorsDataTable.Columns.Add(dc1);
             doctorsDataTable.Columns.Add(dc2);
             doctorsDataTable.Columns.Add(dc3);
+        }
+        private void createEquipmentTable()
+        {
+            equipmentDataTable = new DataTable("Equipment");
+            DataColumn dc1 = new DataColumn("Name",typeof(string));
+            equipmentDataTable.Columns.Add(dc1);
         }
         private void CreateMedicineCreationRequestTable()
         {
@@ -198,7 +206,17 @@ namespace HealthCareCenter
             }
             medicineCreationRequestDataGrid.ItemsSource = medicineCreationRequestDataTable.DefaultView;
         }
-
+        private void FillEquipmentTable(Room room)
+        {
+            equipmentDataTable.Rows.Clear();
+            foreach(string name in room.EquipmentAmounts.Keys)
+            {
+                dr = equipmentDataTable.NewRow();
+                dr[0] = name;
+                equipmentDataTable.Rows.Add(dr);
+            }
+            equipmentDataGrid.ItemsSource = equipmentDataTable.DefaultView;
+        }
         private void AddMedicineToTable(Medicine medicine)
         {
             dr = selectedMedicineDataTable.NewRow();
@@ -655,6 +673,8 @@ namespace HealthCareCenter
         private void StartAppointment_Click(object sender, RoutedEventArgs e)
         {
             int patientID = getRowItemID(scheduleDataGrid, "Patient ID");
+            int roomID = getRowItemID(scheduleDataGrid, "Room ID");
+            selectedRoomID = roomID;
             if(patientID == -1) return;
             selectedPatientID = patientID;
             appointmentIndex = scheduleDataGrid.SelectedIndex;  
@@ -770,6 +790,10 @@ namespace HealthCareCenter
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             exitHealthRecord();
+            scheduleGrid.Visibility = Visibility.Collapsed;
+            equimpentUpdateGrid.Visibility = Visibility.Visible;
+            Room room = RoomService.GetRoom(selectedRoomID);
+            FillEquipmentTable(room);
         }
         private void ReferToADifferentPracticioner_Click(object sender, RoutedEventArgs e)
         {
@@ -1032,6 +1056,20 @@ namespace HealthCareCenter
             }
             return (int)row[key];
         }
+        private string getRowItem(DataGrid grid, string key)
+        {
+            DataRowView row;
+            try
+            {
+                row = (DataRowView)grid.SelectedItems[0];
+            }
+            catch
+            {
+                MessageBox.Show("Select a row from the table");
+                return "";
+            }
+            return (string)row[key];
+        }
 
         //---------------------------------------------------------------------------------------
         //Window closing
@@ -1043,6 +1081,7 @@ namespace HealthCareCenter
             MedicineInstructionRepository.Save();
             ReferralRepository.Save();
             MedicineCreationRequestRepository.Save();
+            HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
             LogOut();
         }
 
@@ -1076,6 +1115,56 @@ namespace HealthCareCenter
             selectedRequest.DenyComment = denyMessage;
             FillMedicineRequestsTable();
             MessageBox.Show("Request denied");
+        }
+
+        private void equimpentUpdateGrid_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            string equipmentName = getRowItem(equipmentDataGrid, "Name");
+            if (equipmentName == "")
+                return;
+            Room room = RoomService.GetRoom(selectedRoomID);
+            int amount = room.GetEquipmentAmount(equipmentName);
+            equipmentTextBlock.Text = amount.ToString();
+        }
+
+        private void submitEquipmentChanges_Click(object sender, RoutedEventArgs e)
+        {
+            string equipmentName = getRowItem(equipmentDataGrid, "Name");
+            string unparsedAmount = equipmentTextBox.Text;
+            int usedAmount = CheckTheAmount(unparsedAmount, equipmentName);
+            if (usedAmount == -1) return;
+            Room room = RoomService.GetRoom(selectedRoomID);
+            room.EquipmentAmounts[equipmentName] -= usedAmount;
+            MessageBox.Show(equipmentName + " sucessfully updated");
+            equipmentTextBox.Text = "";
+        }
+
+        private int CheckTheAmount(string unparsedAmount, string equipmentName)
+        {
+            int usedAmount = -1;
+            try
+            {
+                usedAmount = int.Parse(unparsedAmount);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Invalid number");
+                return -1;
+            }
+            Room room = RoomService.GetRoom(selectedRoomID);
+            int oldAmount = room.GetEquipmentAmount(equipmentName);
+            if(oldAmount < usedAmount)
+            {
+                MessageBox.Show("The number is too big");
+                return -1;
+            }
+            return usedAmount;
+
+        }
+        private void backEquipmentChanges_Click(object sender, RoutedEventArgs e)
+        {
+            scheduleGrid.Visibility = Visibility.Visible;
+            equimpentUpdateGrid.Visibility = Visibility.Collapsed;
         }
 
         private void medicineRequestsDataGrid_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)

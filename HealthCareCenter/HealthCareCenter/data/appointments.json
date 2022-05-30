@@ -85,7 +85,7 @@
     "Emergency": false,
     "DoctorID": 1,
     "HealthRecordID": 1,
-    "HospitalRoomID": 3,
+    "HospitalRoomID": 1,
     "PatientAnamnesis": {
       "ID": 0,
       "Comment": null
@@ -99,7 +99,7 @@
     "Emergency": true,
     "DoctorID": 1,
     "HealthRecordID": 1,
-    "HospitalRoomID": 3,
+    "HospitalRoomID": 1,
     "PatientAnamnesis": {
       "ID": 0,
       "Comment": null
