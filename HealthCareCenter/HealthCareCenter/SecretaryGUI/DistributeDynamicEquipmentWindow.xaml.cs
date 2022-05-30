@@ -19,7 +19,7 @@ namespace HealthCareCenter.SecretaryGUI
     /// </summary>
     public partial class DistributeDynamicEquipmentWindow : Window
     {
-        Room _storage;
+        readonly Room _storage;
         public DistributeDynamicEquipmentWindow()
         {
             _storage = StorageRepository.Load();
@@ -69,7 +69,7 @@ namespace HealthCareCenter.SecretaryGUI
             {
                 roomsWithShortageComboBox.Items.Add(new
                 {
-                    Name = ((HospitalRoom)room).Name,
+                    ((HospitalRoom)room).Name,
                     ID = room.ID.ToString()
                 });
             }
@@ -94,7 +94,7 @@ namespace HealthCareCenter.SecretaryGUI
             {
                 roomsToTransferFromComboBox.Items.Add(new
                 {
-                    Name = room.Name,
+                    room.Name,
                     ID = room.ID.ToString()
                 });
             }

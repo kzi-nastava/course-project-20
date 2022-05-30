@@ -19,7 +19,7 @@ namespace HealthCareCenter.SecretaryGUI
 {
     public partial class SecretaryWindow : Window
     {
-        private Secretary _signedUser;
+        private readonly Secretary _signedUser;
         public SecretaryWindow(User user)
         {
             _signedUser = (Secretary)user;

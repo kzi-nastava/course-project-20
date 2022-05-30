@@ -10,7 +10,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using HealthCareCenter.Model;
 using HealthCareCenter.Service;
 
 namespace HealthCareCenter.SecretaryGUI
@@ -20,7 +19,7 @@ namespace HealthCareCenter.SecretaryGUI
     /// </summary>
     public partial class DynamicEquipmentRequestWindow : Window
     {
-        private Secretary _secretary;
+        private readonly Secretary _secretary;
         private List<string> _request;
 
         public DynamicEquipmentRequestWindow()
@@ -117,7 +116,7 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
-            Dictionary<string, int> amountOfEquipment = getAmountOfEquipment();
+            Dictionary<string, int> amountOfEquipment = GetAmountOfEquipment();
             SendRequest(amountOfEquipment);
             Reset();
             MessageBox.Show("Successfully sent a request for acquisition of dynamic equipment.");
@@ -138,7 +137,7 @@ namespace HealthCareCenter.SecretaryGUI
             DynamicEquipmentRequestRepository.Save();
         }
 
-        private Dictionary<string, int> getAmountOfEquipment()
+        private Dictionary<string, int> GetAmountOfEquipment()
         {
             Dictionary<string, int> amountOfEquipment = new Dictionary<string, int>();
 

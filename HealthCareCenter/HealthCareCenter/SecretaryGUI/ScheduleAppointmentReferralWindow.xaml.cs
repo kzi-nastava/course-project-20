@@ -22,11 +22,10 @@ namespace HealthCareCenter.SecretaryGUI
     /// </summary>
     public partial class ScheduleAppointmentReferralWindow : Window
     {
-        private Patient _patient;
-        private Referral _referral;
+        private readonly Patient _patient;
+        private readonly Referral _referral;
 
         private List<HospitalRoomDisplay> _rooms;
-        private DataTable _availableTerms;
 
         public ScheduleAppointmentReferralWindow()
         {

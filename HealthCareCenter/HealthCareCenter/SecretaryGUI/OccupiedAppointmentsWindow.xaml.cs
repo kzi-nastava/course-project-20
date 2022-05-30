@@ -21,26 +21,22 @@ namespace HealthCareCenter.SecretaryGUI
     /// </summary>
     public partial class OccupiedAppointmentsWindow : Window
     {
-        private Patient _patient;
-        private AppointmentType _type;
-        private List<Doctor> _doctors;
-        private List<HospitalRoom> _rooms;
+        private readonly Patient _patient;
+        private readonly AppointmentType _type;
         private List<Appointment> _occupiedAppointments;
         private List<AppointmentDisplay> _appointmentsForDisplay;
         private Dictionary<int, DateTime> _newDateOf;
-        private Dictionary<int, Appointment> _newAppointmentsInfo;
+        private readonly Dictionary<int, Appointment> _newAppointmentsInfo;
 
         public OccupiedAppointmentsWindow()
         {
             InitializeComponent();
         }
 
-        public OccupiedAppointmentsWindow(Patient patient, AppointmentType type, List<Doctor> doctors, List<HospitalRoom> rooms, List<Appointment> occupiedAppointments, Dictionary<int, Appointment> newAppointmentsInfo)
+        public OccupiedAppointmentsWindow(Patient patient, AppointmentType type, List<Appointment> occupiedAppointments, Dictionary<int, Appointment> newAppointmentsInfo)
         {
             _patient = patient;
             _type = type;
-            _doctors = doctors;
-            _rooms = rooms;
             _occupiedAppointments = occupiedAppointments;
             _newAppointmentsInfo = newAppointmentsInfo;
 

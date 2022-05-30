@@ -18,8 +18,8 @@ namespace HealthCareCenter.SecretaryGUI
     /// </summary>
     public partial class PatientViewWindow : Window
     {
-        private Patient _patient;
-        private HealthRecord _record;
+        private readonly Patient _patient;
+        private readonly HealthRecord _record;
 
         public PatientViewWindow()
         {

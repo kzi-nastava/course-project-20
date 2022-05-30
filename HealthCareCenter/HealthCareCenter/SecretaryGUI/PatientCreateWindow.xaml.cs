@@ -216,7 +216,7 @@ namespace HealthCareCenter.SecretaryGUI
 
         private bool ValidHeight()
         {
-            if (!Double.TryParse(heightTextBox.Text, out double height))
+            if (!Double.TryParse(heightTextBox.Text, out _))
             {
                 MessageBox.Show("Height must be a number.");
                 return false;
@@ -226,7 +226,7 @@ namespace HealthCareCenter.SecretaryGUI
 
         private bool ValidWeight()
         {
-            if (!Double.TryParse(weightTextBox.Text, out double weight))
+            if (!Double.TryParse(weightTextBox.Text, out _))
             {
                 MessageBox.Show("Weight must be a number.");
                 return false;

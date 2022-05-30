@@ -21,7 +21,7 @@ namespace HealthCareCenter.SecretaryGUI
     /// </summary>
     public partial class ViewChangeRequestsWindow : Window
     {
-        private Patient _patient;
+        private readonly Patient _patient;
 
         private List<DeleteRequest> _deleteRequests;
         private List<EditRequest> _editRequests;

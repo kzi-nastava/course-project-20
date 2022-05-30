@@ -18,7 +18,7 @@ namespace HealthCareCenter.SecretaryGUI
     /// </summary>
     public partial class PatientReferralsWindow : Window
     {
-        private Patient _patient;
+        private readonly Patient _patient;
         private List<PatientReferral> _referrals;
 
         public PatientReferralsWindow()

@@ -21,7 +21,7 @@ namespace HealthCareCenter.SecretaryGUI
     /// </summary>
     public partial class ScheduleUrgentAppointmentWindow : Window
     {
-        private Patient _patient;
+        private readonly Patient _patient;
 
         private List<string> _typesOfDoctors;
         private List<Appointment> _occupiedAppointments;
@@ -73,11 +73,11 @@ namespace HealthCareCenter.SecretaryGUI
 
             if (!FindTermsAndSchedule(doctors, type, rooms, terms))
             {
-                OpenPostponingWindow(doctors, type, rooms);
+                OpenPostponingWindow(type);
             }
         }
 
-        private void OpenPostponingWindow(List<Doctor> doctors, AppointmentType type, List<HospitalRoom> rooms)
+        private void OpenPostponingWindow(AppointmentType type)
         {
             if (_occupiedAppointments.Count == 0)
             {
@@ -85,7 +85,7 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
             MessageBox.Show("No available term was found in the next 2 hours. You can, however, postpone an occupied term in the next window.");
-            OccupiedAppointmentsWindow window = new OccupiedAppointmentsWindow(_patient, type, doctors, rooms, _occupiedAppointments, _newAppointmentsInfo);
+            OccupiedAppointmentsWindow window = new OccupiedAppointmentsWindow(_patient, type, _occupiedAppointments, _newAppointmentsInfo);
             window.ShowDialog();
             this.Close();
         }
