@@ -1,15 +1,12 @@
 ﻿using HealthCareCenter.Model;
 using HealthCareCenter.PatientGUI.Commands;
 using HealthCareCenter.PatientGUI.Stores;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
 using System.Windows.Input;
 
 namespace HealthCareCenter.PatientGUI.ViewModels
 {
-    class SearchDoctorsViewModel : ViewModelBase
+    internal class SearchDoctorsViewModel : ViewModelBase
     {
         public Patient Patient { get; }
 
@@ -24,8 +21,7 @@ namespace HealthCareCenter.PatientGUI.ViewModels
             }
         }
 
-        private readonly List<string> _searchCriteria;
-        public List<string> SearchCriteria => _searchCriteria;
+        public List<string> SearchCriteria { get; }
 
         private string _chosenSearchCriteria;
         public string ChosenSearchCriteria
@@ -84,13 +80,13 @@ namespace HealthCareCenter.PatientGUI.ViewModels
 
             _doctors = new List<DoctorViewModel>();
 
-            _searchCriteria = new List<string>
+            SearchCriteria = new List<string>
             {
                 "First name",
                 "Last name",
                 "Professional area"
             };
-            _chosenSearchCriteria = _searchCriteria[0];
+            _chosenSearchCriteria = SearchCriteria[0];
 
             _sortCriteria = new List<string>
             {

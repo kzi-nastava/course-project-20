@@ -1,23 +1,39 @@
-﻿using HealthCareCenter.PatientGUI.ViewModels;
+﻿using HealthCareCenter.Model;
+using HealthCareCenter.PatientGUI.Models;
+using HealthCareCenter.PatientGUI.ViewModels;
+using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
 
 namespace HealthCareCenter.PatientGUI.Commands
 {
-    class SortAppointmentsCommand : CommandBase
+    internal class SortAppointmentsCommand : CommandBase
     {
-        ObservableCollection<AppointmentViewModel> _appointments;
-
         public override void Execute(object parameter)
         {
-            throw new NotImplementedException();
+            List<Appointment> appointments = new List<Appointment>();
+            foreach (AppointmentViewModel appointmentViewModel in _viewModel.Appointments)
+            {
+                appointments.Add(AppointmentService.Find(Convert.ToInt32(appointmentViewModel.AppointmentID)));
+            }
+
+            PatientFunctionality patFunc = PatientFunctionality.GetInstance();
+            appointments = patFunc.SortAppointments(appointments, _viewModel.ChosenSortCriteria);
+
+            List<AppointmentViewModel> sortedAppointmentViewModels = new List<AppointmentViewModel>();
+            foreach (Appointment appointment in appointments)
+            {
+                sortedAppointmentViewModels.Add(new AppointmentViewModel(appointment));
+            }
+
+            _viewModel.Appointments = sortedAppointmentViewModels;
         }
 
-        public SortAppointmentsCommand(ref ObservableCollection<AppointmentViewModel> appointments)
+        private readonly MyHealthRecordViewModel _viewModel;
+
+        public SortAppointmentsCommand(MyHealthRecordViewModel viewModel)
         {
-            _appointments = appointments;
+            _viewModel = viewModel;
         }
     }
 }

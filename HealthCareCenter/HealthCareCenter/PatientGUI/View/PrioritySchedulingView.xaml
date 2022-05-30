@@ -23,7 +23,8 @@
                   Grid.ColumnSpan="2"
                   Grid.RowSpan="2"
                   Margin="10"
-                  ItemsSource="{Binding Doctors}">
+                  ItemsSource="{Binding Doctors}"
+                  SelectedItem="{Binding ChosenDoctor}">
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
@@ -75,8 +76,10 @@
         </ListView>
 
         <ListView Grid.Row="0"
-                Grid.Column="2"
-                Margin="10">
+                  Grid.Column="2"
+                  Margin="10"
+                  ItemsSource="{Binding PriorityNotFoundChoices}"
+                  SelectedItem="{Binding PriorityNotFoundChoice}">
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
@@ -87,20 +90,20 @@
             <ListView.View>
                 <GridView>
 
-                    <GridViewColumn Header="Date" >
+                    <GridViewColumn Header="Doctor ID" >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{}" 
-                                            Padding="20 5"/>
+                                <TextBlock Text="{Binding DoctorID}" 
+                                           Padding="20 5"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
-                    <GridViewColumn Header="Term" >
+                    <GridViewColumn Header="Appointment date" >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{}" 
-                                            Padding="20 5"/>
+                                <TextBlock Text="{Binding AppointmentDate}" 
+                                           Padding="20 5"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -121,7 +124,7 @@
                            Grid.Column="0"
                            FontWeight="SemiBold"
                            Margin="0 0 10 0" />
-                <RadioButton IsChecked="True"
+                <RadioButton IsChecked="{Binding IsDoctorPriority}"
                              Content="Doctor" 
                              GroupName="priority" 
                              Grid.Column="1" />
@@ -129,7 +132,8 @@
                              GroupName="priority" 
                              Grid.Column="2"/>
             </Grid>
-            <DatePicker Margin="5" />
+            <DatePicker Margin="5"
+                        SelectedDate="{Binding ChosenDate}"/>
             <Grid Margin="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -151,20 +155,24 @@
                            Grid.Column="0" />
                 <ComboBox Grid.Row="2"
                           Grid.Column="0" 
-                          Margin="0 0 5 0" />
+                          Margin="0 0 5 0"
+                          ItemsSource="{Binding AllPossibleTerms}"
+                          SelectedValue="{Binding StartRange}" />
                 <TextBlock Text="End term range" 
                            Grid.Row="1"
                            Grid.Column="1"
                            Margin="5 0 0 0" />
                 <ComboBox Grid.Row="2"
                           Grid.Column="1" 
-                          Margin="5 0 0 0" />
+                          Margin="5 0 0 0"
+                          ItemsSource="{Binding AllPossibleTerms}"
+                          SelectedValue="{Binding EndRange}" />
 
             </Grid>
             <Button Content="Schedule appointment"
                     Padding="20 10"
                     Margin="5 10" 
-                    Command="{Binding PriorityScheduleAppointment}"/>
+                    Command="{Binding PriorityScheduleAppointment}" />
 
         </StackPanel>
 

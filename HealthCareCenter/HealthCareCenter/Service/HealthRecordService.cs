@@ -23,6 +23,11 @@ namespace HealthCareCenter.Service
 
         public static HealthRecord Find(Patient patient)
         {
+            if (HealthRecordRepository.Records == null)
+            {
+                HealthRecordRepository.Load();
+            }
+
             foreach (HealthRecord record in HealthRecordRepository.Records)
             {
                 if (patient.HealthRecordID == record.ID)

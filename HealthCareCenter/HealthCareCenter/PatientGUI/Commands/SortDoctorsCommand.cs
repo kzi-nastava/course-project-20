@@ -4,19 +4,17 @@ using HealthCareCenter.PatientGUI.ViewModels;
 using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 
 namespace HealthCareCenter.PatientGUI.Commands
 {
-    class SortDoctorsCommand : CommandBase
+    internal class SortDoctorsCommand : CommandBase
     {
         public override void Execute(object parameter)
         {
             if (_viewModel.Doctors.Count == 0)
             {
-                MessageBox.Show("Nothing to sort", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
+                _ = MessageBox.Show("Nothing to sort", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -40,7 +38,7 @@ namespace HealthCareCenter.PatientGUI.Commands
             _viewModel.Doctors = sortedDoctorViewModels;
         }
 
-        private SearchDoctorsViewModel _viewModel;
+        private readonly SearchDoctorsViewModel _viewModel;
 
         public SortDoctorsCommand(SearchDoctorsViewModel viewModel)
         {

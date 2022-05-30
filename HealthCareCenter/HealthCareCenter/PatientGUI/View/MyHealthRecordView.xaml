@@ -34,7 +34,8 @@
                            Grid.Row="0" />
                 <TextBox IsEnabled="False"
                          Grid.Row="1" 
-                         BorderThickness="2" />
+                         BorderThickness="2"
+                         Text="{Binding PatientHeight}" />
             </Grid>
 
             <Grid Margin="5"
@@ -49,7 +50,8 @@
                            Grid.Row="0" />
                 <TextBox IsEnabled="False"
                          Grid.Row="1"
-                         BorderThickness="2" />
+                         BorderThickness="2"
+                         Text="{Binding PatientWeight}" />
             </Grid>
 
             <Grid Margin="5"
@@ -68,7 +70,8 @@
                          AcceptsReturn="True" 
                          VerticalScrollBarVisibility="Auto" 
                          HorizontalScrollBarVisibility="Auto" 
-                         Grid.Row="1" />
+                         Grid.Row="1"
+                         Text="{Binding PatientAllergens}" />
 
             </Grid>
 
@@ -88,7 +91,8 @@
                          AcceptsReturn="True" 
                          VerticalScrollBarVisibility="Auto" 
                          HorizontalScrollBarVisibility="Auto" 
-                         Grid.Row="1" />
+                         Grid.Row="1" 
+                         Text="{Binding PatientPreviousDiseases}" />
             </Grid>
         </Grid>
 
@@ -113,32 +117,41 @@
 
                 <TextBlock Text="Sort criteria"
                            Grid.Row="0"
-                           Grid.Column="0" />
+                           Grid.Column="0" 
+                           Margin="5 0 0 0" 
+                           FontWeight="SemiBold" />
                 <ComboBox Grid.Row="1"
                           Grid.Column="0" 
-                          Margin="5" />
-                <TextBlock Text="Search keyword"
-                           Grid.Row="0"
-                           Grid.Column="1" />
-                <TextBox Grid.Row="1"
-                         Grid.Column="1" 
-                         Margin="5" />
+                          Margin="5 0" 
+                          ItemsSource="{Binding SortCriteria}" 
+                          SelectedItem="{Binding ChosenSortCriteria}" />
                 <Button Content="Sort"
                         Grid.Row="0"
-                        Grid.Column="2"
+                        Grid.Column="1"
                         Grid.RowSpan="2"
-                        Margin="5" 
+                        Margin="5 0" 
                         Command="{Binding SortAppointments}"  />
+                <TextBlock Text="Search keyword"
+                           Grid.Row="0"
+                           Grid.Column="2"
+                           Margin="5 0 0 0"
+                           FontWeight="SemiBold" />
+                <TextBox Grid.Row="1"
+                         Grid.Column="2" 
+                         Margin="5 0" 
+                         Text="{Binding SearchKeyword}" />
                 <Button Content="Search"
                         Grid.Row="0"
                         Grid.Column="3"
                         Grid.RowSpan="2"
-                        Margin="5"
+                        Margin="5 0"
                         Command="{Binding SearchAppointments}" />
             </Grid>
             
             <ListView Grid.Row="1"
-                      ItemsSource="{Binding Appointments}">
+                      ItemsSource="{Binding Appointments}"
+                      SelectedItem="{Binding ChosenAppointment}"
+                      Margin="5">
 
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
@@ -218,7 +231,7 @@
         </Grid>
 
         <Grid Grid.Column="2"
-              Margin="5">
+              Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
@@ -227,14 +240,16 @@
             <Button Content="Show anamnesis"
                     Grid.Row="0" 
                     Padding="20 20" 
-                    Margin="0 10"/>
+                    Margin="0 10"
+                    Command="{Binding ShowAnamnesis}"/>
             <TextBox BorderThickness="2"
                      IsEnabled="False"
                      TextWrapping="Wrap" 
                      AcceptsReturn="True" 
                      VerticalScrollBarVisibility="Auto" 
                      HorizontalScrollBarVisibility="Auto" 
-                     Grid.Row="1" />
+                     Grid.Row="1" 
+                     Text="{Binding AnamnesisInfo}"/>
 
         </Grid>
 

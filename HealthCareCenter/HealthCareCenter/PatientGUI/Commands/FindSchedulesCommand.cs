@@ -3,24 +3,23 @@ using HealthCareCenter.PatientGUI.Models;
 using HealthCareCenter.PatientGUI.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 
 namespace HealthCareCenter.PatientGUI.Commands
 {
-    class FindSchedulesCommand : CommandBase
+    internal class FindSchedulesCommand : CommandBase
     {
         public override void Execute(object parameter)
         {
             if (_viewModel.ChosenDate.Date.CompareTo(DateTime.Now.Date) <= 0)
             {
-                MessageBox.Show("Invalid date", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
+                _ = MessageBox.Show("Invalid date", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (_viewModel.ChosenDoctor == null)
             {
-                MessageBox.Show("Doctor not chosen", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
+                _ = MessageBox.Show("Doctor not chosen", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -37,9 +36,9 @@ namespace HealthCareCenter.PatientGUI.Commands
             _viewModel.AvailableSchedules = availableTerms;
         }
 
-        CreateAppointmentViewModel _viewModel;
+        private readonly AppointmentManipulationViewModel _viewModel;
 
-        public FindSchedulesCommand(CreateAppointmentViewModel viewModel)
+        public FindSchedulesCommand(AppointmentManipulationViewModel viewModel)
         {
             _viewModel = viewModel;
         }

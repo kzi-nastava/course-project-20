@@ -1,11 +1,8 @@
 ﻿using HealthCareCenter.Model;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace HealthCareCenter.PatientGUI.ViewModels
 {
-    class AppointmentViewModel : ViewModelBase
+    internal class AppointmentViewModel : ViewModelBase
     {
         private readonly Appointment _appointment;
 

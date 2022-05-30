@@ -1,13 +1,9 @@
-﻿using HealthCareCenter.Model;
-using HealthCareCenter.PatientGUI.Stores;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Windows.Input;
 
 namespace HealthCareCenter.PatientGUI.Commands
 {
-    abstract class CommandBase : ICommand
+    internal abstract class CommandBase : ICommand
     {
         public event EventHandler CanExecuteChanged;
 

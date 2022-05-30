@@ -12,7 +12,7 @@ namespace HealthCareCenter.Service
         {
             if (AppointmentRepository.Appointments == null)
             {
-                return null;
+                AppointmentRepository.Load();
             }
 
             foreach (Appointment appointment in AppointmentRepository.Appointments)
@@ -25,11 +25,28 @@ namespace HealthCareCenter.Service
             return null;
         }
 
+        public static Appointment Find(int appointmentID)
+        {
+            if (AppointmentRepository.Appointments == null)
+            {
+                AppointmentRepository.Load();
+            }
+
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            {
+                if (appointment.ID == appointmentID)
+                {
+                    return appointment;
+                }
+            }
+            return null;
+        }
+
         public static List<Appointment> GetPatientUnfinishedAppointments(int patientHealthRecordID)
         {
             if (AppointmentRepository.Appointments == null)
             {
-                return null;
+                AppointmentRepository.Load();
             }
 
             List<Appointment> unfinishedAppointments = new List<Appointment>();
@@ -51,7 +68,7 @@ namespace HealthCareCenter.Service
         {
             if (AppointmentRepository.Appointments == null)
             {
-                return null;
+                AppointmentRepository.Load();
             }
 
             List<Appointment> finishedAppointments = new List<Appointment>();

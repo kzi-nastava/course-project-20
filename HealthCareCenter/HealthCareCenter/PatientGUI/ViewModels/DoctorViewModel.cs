@@ -1,11 +1,8 @@
 ﻿using HealthCareCenter.Model;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace HealthCareCenter.PatientGUI.ViewModels
 {
-    class DoctorViewModel : ViewModelBase
+    internal class DoctorViewModel : ViewModelBase
     {
         private readonly Doctor _doctor;
 

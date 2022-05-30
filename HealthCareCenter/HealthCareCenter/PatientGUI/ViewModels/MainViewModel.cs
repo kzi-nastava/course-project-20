@@ -2,14 +2,11 @@
 using HealthCareCenter.PatientGUI.Commands;
 using HealthCareCenter.PatientGUI.Models;
 using HealthCareCenter.PatientGUI.Stores;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Input;
 
 namespace HealthCareCenter.PatientGUI.ViewModels
 {
-    class MainViewModel : ViewModelBase
+    internal class MainViewModel : ViewModelBase
     {
         private readonly NavigationStore _navigationStore;
         private readonly Patient _patient;

@@ -1,11 +1,9 @@
 ﻿using System;
 using HealthCareCenter.PatientGUI.ViewModels;
-using System.Collections.Generic;
-using System.Text;
 
 namespace HealthCareCenter.PatientGUI.Stores
 {
-    class NavigationStore
+    internal class NavigationStore
     {
         public ViewModelBase _currentViewModel;
 
@@ -25,7 +23,11 @@ namespace HealthCareCenter.PatientGUI.Stores
 
         public static NavigationStore GetInstance()
         {
-            return instance is null ? new NavigationStore() : instance;
+            if (instance == null)
+            {
+                instance = new NavigationStore();
+            }
+            return instance;
         }
 
         public event Action CurrentViewModelChanged;

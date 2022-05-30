@@ -2,18 +2,29 @@
 using HealthCareCenter.PatientGUI.Commands;
 using HealthCareCenter.PatientGUI.Models;
 using HealthCareCenter.PatientGUI.Stores;
-using System;
+using HealthCareCenter.Service;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
 using System.Windows.Input;
 
 namespace HealthCareCenter.PatientGUI.ViewModels
 {
-    class MyAppointmentsViewModel : ViewModelBase
+    internal class MyAppointmentsViewModel : ViewModelBase
     {
-        private readonly ObservableCollection<AppointmentViewModel> _appointments;
-        public IEnumerable<AppointmentViewModel> Appointments => _appointments;
+        public Patient Patient { get; }
+
+        private readonly List<AppointmentViewModel> _appointments;
+        public List<AppointmentViewModel> Appointments => _appointments;
+
+        private AppointmentViewModel _chosenAppointment;
+        public AppointmentViewModel ChosenAppointment
+        {
+            get => _chosenAppointment;
+            set
+            {
+                _chosenAppointment = value;
+                OnPropertyChanged(nameof(ChosenAppointment));
+            }
+        }
 
         public ICommand CreateAppointment { get; }
         public ICommand ModifyAppointment { get; }
@@ -22,15 +33,18 @@ namespace HealthCareCenter.PatientGUI.ViewModels
 
         public MyAppointmentsViewModel(NavigationStore navigationStore, Patient patient)
         {
-            _appointments = new ObservableCollection<AppointmentViewModel>();
-            List<Appointment> allAppointments = AppointmentRepository.Load();
-            foreach (Appointment appointment in allAppointments)
+            Patient = patient;
+
+            _appointments = new List<AppointmentViewModel>();
+            List<Appointment> unfinishedAppointments = AppointmentService.GetPatientUnfinishedAppointments(patient.HealthRecordID);
+            foreach (Appointment appointment in unfinishedAppointments)
             {
                 _appointments.Add(new AppointmentViewModel(appointment));
             }
 
             CreateAppointment = new NavigateCommand(navigationStore, ViewType.CreateAppointment, patient);
-            ModifyAppointment = new NavigateCommand(navigationStore, ViewType.ModifyAppointment, patient);
+            ModifyAppointment = new ShowModifyAppointmentCommand(this, navigationStore);
+            CancelAppointment = new CancelAppointmentCommand(this, navigationStore);
             PriorityScheduling = new NavigateCommand(navigationStore, ViewType.PriorityScheduling, patient);
         }
     }

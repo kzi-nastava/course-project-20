@@ -1,20 +1,18 @@
 ﻿using HealthCareCenter.Model;
 using HealthCareCenter.PatientGUI.Models;
 using HealthCareCenter.PatientGUI.ViewModels;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 
 namespace HealthCareCenter.PatientGUI.Commands
 {
-    class SearchDoctorsCommand : CommandBase
+    internal class SearchDoctorsCommand : CommandBase
     {
         public override void Execute(object parameter)
         {
             if (string.IsNullOrEmpty(_viewModel.SearchKeyword))
             {
-                MessageBox.Show("Keyword not entered", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
+                _ = MessageBox.Show("Keyword not entered", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -32,7 +30,7 @@ namespace HealthCareCenter.PatientGUI.Commands
 
         }
 
-        SearchDoctorsViewModel _viewModel;
+        private readonly SearchDoctorsViewModel _viewModel;
 
         public SearchDoctorsCommand(SearchDoctorsViewModel viewModel)
         {

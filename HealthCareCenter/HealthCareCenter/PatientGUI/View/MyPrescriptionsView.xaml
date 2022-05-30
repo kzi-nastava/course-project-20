@@ -35,11 +35,13 @@
                 <TextBlock Text="Notification receive time"
                            Grid.Row="0"
                            FontWeight="SemiBold" />
-                <TextBox Grid.Row="1" />
+                <TextBox Grid.Row="1" 
+                         Text="{Binding NotificationReceiveTime}" />
                 <Button Content="Set time"
                         Grid.Row="2"
                         Padding="20 10"
-                        Margin="0 10" />
+                        Margin="0 10"
+                        Command="{Binding SetNotificationTime}" />
             </Grid>
 
             <Grid Grid.Column="1"
@@ -53,22 +55,27 @@
                 <TextBlock Text="Search by medicine name"
                            Grid.Row="0"
                            FontWeight="SemiBold" />
-                <TextBox Grid.Row="1" />
+                <TextBox Grid.Row="1" 
+                         Text="{Binding SearchKeyword}" />
                 <Button Content="Search"
                         Grid.Row="2"
                         Padding="20 10"
-                        Margin="0 10" />
+                        Margin="0 10" 
+                        Command="{Binding SearchInstruction}" />
             </Grid>
 
             <Button Content="Show instruction"
                     Grid.Row="0"
                     Grid.Column="2"
-                    Margin="20" />
+                    Margin="15"
+                    Command="{Binding ShowInstruction}"/>
 
             <ListView Grid.Row="1"
                       Grid.Column="0"
                       Grid.ColumnSpan="3"
-                      Margin="5">
+                      Margin="5"
+                      ItemsSource="{Binding Instructions}"
+                      SelectedItem="{Binding ChosenInstruction}">
 
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
@@ -82,7 +89,7 @@
                         <GridViewColumn Header="Prescription ID" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{}" 
+                                    <TextBlock Text="{Binding PrescriptionID}" 
                                                Padding="20 5"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -91,7 +98,7 @@
                         <GridViewColumn Header="Doctor ID" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{}" 
+                                    <TextBlock Text="{Binding DoctorID}" 
                                                Padding="20 5"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -100,7 +107,7 @@
                         <GridViewColumn Header="Doctor name" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{}" 
+                                    <TextBlock Text="{Binding DoctorName}" 
                                                Padding="20 5"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -109,7 +116,7 @@
                         <GridViewColumn Header="Instruction ID" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{}" 
+                                    <TextBlock Text="{Binding InstructionID}" 
                                                Padding="20 5"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -118,7 +125,7 @@
                         <GridViewColumn Header="Medicine ID" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{}" 
+                                    <TextBlock Text="{Binding MedicineID}" 
                                                Padding="20 5"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -127,7 +134,7 @@
                         <GridViewColumn Header="Medicine name" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{}" 
+                                    <TextBlock Text="{Binding MedicineName}" 
                                                Padding="20 5"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -157,7 +164,8 @@
                      AcceptsReturn="True" 
                      VerticalScrollBarVisibility="Auto" 
                      HorizontalScrollBarVisibility="Auto" 
-                     Grid.Row="1" />
+                     Grid.Row="1" 
+                     Text="{Binding MedicineInstructionInfo}" />
 
         </Grid>
 

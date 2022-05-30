@@ -60,7 +60,15 @@
       36,
       37,
       38,
-      39
+      39,
+      41,
+      42,
+      5,
+      41,
+      43,
+      43,
+      44,
+      45
     ],
     "ID": 3,
     "EquipmentAmounts": {},
@@ -69,7 +77,9 @@
   {
     "Type": 2,
     "Name": "gdfgdf",
-    "AppointmentIDs": [],
+    "AppointmentIDs": [
+      40
+    ],
     "ID": 5,
     "EquipmentAmounts": {
       "Chair": 1

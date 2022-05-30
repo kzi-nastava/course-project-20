@@ -45,5 +45,24 @@ namespace HealthCareCenter.Model
                 throw ex;
             }
         }
+
+        public static int GetLargestID()
+        {
+            if (Appointments == null)
+            {
+                Load();
+            }
+
+            int largestID = -1;
+            foreach (Appointment appointment in Appointments)
+            {
+                if (appointment.ID > largestID)
+                {
+                    largestID = appointment.ID;
+                }
+            }
+
+            return largestID;
+        }
     }
 }

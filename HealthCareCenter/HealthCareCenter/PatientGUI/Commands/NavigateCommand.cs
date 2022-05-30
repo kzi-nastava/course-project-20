@@ -2,25 +2,11 @@
 using HealthCareCenter.PatientGUI.Models;
 using HealthCareCenter.PatientGUI.Stores;
 using HealthCareCenter.PatientGUI.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace HealthCareCenter.PatientGUI.Commands
 {
-    class NavigateCommand : CommandBase
+    internal class NavigateCommand : CommandBase
     {
-        private readonly NavigationStore _navigationStore;
-        private readonly ViewType _viewType;
-        private readonly Patient _patient;
-
-        public NavigateCommand(NavigationStore navigationStore, ViewType viewType, Patient patient)
-        {
-            _navigationStore = navigationStore;
-            _viewType = viewType;
-            _patient = patient;
-        }
-
         public override void Execute(object parameter)
         {
             switch (_viewType)
@@ -32,16 +18,13 @@ namespace HealthCareCenter.PatientGUI.Commands
                     _navigationStore.CurrentViewModel = new CreateAppointmentViewModel(_navigationStore, _patient, null);
                     break;
                 case ViewType.PriorityScheduling:
-                    _navigationStore.CurrentViewModel = new PrioritySchedulingViewModel(_navigationStore);
-                    break;
-                case ViewType.ModifyAppointment:
-
+                    _navigationStore.CurrentViewModel = new PrioritySchedulingViewModel(_navigationStore, _patient);
                     break;
                 case ViewType.MyHealthRecord:
-                    _navigationStore.CurrentViewModel = new MyHealthRecordViewModel(_navigationStore);
+                    _navigationStore.CurrentViewModel = new MyHealthRecordViewModel(_navigationStore, _patient);
                     break;
                 case ViewType.MyPrescriptions:
-                    _navigationStore.CurrentViewModel = new MyPrescriptionsViewModel(_navigationStore);
+                    _navigationStore.CurrentViewModel = new MyPrescriptionsViewModel(_navigationStore, _patient);
                     break;
                 case ViewType.DoctorSurvey:
 
@@ -53,6 +36,17 @@ namespace HealthCareCenter.PatientGUI.Commands
                     _navigationStore.CurrentViewModel = new SearchDoctorsViewModel(_navigationStore, _patient);
                     break;
             }
+        }
+
+        private readonly NavigationStore _navigationStore;
+        private readonly ViewType _viewType;
+        private readonly Patient _patient;
+
+        public NavigateCommand(NavigationStore navigationStore, ViewType viewType, Patient patient)
+        {
+            _navigationStore = navigationStore;
+            _viewType = viewType;
+            _patient = patient;
         }
     }
 }

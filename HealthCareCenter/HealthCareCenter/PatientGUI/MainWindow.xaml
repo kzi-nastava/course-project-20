@@ -28,6 +28,9 @@
             <DataTemplate DataType="{x:Type vms:SearchDoctorsViewModel}">
                 <views:SearchDoctorsView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:ModifyAppointmentViewModel}">
+                <views:ModifyAppointmentView />
+            </DataTemplate>
         </Grid.Resources>
 
         <ContentControl Content="{Binding CurrentViewModel}" 
