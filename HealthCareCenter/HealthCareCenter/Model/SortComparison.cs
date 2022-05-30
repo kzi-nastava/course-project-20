@@ -65,4 +65,36 @@ namespace HealthCareCenter.Model
             return a1ProfessionalArea.CompareTo(a2ProfessionalArea);
         }
     }
+
+    class DoctorFirstNameCompare : IComparer<Doctor>
+    {
+        public int Compare(Doctor doc1, Doctor doc2)
+        {
+            return doc1.FirstName.CompareTo(doc2.FirstName);
+        }
+    }
+
+    class DoctorLastNameCompare : IComparer<Doctor>
+    {
+        public int Compare(Doctor doc1, Doctor doc2)
+        {
+            return doc1.LastName.CompareTo(doc2.LastName);
+        }
+    }
+
+    class DoctorProfessionalAreaCompare : IComparer<Doctor>
+    {
+        public int Compare(Doctor doc1, Doctor doc2)
+        {
+            return doc1.Type.CompareTo(doc2.Type);
+        }
+    }
+
+    class DoctorRatingsCompare : IComparer<Doctor>
+    {
+        public int Compare(Doctor doc1, Doctor doc2)
+        {
+            return doc1.GetAverageRating().CompareTo(doc2.GetAverageRating());
+        }
+    }
 }

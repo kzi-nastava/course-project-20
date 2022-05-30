@@ -1,10 +1,10 @@
 [
   {
     "ID": 0,
-    "CurrentRoomID": 4,
+    "CurrentRoomID": 3,
     "Type": 2,
     "Name": "Chair",
-    "RearrangementID": 0
+    "RearrangementID": -1
   },
   {
     "ID": 1,
@@ -22,10 +22,10 @@
   },
   {
     "ID": 3,
-    "CurrentRoomID": 4,
+    "CurrentRoomID": 3,
     "Type": 2,
-    "Name": "Bad",
-    "RearrangementID": 1
+    "Name": "Bed",
+    "RearrangementID": -1
   },
   {
     "ID": 4,

@@ -18,5 +18,13 @@ namespace HealthCareCenter.SecretaryGUI
         public DateTime NewAppointmentTime { get; set; }
         public AppointmentType OriginalType { get; set; }
         public AppointmentType NewType { get; set; }
+
+        public EditRequest() { }
+
+        public EditRequest(int id, DateTime timeSent)
+        {
+            ID = id;
+            TimeSent = timeSent;
+        }
     }
 }

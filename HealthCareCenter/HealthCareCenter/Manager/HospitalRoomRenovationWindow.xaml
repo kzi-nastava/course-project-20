@@ -41,7 +41,7 @@
             <!-- Column Header Text & Bindings-->
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Renovation ID" Binding="{Binding ID}" Width="130"></DataGridTextColumn>
-                <DataGridTextColumn Header="Room ID" Binding="{Binding PrimaryRoomID}"  Width="130"></DataGridTextColumn>
+                <DataGridTextColumn Header="Room ID" Binding="{Binding MainRoomID}"  Width="130"></DataGridTextColumn>
                 <DataGridTextColumn Header="Start Date" Binding="{Binding StartDate}"   Width="130"></DataGridTextColumn>
                 <DataGridTextColumn Header="Finish Date" Binding="{Binding FinishDate}"   Width="*"></DataGridTextColumn>
             </DataGrid.Columns>
@@ -71,6 +71,11 @@
                     <MenuItem Header="Simple renovation" Click="SimpleRenovationItemClick"></MenuItem>
                     <MenuItem Header="Complex renovation - merge" Click="ComplexRenovationMergeItemClick"></MenuItem>
                     <MenuItem Header="Complex renovation - split" Click="ComplexRenovationSplitItemClick"></MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="Medicine">
+                    <MenuItem Header="Create medicine" Click="CreateMedicineClick"></MenuItem>
+                    <MenuItem Header="Change reffused medicine - merge" Click="ReffusedMedicineClick"></MenuItem>
                 </MenuItem>
 
                 <MenuItem Header="Log off" Click="LogOffItemClick"></MenuItem>

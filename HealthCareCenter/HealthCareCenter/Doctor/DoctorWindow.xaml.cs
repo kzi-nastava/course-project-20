@@ -15,7 +15,7 @@ namespace HealthCareCenter
     {
         PrescriptionService prescriptionService;
         private int selectedPatientID;
-        
+
         private Doctor signedUser;
         private DataTable appointmentsDataTable;
         private DataTable patientsDataTable;
@@ -41,7 +41,7 @@ namespace HealthCareCenter
             HealthRecordRepository.Load();
             AppointmentRepository.Load();
             MedicineRepository.Load();
-            PrescriptionRepository.Load();  
+            PrescriptionRepository.Load();
             MedicineInstructionRepository.Load();
             ReferralRepository.Load();
             InitializeComponent();
@@ -52,7 +52,7 @@ namespace HealthCareCenter
 
         private void DisplayNotifications()
         {
-            List<Notification> notifications = NotificationService.FindUnopened(signedUser);    
+            List<Notification> notifications = NotificationService.FindUnopened(signedUser);
             if (notifications.Count == 0)
             {
                 return;
@@ -157,7 +157,7 @@ namespace HealthCareCenter
         private void FillMedicinesTable()
         {
             medicineDataTable.Rows.Clear();
-            foreach(Medicine medicine in MedicineRepository.Medicines)
+            foreach (Medicine medicine in MedicineRepository.Medicines)
             {
                 dr = medicineDataTable.NewRow();
                 dr[0] = medicine.ID;
@@ -185,9 +185,9 @@ namespace HealthCareCenter
         }
         private void DeleteMedicineFromTable(int index)
         {
-            selectedMedicineDataTable.Rows.RemoveAt(index); 
+            selectedMedicineDataTable.Rows.RemoveAt(index);
         }
-        private void FillDoctorsTable(List<Doctor>doctors)
+        private void FillDoctorsTable(List<Doctor> doctors)
         {
             doctorsDataTable.Rows.Clear();
             foreach (Doctor doctor in doctors)
@@ -258,7 +258,7 @@ namespace HealthCareCenter
                 string s = i.ToString();
                 if (s.Length == 1)
                     s = "0" + s;
-               hourOfMedicineTakingComboBox.Items.Add(s);
+                hourOfMedicineTakingComboBox.Items.Add(s);
             }
             for (int i = 0; i <= 59; i += 1)
             {
@@ -349,7 +349,7 @@ namespace HealthCareCenter
             appointment.Type = (AppointmentType)Enum.Parse(typeof(AppointmentType), selectedValue);
             appointment.Emergency = emergency;
             appointment.DoctorID = signedUser.ID;
-            foreach(Patient patient in UserRepository.Patients)
+            foreach (Patient patient in UserRepository.Patients)
             {
                 if (patient.ID == id)
                 {
@@ -377,7 +377,7 @@ namespace HealthCareCenter
             year = yearComboBox.SelectedItem.ToString();
             hour = hourComboBox.SelectedItem.ToString();
             minute = minuteComboBox.SelectedItem.ToString();
-            return  day + "/" + month + "/" + year + " " + hour + ":" + minute;
+            return day + "/" + month + "/" + year + " " + hour + ":" + minute;
         }
         private bool ValidateDateTimeComboBoxes()
         {
@@ -427,7 +427,7 @@ namespace HealthCareCenter
                 hour += 4;
             }
 
-            hourComboBox.SelectedIndex = hour;                               
+            hourComboBox.SelectedIndex = hour;
             minuteComboBox.SelectedIndex = int.Parse(time[1]) / 15;
             emergencyCheckBox.IsChecked = appointment.Emergency;
             if (appointment.Type == AppointmentType.Checkup)
@@ -458,7 +458,7 @@ namespace HealthCareCenter
             weigthTextBox.Text = healthRecord.Weight.ToString();
             CheckPreviousDiseases(healthRecord);
             CheckAlergens(healthRecord);
-            if(AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis == null)
+            if (AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis == null)
             {
                 anamnesisLabel.Content = "No anamnesis";
                 createAPrescription.IsEnabled = false;
@@ -645,14 +645,14 @@ namespace HealthCareCenter
             {
                 row = (DataRowView)scheduleDataGrid.SelectedItems[0];
             }
-            catch 
+            catch
             {
                 MessageBox.Show("Select an appointment");
                 return;
             }
             int patientID = int.Parse(row["Patient ID"].ToString());
             selectedPatientID = patientID;
-            appointmentIndex = scheduleDataGrid.SelectedIndex;  
+            appointmentIndex = scheduleDataGrid.SelectedIndex;
             healthRecordGrid.Visibility = Visibility.Visible;
             scheduleGrid.Visibility = Visibility.Collapsed;
             updateHealthRecord.Visibility = Visibility.Visible;
@@ -701,7 +701,7 @@ namespace HealthCareCenter
             Appointment appointment = new Appointment();
             try
             {
-                FillApointmentWithData(appointment,true);
+                FillApointmentWithData(appointment, true);
             }
             catch (Exception ex)
             {
@@ -709,7 +709,7 @@ namespace HealthCareCenter
             }
 
         }
-        
+
         //---------------------------------------------------------------------------------------
         //Buttons on appointment altering menu
         private void AlterAppointment_Click(object sender, RoutedEventArgs e)
@@ -717,11 +717,11 @@ namespace HealthCareCenter
             Appointment appointment = AppointmentRepository.Appointments[appointmentIndex];
             try
             {
-                FillApointmentWithData(appointment,false);
+                FillApointmentWithData(appointment, false);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message); 
+                MessageBox.Show(ex.Message);
                 return;
             }
             FillAppointmentsTable(AppointmentRepository.Appointments);
@@ -741,7 +741,7 @@ namespace HealthCareCenter
             HealthRecordRepository.Records[healthRecordIndex].Weight = double.Parse(weigthTextBox.Text);
             HealthRecordRepository.Records[healthRecordIndex].PreviousDiseases.Clear();
             string[] previousDiseases = previousDiseasesTextBox.Text.Split(",");
-            foreach(string disease in previousDiseases)
+            foreach (string disease in previousDiseases)
             {
                 if (string.IsNullOrWhiteSpace(disease))
                 {
@@ -772,7 +772,7 @@ namespace HealthCareCenter
             doctorReferalGrid.Visibility = Visibility.Visible;
             referral = new Referral();
             referral.ID = ++ReferralRepository.LargestID;
-            List<Doctor>doctors = getDoctorsByType();
+            List<Doctor> doctors = getDoctorsByType();
             FillDoctorsTable(doctors);
         }
 
@@ -806,7 +806,7 @@ namespace HealthCareCenter
         }
         private void addMedicine_Click(object sender, RoutedEventArgs e)
         {
-            if(prescriptionService.SelectedMedicine != null)
+            if (prescriptionService.SelectedMedicine != null)
             {
                 MessageBox.Show("U already selected a medicine");
                 return;
@@ -955,7 +955,7 @@ namespace HealthCareCenter
                 return;
             }
             int doctorIndex = (int)row["Id"];
-            referral.DoctorID =  doctorIndex;
+            referral.DoctorID = doctorIndex;
             referral.PatientID = selectedPatientID;
             ReferralRepository.Referrals.Add(referral);
             doctorReferalGrid.Visibility = Visibility.Collapsed;
@@ -1039,7 +1039,7 @@ namespace HealthCareCenter
             AppointmentRepository.Save();
             PrescriptionRepository.Save();
             MedicineInstructionRepository.Save();
-            ReferralRepository.Save(); 
+            ReferralRepository.Save();
             LogOut();
         }
 

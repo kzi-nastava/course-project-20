@@ -12,5 +12,15 @@ namespace HealthCareCenter.Model
         public DateTime Expiration { get; set; }
         public List<string> Ingredients { get; set; }
         public string Manufacturer { get; set; }
+
+        public Medicine(int id, string name, DateTime creation, DateTime expiration, List<string> ingredients, string manufacturer)
+        {
+            this.ID = id;
+            this.Name = name;
+            this.Creation = creation;
+            this.Expiration = expiration;
+            this.Ingredients = ingredients;
+            this.Manufacturer = manufacturer;
+        }
     }
 }

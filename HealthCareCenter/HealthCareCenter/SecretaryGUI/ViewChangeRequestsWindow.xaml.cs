@@ -50,78 +50,96 @@ namespace HealthCareCenter.SecretaryGUI
             _editRequests = new List<EditRequest>();
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {
-                if (request.State == Enums.RequestState.Waiting && request.PatientID == _patient.ID)
+                if (request.State != RequestState.Waiting || request.PatientID != _patient.ID)
                 {
-                    if (request.RequestType == Enums.RequestType.Delete)
-                    {
-                        DeleteRequest deleteRequest = new DeleteRequest
-                        {
-                            ID = request.ID,
-                            TimeSent = request.DateSent
-                        };
-
-                        foreach (Appointment appointment in AppointmentRepository.Appointments)
-                        {
-                            if (appointment.ID == request.AppointmentID)
-                            {
-                                foreach (Doctor doctor in UserRepository.Doctors)
-                                {
-                                    if (doctor.ID == appointment.DoctorID)
-                                    {
-                                        deleteRequest.DoctorUsername = doctor.Username;
-                                        break;
-                                    }
-                                }
-                                deleteRequest.AppointmentTime = appointment.ScheduledDate;
-                                break;
-                            }
-                        }
-                        _deleteRequests.Add(deleteRequest);
-                    }
-                    else
-                    {
-                        EditRequest editRequest = new EditRequest
-                        {
-                            ID = request.ID,
-                            TimeSent = request.DateSent
-                        };
-
-                        foreach (Appointment appointment in AppointmentRepository.Appointments)
-                        {
-                            if (appointment.ID == request.AppointmentID)
-                            {
-                                bool foundOld = false;
-                                bool foundNew = false;
-                                foreach (Doctor doctor in UserRepository.Doctors)
-                                {
-                                    if (doctor.ID == appointment.DoctorID)
-                                    {
-                                        editRequest.OriginalDoctorUsername = doctor.Username;
-                                        foundOld = true;
-                                    }
-                                    if (doctor.ID == request.NewDoctorID)
-                                    {
-                                        editRequest.NewDoctorUsername = doctor.Username;
-                                        foundNew = true;
-                                    }
-                                    if (foundNew && foundOld)
-                                    {
-                                        break;
-                                    }
-                                }
-                                editRequest.OriginalAppointmentTime = appointment.ScheduledDate;
-                                editRequest.OriginalType = appointment.Type;
-                                break;
-                            }
-                        }
-                        editRequest.NewAppointmentTime = request.NewDate;
-                        editRequest.NewType = request.NewAppointmentType;
-                        _editRequests.Add(editRequest);
-                    }
+                    continue;
+                }
+                if (request.RequestType == RequestType.Delete)
+                {
+                    AddDeleteRequest(request);
+                }
+                else
+                {
+                    AddEditRequest(request);
                 }
             }
             deleteRequestsDataGrid.ItemsSource = _deleteRequests;
             editRequestsDataGrid.ItemsSource = _editRequests;
+        }
+
+        private void AddEditRequest(AppointmentChangeRequest request)
+        {
+            EditRequest editRequest = new EditRequest(request.ID, request.DateSent);
+
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            {
+                if (appointment.ID != request.AppointmentID)
+                {
+                    continue;
+                }
+
+                LinkDoctorEdit(request, editRequest, appointment);
+
+                editRequest.OriginalAppointmentTime = appointment.ScheduledDate;
+                editRequest.OriginalType = appointment.Type;
+                break;
+            }
+            editRequest.NewAppointmentTime = request.NewDate;
+            editRequest.NewType = request.NewAppointmentType;
+            _editRequests.Add(editRequest);
+        }
+
+        private static void LinkDoctorEdit(AppointmentChangeRequest request, EditRequest editRequest, Appointment appointment)
+        {
+            bool foundOld = false;
+            bool foundNew = false;
+            foreach (Doctor doctor in UserRepository.Doctors)
+            {
+                if (doctor.ID == appointment.DoctorID)
+                {
+                    editRequest.OriginalDoctorUsername = doctor.Username;
+                    foundOld = true;
+                }
+                if (doctor.ID == request.NewDoctorID)
+                {
+                    editRequest.NewDoctorUsername = doctor.Username;
+                    foundNew = true;
+                }
+                if (foundNew && foundOld)
+                {
+                    return;
+                }
+            }
+        }
+
+        private void AddDeleteRequest(AppointmentChangeRequest request)
+        {
+            DeleteRequest deleteRequest = new DeleteRequest(request.ID, request.DateSent);
+
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            {
+                if (appointment.ID != request.AppointmentID)
+                {
+                    continue;
+                }
+
+                LinkDoctorDelete(deleteRequest, appointment);
+                deleteRequest.AppointmentTime = appointment.ScheduledDate;
+                break;
+            }
+            _deleteRequests.Add(deleteRequest);
+        }
+
+        private static void LinkDoctorDelete(DeleteRequest deleteRequest, Appointment appointment)
+        {
+            foreach (Doctor doctor in UserRepository.Doctors)
+            {
+                if (doctor.ID == appointment.DoctorID)
+                {
+                    deleteRequest.DoctorUsername = doctor.Username;
+                    return;
+                }
+            }
         }
 
         private void AcceptDeleteButton_Click(object sender, RoutedEventArgs e)
@@ -132,23 +150,21 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
+            AcceptDeleteRequest();
+            Refresh();
+            MessageBox.Show("Successfully accepted.");
+        }
+
+        private void AcceptDeleteRequest()
+        {
             int requestID = (int)((DeleteRequest)deleteRequestsDataGrid.SelectedItem).ID;
 
-            foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
-            {
-
-                if (request.ID == requestID)
-                {
-                    request.State = RequestState.Approved;
-                    AppointmentChangeRequestService.DeleteAppointment(request);
-                    break;
-                }
-            }
+            AppointmentChangeRequest request = FindRequest(requestID);
+            request.State = RequestState.Approved;
+            AppointmentChangeRequestService.DeleteAppointment(request);
 
             AppointmentRepository.Save();
             AppointmentChangeRequestRepository.Save();
-            Refresh();
-            MessageBox.Show("Successfully accepted.");
         }
 
         private void RejectDeleteButton_Click(object sender, RoutedEventArgs e)
@@ -159,21 +175,16 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
-            int requestID = (int)((DeleteRequest)deleteRequestsDataGrid.SelectedItem).ID;
-
-            foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
-            {
-
-                if (request.ID == requestID)
-                {
-                    request.State = RequestState.Denied;
-                    break;
-                }
-            }
-
-            AppointmentChangeRequestRepository.Save();
+            RejectDeleteRequest();
             Refresh();
             MessageBox.Show("Successfully rejected.");
+        }
+
+        private void RejectDeleteRequest()
+        {
+            int requestID = (int)((DeleteRequest)deleteRequestsDataGrid.SelectedItem).ID;
+            FindRequest(requestID).State = RequestState.Denied;
+            AppointmentChangeRequestRepository.Save();
         }
 
         private void AcceptEditButton_Click(object sender, RoutedEventArgs e)
@@ -184,23 +195,20 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
+            AcceptEditRequest();
+            Refresh();
+            MessageBox.Show("Successfully accepted.");
+        }
+
+        private void AcceptEditRequest()
+        {
             int requestID = (int)((EditRequest)editRequestsDataGrid.SelectedItem).ID;
-
-            foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
-            {
-
-                if (request.ID == requestID)
-                {
-                    request.State = RequestState.Approved;
-                    AppointmentChangeRequestService.EditAppointment(request);
-                    break;
-                }
-            }
+            AppointmentChangeRequest request = FindRequest(requestID);
+            request.State = RequestState.Approved;
+            AppointmentChangeRequestService.EditAppointment(request);
 
             AppointmentRepository.Save();
             AppointmentChangeRequestRepository.Save();
-            Refresh();
-            MessageBox.Show("Successfully accepted.");
         }
 
         private void RejectEditButton_Click(object sender, RoutedEventArgs e)
@@ -211,21 +219,28 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
             }
 
-            int requestID = (int)((EditRequest)editRequestsDataGrid.SelectedItem).ID;
-
-            foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
-            {
-
-                if (request.ID == requestID)
-                {
-                    request.State = RequestState.Denied;
-                    break;
-                }
-            }
-
-            AppointmentChangeRequestRepository.Save();
+            RejectEditRequest();
             Refresh();
             MessageBox.Show("Successfully rejected.");
+        }
+
+        private void RejectEditRequest()
+        {
+            int requestID = (int)((EditRequest)editRequestsDataGrid.SelectedItem).ID;
+            FindRequest(requestID).State = RequestState.Denied;
+            AppointmentChangeRequestRepository.Save();
+        }
+
+        private static AppointmentChangeRequest FindRequest(int requestID)
+        {
+            foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
+            {
+                if (request.ID == requestID)
+                {
+                    return request;
+                }
+            }
+            return null;
         }
     }
 }

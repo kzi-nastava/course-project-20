@@ -25,40 +25,6 @@ namespace HealthCareCenter.Model
             return Appointments;
         }
 
-        public static List<Appointment> GetPatientUnfinishedAppointments(int patientHealthRecordID)
-        {
-            List<Appointment> unfinishedAppointments = new List<Appointment>();
-            foreach (Appointment potentialAppointment in Appointments)
-            {
-                if (potentialAppointment.HealthRecordID == patientHealthRecordID)
-                {
-                    if (potentialAppointment.ScheduledDate.CompareTo(DateTime.Now) > 0)
-                    {
-                        unfinishedAppointments.Add(potentialAppointment);
-                    }
-                }
-            }
-
-            return unfinishedAppointments;
-        }
-
-        public static List<Appointment> GetPatientFinishedAppointments(int patientHealthRecordID)
-        {
-            List<Appointment> finishedAppointments = new List<Appointment>();
-            foreach (Appointment potentialAppointment in Appointments)
-            {
-                if (potentialAppointment.HealthRecordID == patientHealthRecordID)
-                {
-                    if (potentialAppointment.ScheduledDate.CompareTo(DateTime.Now) < 0)
-                    {
-                        finishedAppointments.Add(potentialAppointment);
-                    }
-                }
-            }
-
-            return finishedAppointments;
-        }
-
         public static void Save()
         {
             try

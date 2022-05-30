@@ -35,5 +35,13 @@ namespace HealthCareCenter.Service
             NotificationRepository.Save();
             return notifications;
         }
+
+        public static void SendNotification(int userID, string message)
+        {
+            CalculateMaxID();
+            Notification notification = new Notification(message, userID);
+            NotificationRepository.Notifications.Add(notification);
+            NotificationRepository.Save();
+        }
     }
 }

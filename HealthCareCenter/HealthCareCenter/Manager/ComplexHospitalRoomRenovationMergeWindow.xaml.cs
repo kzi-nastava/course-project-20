@@ -112,9 +112,9 @@ namespace HealthCareCenter
             {
                 if (renovation.RenovationType == Enums.RenovationType.Merge)
                 {
-                    HospitalRoom room1 = HospitalRoomForRenovationService.GetRoom(renovation.Room1ID);
-                    HospitalRoom room2 = HospitalRoomForRenovationService.GetRoom(renovation.Room2ID);
-                    HospitalRoom newRoom = HospitalRoomUnderConstructionService.GetRoom(renovation.MainRoomID);
+                    HospitalRoom room1 = HospitalRoomForRenovationService.Get(renovation.Room1ID);
+                    HospitalRoom room2 = HospitalRoomForRenovationService.Get(renovation.Room2ID);
+                    HospitalRoom newRoom = HospitalRoomUnderConstructionService.Get(renovation.MainRoomID);
 
                     List<string> row = new List<string> {
                     room1.ID.ToString(),room1.Name,room1.Type.ToString(),
@@ -137,7 +137,7 @@ namespace HealthCareCenter
             }
             int parsedHospitalRoomId = Convert.ToInt32(roomId);
 
-            HospitalRoom room = HospitalRoomService.GetRoom(parsedHospitalRoomId);
+            HospitalRoom room = HospitalRoomService.Get(parsedHospitalRoomId);
 
             if (!IsHospitalRoomFound(room))
             {
@@ -217,8 +217,8 @@ namespace HealthCareCenter
             }
             int parsedRoom1Id = Convert.ToInt32(room1Id);
             int parsedRoom2Id = Convert.ToInt32(room2Id);
-            HospitalRoom room1 = HospitalRoomService.GetRoom(parsedRoom1Id);
-            HospitalRoom room2 = HospitalRoomService.GetRoom(parsedRoom2Id);
+            HospitalRoom room1 = HospitalRoomService.Get(parsedRoom1Id);
+            HospitalRoom room2 = HospitalRoomService.Get(parsedRoom2Id);
 
             if (!IsPossibleRenovation(room1))
             {
@@ -297,6 +297,16 @@ namespace HealthCareCenter
         private void ComplexRenovationSplitItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager));
+        }
+
+        private void CreateMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new MedicineCreationWindow(_signedManager));
+        }
+
+        private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new ChangeMedicineRequestWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

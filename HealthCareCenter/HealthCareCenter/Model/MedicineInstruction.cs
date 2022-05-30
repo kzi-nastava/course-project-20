@@ -8,7 +8,8 @@ namespace HealthCareCenter.Model
     public class MedicineInstruction
     {
         public MedicineInstruction() { }
-        public MedicineInstruction(int _id,string _comment,List<DateTime> _consumptionTime,int _dailyConsumption, ConsumptionPeriod _consumptionPeriod) {
+        public MedicineInstruction(int _id, string _comment, List<DateTime> _consumptionTime, int _dailyConsumption, ConsumptionPeriod _consumptionPeriod)
+        {
             this.ID = _id;
             this.Comment = _comment;
             this.ConsumptionTime = new List<DateTime>(_consumptionTime);

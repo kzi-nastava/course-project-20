@@ -19,5 +19,19 @@ namespace HealthCareCenter.Service
                 }
             }
         }
+
+        public static string GetUserFullName(int ID)
+        {
+            foreach (User user in UserRepository.Users)
+            {
+                if (user.ID == ID)
+                {
+                    return user.FirstName + " " + user.LastName;
+                }
+            }
+
+            return "";
+        }
+
     }
 }
