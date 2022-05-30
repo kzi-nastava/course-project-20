@@ -1184,69 +1184,69 @@ namespace HealthCareCenter
             return doctorsByKeyword;
         }
 
-        private void SortSearchDoctors(string sortCriteria)
-        {
-            if (sortCriteria == "Search parameter")
-            {
-                var searchCriteria = searchDoctorKeyWordSearchComboBox.SelectedItem;
-                if (searchCriteria == null)
-                {
-                    MessageBox.Show("No search criteria selected");
-                    return;
-                }
+        //private void SortSearchDoctors(string sortCriteria)
+        //{
+        //    if (sortCriteria == "Search parameter")
+        //    {
+        //        var searchCriteria = searchDoctorKeyWordSearchComboBox.SelectedItem;
+        //        if (searchCriteria == null)
+        //        {
+        //            MessageBox.Show("No search criteria selected");
+        //            return;
+        //        }
 
-                allDoctorsDataTable.Clear();
-                switch (searchCriteria.ToString())
-                {
-                    case "First name":
-                        SortAndFillSearchDoctorsByFirstName();
-                        break;
-                    case "Last name":
-                        SortAndFillSearchDoctorsByLastName();
-                        break;
-                    case "Professional area":
-                        SortAndFillSearchDoctorsByProfessionalArea();
-                        break;
-                }
-            }
-            else
-            {
-                allDoctorsDataTable.Clear();
-                SortAndFillSearchDoctorsByRating();
-            }
-        }
+        //        allDoctorsDataTable.Clear();
+        //        switch (searchCriteria.ToString())
+        //        {
+        //            case "First name":
+        //                SortAndFillSearchDoctorsByFirstName();
+        //                break;
+        //            case "Last name":
+        //                SortAndFillSearchDoctorsByLastName();
+        //                break;
+        //            case "Professional area":
+        //                SortAndFillSearchDoctorsByProfessionalArea();
+        //                break;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        allDoctorsDataTable.Clear();
+        //        SortAndFillSearchDoctorsByRating();
+        //    }
+        //}
 
-        private void SortAndFillSearchDoctorsByFirstName()
-        {
-            DoctorFirstNameCompare doctorComparison = new DoctorFirstNameCompare();
-            doctorsByKeyword.Sort(doctorComparison);
+        //private void SortAndFillSearchDoctorsByFirstName()
+        //{
+        //    DoctorViewModelFirstNameCompare doctorComparison = new DoctorViewModelFirstNameCompare();
+        //    doctorsByKeyword.Sort(doctorComparison);
 
-            FillDoctorTable(searchDoctorsDataGrid, doctorsByKeyword);
-        }
+        //    FillDoctorTable(searchDoctorsDataGrid, doctorsByKeyword);
+        //}
 
-        private void SortAndFillSearchDoctorsByLastName()
-        {
-            DoctorLastNameCompare doctorComparison = new DoctorLastNameCompare();
-            doctorsByKeyword.Sort(doctorComparison);
+        //private void SortAndFillSearchDoctorsByLastName()
+        //{
+        //    DoctorViewModelLastNameCompare doctorComparison = new DoctorViewModelLastNameCompare();
+        //    doctorsByKeyword.Sort(doctorComparison);
 
-            FillDoctorTable(searchDoctorsDataGrid, doctorsByKeyword);
-        }
+        //    FillDoctorTable(searchDoctorsDataGrid, doctorsByKeyword);
+        //}
 
-        private void SortAndFillSearchDoctorsByProfessionalArea()
-        {
-            DoctorProfessionalAreaCompare doctorComparison = new DoctorProfessionalAreaCompare();
-            doctorsByKeyword.Sort(doctorComparison);
+        //private void SortAndFillSearchDoctorsByProfessionalArea()
+        //{
+        //    DoctorViewModelProfessionalAreaCompare doctorComparison = new DoctorViewModelProfessionalAreaCompare();
+        //    doctorsByKeyword.Sort(doctorComparison);
 
-            FillDoctorTable(searchDoctorsDataGrid, doctorsByKeyword);
-        }
+        //    FillDoctorTable(searchDoctorsDataGrid, doctorsByKeyword);
+        //}
 
-        private void SortAndFillSearchDoctorsByRating()
-        {
-            DoctorRatingsCompare doctorComparison = new DoctorRatingsCompare();
-            doctorsByKeyword.Sort(doctorComparison);
+        //private void SortAndFillSearchDoctorsByRating()
+        //{
+        //    DoctorRatingCompare doctorComparison = new DoctorRatingCompare();
+        //    doctorsByKeyword.Sort(doctorComparison);
 
-            FillDoctorTable(searchDoctorsDataGrid, doctorsByKeyword);
-        }
+        //    FillDoctorTable(searchDoctorsDataGrid, doctorsByKeyword);
+        //}
 
         private void searchDoctorSearchButton_Click(object sender, RoutedEventArgs e)
         {
@@ -1282,7 +1282,7 @@ namespace HealthCareCenter
                 return;
             }
 
-            SortSearchDoctors(sortCriteria.ToString());
+            //SortSearchDoctors(sortCriteria.ToString());
         }
 
         private void searchDoctorSelectDoctorButton_Click(object sender, RoutedEventArgs e)

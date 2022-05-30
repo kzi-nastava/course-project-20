@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HealthCareCenter.Model;
+using HealthCareCenter.PatientGUI.Stores;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;

@@ -13,6 +13,7 @@ namespace HealthCareCenter.PatientGUI.ViewModels
         public string DoctorFirstName => _doctor.FirstName.ToString();
         public string DoctorLastName => _doctor.LastName.ToString();
         public string DoctorProfessionalArea => _doctor.Type.ToString();
+        public string DoctorRating => _doctor.GetAverageRating().ToString();
 
         public DoctorViewModel(Doctor doctor)
         {

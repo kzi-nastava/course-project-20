@@ -33,5 +33,18 @@ namespace HealthCareCenter.Service
             return "";
         }
 
+        public static Doctor GetDoctor(int ID)
+        {
+            foreach (Doctor doctor in UserRepository.Doctors)
+            {
+                if (doctor.ID == ID)
+                {
+                    return doctor;
+                }
+            }
+
+            return null;
+        }
+
     }
 }

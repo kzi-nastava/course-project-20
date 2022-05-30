@@ -29,7 +29,7 @@ namespace HealthCareCenter.PatientGUI.Commands
                     _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _patient);
                     break;
                 case ViewType.CreateAppointment:
-                    _navigationStore.CurrentViewModel = new CreateAppointmentViewModel(_navigationStore, _patient);
+                    _navigationStore.CurrentViewModel = new CreateAppointmentViewModel(_navigationStore, _patient, null);
                     break;
                 case ViewType.PriorityScheduling:
                     _navigationStore.CurrentViewModel = new PrioritySchedulingViewModel(_navigationStore);
@@ -50,7 +50,7 @@ namespace HealthCareCenter.PatientGUI.Commands
 
                     break;
                 case ViewType.SearchDoctors:
-                    _navigationStore.CurrentViewModel = new SearchDoctorsViewModel(_navigationStore);
+                    _navigationStore.CurrentViewModel = new SearchDoctorsViewModel(_navigationStore, _patient);
                     break;
             }
         }

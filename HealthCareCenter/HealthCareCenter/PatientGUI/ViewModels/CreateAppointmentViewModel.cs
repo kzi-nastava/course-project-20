@@ -62,18 +62,22 @@ namespace HealthCareCenter.PatientGUI.ViewModels
             }
         }
 
-        public ICommand FindTerms { get; set; }
+        public ICommand FindTerms { get; }
         public ICommand ScheduleAppointment { get; }
 
-        public CreateAppointmentViewModel(NavigationStore navigationStore, Patient patient)
+        public CreateAppointmentViewModel(NavigationStore navigationStore, Patient patient, DoctorViewModel chosenDoctor)
         {
             Patient = patient;
 
-            _doctors = new List<DoctorViewModel>();
-            List<Doctor> allDoctors = UserRepository.Doctors;
-            foreach (Doctor doctor in allDoctors)
+            _chosenDoctor = chosenDoctor;
+            if (_chosenDoctor == null)
             {
-                _doctors.Add(new DoctorViewModel(doctor));
+                _doctors = new List<DoctorViewModel>();
+                List<Doctor> allDoctors = UserRepository.Doctors;
+                foreach (Doctor doctor in allDoctors)
+                {
+                    _doctors.Add(new DoctorViewModel(doctor));
+                }
             }
 
             ChosenDate = DateTime.Now.Date;

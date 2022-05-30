@@ -43,10 +43,13 @@
                            Margin="5 0 0 0" />
                 <TextBox Grid.Row="1"
                          Grid.Column="0" 
-                         Margin="0 0 5 0" />
+                         Margin="0 0 5 0" 
+                         Text="{Binding SearchKeyword}" />
                 <ComboBox Grid.Row="1"
                           Grid.Column="1"
-                          Margin="5 0 0 0" />
+                          Margin="5 0 0 0" 
+                          ItemsSource="{Binding SearchCriteria}"
+                          SelectedItem="{Binding ChosenSearchCriteria}" />
                 <Button Content="Search"
                         Grid.Row="2"
                         Grid.Column="0"
@@ -68,11 +71,13 @@
                 <TextBlock Text="Sort by"
                        FontWeight="SemiBold" 
                        Grid.Row="0" />
-                <ComboBox Grid.Row="1" />
+                <ComboBox Grid.Row="1" 
+                          ItemsSource="{Binding SortCriteria}"
+                          SelectedItem="{Binding ChosenSortCriteria}" />
                 <Button Content="Sort"
                         Grid.Row="2"
                         Command="{Binding SortDoctors}"
-                        Margin="0 5 0 0"/>
+                        Margin="0 5 0 0" />
             </Grid>
 
             <Button Content="Select doctor"
@@ -86,7 +91,8 @@
 
         <ListView Grid.Row="1"
                   Margin="5"
-                  ItemsSource="{Binding Doctors}">
+                  ItemsSource="{Binding Doctors}"
+                  SelectedItem="{Binding ChosenDoctor}">
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
@@ -128,6 +134,15 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding DoctorProfessionalArea}" 
+                                           Padding="20 5"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Doctor rating" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DoctorRating}" 
                                            Padding="20 5"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
