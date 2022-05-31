@@ -42,8 +42,8 @@ namespace HealthCareCenter.PatientGUI.ViewModels
                 _appointments.Add(new AppointmentViewModel(appointment));
             }
 
-            CreateAppointment = new NavigateCommand(navigationStore, ViewType.CreateAppointment, patient);
-            ModifyAppointment = new ShowModifyAppointmentCommand(this, navigationStore);
+            CreateAppointment = new ShowAppointmentFormCommand(this, navigationStore, false);
+            ModifyAppointment = new ShowAppointmentFormCommand(this, navigationStore, true);
             CancelAppointment = new CancelAppointmentCommand(this, navigationStore);
             PriorityScheduling = new NavigateCommand(navigationStore, ViewType.PriorityScheduling, patient);
         }

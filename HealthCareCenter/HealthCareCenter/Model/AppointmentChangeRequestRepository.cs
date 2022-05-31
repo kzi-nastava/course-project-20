@@ -2,13 +2,23 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace HealthCareCenter.Model
 {
     class AppointmentChangeRequestRepository
     {
-        public static List<AppointmentChangeRequest> Requests { get; set; }
+        private static List<AppointmentChangeRequest> _requests;
+        public static List<AppointmentChangeRequest> Requests
+        {
+            get
+            {
+                if (_requests == null)
+                {
+                    Load();
+                }
+                return _requests;
+            }
+        }
         public static int LargestID { get; set; }
 
         public static List<AppointmentChangeRequest> Load()
@@ -21,14 +31,14 @@ namespace HealthCareCenter.Model
                 };
 
                 string JSONTextRequests = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointmentChangeRequests.json");
-                Requests = (List<AppointmentChangeRequest>)JsonConvert.DeserializeObject<IEnumerable<AppointmentChangeRequest>>(JSONTextRequests, settings);
-                LargestID = Requests.Count == 0 ? 0 : Requests[^1].ID;
+                _requests = (List<AppointmentChangeRequest>)JsonConvert.DeserializeObject<IEnumerable<AppointmentChangeRequest>>(JSONTextRequests, settings);
+                LargestID = _requests.Count == 0 ? 0 : _requests[^1].ID;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-            return Requests;
+            return _requests;
         }
 
         public static void Save()
@@ -54,11 +64,6 @@ namespace HealthCareCenter.Model
 
         public static int GetLargestID()
         {
-            if (Requests == null)
-            {
-                Load();
-            }
-
             int largestID = -1;
             foreach (AppointmentChangeRequest request in Requests)
             {

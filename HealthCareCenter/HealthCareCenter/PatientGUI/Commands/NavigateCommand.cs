@@ -14,9 +14,6 @@ namespace HealthCareCenter.PatientGUI.Commands
                 case ViewType.MyAppointments:
                     _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _patient);
                     break;
-                case ViewType.CreateAppointment:
-                    _navigationStore.CurrentViewModel = new CreateAppointmentViewModel(_navigationStore, _patient, null);
-                    break;
                 case ViewType.PriorityScheduling:
                     _navigationStore.CurrentViewModel = new PrioritySchedulingViewModel(_navigationStore, _patient);
                     break;

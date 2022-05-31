@@ -1,9 +1,7 @@
 ﻿using HealthCareCenter.Model;
-using HealthCareCenter.PatientGUI.ViewModels;
 using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 
 namespace HealthCareCenter.PatientGUI.Models
@@ -36,6 +34,19 @@ namespace HealthCareCenter.PatientGUI.Models
             }
 
             return allPossibleTerms;
+        }
+
+        public bool IsAvailable(DateTime scheduleDate, int doctorID)
+        {
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            {
+                if (appointment.ScheduledDate.CompareTo(scheduleDate) == 0 && doctorID == appointment.DoctorID)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public void ScheduleAppointment(DateTime scheduleDate, int doctorID, int healthRecordID, int hospitalRoomID)
@@ -655,7 +666,7 @@ namespace HealthCareCenter.PatientGUI.Models
             return notificationsFromPrescriptionsToSend;
         }
 
-        public List<string> GetNotifications(Dictionary<int, Dictionary<int, int>> notificationsFromPrescriptionsToSend, List<Prescription> patientPrescriptions, Patient patient)
+        public List<string> GetNotifications(Dictionary<int, Dictionary<int, int>> notificationsFromPrescriptionsToSend, Patient patient)
         {
             List<string> notificationsToSend = new List<string>();
             foreach (KeyValuePair<int, Dictionary<int, int>> kvp in notificationsFromPrescriptionsToSend)
@@ -671,7 +682,7 @@ namespace HealthCareCenter.PatientGUI.Models
                     DateTime takingTime = instruction.ConsumptionTime[intructionNotificationTimeIndex.Value];
                     TimeSpan timePassedTakingMedicine = takingTime.TimeOfDay.Subtract(DateTime.Now.TimeOfDay);
                     int hoursTilConsumption = (int)Math.Round(timePassedTakingMedicine.TotalHours);
-                    if (hoursTilConsumption <= patient.NotificationReceiveTime)
+                    if (hoursTilConsumption > 0 && hoursTilConsumption <= patient.NotificationReceiveTime)
                     {
                         string medicineName = MedicineService.GetName(instruction.MedicineID);
                         string notificationInfo = $"Medicine consumption notification! Medicine: {medicineName}, Time to take: {takingTime.TimeOfDay}, Prescription ID: {kvp.Key}";

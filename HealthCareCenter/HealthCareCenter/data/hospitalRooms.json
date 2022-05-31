@@ -61,14 +61,18 @@
       37,
       38,
       39,
-      41,
       42,
       5,
       41,
       43,
       43,
       44,
-      45
+      45,
+      45,
+      40,
+      46,
+      47,
+      48
     ],
     "ID": 3,
     "EquipmentAmounts": {},
@@ -78,7 +82,9 @@
     "Type": 2,
     "Name": "gdfgdf",
     "AppointmentIDs": [
-      40
+      40,
+      47,
+      47
     ],
     "ID": 5,
     "EquipmentAmounts": {

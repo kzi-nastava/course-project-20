@@ -7,8 +7,7 @@ namespace HealthCareCenter.PatientGUI.Models
     enum ViewType
     {
         MyAppointments,
-        CreateAppointment,
-        ModifyAppointment,
+        AppointmentForm,
         PriorityScheduling,
         MyHealthRecord,
         MyPrescriptions,

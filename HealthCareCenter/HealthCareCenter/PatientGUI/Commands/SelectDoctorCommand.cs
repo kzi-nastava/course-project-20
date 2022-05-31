@@ -14,8 +14,8 @@ namespace HealthCareCenter.PatientGUI.Commands
                 return;
             }
 
-            _navigationStore.CurrentViewModel = new CreateAppointmentViewModel(
-                _navigationStore, _viewModel.Patient, _viewModel.ChosenDoctor);
+            _navigationStore.CurrentViewModel = new AppointmentFormViewModel(
+                _navigationStore, _viewModel.Patient, null, false, _viewModel.ChosenDoctor);
 
         }
 

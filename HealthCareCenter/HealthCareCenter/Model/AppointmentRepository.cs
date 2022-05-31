@@ -9,7 +9,18 @@ namespace HealthCareCenter.Model
 {
     class AppointmentRepository
     {
-        public static List<Appointment> Appointments { get; set; }
+        private static List<Appointment> _appointments;
+        public static List<Appointment> Appointments
+        {
+            get
+            {
+                if (_appointments == null)
+                {
+                    Load();
+                }
+                return _appointments;
+            }
+        }
         public static int LargestID { get; set; }
 
         public static List<Appointment> Load()
@@ -20,9 +31,9 @@ namespace HealthCareCenter.Model
             };
 
             string JSONTextAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointments.json");
-            Appointments = (List<Appointment>)JsonConvert.DeserializeObject<IEnumerable<Appointment>>(JSONTextAppointments, settings);
-            LargestID = Appointments.Count == 0 ? 0 : Appointments[^1].ID;
-            return Appointments;
+            _appointments = (List<Appointment>)JsonConvert.DeserializeObject<IEnumerable<Appointment>>(JSONTextAppointments, settings);
+            LargestID = _appointments.Count == 0 ? 0 : _appointments[^1].ID;
+            return _appointments;
         }
 
         public static void Save()
@@ -48,11 +59,6 @@ namespace HealthCareCenter.Model
 
         public static int GetLargestID()
         {
-            if (Appointments == null)
-            {
-                Load();
-            }
-
             int largestID = -1;
             foreach (Appointment appointment in Appointments)
             {

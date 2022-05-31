@@ -13,9 +13,6 @@
             <DataTemplate DataType="{x:Type vms:MyAppointmentsViewModel}">
                 <views:MyAppointmentsView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vms:CreateAppointmentViewModel}">
-                <views:CreateAppointmentView />
-            </DataTemplate>
             <DataTemplate DataType="{x:Type vms:PrioritySchedulingViewModel}">
                 <views:PrioritySchedulingView />
             </DataTemplate>
@@ -28,8 +25,8 @@
             <DataTemplate DataType="{x:Type vms:SearchDoctorsViewModel}">
                 <views:SearchDoctorsView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vms:ModifyAppointmentViewModel}">
-                <views:ModifyAppointmentView />
+            <DataTemplate DataType="{x:Type vms:AppointmentFormViewModel}">
+                <views:AppointmentFormView />
             </DataTemplate>
         </Grid.Resources>
 

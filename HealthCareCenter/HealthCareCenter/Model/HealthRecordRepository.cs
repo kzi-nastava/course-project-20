@@ -8,14 +8,26 @@ namespace HealthCareCenter.Model
 {
     public static class HealthRecordRepository
     {
-        public static List<HealthRecord> Records { get; set; }
+        private static List<HealthRecord> _records;
+        public static List<HealthRecord> Records
+        {
+            get
+            {
+                if (_records == null)
+                {
+                    Load();
+                }
+                return _records;
+            }
+            set => _records = value;
+        }
 
         public static void Load()
         {
             try
             {
                 string JSONTextHealthRecords = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\healthRecords.json");
-                Records = (List<HealthRecord>)JsonConvert.DeserializeObject<IEnumerable<HealthRecord>>(JSONTextHealthRecords);
+                _records = (List<HealthRecord>)JsonConvert.DeserializeObject<IEnumerable<HealthRecord>>(JSONTextHealthRecords);
             }
             catch (Exception ex)
             {
