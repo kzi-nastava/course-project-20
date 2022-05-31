@@ -1,5 +1,5 @@
 ﻿using HealthCareCenter.Model;
-using HealthCareCenter.SecretaryGUI;
+using HealthCareCenter.Secretary;
 using System;
 using System.Collections.Generic;
 using System.Text;
