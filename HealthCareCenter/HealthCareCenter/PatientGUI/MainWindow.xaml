@@ -6,7 +6,7 @@
         xmlns:views="clr-namespace:HealthCareCenter.PatientGUI.View"
         xmlns:vms="clr-namespace:HealthCareCenter.PatientGUI.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="MainWindow" Height="540" Width="900"
         WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.Resources>

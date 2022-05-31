@@ -1706,7 +1706,7 @@ namespace HealthCareCenter
                 chosenScheduleDate = Convert.ToDateTime(chosenDate);
                 isScheduleDateChosen = true;
             }
-            catch (Exception formatEx)
+            catch
             {
                 MessageBox.Show("Invalid date format");
                 return false;

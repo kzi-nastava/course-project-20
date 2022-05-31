@@ -18,7 +18,7 @@ namespace HealthCareCenter.PatientGUI.Commands
             }
 
             PatientFunctionality patFunc = PatientFunctionality.GetInstance();
-            MedicineInstruction instruction = MedicineInstructionService.GetSingle(Convert.ToInt32(_viewModel.ChosenInstruction.InstructionID));
+            MedicineInstruction instruction = MedicineInstructionService.GetSingle(_viewModel.ChosenInstruction.InstructionID);
 
             _viewModel.MedicineInstructionInfo = patFunc.GetMedicineInstructionInfo(instruction);
         }

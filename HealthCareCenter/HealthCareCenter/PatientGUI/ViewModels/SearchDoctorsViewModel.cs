@@ -10,17 +10,6 @@ namespace HealthCareCenter.PatientGUI.ViewModels
     {
         public Patient Patient { get; }
 
-        private List<DoctorViewModel> _doctors;
-        public List<DoctorViewModel> Doctors
-        {
-            get => _doctors;
-            set
-            {
-                _doctors = value;
-                OnPropertyChanged(nameof(Doctors));
-            }
-        }
-
         public List<string> SearchCriteria { get; }
 
         private string _chosenSearchCriteria;
@@ -56,6 +45,17 @@ namespace HealthCareCenter.PatientGUI.ViewModels
             {
                 _chosenSortCriteria = value;
                 OnPropertyChanged(nameof(ChosenSortCriteria));
+            }
+        }
+
+        private List<DoctorViewModel> _doctors;
+        public List<DoctorViewModel> Doctors
+        {
+            get => _doctors;
+            set
+            {
+                _doctors = value;
+                OnPropertyChanged(nameof(Doctors));
             }
         }
 

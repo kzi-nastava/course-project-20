@@ -2,7 +2,12 @@
 using HealthCareCenter.PatientGUI.Commands;
 using HealthCareCenter.PatientGUI.Models;
 using HealthCareCenter.PatientGUI.Stores;
+using HealthCareCenter.Service;
+using System;
+using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace HealthCareCenter.PatientGUI.ViewModels
 {
@@ -10,6 +15,8 @@ namespace HealthCareCenter.PatientGUI.ViewModels
     {
         private readonly NavigationStore _navigationStore;
         private readonly Patient _patient;
+
+        private readonly Dictionary<int, Dictionary<int, int>> _notificationsFromPrescriptionsToSend;
 
         public ViewModelBase CurrentViewModel => _navigationStore.CurrentViewModel;
 
@@ -30,8 +37,14 @@ namespace HealthCareCenter.PatientGUI.ViewModels
 
             _patient = patient;
 
+            _notificationsFromPrescriptionsToSend = PatientFunctionality.GetInstance().GetNotificationsSentDict(
+                PrescriptionService.GetPatientPrescriptions(_patient.HealthRecordID));
+            // show notifications on startup
+            ShowNotifications();
+
             CurrentViewLabel = CurrentViewModel.ToString();
             OnPropertyChanged(nameof(CurrentViewLabel));
+            StartNotificationChecks();
 
             ShowMyAppointments = new NavigateCommand(_navigationStore, ViewType.MyAppointments, _patient);
             ShowSearchForDoctors = new NavigateCommand(_navigationStore, ViewType.SearchDoctors, _patient);
@@ -47,6 +60,31 @@ namespace HealthCareCenter.PatientGUI.ViewModels
             CurrentViewLabel = CurrentViewModel.ToString();
             OnPropertyChanged(nameof(CurrentViewLabel));
             OnPropertyChanged(nameof(CurrentViewModel));
+        }
+
+        private void StartNotificationChecks()
+        {
+            DispatcherTimer notificationDispatcherTimer = new DispatcherTimer();
+            notificationDispatcherTimer.Tick += new EventHandler(NotificationChecker);
+            notificationDispatcherTimer.Interval = new TimeSpan(0, 15, 0);
+            notificationDispatcherTimer.Start();
+        }
+
+        private void NotificationChecker(object sender, EventArgs e)
+        {
+            ShowNotifications();
+        }
+
+        private void ShowNotifications()
+        {
+            List<string> notificationsToSend = PatientFunctionality.GetInstance().GetNotifications(
+                _notificationsFromPrescriptionsToSend,
+                PrescriptionService.GetPatientPrescriptions(_patient.HealthRecordID), _patient);
+
+            foreach (string notificationInfo in notificationsToSend)
+            {
+                _ = MessageBox.Show(notificationInfo, "My App", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 }

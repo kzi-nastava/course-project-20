@@ -76,19 +76,6 @@ namespace HealthCareCenter.PatientGUI.ViewModels
         {
             Patient = patient;
 
-            if (MedicineRepository.Medicines == null)
-            {
-                _ = MedicineRepository.Load();
-            }
-            if (PrescriptionRepository.Prescriptions == null)
-            {
-                _ = PrescriptionRepository.Load();
-            }
-            if (MedicineInstructionRepository.MedicineInstructions == null)
-            {
-                _ = MedicineInstructionRepository.Load();
-            }
-
             PatientPrescriptions = PrescriptionService.GetPatientPrescriptions(patient.HealthRecordID);
             List<MedicineInstructionFromPrescriptionViewModel> instructions = new List<MedicineInstructionFromPrescriptionViewModel>();
             foreach (Prescription prescription in PatientPrescriptions)

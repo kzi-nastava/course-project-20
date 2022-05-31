@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Model;
+using System;
 
 namespace HealthCareCenter.PatientGUI.ViewModels
 {
@@ -6,13 +7,13 @@ namespace HealthCareCenter.PatientGUI.ViewModels
     {
         private readonly Appointment _appointment;
 
-        public string AppointmentID => _appointment.ID.ToString();
-        public string AppointmentType => _appointment.Type.ToString();
-        public string AppointmentDate => _appointment.ScheduledDate.ToString("g");
-        public string CreationDate => _appointment.CreatedDate.ToString("g");
-        public string IsEmergency => _appointment.Emergency.ToString();
-        public string DoctorID => _appointment.DoctorID.ToString();
-        public string RoomID => _appointment.HospitalRoomID.ToString();
+        public int AppointmentID => _appointment.ID;
+        public Enums.AppointmentType AppointmentType => _appointment.Type;
+        public DateTime AppointmentDate => _appointment.ScheduledDate;
+        public DateTime CreationDate => _appointment.CreatedDate;
+        public bool IsEmergency => _appointment.Emergency;
+        public int DoctorID => _appointment.DoctorID;
+        public int RoomID => _appointment.HospitalRoomID;
 
         public AppointmentViewModel(Appointment appointment)
         {

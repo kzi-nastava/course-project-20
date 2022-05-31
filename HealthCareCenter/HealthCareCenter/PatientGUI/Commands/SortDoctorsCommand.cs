@@ -23,7 +23,7 @@ namespace HealthCareCenter.PatientGUI.Commands
             List<Doctor> searchedDoctors = new List<Doctor>();
             foreach (DoctorViewModel doctorViewModel in _viewModel.Doctors)
             {
-                searchedDoctors.Add(UserService.GetDoctor(Convert.ToInt32(doctorViewModel.DoctorID)));
+                searchedDoctors.Add(UserService.GetDoctor(doctorViewModel.DoctorID));
             }
 
             List<Doctor> sortedDoctors = patFunc.GetSortedDoctorsByCriteria(

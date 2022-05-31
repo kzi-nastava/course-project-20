@@ -60,5 +60,10 @@ namespace HealthCareCenter.Model
             return (Hours == ((AppointmentTerm)obj).Hours)
                 && (Minutes == ((AppointmentTerm)obj).Minutes);
         }
+
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
     }
 }

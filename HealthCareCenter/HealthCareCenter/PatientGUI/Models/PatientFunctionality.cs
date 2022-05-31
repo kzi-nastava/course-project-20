@@ -10,7 +10,10 @@ namespace HealthCareCenter.PatientGUI.Models
 {
     class PatientFunctionality
     {
-        private static PatientFunctionality instance;
+        private const int _creationTrollLimit = 100;
+        private const int _modificationTrollLimit = 100;
+
+        private static readonly PatientFunctionality instance;
 
         private PatientFunctionality() { }
 
@@ -37,7 +40,7 @@ namespace HealthCareCenter.PatientGUI.Models
 
         public void ScheduleAppointment(DateTime scheduleDate, int doctorID, int healthRecordID, int hospitalRoomID)
         {
-            if (CheckCreationTroll())
+            if (CheckCreationTroll(UserService.GetPatientByHealthRecordID(healthRecordID)))
             {
                 return;
             }
@@ -62,7 +65,7 @@ namespace HealthCareCenter.PatientGUI.Models
 
         public void ScheduleAppointment(Appointment newAppointment)
         {
-            if (CheckCreationTroll())
+            if (CheckCreationTroll(UserService.GetPatientByHealthRecordID(newAppointment.HealthRecordID)))
             {
                 return;
             }
@@ -73,8 +76,37 @@ namespace HealthCareCenter.PatientGUI.Models
             AppointmentRepository.Save();
         }
 
-        private bool CheckCreationTroll()
+        private bool CheckCreationTroll(Patient possibleTroll)
         {
+            int creationCount = 0;
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            {
+                if (appointment.HealthRecordID == possibleTroll.HealthRecordID)
+                {
+                    TimeSpan timePassedSinceScheduling = DateTime.Now.Subtract(appointment.CreatedDate);
+                    if (timePassedSinceScheduling.TotalDays < 30)
+                    {
+                        ++creationCount;
+                    }
+                }
+            }
+
+            if (creationCount >= _creationTrollLimit)
+            {
+                MessageBox.Show("You have been blocked for excessive amounts of appointments created in the last 30 days");
+                foreach (Patient patient in UserRepository.Patients)
+                {
+                    if (possibleTroll.ID == patient.ID)
+                    {
+                        patient.IsBlocked = true;
+                        patient.BlockedBy = Enums.Blocker.System;
+                        break;
+                    }
+
+                }
+                return true;
+            }
+
             return false;
         }
 
@@ -86,7 +118,7 @@ namespace HealthCareCenter.PatientGUI.Models
 
         public void ModifyAppointment(DateTime scheduleDate, DateTime oldScheduleDate, int appointmentID, int doctorID, int patientID, int hospitalRoomID)
         {
-            if (CheckModificationTroll())
+            if (CheckModificationTroll(UserService.GetPatientByID(patientID)))
             {
                 return;
             }
@@ -135,7 +167,7 @@ namespace HealthCareCenter.PatientGUI.Models
 
         public void CancelAppointment(int appointmentID, int patientID, DateTime appointmentScheduleDate)
         {
-            if (CheckModificationTroll())
+            if (CheckModificationTroll(UserService.GetPatientByID(patientID)))
             {
                 return;
             }
@@ -177,9 +209,38 @@ namespace HealthCareCenter.PatientGUI.Models
                 AppointmentRepository.Save();
             }
         }
-        
-        private bool CheckModificationTroll()
+
+        private bool CheckModificationTroll(Patient possibleTroll)
         {
+            int modificationCount = 0;
+            foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
+            {
+                if (changeRequest.PatientID == possibleTroll.ID)
+                {
+                    TimeSpan timePassedSinceScheduling = DateTime.Now.Subtract(changeRequest.DateSent);
+                    if (timePassedSinceScheduling.TotalDays < 30)
+                    {
+                        ++modificationCount;
+                    }
+                }
+            }
+
+            if (modificationCount >= _modificationTrollLimit)
+            {
+                MessageBox.Show("You have been blocked for excessive amounts of change requests sent in the last 30 days");
+                foreach (Patient patient in UserRepository.Patients)
+                {
+                    if (possibleTroll.ID == patient.ID)
+                    {
+                        patient.IsBlocked = true;
+                        patient.BlockedBy = Enums.Blocker.System;
+                        break;
+                    }
+                }
+
+                return true;
+            }
+
             return false;
         }
 
@@ -558,6 +619,70 @@ namespace HealthCareCenter.PatientGUI.Models
             medicineInstructionInfo += "- " + instruction.ConsumptionPeriod;
 
             return medicineInstructionInfo;
+        }
+
+        public Dictionary<int, Dictionary<int, int>> GetNotificationsSentDict(List<Prescription> patientPrescriptions)
+        {
+            // dictionary notificationsSent contains int key and Dictionary<int, int> as value
+            // key is prescription id, and value is Dictionary<int, int> where the key is medicine instruction
+            // id and value is the index of the time in MedicineInstruction.ConsumptionTime that should be checked
+            // if it fulfills the criteria for sending a notification
+
+            Dictionary<int, Dictionary<int, int>> notificationsFromPrescriptionsToSend = new Dictionary<int, Dictionary<int, int>>();
+            foreach (Prescription prescription in patientPrescriptions)
+            {
+                Dictionary<int, int> notificationsToSend = new Dictionary<int, int>();
+                foreach (int medicineInstructionID in prescription.MedicineInstructionIDs)
+                {
+                    MedicineInstruction instruction = MedicineInstructionService.GetSingle(medicineInstructionID);
+                    notificationsToSend.Add(instruction.ID, 0);
+                    foreach (DateTime takingTime in instruction.ConsumptionTime)
+                    {
+                        TimeSpan timePassedTakingMedicine = takingTime.TimeOfDay.Subtract(DateTime.Now.TimeOfDay);
+                        int hoursTilConsumption = (int)Math.Round(timePassedTakingMedicine.TotalHours);
+                        if (hoursTilConsumption < 0)
+                        {
+                            ++notificationsToSend[instruction.ID];
+                            continue;
+                        }
+                        break;
+                    }
+                }
+
+                notificationsFromPrescriptionsToSend.Add(prescription.ID, notificationsToSend);
+            }
+
+            return notificationsFromPrescriptionsToSend;
+        }
+
+        public List<string> GetNotifications(Dictionary<int, Dictionary<int, int>> notificationsFromPrescriptionsToSend, List<Prescription> patientPrescriptions, Patient patient)
+        {
+            List<string> notificationsToSend = new List<string>();
+            foreach (KeyValuePair<int, Dictionary<int, int>> kvp in notificationsFromPrescriptionsToSend)
+            {
+                foreach (KeyValuePair<int, int> intructionNotificationTimeIndex in kvp.Value)
+                {
+                    MedicineInstruction instruction = MedicineInstructionService.GetSingle(intructionNotificationTimeIndex.Key);
+                    if (intructionNotificationTimeIndex.Value >= instruction.ConsumptionTime.Count)
+                    {
+                        continue;
+                    }
+
+                    DateTime takingTime = instruction.ConsumptionTime[intructionNotificationTimeIndex.Value];
+                    TimeSpan timePassedTakingMedicine = takingTime.TimeOfDay.Subtract(DateTime.Now.TimeOfDay);
+                    int hoursTilConsumption = (int)Math.Round(timePassedTakingMedicine.TotalHours);
+                    if (hoursTilConsumption <= patient.NotificationReceiveTime)
+                    {
+                        string medicineName = MedicineService.GetName(instruction.MedicineID);
+                        string notificationInfo = $"Medicine consumption notification! Medicine: {medicineName}, Time to take: {takingTime.TimeOfDay}, Prescription ID: {kvp.Key}";
+                        notificationsToSend.Add(notificationInfo);
+                        ++kvp.Value[intructionNotificationTimeIndex.Key];
+                    }
+                    break;
+                }
+            }
+
+            return notificationsToSend;
         }
 
     }

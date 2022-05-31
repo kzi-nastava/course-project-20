@@ -25,7 +25,7 @@ namespace HealthCareCenter.PatientGUI.Commands
 
             PatientFunctionality patFunc = PatientFunctionality.GetInstance();
             List<AppointmentTerm> allPossibleTerms = patFunc.GetAllPossibleTermsForCreateAppointment(
-                Convert.ToInt32(_viewModel.ChosenDoctor.DoctorID), _viewModel.ChosenDate);
+                _viewModel.ChosenDoctor.DoctorID, _viewModel.ChosenDate);
 
             List<AppointmentScheduleViewModel> availableTerms = new List<AppointmentScheduleViewModel>();
             foreach (AppointmentTerm term in allPossibleTerms)

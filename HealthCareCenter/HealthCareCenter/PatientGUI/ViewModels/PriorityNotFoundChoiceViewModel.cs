@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Model;
+using System;
 
 namespace HealthCareCenter.PatientGUI.ViewModels
 {
@@ -6,8 +7,8 @@ namespace HealthCareCenter.PatientGUI.ViewModels
     {
         private readonly Appointment _appointment;
 
-        public string DoctorID => _appointment.DoctorID.ToString();
-        public string AppointmentDate => _appointment.ScheduledDate.ToString("g");
+        public int DoctorID => _appointment.DoctorID;
+        public DateTime AppointmentDate => _appointment.ScheduledDate;
 
         public PriorityNotFoundChoiceViewModel(Appointment appointment)
         {

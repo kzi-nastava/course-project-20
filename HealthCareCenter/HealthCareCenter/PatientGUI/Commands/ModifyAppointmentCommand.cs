@@ -30,15 +30,14 @@ namespace HealthCareCenter.PatientGUI.Commands
             MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure?", "Schedule appointment?", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                DateTime oldScheduleDate = Convert.ToDateTime(_viewModel.ChosenAppointment.AppointmentDate);
-                if (patFunc.ShouldSendToSecretary(oldScheduleDate))
+                if (patFunc.ShouldSendToSecretary(_viewModel.ChosenAppointment.AppointmentDate))
                 {
                     _ = MessageBox.Show("Since there are less than 2 days until this appointment starts, a request will be sent to the secretary",
                         "My App", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 patFunc.ModifyAppointment(
-                    scheduleDate, oldScheduleDate, Convert.ToInt32(_viewModel.ChosenAppointment.AppointmentID),
-                    Convert.ToInt32(_viewModel.ChosenDoctor.DoctorID), _viewModel.Patient.ID, hospitalRoomID);
+                    scheduleDate, _viewModel.ChosenAppointment.AppointmentDate, _viewModel.ChosenAppointment.AppointmentID,
+                    _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.ID, hospitalRoomID);
                 _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _viewModel.Patient);
             }
         }

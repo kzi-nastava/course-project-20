@@ -17,8 +17,8 @@ namespace HealthCareCenter.PatientGUI.Commands
                     "My App", MessageBoxButton.OK, MessageBoxImage.Information);
 
             List<Appointment> similarToPriority = patFunc.GetAppointmentsSimilarToPriorites(
-                _viewModel.IsDoctorPriority, Convert.ToInt32(_viewModel.ChosenDoctor.DoctorID),
-                _viewModel.Patient.HealthRecordID, _viewModel.ChosenDate, _viewModel.StartRange, _viewModel.EndRange);
+                _viewModel.IsDoctorPriority, _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.HealthRecordID, 
+                _viewModel.ChosenDate, _viewModel.StartRange, _viewModel.EndRange);
 
             if (similarToPriority.Count == 0)
             {
@@ -89,8 +89,8 @@ namespace HealthCareCenter.PatientGUI.Commands
                 return;
             }
 
-            int doctorID = Convert.ToInt32(_viewModel.PriorityNotFoundChoice.DoctorID);
-            DateTime scheduleDate = Convert.ToDateTime(_viewModel.PriorityNotFoundChoice.AppointmentDate);
+            int doctorID = _viewModel.PriorityNotFoundChoice.DoctorID;
+            DateTime scheduleDate = _viewModel.PriorityNotFoundChoice.AppointmentDate;
             int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(scheduleDate, Enums.RoomType.Checkup);
             if (hospitalRoomID == -1)
             {

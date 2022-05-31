@@ -8,7 +8,19 @@ namespace HealthCareCenter.Model
 {
     public static class MedicineRepository
     {
-        public static List<Medicine> Medicines { get; set; }
+        private static List<Medicine> _medicines;
+        public static List<Medicine> Medicines
+        {
+            get
+            {
+                if (_medicines == null)
+                {
+                    Load();
+                }
+                return _medicines;
+            }
+            set => _medicines = value;
+        }
         public static List<Medicine> Load()
         {
             var settings = new JsonSerializerSettings
@@ -17,8 +29,8 @@ namespace HealthCareCenter.Model
             };
 
             string JSONTextMedicines = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\medicines.json");
-            Medicines = (List<Medicine>)JsonConvert.DeserializeObject<IEnumerable<Medicine>>(JSONTextMedicines, settings);
-            return Medicines;
+            _medicines = (List<Medicine>)JsonConvert.DeserializeObject<IEnumerable<Medicine>>(JSONTextMedicines, settings);
+            return _medicines;
         }
         public static void Save()
         {

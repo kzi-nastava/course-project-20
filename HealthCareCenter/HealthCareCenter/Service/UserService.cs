@@ -46,5 +46,31 @@ namespace HealthCareCenter.Service
             return null;
         }
 
+        public static Patient GetPatientByID(int patientID)
+        {
+            foreach (Patient patient in UserRepository.Patients)
+            {
+                if (patient.ID == patientID)
+                {
+                    return patient;
+                }
+            }
+
+            return null;
+        }
+
+        public static Patient GetPatientByHealthRecordID(int healthRecordID)
+        {
+            foreach (Patient patient in UserRepository.Patients)
+            {
+                if (patient.HealthRecordID == healthRecordID)
+                {
+                    return patient;
+                }
+            }
+
+            return null;
+        }
+
     }
 }

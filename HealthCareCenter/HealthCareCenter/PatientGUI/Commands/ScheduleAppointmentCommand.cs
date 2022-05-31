@@ -31,7 +31,7 @@ namespace HealthCareCenter.PatientGUI.Commands
             if (messageBoxResult == MessageBoxResult.Yes)
             {
                 patFunc.ScheduleAppointment(
-                    scheduleDate, Convert.ToInt32(_viewModel.ChosenDoctor.DoctorID), _viewModel.Patient.HealthRecordID, hospitalRoomID);
+                    scheduleDate, _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.HealthRecordID, hospitalRoomID);
                 _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _viewModel.Patient);
             }
         }
