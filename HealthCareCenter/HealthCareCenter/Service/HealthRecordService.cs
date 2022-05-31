@@ -21,6 +21,28 @@ namespace HealthCareCenter.Service
             }
         }
 
+        public static HealthRecord FindRecordByPatientID(int ID)
+        {
+            foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
+            {
+                if (ID == healthRecord.PatientID)
+                {
+                    return healthRecord;
+                }
+            }
+            return null;
+        }
+        public static HealthRecord FindRecord(int ID)
+        {
+            foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
+            {
+                if (ID == healthRecord.ID)
+                {
+                    return healthRecord;
+                }
+            }
+            return null;
+        }
         public static HealthRecord FindRecord(Patient patient)
         {
             foreach (HealthRecord record in HealthRecordRepository.Records)
@@ -43,6 +65,40 @@ namespace HealthCareCenter.Service
                 }
             }
             return null;
+        }
+        public static string CheckAlergens(HealthRecord healthRecord)
+        {
+            string alergens = "";
+            if (healthRecord.Allergens != null)
+            {
+                foreach (string s in healthRecord.Allergens)
+                {
+                    alergens += "," + s;
+                }
+
+                return alergens;
+            }
+            else
+            {
+                return "none";
+            }
+        }
+        public static string CheckPreviousDiseases(HealthRecord healthRecord)
+        {
+            string previousDiseases = "";
+            if (healthRecord.PreviousDiseases != null)
+            {
+                foreach (string s in healthRecord.PreviousDiseases)
+                {
+                    previousDiseases += "," + s;
+                }
+
+                return previousDiseases;
+            }
+            else
+            {
+                return "none";
+            }
         }
     }
 }

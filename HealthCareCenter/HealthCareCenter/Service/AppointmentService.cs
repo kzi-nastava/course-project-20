@@ -19,5 +19,19 @@ namespace HealthCareCenter.Service
             }
             return null;
         }
+
+        public static List<Appointment> GetAppointmentsInTheFollowingDays(DateTime date, int numberOfDays)
+        {
+            List<Appointment> appointments = new List<Appointment>();
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            {
+                TimeSpan timeSpan = appointment.ScheduledDate.Subtract(date);
+                if (timeSpan.TotalDays <= 3 && timeSpan.TotalDays >= 0)
+                {
+                    appointments.Add(appointment);
+                }
+            }
+            return appointments;
+        } 
     }
 }
