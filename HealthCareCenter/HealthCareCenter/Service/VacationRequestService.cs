@@ -1,13 +1,10 @@
 ﻿using HealthCareCenter.Enums;
 using HealthCareCenter.Model;
 using HealthCareCenter.Secretary;
-using HealthCareCenter.Service;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 
-namespace HealthCareCenter.Controller
+namespace HealthCareCenter.Service
 {
     public static class VacationRequestService
     {
@@ -24,7 +21,7 @@ namespace HealthCareCenter.Controller
             return false;
         }
 
-        public static ObservableCollection<VacationRequestDisplay> Refresh()
+        public static ObservableCollection<VacationRequestDisplay> Get()
         {
             ObservableCollection<VacationRequestDisplay> vacationRequests = new ObservableCollection<VacationRequestDisplay>();
 
@@ -61,7 +58,7 @@ namespace HealthCareCenter.Controller
         public static ObservableCollection<VacationRequestDisplay> Accept(int id)
         {
             PerformAccept(id);
-            return Refresh();
+            return Get();
         }
 
         private static void PerformAccept(int id)
@@ -83,7 +80,7 @@ namespace HealthCareCenter.Controller
         public static ObservableCollection<VacationRequestDisplay> Deny(int id, string reason)
         {
             PerformDeny(id, reason);
-            return Refresh();
+            return Get();
         }
 
         private static void PerformDeny(int id, string reason)

@@ -21,12 +21,12 @@
   },
   {
     "ID": 2,
-    "StartDate": "24/05/2022",
-    "EndDate": "30/05/2022",
+    "StartDate": "24/06/2022",
+    "EndDate": "30/06/2022",
     "RequestReason": "Vacation as well",
     "DenialReason": "",
     "Emergency": false,
     "State": 2,
-    "DoctorID": 5
+    "DoctorID": 1
   }
 ]

@@ -30,7 +30,7 @@ namespace HealthCareCenter.Secretary
 
             InitializeComponent();
 
-            vacationRequestsDataGrid.ItemsSource = _controller.Refresh();
+            vacationRequestsDataGrid.ItemsSource = _controller.Get();
         }
 
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
