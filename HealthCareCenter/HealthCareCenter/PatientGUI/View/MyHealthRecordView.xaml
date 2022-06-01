@@ -35,7 +35,9 @@
                 <TextBox IsEnabled="False"
                          Grid.Row="1" 
                          BorderThickness="2"
-                         Text="{Binding PatientHeight}" />
+                         Text="{Binding PatientHeight}" 
+                         FontFamily="Comic sans MS"
+                         Style="{StaticResource DefaultTextBoxTheme}" />
             </Grid>
 
             <Grid Margin="5"
@@ -51,7 +53,9 @@
                 <TextBox IsEnabled="False"
                          Grid.Row="1"
                          BorderThickness="2"
-                         Text="{Binding PatientWeight}" />
+                         Text="{Binding PatientWeight}" 
+                         FontFamily="Comic sans MS" 
+                         Style="{StaticResource DefaultTextBoxTheme}"  />
             </Grid>
 
             <Grid Margin="5"
@@ -71,7 +75,9 @@
                          VerticalScrollBarVisibility="Auto" 
                          HorizontalScrollBarVisibility="Auto" 
                          Grid.Row="1"
-                         Text="{Binding PatientAllergens}" />
+                         Text="{Binding PatientAllergens}"  
+                         FontFamily="Comic sans MS"
+                         Style="{StaticResource DefaultTextBoxTheme}" />
 
             </Grid>
 
@@ -92,7 +98,9 @@
                          VerticalScrollBarVisibility="Auto" 
                          HorizontalScrollBarVisibility="Auto" 
                          Grid.Row="1" 
-                         Text="{Binding PatientPreviousDiseases}" />
+                         Text="{Binding PatientPreviousDiseases}" 
+                         FontFamily="Comic sans MS"
+                         Style="{StaticResource DefaultTextBoxTheme}" />
             </Grid>
         </Grid>
 
@@ -130,7 +138,8 @@
                         Grid.Column="1"
                         Grid.RowSpan="2"
                         Margin="5 0" 
-                        Command="{Binding SortAppointments}"  />
+                        Command="{Binding SortAppointments}"
+                        Style="{StaticResource HealthcareCenterButtonTheme}" />
                 <TextBlock Text="Search keyword"
                            Grid.Row="0"
                            Grid.Column="2"
@@ -139,13 +148,15 @@
                 <TextBox Grid.Row="1"
                          Grid.Column="2" 
                          Margin="5 0" 
-                         Text="{Binding SearchKeyword}" />
+                         Text="{Binding SearchKeyword}" 
+                         Style="{StaticResource DefaultTextBoxTheme}" />
                 <Button Content="Search"
                         Grid.Row="0"
                         Grid.Column="3"
                         Grid.RowSpan="2"
                         Margin="5 0"
-                        Command="{Binding SearchAppointments}" />
+                        Command="{Binding SearchAppointments}"
+                        Style="{StaticResource HealthcareCenterButtonTheme}" />
             </Grid>
             
             <ListView Grid.Row="1"
@@ -238,10 +249,11 @@
             </Grid.RowDefinitions>
 
             <Button Content="Show anamnesis"
-                    Grid.Row="0" 
-                    Padding="20 20" 
+                    Grid.Row="0"
+                    Height="50"
                     Margin="0 10"
-                    Command="{Binding ShowAnamnesis}"/>
+                    Command="{Binding ShowAnamnesis}"
+                    Style="{StaticResource HealthcareCenterButtonTheme}" />
             <TextBox BorderThickness="2"
                      IsEnabled="False"
                      TextWrapping="Wrap" 
@@ -249,7 +261,9 @@
                      VerticalScrollBarVisibility="Auto" 
                      HorizontalScrollBarVisibility="Auto" 
                      Grid.Row="1" 
-                     Text="{Binding AnamnesisInfo}"/>
+                     Text="{Binding AnamnesisInfo}"
+                     FontFamily="Comic sans MS"
+                     Style="{StaticResource DefaultTextBoxTheme}" />
 
         </Grid>
 

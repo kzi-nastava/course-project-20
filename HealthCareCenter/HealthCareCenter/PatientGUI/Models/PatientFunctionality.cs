@@ -370,7 +370,7 @@ namespace HealthCareCenter.PatientGUI.Models
         public List<Appointment> GetAppointmentsByAnamnesisKeyword(string searchKeyword, int healthRecordID)
         {
             List<Appointment> finishedAppointments = AppointmentService.GetPatientFinishedAppointments(healthRecordID);
-            if (searchKeyword == "")
+            if (string.IsNullOrEmpty(searchKeyword))
             {
                 return finishedAppointments;
             }

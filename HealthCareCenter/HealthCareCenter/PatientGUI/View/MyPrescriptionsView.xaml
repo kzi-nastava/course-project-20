@@ -36,12 +36,14 @@
                            Grid.Row="0"
                            FontWeight="SemiBold" />
                 <TextBox Grid.Row="1" 
-                         Text="{Binding NotificationReceiveTime}" />
+                         Text="{Binding NotificationReceiveTime}"
+                         Style="{StaticResource DefaultTextBoxTheme}" />
                 <Button Content="Set time"
                         Grid.Row="2"
                         Padding="20 10"
                         Margin="0 10"
-                        Command="{Binding SetNotificationTime}" />
+                        Command="{Binding SetNotificationTime}"
+                        Style="{StaticResource HealthcareCenterButtonTheme}"  />
             </Grid>
 
             <Grid Grid.Column="1"
@@ -56,19 +58,22 @@
                            Grid.Row="0"
                            FontWeight="SemiBold" />
                 <TextBox Grid.Row="1" 
-                         Text="{Binding SearchKeyword}" />
+                         Text="{Binding SearchKeyword}"
+                         Style="{StaticResource DefaultTextBoxTheme}" />
                 <Button Content="Search"
                         Grid.Row="2"
                         Padding="20 10"
                         Margin="0 10" 
-                        Command="{Binding SearchInstruction}" />
+                        Command="{Binding SearchInstruction}"
+                        Style="{StaticResource HealthcareCenterButtonTheme}"  />
             </Grid>
 
             <Button Content="Show instruction"
                     Grid.Row="0"
                     Grid.Column="2"
                     Margin="15"
-                    Command="{Binding ShowInstruction}"/>
+                    Command="{Binding ShowInstruction}"
+                    Style="{StaticResource HealthcareCenterButtonTheme}" />
 
             <ListView Grid.Row="1"
                       Grid.Column="0"
@@ -165,7 +170,8 @@
                      VerticalScrollBarVisibility="Auto" 
                      HorizontalScrollBarVisibility="Auto" 
                      Grid.Row="1" 
-                     Text="{Binding MedicineInstructionInfo}" />
+                     Text="{Binding MedicineInstructionInfo}"
+                     Style="{StaticResource DefaultTextBoxTheme}"  />
 
         </Grid>
 

@@ -114,7 +114,8 @@
 
         <StackPanel Grid.Row="2"
                     Grid.Column="2">
-            <Grid Margin="5">
+            <Grid Margin="5"
+                  MinHeight="35">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="*" />
@@ -123,14 +124,17 @@
                 <TextBlock Text="Priority: "
                            Grid.Column="0"
                            FontWeight="SemiBold"
-                           Margin="0 0 10 0" />
+                           Margin="0 0 10 0" 
+                           VerticalAlignment="Center" />
                 <RadioButton IsChecked="{Binding IsDoctorPriority}"
                              Content="Doctor" 
                              GroupName="priority" 
-                             Grid.Column="1" />
+                             Grid.Column="1" 
+                             Style="{StaticResource PriorityRadioButtonTheme}" />
                 <RadioButton Content="Time" 
                              GroupName="priority" 
-                             Grid.Column="2"/>
+                             Grid.Column="2"
+                             Style="{StaticResource PriorityRadioButtonTheme}" />
             </Grid>
             <DatePicker Margin="5"
                         SelectedDate="{Binding ChosenDate}"/>
@@ -172,7 +176,8 @@
             <Button Content="Schedule appointment"
                     Padding="20 10"
                     Margin="5 10" 
-                    Command="{Binding PriorityScheduleAppointment}" />
+                    Command="{Binding PriorityScheduleAppointment}" 
+                    Style="{StaticResource HealthcareCenterButtonTheme}" />
 
         </StackPanel>
 

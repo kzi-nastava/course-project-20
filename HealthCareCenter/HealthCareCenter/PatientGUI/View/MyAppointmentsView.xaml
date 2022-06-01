@@ -94,22 +94,30 @@
 
         <StackPanel Grid.Row="1" 
                     Orientation="Horizontal">
-            <Button Content="Create appoinment" 
-                    Padding="20 20" 
+            <Button Content="Create appoinment"
+                    Width="150"
+                    Height="50"
                     Margin="20 10" 
-                    Command="{Binding CreateAppointment}" />
+                    Command="{Binding CreateAppointment}"
+                    Style="{StaticResource HealthcareCenterButtonTheme}" />
             <Button Content="Modify appoinment" 
-                    Padding="20 20"
+                    Width="150"
+                    Height="50"
                     Margin="20 10"
-                    Command="{Binding ModifyAppointment}" />
+                    Command="{Binding ModifyAppointment}" 
+                    Style="{StaticResource HealthcareCenterButtonTheme}" />
             <Button Content="Cancel appoinment" 
-                    Padding="20 20"
+                    Width="150"
+                    Height="50"
                     Margin="20 10" 
-                    Command="{Binding CancelAppointment}" />
+                    Command="{Binding CancelAppointment}" 
+                    Style="{StaticResource HealthcareCenterButtonTheme}" />
             <Button Content="Priority scheduling" 
-                    Padding="20 20"
+                    Width="150"
+                    Height="50"
                     Margin="20 10" 
-                    Command="{Binding PriorityScheduling}" />
+                    Command="{Binding PriorityScheduling}" 
+                    Style="{StaticResource HealthcareCenterButtonTheme}" />
         </StackPanel>
     </Grid>
 </UserControl>

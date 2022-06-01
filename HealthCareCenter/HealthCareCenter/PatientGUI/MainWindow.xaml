@@ -6,73 +6,117 @@
         xmlns:views="clr-namespace:HealthCareCenter.PatientGUI.View"
         xmlns:vms="clr-namespace:HealthCareCenter.PatientGUI.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="540" Width="900"
-        WindowStartupLocation="CenterScreen">
-    <Grid>
-        <Grid.Resources>
-            <DataTemplate DataType="{x:Type vms:MyAppointmentsViewModel}">
-                <views:MyAppointmentsView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vms:PrioritySchedulingViewModel}">
-                <views:PrioritySchedulingView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vms:MyHealthRecordViewModel}">
-                <views:MyHealthRecordView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vms:MyPrescriptionsViewModel}">
-                <views:MyPrescriptionsView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vms:SearchDoctorsViewModel}">
-                <views:SearchDoctorsView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vms:AppointmentFormViewModel}">
-                <views:AppointmentFormView />
-            </DataTemplate>
-        </Grid.Resources>
+        Height="600" Width="1100"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        AllowsTransparency="True">
+    <Border CornerRadius="20"
+            Background="#e9aeae">
+        <Grid>
+            <Grid.Resources>
+                <DataTemplate DataType="{x:Type vms:MyAppointmentsViewModel}">
+                    <views:MyAppointmentsView />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:PrioritySchedulingViewModel}">
+                    <views:PrioritySchedulingView />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:MyHealthRecordViewModel}">
+                    <views:MyHealthRecordView />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:MyPrescriptionsViewModel}">
+                    <views:MyPrescriptionsView />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:SearchDoctorsViewModel}">
+                    <views:SearchDoctorsView />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:AppointmentFormViewModel}">
+                    <views:AppointmentFormView />
+                </DataTemplate>
+            </Grid.Resources>
 
-        <ContentControl Content="{Binding CurrentViewModel}" 
+            <ContentControl Content="{Binding CurrentViewModel}" 
+                            Grid.Row="2"
+                            Grid.Column="1" 
+                            Margin="10"/>
+
+            <TextBlock Text="Healthcare Center"
+                       Grid.Row="1"
+                       Grid.Column="0" 
+                       Foreground="White"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       FontStyle="Italic"
+                       FontFamily="Comic sans MS"
+                       Margin="20 0 0 0"/>
+
+            <StackPanel Orientation="Vertical"
                         Grid.Row="2"
-                        Grid.Column="1"
-                        Grid.ColumnSpan="2" />
+                        Grid.Column="0">
+                <RadioButton Content="My appointments"
+                             Height="50"
+                             Width="auto"
+                             Foreground="White"
+                             FontSize="14" 
+                             Style="{StaticResource MenuItemTheme}"
+                             IsChecked="True"
+                             Command="{Binding ShowMyAppointments}" />
+                <RadioButton Content="My health record"
+                             Height="50"
+                             Width="auto"
+                             Foreground="White"
+                             FontSize="14" 
+                             Style="{StaticResource MenuItemTheme}"
+                             Command="{Binding ShowMyHealthRecord}" />
+                <RadioButton Content="My prescriptions"
+                             Height="50"
+                             Width="auto"
+                             Foreground="White"
+                             FontSize="14" 
+                             Style="{StaticResource MenuItemTheme}"
+                             Command="{Binding ShowMyPrescriptions}" />
+                <RadioButton Content="Search for doctor"
+                             Height="50"
+                             Width="auto"
+                             Foreground="White"
+                             FontSize="14" 
+                             Style="{StaticResource MenuItemTheme}"
+                             Command="{Binding ShowSearchForDoctors}" />
+                <RadioButton Content="Doctor survey"
+                             Height="50"
+                             Width="auto"
+                             Foreground="White"
+                             FontSize="14" 
+                             Style="{StaticResource MenuItemTheme}"
+                             Command="{Binding ShowDoctorSurvey}" />
+                <RadioButton Content="Healthcare center survey"
+                             Height="50"
+                             Width="auto"
+                             Foreground="White"
+                             FontSize="14" 
+                             Style="{StaticResource MenuItemTheme}"
+                             Command="{Binding ShowHealthCenterSurvey}" />
+                <RadioButton Content="Log out"
+                             Height="50"
+                             Width="auto"
+                             Foreground="White"
+                             FontSize="14" 
+                             Style="{StaticResource MenuItemTheme}"
+                             Command="{Binding LogOut}" />
+            </StackPanel>
 
-        <Menu Grid.Row="1" 
-              Grid.Column="1" >
-            <MenuItem Header="Action">
-                <MenuItem Header="View your appointments" 
-                          Command="{Binding ShowMyAppointments}"/>
-                <MenuItem Header="Search for doctor" 
-                          Command="{Binding ShowSearchForDoctors}"/>
-                <MenuItem Header="My prescriptions" 
-                          Command="{Binding ShowMyPrescriptions}"/>
-                <MenuItem Header="My health record" 
-                          Command="{Binding ShowMyHealthRecord}"/>
-                <MenuItem Header="Access surveys">
-                    <MenuItem Header="Doctor" 
-                              Command="{Binding ShowDoctorSurvey}"/>
-                    <MenuItem Header="Health center" 
-                              Command="{Binding ShowHealthCenterSurvey}"/>
-                </MenuItem>
-                <MenuItem Header="Log out"
-                          Command="{Binding LogOut}"/>
-            </MenuItem>
-        </Menu>
-        <TextBlock Grid.Row="1"
-                   Grid.Column="2"
-                   Margin="20 0 0 0"
-                   Text="{Binding CurrentViewLabel}" />
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20" />
+                <RowDefinition Height="50" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="20"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="20" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20" />
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="20" />
-        </Grid.ColumnDefinitions>
-
-    </Grid>
+        </Grid>
+    </Border>
 </Window>

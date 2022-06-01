@@ -3,6 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:HealthCareCenter">
     <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="./PatientGUI/Themes/MenuItemTheme.xaml" />
+                <ResourceDictionary Source="./PatientGUI/Themes/TextBoxTheme.xaml" />
+                <ResourceDictionary Source="./PatientGUI/Themes/ButtonTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
         
     </Application.Resources>
 </Application>
