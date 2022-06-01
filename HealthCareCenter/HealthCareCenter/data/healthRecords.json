@@ -2,12 +2,12 @@
   {
     "ID": 1,
     "Height": 164.0,
-    "Weight": 60.0,
+    "Weight": 67.0,
     "PreviousDiseases": [
-      "Tachycardia"
+      "Previous diseases"
     ],
     "Allergens": [
-      "Tree pollen"
+      "Alergens"
     ],
     "PatientID": 2
   },

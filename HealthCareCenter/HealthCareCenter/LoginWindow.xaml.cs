@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using HealthCareCenter.Model;
 using HealthCareCenter.SecretaryGUI;
+using HealthCareCenter.DoctorServices;
+using HealthCareCenter.DoctorGUI;
 using HealthCareCenter.Service;
 
 namespace HealthCareCenter
@@ -74,7 +76,8 @@ namespace HealthCareCenter
                     {
                         if (user.GetType() == typeof(Doctor))
                         {
-                            ShowWindow(new DoctorWindow(user));
+                            DoctorWindowService doctorWindowService = new DoctorWindowService((Doctor)user);
+                            Close();
                         }
                         else if (user.GetType() == typeof(Manager))
                         {

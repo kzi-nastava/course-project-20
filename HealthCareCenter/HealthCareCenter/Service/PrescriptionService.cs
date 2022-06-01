@@ -7,19 +7,19 @@ using System.Windows;
 
 namespace HealthCareCenter.Service
 {
-    public class PrescriptionService
+    public static class PrescriptionService
     {
-        public PrescriptionService(int _doctorID)
+        public static void Initialise(int _doctorID)
         {
-            this._doctorID = _doctorID;
+            doctorID = _doctorID;
             MedicineInstructions = new List<int>();
         }
-        private List<DateTime>_times = new List<DateTime>();
-        public Medicine SelectedMedicine { get; set; }
-        public  List<int> MedicineInstructions { get; set; }
-        private int _doctorID;
+        private static List<DateTime>_times = new List<DateTime>();
+        public static Medicine SelectedMedicine { get; set; }
+        public static List<int> MedicineInstructions { get; set; }
+        private static int doctorID;
 
-        public bool ClearData(bool finishing)
+        public static bool ClearData(bool finishing)
         {
             _times.Clear();
             if (finishing)
@@ -27,7 +27,7 @@ namespace HealthCareCenter.Service
             SelectedMedicine = null;
             return true;
         }
-        public bool AddTime(string hour,string minute) {
+        public static bool AddTime(string hour,string minute) {
             try
             {
                 DateTime time = DateTime.Parse(hour + ":" + minute);
@@ -47,7 +47,7 @@ namespace HealthCareCenter.Service
                 return false;
             }
         }
-        public bool CreateMedicineInstruction(int id,string comment,int dailyConsumption,ConsumptionPeriod consumptionPeriod, int medicineID) {
+        public static bool CreateMedicineInstruction(int id,string comment,int dailyConsumption,ConsumptionPeriod consumptionPeriod, int medicineID) {
             bool sucessfull = checkData(false);
             if (!sucessfull)
                 return false;
@@ -63,19 +63,19 @@ namespace HealthCareCenter.Service
                 return false;
             }
         }
-        public bool CreateAPrescription()
+        public static bool CreateAPrescription()
         {
             bool sucessfull = checkData(true);
             if (!sucessfull)
                 return false;
             List<int> medicineInstructions = new List<int>(MedicineInstructions);
-            Prescription prescription = new Prescription(++PrescriptionRepository.LargestID,_doctorID,medicineInstructions);
+            Prescription prescription = new Prescription(++PrescriptionRepository.LargestID, doctorID,medicineInstructions);
             
             PrescriptionRepository.Prescriptions.Add(prescription);
             return true;
         }
 
-        private bool checkData(bool finishing)
+        private static bool checkData(bool finishing)
         {
             if(_times.Count == 0 && !finishing)
             {
@@ -94,7 +94,7 @@ namespace HealthCareCenter.Service
             }
             return true;
         }
-        public bool AddPrescription(Prescription prescription)
+        public static bool AddPrescription(Prescription prescription)
         {
             try
             {

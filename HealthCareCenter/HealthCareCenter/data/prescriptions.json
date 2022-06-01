@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "ID": 1,
+    "DoctorID": 1,
+    "MedicineInstructionIDs": [
+      1,
+      2
+    ]
+  }
+]

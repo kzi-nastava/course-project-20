@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "ID": 1,
+    "MedicineID": 1,
+    "Comment": "proba",
+    "ConsumptionTime": [
+      "31/05/2022 14:00",
+      "31/05/2022 22:00"
+    ],
+    "DailyConsumption": 1,
+    "ConsumptionPeriod": 1
+  },
+  {
+    "ID": 2,
+    "MedicineID": 1,
+    "Comment": "proba",
+    "ConsumptionTime": [
+      "31/05/2022 22:16"
+    ],
+    "DailyConsumption": 1,
+    "ConsumptionPeriod": 0
+  }
+]

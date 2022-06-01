@@ -14,15 +14,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Service\DoctorWindowService.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Page Include="App.xaml" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="DoctorServices\AddDeleteAppointmentService.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
   </ItemGroup>
 
 </Project>
