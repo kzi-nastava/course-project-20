@@ -5,7 +5,7 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    class Notification
+    public class Notification
     {
         public int ID { get; set; }
         public string Message { get; set; }

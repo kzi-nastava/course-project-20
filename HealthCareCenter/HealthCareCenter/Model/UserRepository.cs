@@ -14,6 +14,20 @@ namespace HealthCareCenter.Model
         public static List<Patient> Patients { get; set; }
         public static List<Secretary> Secretaries { get; set; }
 
+        public static int maxID = -1;
+
+        public static void CalculateMaxID()
+        {
+            maxID = -1;
+            foreach (User user in Users)
+            {
+                if (user.ID > maxID)
+                {
+                    maxID = user.ID;
+                }
+            }
+        }
+
         public static void LoadUsers()
         {
             try

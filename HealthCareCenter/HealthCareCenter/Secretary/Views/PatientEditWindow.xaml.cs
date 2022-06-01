@@ -1,17 +1,11 @@
 ﻿using HealthCareCenter.Model;
+using HealthCareCenter.Secretary.Controllers;
+using HealthCareCenter.Secretary.DTOs;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace HealthCareCenter.Secretary
 {
@@ -26,6 +20,8 @@ namespace HealthCareCenter.Secretary
         private ObservableCollection<string> _previousDiseases;
         private ObservableCollection<string> _allergens;
 
+        private readonly PatientEditController _controller;
+
         public PatientEditWindow()
         {
             InitializeComponent();
@@ -36,6 +32,8 @@ namespace HealthCareCenter.Secretary
             this._patient = patient;
             this._record = record;
             InitializeComponent();
+
+            _controller = new PatientEditController();
         }
 
         private void Reset()
@@ -59,9 +57,14 @@ namespace HealthCareCenter.Secretary
 
         private void AddPreviousDiseaseButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(previousDiseaseTextBox.Text))
+            string disease;
+            try
             {
-                MessageBox.Show("You must enter a disease.");
+                disease = _controller.ValidatePreviousDisease(previousDiseaseTextBox.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
                 return;
             }
             _previousDiseases.Add(previousDiseaseTextBox.Text);
@@ -69,9 +72,14 @@ namespace HealthCareCenter.Secretary
 
         private void AddAllergenButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(allergenTextBox.Text))
+            string allergen;
+            try
             {
-                MessageBox.Show("You must enter an allergen.");
+                allergen = _controller.ValidateAllergen(allergenTextBox.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
                 return;
             }
             _allergens.Add(allergenTextBox.Text);
@@ -103,9 +111,14 @@ namespace HealthCareCenter.Secretary
 
         private void EditPreviousDiseaseButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(previousDiseaseTextBox.Text))
+            string disease;
+            try
             {
-                MessageBox.Show("You must enter a disease.");
+                disease = _controller.ValidatePreviousDisease(previousDiseaseTextBox.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
                 return;
             }
             if (previousDiseasesListBox.SelectedItem != null)
@@ -120,9 +133,14 @@ namespace HealthCareCenter.Secretary
 
         private void EditAllergenButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(allergenTextBox.Text))
+            string allergen;
+            try
             {
-                MessageBox.Show("You must enter an allergen.");
+                allergen = _controller.ValidateAllergen(allergenTextBox.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
                 return;
             }
             if (allergensListBox.SelectedItem != null)
@@ -175,147 +193,22 @@ namespace HealthCareCenter.Secretary
             allergensListBox.ItemsSource = _allergens;
         }
 
-        private bool EnteredData()
-        {
-            if (string.IsNullOrWhiteSpace(firstNameTextBox.Text))
-            {
-                MessageBox.Show("You must enter a first name.");
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(usernameTextBox.Text))
-            {
-                MessageBox.Show("You must enter a username.");
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(lastNameTextBox.Text))
-            {
-                MessageBox.Show("You must enter a last name.");
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(passwordTextBox.Text))
-            {
-                MessageBox.Show("You must enter a password.");
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(heightTextBox.Text))
-            {
-                MessageBox.Show("You must enter a height.");
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(weightTextBox.Text))
-            {
-                MessageBox.Show("You must enter a weight.");
-                return false;
-            }
-            if (birthDatePicker.SelectedDate == null)
-            {
-                MessageBox.Show("You must enter a date of birth.");
-                return false;
-            }
-            return true;
-        }
-
-        private bool BirthDateInFuture()
-        {
-            if (birthDatePicker.SelectedDate > DateTime.Now)
-            {
-                MessageBox.Show("You cannot enter a date in the future.");
-                return true;
-            }
-            return false;
-        }
-
-        private bool ValidHeight()
-        {
-            if (!Double.TryParse(heightTextBox.Text, out _))
-            {
-                MessageBox.Show("Height must be a number.");
-                return false;
-            }
-            return true;
-        }
-
-        private bool ValidWeight()
-        {
-            if (!Double.TryParse(weightTextBox.Text, out _))
-            {
-                MessageBox.Show("Weight must be a number.");
-                return false;
-            }
-            return true;
-        }
-
-        private bool UsernameInUse()
-        {
-            if (_patient.Username == usernameTextBox.Text)
-            {
-                return false;
-            }
-            foreach (User user in UserRepository.Users)
-            {
-                if (user.Username == usernameTextBox.Text)
-                {
-                    MessageBox.Show("Username is already in use. Choose a different one.");
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private bool ValidData()
-        {
-            if (BirthDateInFuture())
-                return false;
-
-            if (UsernameInUse())
-                return false;
-
-            if (!ValidHeight())
-                return false;
-
-            if (!ValidWeight())
-                return false;
-
-            return true;
-        }
-
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!EnteredData())
+            HealthRecordDTO editedRecord = new HealthRecordDTO(_record.ID, heightTextBox.Text, weightTextBox.Text, _previousDiseases.Cast<String>().ToList(), _allergens.Cast<String>().ToList(), _record.PatientID);
+            PatientDTO editedPatient = new PatientDTO(_patient.ID, usernameTextBox.Text, passwordTextBox.Text, firstNameTextBox.Text, lastNameTextBox.Text, birthDatePicker.SelectedDate, _patient.IsBlocked, _patient.BlockedBy, _patient.PrescriptionIDs, _patient.HealthRecordID);
+
+            try
+            {
+                _controller.Edit(editedPatient, editedRecord, _patient, _record);
+            } 
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
                 return;
-
-            if (!ValidData())
-                return;
-
-            EditHealthRecord();
-            EditPatient();
-
-            SaveToRepositories();
+            }
 
             MessageBox.Show("Successfully edited the patient and health record.");
-        }
-
-        private static void SaveToRepositories()
-        {
-            HealthRecordRepository.Save();
-            UserRepository.SavePatients();
-        }
-
-        private void EditPatient()
-        {
-            _patient.Username = usernameTextBox.Text;
-            _patient.Password = passwordTextBox.Text;
-            _patient.FirstName = firstNameTextBox.Text;
-            _patient.LastName = lastNameTextBox.Text;
-            _patient.DateOfBirth = (DateTime)birthDatePicker.SelectedDate;
-        }
-
-        private void EditHealthRecord()
-        {
-            _record.Height = Double.Parse(heightTextBox.Text);
-            _record.Weight = Double.Parse(weightTextBox.Text);
-            _record.PreviousDiseases = _previousDiseases.Cast<String>().ToList();
-            _record.Allergens = _allergens.Cast<String>().ToList();
         }
     }
 }

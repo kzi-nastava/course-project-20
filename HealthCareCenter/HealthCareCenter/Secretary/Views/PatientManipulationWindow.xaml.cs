@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using HealthCareCenter.Model;
+using HealthCareCenter.Secretary.Controllers;
 using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Secretary
@@ -20,18 +21,7 @@ namespace HealthCareCenter.Secretary
     public partial class PatientManipulationWindow : Window
     {
         private List<Patient> _blockedPatients;
-
-        private void LoadBlockedPatients()
-        {
-            _blockedPatients = new List<Patient>();
-            foreach (Patient patient in UserRepository.Patients)
-            {
-                if (patient.IsBlocked)
-                {
-                    _blockedPatients.Add(patient);
-                }
-            }
-        }
+        private PatientManipulationController _controller;
 
         public PatientManipulationWindow()
         {
@@ -40,24 +30,12 @@ namespace HealthCareCenter.Secretary
 
         private void Window_Initialized(object sender, EventArgs e)
         {
+            _controller = new PatientManipulationController();
+
             patientsDataGrid.ItemsSource = UserRepository.Patients;
-            LoadBlockedPatients();
+            _blockedPatients = _controller.LoadBlockedPatients();
 
-            HealthRecordRepository.Load();
-            VacationRequestRepository.Load();
-            UpdateMaxIDsIfNeeded();
-        }
-
-        private static void UpdateMaxIDsIfNeeded()
-        {
-            if (UserService.maxID == -1)
-            {
-                UserService.CalculateMaxID();
-            }
-            if (HealthRecordService.maxID == -1)
-            {
-                HealthRecordService.CalculateMaxID();
-            }
+            _controller.UpdateMaxIDsIfNeeded();
         }
 
         private void ShowEveryoneRadioButton_Click(object sender, RoutedEventArgs e)
@@ -79,22 +57,16 @@ namespace HealthCareCenter.Secretary
             }
 
             Patient selectedPatient = (Patient)patientsDataGrid.SelectedItem;
-            if (!selectedPatient.IsBlocked)
+            try
             {
-                Block(selectedPatient);
+                _controller.Block(selectedPatient, _blockedPatients);
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Patient is already blocked.");
+                MessageBox.Show(ex.Message);
+                return;
             }
-        }
-
-        private void Block(Patient selectedPatient)
-        {
-            selectedPatient.IsBlocked = true;
-            selectedPatient.BlockedBy = Enums.Blocker.Secretary;
-            _blockedPatients.Add(selectedPatient);
-            UserRepository.SavePatients();
+            
             patientsDataGrid.Items.Refresh();
             MessageBox.Show("Patient successfully blocked.");
         }
@@ -108,22 +80,16 @@ namespace HealthCareCenter.Secretary
             }
 
             Patient selectedPatient = (Patient)patientsDataGrid.SelectedItem;
-            if (selectedPatient.IsBlocked)
+            try
             {
-                Unblock(selectedPatient);
+                _controller.Unblock(selectedPatient, _blockedPatients);
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Patient is not blocked.");
+                MessageBox.Show(ex.Message);
+                return;
             }
-        }
 
-        private void Unblock(Patient selectedPatient)
-        {
-            selectedPatient.IsBlocked = false;
-            selectedPatient.BlockedBy = Enums.Blocker.None;
-            _blockedPatients.Remove(selectedPatient);
-            UserRepository.SavePatients();
             patientsDataGrid.Items.Refresh();
             MessageBox.Show("Patient successfully unblocked.");
         }
@@ -144,43 +110,18 @@ namespace HealthCareCenter.Secretary
             }
 
             Patient patient = (Patient)patientsDataGrid.SelectedItem;
-
-            DeleteHealthRecord(patient);
-            HealthRecordRepository.Save();
-
-            DeletePatient(patient);
-            UserRepository.SavePatients();
+            try
+            {
+                _controller.Delete(patient);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
 
             patientsDataGrid.Items.Refresh();
             MessageBox.Show("Successfully deleted patient and the corresponding health record.");
-        }
-
-        private static void DeletePatient(Patient patient)
-        {
-            UserRepository.Patients.Remove(patient);
-            UserRepository.Users.Remove(patient);
-
-            if (patient.ID == UserService.maxID)
-            {
-                UserService.CalculateMaxID();
-            }
-        }
-
-        private static void DeleteHealthRecord(Patient patient)
-        {
-            foreach (HealthRecord record in HealthRecordRepository.Records)
-            {
-                if (patient.HealthRecordID != record.ID)
-                {
-                    continue;
-                }
-                HealthRecordRepository.Records.Remove(record);
-                if (patient.HealthRecordID == HealthRecordService.maxID)
-                {
-                    HealthRecordService.CalculateMaxID();
-                }
-                break;
-            }
         }
 
         private void ViewButton_Click(object sender, RoutedEventArgs e)
@@ -197,11 +138,11 @@ namespace HealthCareCenter.Secretary
         private void OpenViewWindow()
         {
             Patient patient = (Patient)patientsDataGrid.SelectedItem;
-            HealthRecord record = HealthRecordService.Find(patient);
+            HealthRecord record = _controller.FindRecord(patient);
 
             PatientViewWindow window = new PatientViewWindow(patient, record);
             window.ShowDialog();
-            LoadBlockedPatients();
+            _blockedPatients = _controller.LoadBlockedPatients();
             patientsDataGrid.Items.Refresh();
         }
 
@@ -219,7 +160,7 @@ namespace HealthCareCenter.Secretary
         private void OpenEditWindow()
         {
             Patient patient = (Patient)patientsDataGrid.SelectedItem;
-            HealthRecord record = HealthRecordService.Find(patient);
+            HealthRecord record = _controller.FindRecord(patient);
 
             PatientEditWindow window = new PatientEditWindow(patient, record);
             window.ShowDialog();

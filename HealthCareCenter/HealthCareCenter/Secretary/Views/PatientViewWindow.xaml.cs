@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using HealthCareCenter.Model;
+using HealthCareCenter.Secretary.Controllers;
 
 namespace HealthCareCenter.Secretary
 {
@@ -21,6 +22,8 @@ namespace HealthCareCenter.Secretary
         private readonly Patient _patient;
         private readonly HealthRecord _record;
 
+        private readonly PatientViewController _controller;
+
         public PatientViewWindow()
         {
             InitializeComponent();
@@ -31,6 +34,8 @@ namespace HealthCareCenter.Secretary
             this._patient = patient;
             this._record = record;
             InitializeComponent();
+
+            _controller = new PatientViewController();
         }
 
         private void InitializeWindow()
@@ -56,21 +61,16 @@ namespace HealthCareCenter.Secretary
 
         private void BlockButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!_patient.IsBlocked)
+            try
             {
-                Block();
+                _controller.Block(_patient);
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Patient is already blocked.");
+                MessageBox.Show(ex.Message);
+                return;
             }
-        }
 
-        private void Block()
-        {
-            _patient.IsBlocked = true;
-            _patient.BlockedBy = Enums.Blocker.Secretary;
-            UserRepository.SavePatients();
             isBlockedCheckBox.IsChecked = true;
             blockedByTextBox.Text = Enums.Blocker.Secretary.ToString();
             MessageBox.Show("Patient successfully blocked.");
@@ -78,21 +78,16 @@ namespace HealthCareCenter.Secretary
 
         private void UnblockButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_patient.IsBlocked)
+            try
             {
-                Unblock();
+                _controller.Unblock(_patient);
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Patient is not blocked.");
+                MessageBox.Show(ex.Message);
+                return;
             }
-        }
 
-        private void Unblock()
-        {
-            _patient.IsBlocked = false;
-            _patient.BlockedBy = Enums.Blocker.None;
-            UserRepository.SavePatients();
             isBlockedCheckBox.IsChecked = false;
             blockedByTextBox.Text = Enums.Blocker.None.ToString();
             MessageBox.Show("Patient successfully unblocked.");
