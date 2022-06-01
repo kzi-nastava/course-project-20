@@ -23,16 +23,12 @@
                   Grid.ColumnSpan="3"
                   Margin="10"
                   ItemsSource="{Binding Doctors}"
-                  SelectedItem="{Binding ChosenDoctor}">
-
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
+                  SelectedItem="{Binding ChosenDoctor}"
+                  Style="{StaticResource TableTheme}"
+                  ItemContainerStyle="{StaticResource TableRowTheme}">
 
             <ListView.View>
-                <GridView>
+                <GridView ColumnHeaderContainerStyle="{StaticResource TableHeaderTheme}">
 
                     <GridViewColumn Header="Doctor ID" >
                         <GridViewColumn.CellTemplate>
@@ -86,12 +82,15 @@
         <DatePicker Margin="20 10"
                     SelectedDate="{Binding ChosenDate}"
                     Grid.Row="1"
-                    Grid.Column="0" />
+                    Grid.Column="0"
+                    Style="{StaticResource DatePickerTheme}"
+                    CalendarStyle="{StaticResource CalendarTheme}"/>
         <ComboBox Grid.Row="1"
                   Grid.Column="1" 
                   Margin="20 10"
                   ItemsSource="{Binding AllTerms}"
-                  SelectedItem="{Binding ChosenTerm}" />
+                  SelectedItem="{Binding ChosenTerm}"
+                  Style="{StaticResource ComboBoxTheme}"/>
         <Button Content="Submit"
                 Margin="20 10" 
                 Command="{Binding SubmitAppointment}"

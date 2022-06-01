@@ -12,42 +12,6 @@
     "Ratings": [ 4.3, 2.2 ]
   },
   {
-    "Type": "General practitioner",
-    "VacationRequestIDs": [],
-    "MedicineCreationRequestIDs": [],
-    "ID": 2,
-    "Username": "j",
-    "Password": "j",
-    "FirstName": "Jovan",
-    "LastName": "Ivanovic",
-    "DateOfBirth": "15/06/1994",
-    "Ratings": [ 4.3, 2.2 ]
-  },
-  {
-    "Type": "Cardiology",
-    "VacationRequestIDs": [],
-    "MedicineCreationRequestIDs": [],
-    "ID": 3,
-    "Username": "m",
-    "Password": "m",
-    "FirstName": "Aleksa",
-    "LastName": "Aleksic",
-    "DateOfBirth": "12/04/1992",
-    "Ratings": [ 5.0, 4.5 ]
-  },
-  {
-    "Type": "Cardiology",
-    "VacationRequestIDs": [],
-    "MedicineCreationRequestIDs": [],
-    "ID": 4,
-    "Username": "a",
-    "Password": "a",
-    "FirstName": "Zika",
-    "LastName": "Zikic",
-    "DateOfBirth": "12/04/1992",
-    "Ratings": [ 3.0, 4.8 ]
-  },
-  {
     "Type": "Cardiology",
     "VacationRequestIDs": [],
     "MedicineCreationRequestIDs": [],
@@ -59,16 +23,4 @@
     "DateOfBirth": "12/04/1992",
     "Ratings": [ 5.0, 2.8 ]
   },
-  {
-    "Type": "Cardiology",
-    "VacationRequestIDs": [],
-    "MedicineCreationRequestIDs": [],
-    "ID": 6,
-    "Username": "r",
-    "Password": "r",
-    "FirstName": "Mika",
-    "LastName": "Mikic",
-    "DateOfBirth": "12/04/1992",
-    "Ratings": [ 3.8, 4.8 ]
-  }
 ]

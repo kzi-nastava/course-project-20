@@ -35,12 +35,14 @@
                 <TextBlock Text="Key word search"
                            Grid.Row="0"
                            Grid.Column="0" 
-                           FontWeight="SemiBold"/>
+                           FontWeight="SemiBold"
+                           Style="{StaticResource LabelTheme}" />
                 <TextBlock Text="Key word criteria"
                            Grid.Row="0"
                            Grid.Column="1"
                            FontWeight="SemiBold"
-                           Margin="5 0 0 0" />
+                           Margin="5 0 0 0"
+                           Style="{StaticResource LabelTheme}" />
                 <TextBox Grid.Row="1"
                          Grid.Column="0" 
                          Margin="0 0 5 0" 
@@ -50,7 +52,8 @@
                           Grid.Column="1"
                           Margin="5 0 0 0" 
                           ItemsSource="{Binding SearchCriteria}"
-                          SelectedItem="{Binding ChosenSearchCriteria}" />
+                          SelectedItem="{Binding ChosenSearchCriteria}"
+                          Style="{StaticResource ComboBoxTheme}" />
                 <Button Content="Search"
                         Grid.Row="2"
                         Grid.Column="0"
@@ -71,11 +74,12 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="Sort by"
-                       FontWeight="SemiBold" 
-                       Grid.Row="0" />
+                           Grid.Row="0"
+                           Style="{StaticResource LabelTheme}" />
                 <ComboBox Grid.Row="1" 
                           ItemsSource="{Binding SortCriteria}"
-                          SelectedItem="{Binding ChosenSortCriteria}" />
+                          SelectedItem="{Binding ChosenSortCriteria}"
+                          Style="{StaticResource ComboBoxTheme}" />
                 <Button Content="Sort"
                         Grid.Row="2"
                         Command="{Binding SortDoctors}"
@@ -97,16 +101,12 @@
         <ListView Grid.Row="1"
                   Margin="5"
                   ItemsSource="{Binding Doctors}"
-                  SelectedItem="{Binding ChosenDoctor}">
-
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
+                  SelectedItem="{Binding ChosenDoctor}"
+                  Style="{StaticResource TableTheme}"
+                  ItemContainerStyle="{StaticResource TableRowTheme}">
 
             <ListView.View>
-                <GridView>
+                <GridView ColumnHeaderContainerStyle="{StaticResource TableHeaderTheme}">
 
                     <GridViewColumn Header="Doctor ID" >
                         <GridViewColumn.CellTemplate>

@@ -6,16 +6,21 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Grid VerticalAlignment="Stretch"
+                        <Border BorderThickness="2"
+                                BorderBrush="White">
+                            <Grid VerticalAlignment="Stretch"
                                   HorizontalAlignment="Stretch"
                                   Background="{TemplateBinding Background}">
-                            <TextBlock Text="{TemplateBinding Content}"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       FontFamily="Comic sans MS"
-                                       Padding="5"
-                                       Foreground="White"/>
-                        </Grid>
+                                <TextBlock Text="{TemplateBinding Content}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           FontFamily="Comic sans MS"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Padding="5"
+                                           Foreground="White" />
+                            </Grid>
+                        </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>

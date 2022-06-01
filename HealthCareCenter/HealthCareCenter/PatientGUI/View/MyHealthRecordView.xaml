@@ -127,12 +127,14 @@
                            Grid.Row="0"
                            Grid.Column="0" 
                            Margin="5 0 0 0" 
-                           FontWeight="SemiBold" />
+                           FontWeight="SemiBold" 
+                           Style="{StaticResource LabelTheme}"/>
                 <ComboBox Grid.Row="1"
                           Grid.Column="0" 
                           Margin="5 0" 
                           ItemsSource="{Binding SortCriteria}" 
-                          SelectedItem="{Binding ChosenSortCriteria}" />
+                          SelectedItem="{Binding ChosenSortCriteria}" 
+                          Style="{StaticResource ComboBoxTheme}"/>
                 <Button Content="Sort"
                         Grid.Row="0"
                         Grid.Column="1"
@@ -144,7 +146,7 @@
                            Grid.Row="0"
                            Grid.Column="2"
                            Margin="5 0 0 0"
-                           FontWeight="SemiBold" />
+                           Style="{StaticResource LabelTheme}" />
                 <TextBox Grid.Row="1"
                          Grid.Column="2" 
                          Margin="5 0" 
@@ -162,16 +164,12 @@
             <ListView Grid.Row="1"
                       ItemsSource="{Binding Appointments}"
                       SelectedItem="{Binding ChosenAppointment}"
-                      Margin="5">
-
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
+                      Margin="5"
+                      Style="{StaticResource TableTheme}"
+                      ItemContainerStyle="{StaticResource TableRowTheme}">
 
                 <ListView.View>
-                    <GridView>
+                    <GridView ColumnHeaderContainerStyle="{StaticResource TableHeaderTheme}">
                         
                         <GridViewColumn Header="Appointment ID" >
                             <GridViewColumn.CellTemplate>

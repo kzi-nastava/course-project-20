@@ -15,17 +15,14 @@
         <ListView Grid.Row="0"
                   Margin="10"
                   ItemsSource="{Binding Appointments}"
-                  SelectedItem="{Binding ChosenAppointment}">
-
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
+                  SelectedItem="{Binding ChosenAppointment}"
+                  Style="{StaticResource TableTheme}"
+                  ItemContainerStyle="{StaticResource TableRowTheme}">
 
             <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Appointment ID" >
+                <GridView ColumnHeaderContainerStyle="{StaticResource TableHeaderTheme}">
+                    
+                    <GridViewColumn Header="Appointment ID">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding AppointmentID}" 

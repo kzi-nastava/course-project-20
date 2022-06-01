@@ -5,9 +5,13 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="./PatientGUI/Themes/DatePickerTheme.xaml" />
                 <ResourceDictionary Source="./PatientGUI/Themes/MenuItemTheme.xaml" />
+                <ResourceDictionary Source="./PatientGUI/Themes/ComboBoxTheme.xaml" />
                 <ResourceDictionary Source="./PatientGUI/Themes/TextBoxTheme.xaml" />
                 <ResourceDictionary Source="./PatientGUI/Themes/ButtonTheme.xaml" />
+                <ResourceDictionary Source="./PatientGUI/Themes/TableTheme.xaml" />
+                <ResourceDictionary Source="./PatientGUI/Themes/LabelTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
         

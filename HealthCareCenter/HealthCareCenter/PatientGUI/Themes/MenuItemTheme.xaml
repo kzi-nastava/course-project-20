@@ -37,14 +37,17 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
-                        <Border CornerRadius="20"
-                                BorderThickness="2">
+                        <Border CornerRadius="50"
+                                BorderThickness="3">
                             <Grid VerticalAlignment="Stretch"
                                   HorizontalAlignment="Stretch"
                                   Background="{TemplateBinding Background}">
                                 <TextBlock Text="{TemplateBinding Content}"
                                        VerticalAlignment="Center"
-                                       HorizontalAlignment="Center" />
+                                       HorizontalAlignment="Center" 
+                                       FontFamily="Comic sans MS"
+                                       Foreground="White"
+                                       FontSize="14"/>
                             </Grid>
                         </Border>
                     </ControlTemplate>
@@ -61,15 +64,40 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="RadioButton">
-                            <Border CornerRadius="20"
-                                    BorderThickness="5"
-                                    BorderBrush="#d39a9a">
+                            <Border CornerRadius="50"
+                                    BorderThickness="3"
+                                    BorderBrush="#ce6565">
                                 <Grid VerticalAlignment="Stretch"
                                       HorizontalAlignment="Stretch"
                                       Background="{TemplateBinding Background}">
                                     <TextBlock Text="{TemplateBinding Content}"
                                                VerticalAlignment="Center"
-                                               HorizontalAlignment="Center" />
+                                               HorizontalAlignment="Center"
+                                               FontFamily="Comic sans MS"
+                                               Foreground="White"
+                                               FontSize="14"/>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RadioButton">
+                            <Border CornerRadius="50"
+                                    BorderThickness="5"
+                                    BorderBrush="#ce6565">
+                                <Grid VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Stretch"
+                                      Background="{TemplateBinding Background}">
+                                    <TextBlock Text="{TemplateBinding Content}"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"
+                                               FontFamily="Comic sans MS"
+                                               Foreground="White"
+                                               FontSize="16"/>
                                 </Grid>
                             </Border>
                         </ControlTemplate>
