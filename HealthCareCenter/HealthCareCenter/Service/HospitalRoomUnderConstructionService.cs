@@ -12,7 +12,7 @@ namespace HealthCareCenter.Service
             return HospitalRoomUnderConstructionRepository.Rooms;
         }
 
-        public static HospitalRoom GetRoom(int id)
+        public static HospitalRoom Get(int id)
         {
             try
             {
@@ -37,10 +37,10 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static void AddRoom(HospitalRoom newRoom)
+        public static void Add(HospitalRoom newRoom)
         {
             HospitalRoomUnderConstructionRepository.Rooms.Add(newRoom);
-            HospitalRoomUnderConstructionRepository.SaveRooms(HospitalRoomUnderConstructionRepository.Rooms);
+            HospitalRoomUnderConstructionRepository.Save();
         }
 
         public static int GetLargestRoomId()
@@ -62,7 +62,7 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static bool DeleteRoom(int id)
+        public static bool Delete(int id)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace HealthCareCenter.Service
                     if (id == HospitalRoomUnderConstructionRepository.Rooms[i].ID)
                     {
                         HospitalRoomUnderConstructionRepository.Rooms.RemoveAt(i);
-                        HospitalRoomUnderConstructionRepository.SaveRooms(HospitalRoomUnderConstructionRepository.Rooms);
+                        HospitalRoomUnderConstructionRepository.Save();
                         return true;
                     }
                 }

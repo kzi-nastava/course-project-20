@@ -1,1 +1,37 @@
-[{"ID":0,"CurrentRoomID":5,"Type":2,"Name":"Chair","RearrangementID":-1},{"ID":1,"CurrentRoomID":0,"Type":2,"Name":"Table","RearrangementID":-1},{"ID":2,"CurrentRoomID":0,"Type":2,"Name":"Chair","RearrangementID":-1},{"ID":3,"CurrentRoomID":6,"Type":2,"Name":"Bad","RearrangementID":-1},{"ID":4,"CurrentRoomID":0,"Type":3,"Name":"Bench","RearrangementID":-1}]
+[
+  {
+    "ID": 0,
+    "CurrentRoomID": 3,
+    "Type": 2,
+    "Name": "Chair",
+    "RearrangementID": -1
+  },
+  {
+    "ID": 1,
+    "CurrentRoomID": 0,
+    "Type": 2,
+    "Name": "Table",
+    "RearrangementID": -1
+  },
+  {
+    "ID": 2,
+    "CurrentRoomID": 0,
+    "Type": 2,
+    "Name": "Chair",
+    "RearrangementID": -1
+  },
+  {
+    "ID": 3,
+    "CurrentRoomID": 3,
+    "Type": 2,
+    "Name": "Bed",
+    "RearrangementID": -1
+  },
+  {
+    "ID": 4,
+    "CurrentRoomID": 0,
+    "Type": 3,
+    "Name": "Bench",
+    "RearrangementID": -1
+  }
+]

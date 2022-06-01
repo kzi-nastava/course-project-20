@@ -52,13 +52,13 @@ namespace HealthCareCenter.Model
         /// </summary>
         public void RemoveRearrangement()
         {
-            Room currentRoom = RoomService.GetRoom(CurrentRoomID);
+            Room currentRoom = RoomService.Get(CurrentRoomID);
 
             if (this.IsScheduledRearrangement())
             {
                 // Get rearrangement
                 EquipmentRearrangement rearrangement = EquipmentRearrangementService.GetRearrangement(this.RearrangementID);
-                Room newRoomOfRearrangement = RoomService.GetRoom(CurrentRoomID);
+                Room newRoomOfRearrangement = RoomService.Get(CurrentRoomID);
 
                 // Romeve rearrangement id from list RearrangemetIDs of newRoomOfPreviusRearrangement and currenRoom
                 newRoomOfRearrangement.EquipmentRearrangementsIDs.Remove(rearrangement.ID);
@@ -69,13 +69,13 @@ namespace HealthCareCenter.Model
 
                 // Update rooms
                 //********************************************
-                RoomService.UpdateRoom(newRoomOfRearrangement);
-                RoomService.UpdateRoom(currentRoom);
+                RoomService.Update(newRoomOfRearrangement);
+                RoomService.Update(currentRoom);
                 //********************************************
 
                 // Rearrangement removed
                 this.RearrangementID = -1;
-                EquipmentService.UpdateEquipment(this);
+                EquipmentService.Update(this);
             }
         }
 
@@ -85,8 +85,8 @@ namespace HealthCareCenter.Model
         /// <param name="rearrangement"></param>
         public void SetRearrangement(EquipmentRearrangement rearrangement)
         {
-            Room currentRoom = RoomService.GetRoom(CurrentRoomID);
-            Room newRoomOfCurrentRearrangement = RoomService.GetRoom(rearrangement.NewRoomID);
+            Room currentRoom = RoomService.Get(CurrentRoomID);
+            Room newRoomOfCurrentRearrangement = RoomService.Get(rearrangement.NewRoomID);
 
             // Equipment already has rearrangemt
             if (this.IsScheduledRearrangement())
@@ -105,12 +105,12 @@ namespace HealthCareCenter.Model
 
             // Update Rooms
             //********************************************
-            RoomService.UpdateRoom(newRoomOfCurrentRearrangement);
-            RoomService.UpdateRoom(currentRoom);
+            RoomService.Update(newRoomOfCurrentRearrangement);
+            RoomService.Update(currentRoom);
             //********************************************
 
             // Update equipment information
-            EquipmentService.UpdateEquipment(this);
+            EquipmentService.Update(this);
         }
 
         private bool IsDateTimeBeforeCurrentTime(DateTime rearrangementDate)
@@ -131,8 +131,8 @@ namespace HealthCareCenter.Model
 
                 if (IsDateTimeBeforeCurrentTime(rearrangement.MoveTime))
                 {
-                    Room currentRoom = RoomService.GetRoom(this.CurrentRoomID);
-                    Room newRoomOfRearrangement = RoomService.GetRoom(rearrangement.NewRoomID);
+                    Room currentRoom = RoomService.Get(this.CurrentRoomID);
+                    Room newRoomOfRearrangement = RoomService.Get(rearrangement.NewRoomID);
 
                     // update data about equipment number in rooms
                     currentRoom.EquipmentAmounts[this.Name]--;
@@ -146,11 +146,11 @@ namespace HealthCareCenter.Model
                         newRoomOfRearrangement.EquipmentAmounts.Add(this.Name, 1);
                     }
 
-                    RoomService.UpdateRoom(currentRoom);
-                    RoomService.UpdateRoom(newRoomOfRearrangement);
+                    RoomService.Update(currentRoom);
+                    RoomService.Update(newRoomOfRearrangement);
                     this.CurrentRoomID = rearrangement.NewRoomID;
                     this.RemoveRearrangement();
-                    EquipmentService.UpdateEquipment(this);
+                    EquipmentService.Update(this);
                 }
             }
         }

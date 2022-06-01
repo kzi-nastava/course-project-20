@@ -14,7 +14,7 @@ namespace HealthCareCenter.Service
         public static Dictionary<string, int> GetEquipmentsAmount()
         {
             List<HospitalRoom> rooms = HospitalRoomService.GetRooms();
-            Room storage = StorageRepository.GetStorage();
+            Room storage = StorageRepository.Load();
 
             List<Room> hospitalPremises = new List<Room>();
 
@@ -47,24 +47,24 @@ namespace HealthCareCenter.Service
         /// </summary>
         /// <param name="room"></param>
         /// <returns></returns>
-        public static bool UpdateRoom(Room room)
+        public static bool Update(Room room)
         {
             try
             {
                 if (room.IsStorage())
                 {
-                    StorageRepository.SaveStorage(room);
+                    StorageRepository.Save(room);
                 }
                 else
                 {
                     HospitalRoom hospitalRoom = (HospitalRoom)room;
                     if (hospitalRoom.IsCurrentlyRenovating())
                     {
-                        HospitalRoomForRenovationService.UpdateRoom(hospitalRoom);
+                        HospitalRoomForRenovationService.Update(hospitalRoom);
                     }
                     else
                     {
-                        HospitalRoomService.UpdateRoom(hospitalRoom);
+                        HospitalRoomService.Update(hospitalRoom);
                     }
                 }
                 return true;
@@ -75,26 +75,26 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static Room GetRoom(int roomId)
+        public static Room Get(int roomId)
         {
             try
             {
                 Room room = null;
                 if (roomId == 0)
                 {
-                    room = StorageRepository.GetStorage();
+                    room = StorageRepository.Load();
                 }
                 if (room == null)
                 {
-                    room = HospitalRoomService.GetRoom(roomId);
+                    room = HospitalRoomService.Get(roomId);
                 }
                 if (room == null)
                 {
-                    room = HospitalRoomForRenovationService.GetRoom(roomId);
+                    room = HospitalRoomForRenovationService.Get(roomId);
                 }
                 if (room == null)
                 {
-                    room = HospitalRoomUnderConstructionService.GetRoom(roomId);
+                    room = HospitalRoomUnderConstructionService.Get(roomId);
                 }
                 if (room == null)
                 {

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HealthCareCenter"
         mc:Ignorable="d"
-        Title="CrudHospitalRoomWindow" Height="400" Width="420"
+        Title="CrudHospitalRoomWindow" Height="400" Width="500"
         WindowStartupLocation="CenterScreen">
     <Grid>
         <DataGrid x:Name="DataGridHospitalRooms" Margin="10,26,10,214" IsReadOnly="True">
@@ -26,17 +26,17 @@
                 <DataGridTextColumn Header="Room Type" Binding="{Binding Type}"  Width="*"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <ComboBox x:Name="RoomTypeComboBox"  HorizontalAlignment="Left" Margin="270,190,0,0" VerticalAlignment="Top" Width="120" Height="27"></ComboBox>
+        <ComboBox x:Name="RoomTypeComboBox"  HorizontalAlignment="Left" Margin="370,192,0,0" VerticalAlignment="Top" Width="120" Height="27"></ComboBox>
 
         <Button x:Name="AddHospitalRoomButton"   Content="Add new hospital room" FontWeight="SemiBold" HorizontalAlignment="Left" Margin="10,192,0,0" VerticalAlignment="Top" Height="27" Click="AddHospitalRoomButton_Click" />
         <Button x:Name="DeleteHospitalRoomButton" Content="Delete hospital room" FontWeight="SemiBold" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top" Width="132" Height="25" Click="DeleteHospitalRoomButton_Click" />
         <Button x:Name="UpdateHospitalRoomButton" Content="Update hospital room" FontWeight="SemiBold" HorizontalAlignment="Left" Margin="10,287,0,0" VerticalAlignment="Top" Width="132" Height="25" Click="UpdateHospitalRoomButton_Click" />
 
-        <Label Content="Room ID" HorizontalAlignment="Left" Margin="236,237,0,0" VerticalAlignment="Top" RenderTransformOrigin="0,0.618" Height="25" />
-        <TextBox x:Name="HospitalRoomIdTextBox" HorizontalAlignment="Left" Margin="315,237,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="75" Height="25" />
+        <Label Content="Room ID" HorizontalAlignment="Left" Margin="334,237,0,0" VerticalAlignment="Top" RenderTransformOrigin="0,0.618" Height="25" />
+        <TextBox x:Name="HospitalRoomIdTextBox" HorizontalAlignment="Left" Margin="415,237,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="75" Height="25" RenderTransformOrigin="0.827,0.482" />
 
-        <TextBox x:Name="HospitalRoomNameTextBox"  HorizontalAlignment="Left" Margin="315,287,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="75" Height="25" />
-        <Label Content="Room Name" HorizontalAlignment="Left" Margin="236,287,0,0" VerticalAlignment="Top" Height="25" />
+        <TextBox x:Name="HospitalRoomNameTextBox"  HorizontalAlignment="Left" Margin="415,287,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="75" Height="25" />
+        <Label Content="Room Name" HorizontalAlignment="Left" Margin="334,287,0,0" VerticalAlignment="Top" Height="25" />
 
         <StackPanel>
             <Menu IsMainMenu="True">
@@ -52,6 +52,11 @@
                     <MenuItem Header="Simple renovation" Click="SimpleRenovationItemClick"></MenuItem>
                     <MenuItem Header="Complex renovation - merge" Click="ComplexRenovationMergeItemClick"></MenuItem>
                     <MenuItem Header="Complex renovation - split" Click="ComplexRenovationSplitItemClick"></MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="Medicine">
+                    <MenuItem Header="Create medicine" Click="CreateMedicineClick"></MenuItem>
+                    <MenuItem Header="Change reffused medicine - merge" Click="ReffusedMedicineClick"></MenuItem>
                 </MenuItem>
 
                 <MenuItem Header="Log off" Click="LogOffItemClick"></MenuItem>

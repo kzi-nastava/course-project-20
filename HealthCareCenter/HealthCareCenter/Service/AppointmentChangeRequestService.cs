@@ -18,7 +18,7 @@ namespace HealthCareCenter.Model
             {
                 if (appointment.ID == request.AppointmentID)
                 {
-                    HospitalRoomService.GetRoom(appointment.HospitalRoomID).AppointmentIDs.Remove(appointment.ID);
+                    HospitalRoomService.Get(appointment.HospitalRoomID).AppointmentIDs.Remove(appointment.ID);
                     AppointmentRepository.Appointments.Remove(appointment);
                     break;
                 }
