@@ -82,7 +82,7 @@ namespace HealthCareCenter
         {
             while (true)
             {
-                DynamicEquipmentRequestService.FulfillRequestsIfNeeded();
+                DynamicEquipmentService.FulfillRequestsIfNeeded();
                 Thread.Sleep(timeBetweenWork);
             }
         }

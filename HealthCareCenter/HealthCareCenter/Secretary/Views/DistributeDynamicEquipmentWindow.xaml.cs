@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using HealthCareCenter.Model;
+using HealthCareCenter.Secretary.Controllers;
 using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Secretary
@@ -19,10 +20,13 @@ namespace HealthCareCenter.Secretary
     /// </summary>
     public partial class DistributeDynamicEquipmentWindow : Window
     {
-        readonly Room _storage;
+        private readonly Room _storage;
+        private readonly DistributeDynamicEquipmentController _controller;
+
         public DistributeDynamicEquipmentWindow()
         {
             _storage = StorageRepository.Load();
+            _controller = new DistributeDynamicEquipmentController();
 
             InitializeComponent();
 
@@ -154,41 +158,18 @@ namespace HealthCareCenter.Secretary
             if (!ValidData())
                 return;
 
-            if (!int.TryParse(quantityTextBox.Text, out int quantity) || quantity <= 0)
+            try
             {
-                MessageBox.Show("Quantity must be a positive number.");
+                _controller.Transfer(quantityTextBox.Text, equipmentFromOtherRoomListBox.SelectedItem.ToString().Split(":"),
+                    GetSelectedRoom(roomsToTransferFromComboBox), GetSelectedRoom(roomsWithShortageComboBox), _storage);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
                 return;
             }
-
-            string[] equipmentAndAmount = equipmentFromOtherRoomListBox.SelectedItem.ToString().Split(":");
-            string selectedEquipment = equipmentAndAmount[0];
-            int selectedEquipmentAmount = int.Parse(equipmentAndAmount[1]);
-
-            if (quantity > selectedEquipmentAmount)
-            {
-                MessageBox.Show("You cannot enter a quantity bigger than the amount of equipment available in the room.");
-                return;
-            }
-
-            Transfer(quantity, selectedEquipment);
             Reset();
             MessageBox.Show("Successfully transfered the equipment.");
-        }
-
-        private void Transfer(int quantity, string selectedEquipment)
-        {
-            Room roomWithEquipment = GetSelectedRoom(roomsToTransferFromComboBox);
-            Room roomWithShortage = GetSelectedRoom(roomsWithShortageComboBox);
-
-            roomWithEquipment.EquipmentAmounts[selectedEquipment] -= quantity;
-
-            if (roomWithShortage.EquipmentAmounts.ContainsKey(selectedEquipment))
-                roomWithShortage.EquipmentAmounts[selectedEquipment] += quantity;
-            else
-                roomWithShortage.EquipmentAmounts.Add(selectedEquipment, quantity);
-
-            StorageRepository.Save(_storage);
-            HospitalRoomRepository.Save();
         }
 
         private bool ValidData()
@@ -201,11 +182,6 @@ namespace HealthCareCenter.Secretary
             if (roomsWithShortageComboBox.SelectedItem == null)
             {
                 MessageBox.Show("You must select a room with an equipment shortage.");
-                return false;
-            }
-            if (roomsToTransferFromComboBox.Text == roomsWithShortageComboBox.Text)
-            {
-                MessageBox.Show("You must select different rooms.");
                 return false;
             }
             if (equipmentFromOtherRoomListBox.SelectedItem == null)

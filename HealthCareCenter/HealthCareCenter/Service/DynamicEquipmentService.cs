@@ -5,7 +5,7 @@ using System.Text;
 
 namespace HealthCareCenter.Service
 {
-    public class DynamicEquipmentRequestService
+    public class DynamicEquipmentService
     {
         public static void FulfillRequestsIfNeeded()
         {
@@ -51,13 +51,13 @@ namespace HealthCareCenter.Service
             return false;
         }
 
-        public static void Send(List<string> request, Model.Secretary secretary)
+        public static void SendRequest(List<string> request, Model.Secretary secretary)
         {
             Dictionary<string, int> amountOfEquipment = GetAmountOfEquipment(request);
-            Send(amountOfEquipment, secretary);
+            SendRequest(amountOfEquipment, secretary);
         }
 
-        private static void Send(Dictionary<string, int> amountOfEquipment, Model.Secretary secretary)
+        private static void SendRequest(Dictionary<string, int> amountOfEquipment, Model.Secretary secretary)
         {
             DynamicEquipmentRequest request = new DynamicEquipmentRequest(++DynamicEquipmentRequestRepository.maxID, false, secretary.ID, DateTime.Now, amountOfEquipment);
             DynamicEquipmentRequestRepository.Requests.Add(request);
@@ -91,6 +91,19 @@ namespace HealthCareCenter.Service
                 }
             }
             return missingEquipment;
+        }
+
+        public static void Transfer(int quantity, string equipment, Room transferFrom, Room transferTo, Room storage)
+        {
+            transferFrom.EquipmentAmounts[equipment] -= quantity;
+
+            if (transferTo.EquipmentAmounts.ContainsKey(equipment))
+                transferTo.EquipmentAmounts[equipment] += quantity;
+            else
+                transferTo.EquipmentAmounts.Add(equipment, quantity);
+
+            StorageRepository.Save(storage);
+            HospitalRoomRepository.Save();
         }
     }
 }

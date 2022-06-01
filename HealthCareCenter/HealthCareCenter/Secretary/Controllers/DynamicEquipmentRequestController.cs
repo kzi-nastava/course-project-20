@@ -19,7 +19,7 @@ namespace HealthCareCenter.Secretary.Controllers
             {
                 throw new Exception("You must first add equipment to the request.");
             }
-            DynamicEquipmentRequestService.Send(request, secretary);
+            DynamicEquipmentService.SendRequest(request, secretary);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace HealthCareCenter.Secretary.Controllers
             {
                 throw new Exception("Quantity must be a positive number.");
             }
-            if (DynamicEquipmentRequestService.IsAlreadyAdded(selectedEquipment, request))
+            if (DynamicEquipmentService.IsAlreadyAdded(selectedEquipment, request))
             {
                 throw new Exception("You cannot add equipment that you have already added.");
             }
@@ -44,7 +44,7 @@ namespace HealthCareCenter.Secretary.Controllers
 
         public List<string> GetMissingEquipment()
         {
-            return DynamicEquipmentRequestService.GetMissingEquipment();
+            return DynamicEquipmentService.GetMissingEquipment();
         }
     }
 }
