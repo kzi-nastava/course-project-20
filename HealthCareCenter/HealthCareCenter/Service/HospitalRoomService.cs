@@ -1,4 +1,5 @@
-﻿using HealthCareCenter.Model;
+﻿using HealthCareCenter.Enums;
+using HealthCareCenter.Model;
 using HealthCareCenter.Secretary;
 using System;
 using System.Collections.Generic;
@@ -249,6 +250,20 @@ namespace HealthCareCenter.Service
             return rooms;
         }
 
+        public static List<HospitalRoom> GetRoomsOfType(AppointmentType type)
+        {
+            List<HospitalRoom> rooms = new List<HospitalRoom>();
+            foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
+            {
+                bool correctRoom = (type == AppointmentType.Checkup && room.Type == RoomType.Checkup) || (type == AppointmentType.Operation && room.Type == RoomType.Operation);
+                if (correctRoom)
+                {
+                    rooms.Add(room);
+                }
+            }
+            return rooms;
+        }
+
         public static bool IsOccupied(int roomID, DateTime time)
         {
             foreach (Appointment appointment in AppointmentRepository.Appointments)
@@ -263,6 +278,18 @@ namespace HealthCareCenter.Service
                 }
             }
             return false;
+        }
+
+        public static void RemoveUnavailableRooms(List<HospitalRoom> availableRooms, Appointment appointment)
+        {
+            foreach (HospitalRoom room in availableRooms)
+            {
+                if (room.ID == appointment.HospitalRoomID)
+                {
+                    availableRooms.Remove(room);
+                    return;
+                }
+            }
         }
     }
 }
