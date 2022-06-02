@@ -30,8 +30,6 @@ namespace HealthCareCenter.Secretary
 
             _controller = new ScheduleAppointmentReferralController();
 
-            AppointmentRepository.Load();
-
             InitializeComponent();
 
             Refresh();

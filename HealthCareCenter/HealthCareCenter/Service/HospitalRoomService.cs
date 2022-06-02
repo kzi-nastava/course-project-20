@@ -248,5 +248,21 @@ namespace HealthCareCenter.Service
             }
             return rooms;
         }
+
+        public static bool IsOccupied(int roomID, DateTime time)
+        {
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            {
+                if (appointment.HospitalRoomID != roomID)
+                {
+                    continue;
+                }
+                if (appointment.ScheduledDate.CompareTo(time) == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

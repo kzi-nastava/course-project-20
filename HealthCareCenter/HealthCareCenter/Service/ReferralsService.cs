@@ -56,7 +56,7 @@ namespace HealthCareCenter.Service
             return null;
         }
 
-        public static void ScheduleAppointment(Referral referral, Appointment appointment)
+        public static void Schedule(Referral referral, Appointment appointment)
         {
             AppointmentRepository.Appointments.Add(appointment);
             AppointmentRepository.Save();
