@@ -99,7 +99,7 @@ namespace HealthCareCenter.Model
                 if (room.Contains(equipment))
                 {
                     room.EquipmentAmounts[equipment.Name]--;
-                    RoomService.UpdateRoom(room);
+                    RoomService.Update(room);
                 }
                 else
                 {
@@ -138,9 +138,9 @@ namespace HealthCareCenter.Model
         private void AddEquipment(Equipment equipment, Room room)
         {
             IncreaseEquipmentAmount(equipment, room);
-            RoomService.UpdateRoom(this);
+            RoomService.Update(this);
             equipment.CurrentRoomID = room.ID;
-            EquipmentService.UpdateEquipment(equipment);
+            EquipmentService.Update(equipment);
         }
 
         private void TransferEquipment(Equipment equipment, Room room)

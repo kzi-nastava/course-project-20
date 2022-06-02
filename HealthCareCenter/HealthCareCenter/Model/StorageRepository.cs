@@ -14,7 +14,7 @@ namespace HealthCareCenter.Model
         /// Get storage data.
         /// </summary>
         /// <returns>Storage as room object.</returns>
-        public static Room GetStorage()
+        public static Room Load()
         {
             try
             {
@@ -39,13 +39,16 @@ namespace HealthCareCenter.Model
         /// </summary>
         /// <param name="storage"></param>
         /// <returns></returns>
-        public static bool SaveStorage(Room storage)
+        public static bool Save(Room storage)
         {
             try
             {
                 List<Room> rooms = new List<Room>();
                 rooms.Add(storage);
-                JsonSerializer serializer = new JsonSerializer();
+                JsonSerializer serializer = new JsonSerializer
+                {
+                    Formatting = Formatting.Indented
+                };
 
                 using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + _fileName))
                 using (JsonWriter writer = new JsonTextWriter(sw))

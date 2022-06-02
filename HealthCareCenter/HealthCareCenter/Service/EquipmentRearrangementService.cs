@@ -23,7 +23,7 @@ namespace HealthCareCenter.Service
         public static void AddRearrangement(EquipmentRearrangement newRearrangement)
         {
             EquipmentRearrangementRepository.Rearrangements.Add(newRearrangement);
-            EquipmentRearrangementRepository.SaveRearrangements(EquipmentRearrangementRepository.Rearrangements);
+            EquipmentRearrangementRepository.Save();
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace HealthCareCenter.Service
                     if (id == EquipmentRearrangementRepository.Rearrangements[i].ID)
                     {
                         EquipmentRearrangementRepository.Rearrangements.RemoveAt(i);
-                        EquipmentRearrangementRepository.SaveRearrangements(EquipmentRearrangementRepository.Rearrangements);
+                        EquipmentRearrangementRepository.Save();
                         return true;
                     }
                 }
@@ -127,7 +127,7 @@ namespace HealthCareCenter.Service
                     if (rearrangement.ID == EquipmentRearrangementRepository.Rearrangements[i].ID)
                     {
                         EquipmentRearrangementRepository.Rearrangements[i] = rearrangement;
-                        EquipmentRearrangementRepository.SaveRearrangements(EquipmentRearrangementRepository.Rearrangements);
+                        EquipmentRearrangementRepository.Save();
                         return true;
                     }
                 }

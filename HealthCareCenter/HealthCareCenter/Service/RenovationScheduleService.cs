@@ -12,7 +12,7 @@ namespace HealthCareCenter.Service
             return RenovationScheduleRepository.Renovations;
         }
 
-        public static RenovationSchedule GetRenovation(int id)
+        public static RenovationSchedule Get(int id)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static RenovationSchedule GetRenovation(HospitalRoom room)
+        public static RenovationSchedule Get(HospitalRoom room)
         {
             try
             {
@@ -62,10 +62,10 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static void AddRenovation(RenovationSchedule newRenovation)
+        public static void Add(RenovationSchedule newRenovation)
         {
             RenovationScheduleRepository.Renovations.Add(newRenovation);
-            RenovationScheduleRepository.SaveRenovations(RenovationScheduleRepository.Renovations);
+            RenovationScheduleRepository.Save();
         }
 
         public static int GetLargestRenovationId()
@@ -87,7 +87,7 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static bool DeleteRenovation(int id)
+        public static bool Delete(int id)
         {
             try
             {
@@ -96,7 +96,7 @@ namespace HealthCareCenter.Service
                     if (id == RenovationScheduleRepository.Renovations[i].ID)
                     {
                         RenovationScheduleRepository.Renovations.RemoveAt(i);
-                        RenovationScheduleRepository.SaveRenovations(RenovationScheduleRepository.Renovations);
+                        RenovationScheduleRepository.Save();
                         return true;
                     }
                 }
@@ -113,7 +113,7 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static bool DeleteRenovation(RenovationSchedule renovation)
+        public static bool Delete(RenovationSchedule renovation)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace HealthCareCenter.Service
                     if (renovation.ID == RenovationScheduleRepository.Renovations[i].ID)
                     {
                         RenovationScheduleRepository.Renovations.RemoveAt(i);
-                        RenovationScheduleRepository.SaveRenovations(RenovationScheduleRepository.Renovations);
+                        RenovationScheduleRepository.Save();
                         return true;
                     }
                 }

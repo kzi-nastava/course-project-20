@@ -1,0 +1,23 @@
+[
+  {
+    "ID": 0,
+    "Name": "asdasd",
+    "Creation": "2022-05-30T00:00:00",
+    "Expiration": "2022-05-31T00:00:00",
+    "Ingredients": [
+      "asda"
+    ],
+    "Manufacturer": "asdasd"
+  },
+  {
+    "ID": 1,
+    "Name": "asdfasdf",
+    "Creation": "2022-05-24T00:00:00",
+    "Expiration": "2022-05-24T00:00:00",
+    "Ingredients": [
+      "asdasd",
+      "sdf"
+    ],
+    "Manufacturer": "fdsgsdmfgsdf"
+  }
+]

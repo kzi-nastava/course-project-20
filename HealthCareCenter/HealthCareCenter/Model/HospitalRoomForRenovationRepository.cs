@@ -10,9 +10,9 @@ namespace HealthCareCenter.Model
     {
         private const string fileName = "hospitalRoomsForRenovation.json";
 
-        public static List<HospitalRoom> Rooms = LoadRooms();
+        public static List<HospitalRoom> Rooms = Load();
 
-        private static List<HospitalRoom> LoadRooms()
+        private static List<HospitalRoom> Load()
         {
             try
             {
@@ -32,7 +32,7 @@ namespace HealthCareCenter.Model
             }
         }
 
-        public static bool SaveRooms(List<HospitalRoom> rooms)
+        public static bool Save()
         {
             try
             {
@@ -41,7 +41,7 @@ namespace HealthCareCenter.Model
                 using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + fileName))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
-                    serializer.Serialize(writer, rooms);
+                    serializer.Serialize(writer, Rooms);
                 }
                 return true;
             }
