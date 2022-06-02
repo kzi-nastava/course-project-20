@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Model;
+using HealthCareCenter.Secretary;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -232,6 +233,20 @@ namespace HealthCareCenter.Service
                 }
             }
             HospitalRoomRepository.Save();
+        }
+
+        public static List<HospitalRoomDisplay> GetRoomsForDisplay(bool checkup)
+        {
+            List<HospitalRoomDisplay> rooms = new List<HospitalRoomDisplay>();
+            foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
+            {
+                bool correctRoom = (room.Type == Enums.RoomType.Checkup && checkup) || (room.Type == Enums.RoomType.Operation && !checkup);
+                if (correctRoom)
+                {
+                    rooms.Add(new HospitalRoomDisplay() { ID = room.ID, Name = room.Name });
+                }
+            }
+            return rooms;
         }
     }
 }

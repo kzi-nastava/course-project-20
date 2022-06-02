@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Model;
+using HealthCareCenter.Secretary.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,6 +22,8 @@ namespace HealthCareCenter.Secretary
         private readonly Patient _patient;
         private List<PatientReferral> _referrals;
 
+        private readonly PatientReferralsController _controller;
+
         public PatientReferralsWindow()
         {
             InitializeComponent();
@@ -29,50 +32,17 @@ namespace HealthCareCenter.Secretary
         public PatientReferralsWindow(Patient patient)
         {
             _patient = patient;
-            ReferralRepository.Load();
+            _controller = new PatientReferralsController();
 
             InitializeComponent();
 
-            referralsDataGrid.IsReadOnly = true;
             Refresh();
         }
 
         private void Refresh()
         {
-            _referrals = new List<PatientReferral>();
-            foreach (Referral referral in ReferralRepository.Referrals)
-            {
-                if (referral.PatientID != _patient.ID)
-                {
-                    continue;
-                }
-
-                Add(referral);
-            }
+            _referrals = _controller.Get(_patient);
             referralsDataGrid.ItemsSource = _referrals;
-        }
-
-        private void Add(Referral referral)
-        {
-            PatientReferral patientReferral = new PatientReferral(referral.ID);
-
-            LinkDoctor(referral, patientReferral);
-            _referrals.Add(patientReferral);
-        }
-
-        private static void LinkDoctor(Referral referral, PatientReferral patientReferral)
-        {
-            foreach (Doctor doctor in UserRepository.Doctors)
-            {
-                if (doctor.ID != referral.DoctorID)
-                {
-                    continue;
-                }
-                patientReferral.DoctorUsername = doctor.Username;
-                patientReferral.DoctorFirstName = doctor.FirstName;
-                patientReferral.DoctorLastName = doctor.LastName;
-                return;
-            }
         }
 
         private void UseReferralButton_Click(object sender, RoutedEventArgs e)
@@ -83,23 +53,11 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            Referral selectedReferral = FindReferral();
+            Referral selectedReferral = _controller.Find(((PatientReferral)referralsDataGrid.SelectedItem).ID);
 
             ScheduleAppointmentReferralWindow window = new ScheduleAppointmentReferralWindow(_patient, selectedReferral);
             window.ShowDialog();
             Refresh();
-        }
-
-        private Referral FindReferral()
-        {
-            foreach (Referral referral in ReferralRepository.Referrals)
-            {
-                if (referral.ID == ((PatientReferral)referralsDataGrid.SelectedItem).ID)
-                {
-                    return referral;
-                }
-            }
-            return null;
         }
     }
 }

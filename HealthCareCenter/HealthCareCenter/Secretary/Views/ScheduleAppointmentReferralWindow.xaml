@@ -45,7 +45,7 @@
         <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="2.5" Content="Select the term date &amp; appointment type first, then select the right rows in the tables and click schedule to schedule an appointment via referral."/>
 
         <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="Rooms:" Margin="5" HorizontalContentAlignment="Center"/>
-        <DataGrid x:Name="roomsDataGrid" Grid.Row="2" Grid.Column="0" Margin="7.5" Grid.ColumnSpan="2" 
+        <DataGrid x:Name="roomsDataGrid" Grid.Row="2" Grid.Column="0" Margin="7.5" Grid.ColumnSpan="2" IsReadOnly="True"
                   AutoGenerateColumns="False" FontSize="12" SelectionMode="Single" SelectionUnit="FullRow">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="auto"/>

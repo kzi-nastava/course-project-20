@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using HealthCareCenter.Secretary.Controllers;
 
 namespace HealthCareCenter.Secretary
 {
@@ -15,8 +16,7 @@ namespace HealthCareCenter.Secretary
     {
         private readonly Patient _patient;
         private readonly Referral _referral;
-
-        private List<HospitalRoomDisplay> _rooms;
+        private readonly ScheduleAppointmentReferralController _controller;
 
         public ScheduleAppointmentReferralWindow()
         {
@@ -28,11 +28,12 @@ namespace HealthCareCenter.Secretary
             _patient = patient;
             _referral = referral;
 
+            _controller = new ScheduleAppointmentReferralController();
+
             AppointmentRepository.Load();
 
             InitializeComponent();
 
-            roomsDataGrid.IsReadOnly = true;
             Refresh();
         }
 
@@ -49,33 +50,15 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            List<string> terms = Utils.GetPossibleDailyTerms();
-
-            RemoveOccupiedTerms(terms);
-
-            termsListBox.ItemsSource = terms;
-        }
-
-        private void RemoveOccupiedTerms(List<string> terms)
-        {
-            if (VacationRequestService.OnVacation(_referral.DoctorID, (DateTime)termDatePicker.SelectedDate))
+            try
             {
-                terms.Clear();
-                MessageBox.Show("The doctor is on vacation at this time.");
-                return;
+                termsListBox.ItemsSource = _controller.GetAvailableTerms(_referral.DoctorID, (DateTime)termDatePicker.SelectedDate);
             }
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            catch (Exception ex)
             {
-                if (appointment.DoctorID != _referral.DoctorID || appointment.ScheduledDate.Date.CompareTo(termDatePicker.SelectedDate) != 0)
-                {
-                    continue;
-                }
-                string unavailableTerm = appointment.ScheduledDate.Hour.ToString();
-                if (appointment.ScheduledDate.Minute != 0)
-                    unavailableTerm += ":" + appointment.ScheduledDate.Minute;
-                else
-                    unavailableTerm += ":" + appointment.ScheduledDate.Minute + "0";
-                terms.Remove(unavailableTerm);
+                termsListBox.ItemsSource = new List<string>();
+                MessageBox.Show(ex.Message);
+                return;
             }
         }
 
@@ -86,17 +69,15 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            _rooms = new List<HospitalRoomDisplay>();
-            foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
+            try
             {
-                bool correctRoom = (room.Type == Enums.RoomType.Checkup && (bool)checkupRadioButton.IsChecked) || (room.Type == Enums.RoomType.Operation && (bool)operationRadioButton.IsChecked);
-                if (correctRoom)
-                {
-                    _rooms.Add(new HospitalRoomDisplay() { ID = room.ID, Name = room.Name });
-                }
+                roomsDataGrid.ItemsSource = _controller.GetRooms((bool)checkupRadioButton.IsChecked);
             }
-
-            roomsDataGrid.ItemsSource = _rooms;
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
         }
 
         private void AppointmentTypeRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -115,31 +96,22 @@ namespace HealthCareCenter.Secretary
                 return;
 
             DateTime scheduledDate = GetScheduledDate();
+            int roomID = ((HospitalRoomDisplay)roomsDataGrid.SelectedItem).ID;
 
-            if (!TimePassed(scheduledDate))
+            Appointment appointment = new Appointment(scheduledDate, roomID, _referral.DoctorID, _patient.HealthRecordID, SelectedAppointmentType(), false);
+
+            try
+            {
+                _controller.Schedule(_referral, appointment);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
                 return;
-
-            if (RoomOccupied(scheduledDate))
-                return;
-
-            ScheduleAppointment(scheduledDate);
+            }
 
             MessageBox.Show("Successfully scheduled appointment via referral.");
-            this.Close();
-        }
-
-        private void ScheduleAppointment(DateTime scheduledDate)
-        {
-            int roomID = ((HospitalRoomDisplay)roomsDataGrid.SelectedItem).ID;
-            Appointment appointment = new Appointment(scheduledDate, roomID, _referral.DoctorID, _patient.HealthRecordID, SelectedAppointmentType(), false);
-            AppointmentRepository.Appointments.Add(appointment);
-            AppointmentRepository.Save();
-
-            HospitalRoomService.Update(roomID, appointment);
-            HospitalRoomRepository.Save();
-
-            ReferralRepository.Referrals.Remove(_referral);
-            ReferralRepository.Save();
+            Close();
         }
 
         private AppointmentType SelectedAppointmentType()
@@ -148,34 +120,6 @@ namespace HealthCareCenter.Secretary
                 return AppointmentType.Checkup;
             else
                 return AppointmentType.Operation;
-        }
-
-        private bool RoomOccupied(DateTime time)
-        {
-            HospitalRoomDisplay room = (HospitalRoomDisplay)roomsDataGrid.SelectedItem;
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
-            {
-                if (appointment.HospitalRoomID != room.ID)
-                {
-                    continue;
-                }
-                if (appointment.ScheduledDate.CompareTo(time) == 0)
-                {
-                    MessageBox.Show("You must select a different room that is not occupied at the term date and time.");
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private static bool TimePassed(DateTime scheduledDate)
-        {
-            if (scheduledDate <= DateTime.Now)
-            {
-                MessageBox.Show("Your term date has to be in the future.");
-                return false;
-            }
-            return true;
         }
 
         private DateTime GetScheduledDate()
