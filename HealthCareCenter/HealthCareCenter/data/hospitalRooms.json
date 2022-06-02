@@ -7,9 +7,9 @@
     "EquipmentAmounts": {
       "Table": 0,
       "Bad": 1,
-      "Chair": 1,
-      "gauze": 1,
-      "scissors": 0
+      "Chair": 4,
+      "gauze": 4,
+      "scissors": 4
     },
     "EquipmentRearrangementsIDs": []
   },

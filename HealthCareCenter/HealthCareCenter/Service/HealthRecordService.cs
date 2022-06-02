@@ -100,5 +100,52 @@ namespace HealthCareCenter.Service
                 return "none";
             }
         }
+
+        public static void UpdateHealthRecord(double height, double weight, string[] previousDiseases, string[] alergens, int healthRecordIndex)
+        {
+            HealthRecord healthRecord = HealthRecordRepository.Records[healthRecordIndex];
+            healthRecord.Height = height;
+            healthRecord.Weight = weight;
+            FillPreviousDiseases(previousDiseases, healthRecord);
+            FillAlergens(alergens, healthRecord);
+
+
+        }
+
+        public static void FillPreviousDiseases(string[] previousDiseases, HealthRecord healthRecord)
+        {
+            healthRecord.PreviousDiseases.Clear();
+            foreach (string disease in previousDiseases)
+            {
+                if (string.IsNullOrWhiteSpace(disease))
+                {
+                    continue;
+                }
+
+                healthRecord.PreviousDiseases.Add(disease);
+            }
+        }
+        public static void FillAlergens(string[] allergens, HealthRecord healthRecord)
+        {
+            healthRecord.Allergens.Clear();
+            foreach (string allergen in allergens)
+            {
+                if (string.IsNullOrWhiteSpace(allergen))
+                {
+                    continue;
+                }
+
+                healthRecord.Allergens.Add(allergen);
+            }
+        }
+
+        public static string IsAllergicTo(Medicine medicine,HealthRecord healthRecord)
+        {
+            foreach (string ingredient in medicine.Ingredients)
+                if (healthRecord.Allergens.Contains(ingredient))
+                    return ingredient;
+            return "";
+        }
+        
     }
 }

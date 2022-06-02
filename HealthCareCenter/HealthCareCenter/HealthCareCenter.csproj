@@ -25,6 +25,9 @@
     <Compile Update="DoctorServices\AddDeleteAppointmentService.cs">
       <Generator>MSBuild:Compile</Generator>
     </Compile>
+    <Compile Update="DoctorServices\HealthRecordWindowService.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
   </ItemGroup>
 
 </Project>

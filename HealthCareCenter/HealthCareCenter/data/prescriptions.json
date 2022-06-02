@@ -6,5 +6,19 @@
       1,
       2
     ]
+  },
+  {
+    "ID": 2,
+    "DoctorID": 1,
+    "MedicineInstructionIDs": [
+      3
+    ]
+  },
+  {
+    "ID": 3,
+    "DoctorID": 1,
+    "MedicineInstructionIDs": [
+      4
+    ]
   }
 ]

@@ -16,5 +16,16 @@ namespace HealthCareCenter.Service
             }
             return null;
         }
+        public static string GetIngredients(MedicineCreationRequest request)
+        {
+            string ingredients = "";
+            foreach (string ingredient in request.Ingredients)
+            {
+                ingredients += ingredient + ",";
+            }
+            if(ingredients.Length > 0)
+                return ingredients.Substring(0, ingredients.Length - 1);
+            return ingredients;
+        }
     }
 }

@@ -14,9 +14,8 @@ namespace HealthCareCenter.DoctorServices
 {
     public class DoctorWindowService
     {
-        public int selectedRoomID;
-        private int healthRecordIndex, selectedPatientID, selectedAppointmentIndex, comboBoxChangeCounter = 0;
-        private HealthRecord selectedPatientsHealthRecord;
+        public int selectedRoomID, selectedPatientID, selectedAppointmentIndex, comboBoxChangeCounter = 0;
+        public HealthRecord selectedPatientsHealthRecord;
         private User _signedUser;
         private DoctorWindow window;
         private Referral referral;
@@ -25,35 +24,6 @@ namespace HealthCareCenter.DoctorServices
             _signedUser = signedUser;
             window = new DoctorWindow(signedUser, this);
             window.Show();
-            FillMedicineRequestsTable();
-        }
-        public void FillMedicineRequestsTable()
-        {
-            window.medicineCreationRequestDataTable.Rows.Clear();
-            foreach (MedicineCreationRequest request in MedicineCreationRequestRepository.Requests)
-            {
-                if (request.State != RequestState.Waiting)
-                    continue;
-                window.AddMedicineRequestToTable(request);
-            }
-            window.medicineCreationRequestDataGrid.ItemsSource = window.medicineCreationRequestDataTable.DefaultView;
-        }
-        public void FillMedicinesTable()
-        {
-            window.medicineDataTable.Rows.Clear();
-            foreach (Medicine medicine in MedicineRepository.Medicines)
-            {
-                window.AddMedicineToMedicineTable(medicine, window.medicineDataTable);
-            }
-            window.medicationDataGrid.ItemsSource = window.medicineDataTable.DefaultView;
-        }
-
-        public void FillSelectedMedicinesTable()
-        {
-            window.selectedMedicineDataTable.Rows.Clear();
-            Medicine medicine = PrescriptionService.SelectedMedicine;
-            window.AddMedicineToMedicineTable(chosenMedicine, window.selectedMedicineDataTable);
-            window.selectedMedicationDataGrid.ItemsSource = window.selectedMedicineDataTable.DefaultView;
         }
 
         public void FillEquipmentTable()
@@ -82,43 +52,6 @@ namespace HealthCareCenter.DoctorServices
             referral.ID = ++ReferralRepository.LargestID;
         }
 
-        public bool SelectMedicine()
-        {
-            int medicineIndex;
-            bool isAlergic;
-            if (PrescriptionService.SelectedMedicine != null)
-            {
-                MessageBox.Show("U already selected a medicine");
-                return false;
-            }
-            medicineIndex = GetSelectedIndex(window.medicationDataGrid);
-            if (medicineIndex == -1)
-                return false;
-            chosenMedicine = MedicineRepository.Medicines[medicineIndex];
-            isAlergic = CheckAlergies(chosenMedicine);
-            if (isAlergic)
-                return false;
-            PrescriptionService.SelectedMedicine = chosenMedicine;
-            return true;
-        }
-
-        public void RemoveMedicineFromSelectedMedicine()
-        {
-            int medicineIndex = GetSelectedIndex(window.selectedMedicationDataGrid);
-            if (medicineIndex == -1)
-                return;
-            try
-            {
-                PrescriptionService.SelectedMedicine = null;
-                DeleteMedicineFromTable(medicineIndex);
-            }
-            catch { }
-        }
-
-        private void DeleteMedicineFromTable(int index)
-        {
-            window.selectedMedicineDataTable.Rows.RemoveAt(index);
-        }
         public void FillDoctorsTable(List<Doctor> doctors)
         {
             window.doctorsDataTable.Rows.Clear();
@@ -156,24 +89,6 @@ namespace HealthCareCenter.DoctorServices
             window.yearChoiceComboBox.Items.Add("2024");
         }
 
-        public void FillMedicineTakingComboBoxes()
-        {
-            for (int i = 0; i <= 24; i++)
-            {
-                string s = i.ToString();
-                if (s.Length == 1)
-                    s = "0" + s;
-                window.hourOfMedicineTakingComboBox.Items.Add(s);
-            }
-            for (int i = 0; i <= 59; i += 1)
-            {
-                string s = i.ToString();
-                if (s.Length == 1)
-                    s = "0" + s;
-                window.minuteOfMedicineTakingComboBox.Items.Add(s);
-            }
-        }
-
         public void FillAppointmentsTable(List<Appointment> appointments)
         {
             window.appointmentsDataTable.Rows.Clear();
@@ -188,7 +103,6 @@ namespace HealthCareCenter.DoctorServices
                 {
                     continue;
                 }
-                int patientID = -1;
                 HealthRecord patientsHealthRecord = HealthRecordService.FindRecord(appointment.HealthRecordID);
                 if (patientsHealthRecord != null)
                     window.AddAppointmentToAppointmentsTable(appointment, patientsHealthRecord.PatientID);
@@ -196,62 +110,6 @@ namespace HealthCareCenter.DoctorServices
                     window.AddAppointmentToAppointmentsTable(appointment, -1);
             }
             window.scheduleDataGrid.ItemsSource = window.appointmentsDataTable.DefaultView;
-        }
-
-        public void UpdateHealthRecord()
-        {
-            HealthRecordRepository.Records[healthRecordIndex].Height = double.Parse(window.heightTextBox.Text);
-            HealthRecordRepository.Records[healthRecordIndex].Weight = double.Parse(window.weigthTextBox.Text);
-            HealthRecordRepository.Records[healthRecordIndex].PreviousDiseases.Clear();
-            string[] previousDiseases = window.previousDiseasesTextBox.Text.Split(",");
-            foreach (string disease in previousDiseases)
-            {
-                if (string.IsNullOrWhiteSpace(disease))
-                {
-                    continue;
-                }
-
-                HealthRecordRepository.Records[healthRecordIndex].PreviousDiseases.Add(disease);
-            }
-            HealthRecordRepository.Records[healthRecordIndex].Allergens.Clear();
-            string[] allergens = window.alergensTextBox.Text.Split(",");
-            foreach (string allergen in allergens)
-            {
-                if (string.IsNullOrWhiteSpace(allergen))
-                {
-                    continue;
-                }
-
-                HealthRecordRepository.Records[healthRecordIndex].Allergens.Add(allergen);
-            }
-        }
-   
-        public void ParseHealthRecordData(HealthRecord healthRecord)
-        {
-            int appointmentIndex;
-            string height, weight, alergens, previousDiseases, healthRecordID, anamnesis;
-            appointmentIndex = window.scheduleDataGrid.SelectedIndex;
-            if (appointmentIndex == -1)
-            {
-                MessageBox.Show("No row is selected");
-                return;
-            }
-            alergens = HealthRecordService.CheckAlergens(healthRecord);
-            previousDiseases = HealthRecordService.CheckPreviousDiseases(healthRecord);
-            healthRecordID = healthRecord.ID.ToString();
-            height = healthRecord.Height.ToString();
-            weight = healthRecord.Weight.ToString();
-            if (AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis.Comment == "")
-            {
-                anamnesis = "No anamnesis";
-                window.createAPrescription.IsEnabled = false;
-            }
-            else
-            {
-                anamnesis = AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis.Comment;
-                window.createAPrescription.IsEnabled = true;
-            }
-            window.FillHealthRecordData(healthRecordID, height, weight, alergens, previousDiseases, anamnesis);
         }
 
         public void SearchAppointments()
@@ -273,84 +131,15 @@ namespace HealthCareCenter.DoctorServices
         public bool FindRoomID()
         {
             int patientID, roomID, appointmentIndex;
-            patientID = GetRowItemID(window.scheduleDataGrid, "Patient ID");
-            roomID = GetRowItemID(window.scheduleDataGrid, "Room ID");
-            appointmentIndex = GetSelectedIndex(window.scheduleDataGrid);
+            patientID = TableService.GetRowItemID(window.scheduleDataGrid, "Patient ID");
+            roomID = TableService.GetRowItemID(window.scheduleDataGrid, "Room ID");
+            appointmentIndex = TableService.GetSelectedIndex(window.scheduleDataGrid);
             if (patientID == -1 || roomID == -1 || appointmentIndex == -1)  
                 return false;
             selectedRoomID = roomID;
             selectedPatientID = patientID;
             selectedAppointmentIndex = appointmentIndex;
             return true;
-        }
-
-        public void UpdateHealthRecordWindow()
-        {
-            FillMedicinesTable();
-            HealthRecord healthRecord = HealthRecordService.FindRecordByPatientID(selectedPatientID);
-            ParseHealthRecordData(healthRecord);
-            selectedPatientsHealthRecord = healthRecord;
-        }
-        public bool FindHealthRecord()
-        {
-            int id, appointmentIndex;
-            id = GetRowItemID(window.scheduleDataGrid, "Patient Id");
-            appointmentIndex = GetSelectedIndex(window.scheduleDataGrid);
-            if (id == -1 || appointmentIndex == -1) 
-                return false;
-            Patient patient = PatientService.FindPatient(id);
-            HealthRecord healthRecord = HealthRecordService.FindRecord(patient);
-            if (patient == null || healthRecord == null)
-                return false;
-            healthRecordIndex = PatientService.FindPatientIndex(id);
-            ParseHealthRecordData(healthRecord);
-            return true;
-        }
-
-        public void AddMedicineConsumptionTime()
-        {
-            string hour = window.hourOfMedicineTakingComboBox.SelectedItem.ToString();
-            string minute = window.minuteOfMedicineTakingComboBox.SelectedItem.ToString();
-            bool successful = PrescriptionService.AddTime(hour, minute);
-            if (successful)
-                MessageBox.Show("Time added successfuly");
-            else
-                MessageBox.Show("An error happend with time conversion");
-        } 
-
-        public void AddMedicineToPrescription()
-        {
-            int consumptionPeriodIndex, consumptionsPerDay;
-            string instructions;
-            instructions = window.instructionsTextBox.Text.Trim();
-            if (instructions.Length == 0)
-                instructions = "";
-            consumptionPeriodIndex = window.consumptionPeriodComboBox.SelectedIndex;
-            ConsumptionPeriod consumptionPeriod;
-            switch (consumptionPeriodIndex)
-            {
-                case 0: consumptionPeriod = ConsumptionPeriod.AfterEating; break;
-                case 1: consumptionPeriod = ConsumptionPeriod.BeforeEating; break;
-                case 2: consumptionPeriod = ConsumptionPeriod.Any; break;
-                default: consumptionPeriod = ConsumptionPeriod.Any; break;
-            }
-            consumptionsPerDay = window.consumptionPerDayComboBox.SelectedIndex + 1;
-            bool successful = PrescriptionService.CreateMedicineInstruction(0, instructions, consumptionsPerDay, consumptionPeriod, chosenMedicine.ID);
-            if (!successful)
-                return;
-            PrescriptionService.ClearData(false);
-            window.selectedMedicineDataTable.Clear();
-        }
-
-        public void CreateAPrescription()
-        {
-            bool successful = PrescriptionService.CreateAPrescription();
-            if (!successful)
-                return;
-            window.enableMedicineGrid(false);
-            window.selectedMedicineDataTable.Rows.Clear();
-            PrescriptionService.ClearData(true);
-            MessageBox.Show("Added prescription successfuly");
         }
 
         public void CreateAnamnessis()
@@ -365,47 +154,24 @@ namespace HealthCareCenter.DoctorServices
 
         public bool FillReferralWithData()
         {
-            int doctorID = GetRowItemID(window.doctorsDataGrid, "Id");
+            int doctorID = TableService.GetRowItemID(window.doctorsDataGrid, "Id");
             if (doctorID == -1) 
                 return false;
-            referral.DoctorID = doctorID;
-            referral.PatientID = selectedPatientID;
+            ReferralService.FillReferral(doctorID, selectedPatientID, referral);
             ReferralRepository.Referrals.Add(referral);
             return true;
         }
 
         public bool FillAutomaticReferralWithData()
         {
-            DataRowView row;
-            try
-            {
-                row = (DataRowView)window.doctorsDataGrid.Items[0];
-            }
-            catch
-            {
-                MessageBox.Show("Select a row from the table");
-                return false;
-            }
-            int doctorID = (int)row["Id"];
+            int doctorID = TableService.GetRowItemID(window.doctorsDataGrid, "Id");
             if (doctorID == -1) 
                 return false;
-            referral.DoctorID = doctorID;
-            referral.PatientID = selectedPatientID;
+            ReferralService.FillReferral(doctorID,selectedPatientID,referral);
             ReferralRepository.Referrals.Add(referral);
             return true;
         }
-        private bool CheckAlergies(Medicine medicine)
-        {
-            foreach (string ingredient in medicine.Ingredients)
-            {
-                if (selectedPatientsHealthRecord.Allergens.Contains(ingredient))
-                {
-                    MessageBox.Show("Patient is allergic to: " + ingredient);
-                    return true;
-                }
-            }
-            return false;
-        }
+
         private void CheckDateComboBoxes()
         {
             if (window.dayChoiceComboBox.SelectedItem == null)
@@ -423,6 +189,54 @@ namespace HealthCareCenter.DoctorServices
                 MessageBox.Show("select a year");
                 return;
             }
+        }
+
+        public void UpdateEquipment(int selectedRoomID)
+        {
+            string equipmentName = TableService.GetRowItem(window.equipmentDataGrid, "Name");
+            if (equipmentName == "")
+                return;
+            Room room = RoomService.GetRoom(selectedRoomID);
+            int amount = room.GetEquipmentAmount(equipmentName);
+            window.equipmentTextBlock.Text = amount.ToString();
+        }
+
+        public void SubmitEquipmentChanges(int selectedRoomID)
+        {
+            string equipmentName, unparsedAmount;
+            int usedAmount;
+            equipmentName = TableService.GetRowItem(window.equipmentDataGrid, "Name");
+            unparsedAmount = window.equipmentTextBox.Text;
+            usedAmount = CheckTheAmount(unparsedAmount, equipmentName, selectedRoomID);
+            if (usedAmount == -1) return;
+            Room room = RoomService.GetRoom(selectedRoomID);
+            room.EquipmentAmounts[equipmentName] -= usedAmount;
+            MessageBox.Show(equipmentName + " sucessfully updated");
+            window.equipmentTextBox.Text = "";
+        }
+
+        private int CheckTheAmount(string unparsedAmount, string equipmentName, int selectedRoomID)
+        {
+            int usedAmount = -1, oldAmount;
+            Room room;
+            try
+            {
+                usedAmount = int.Parse(unparsedAmount);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Invalid number");
+                return -1;
+            }
+            room = RoomService.GetRoom(selectedRoomID);
+            oldAmount = room.GetEquipmentAmount(equipmentName);
+            if (oldAmount < usedAmount)
+            {
+                MessageBox.Show("The number is too big");
+                return -1;
+            }
+            return usedAmount;
+
         }
 
         public List<Doctor> GetDoctorsByType()
@@ -456,62 +270,6 @@ namespace HealthCareCenter.DoctorServices
                 default: return null;
             }
             return DoctorService.GetDoctorsBySpecialization(chosenType);
-        }
-        public int GetSelectedIndex(DataGrid dataGrid)
-        {
-            int rowIndex;
-            try
-            {
-                rowIndex = dataGrid.SelectedIndex;
-            }
-            catch
-            {
-                MessageBox.Show("Select a row from the table");
-                return -1;
-            }
-            return rowIndex;
-        }
-        public int GetRowItemID(DataGrid grid, string key)
-        {
-            DataRowView row;
-            try
-            {
-                row = (DataRowView)grid.SelectedItems[0];
-            }
-            catch
-            {
-                MessageBox.Show("Select a row from the table");
-                return -1;
-            }
-            return (int)row[key];
-        }
-        public string GetRowItem(DataGrid grid, string key)
-        {
-            DataRowView row;
-            try
-            {
-                row = (DataRowView)grid.SelectedItems[0];
-            }
-            catch
-            {
-                MessageBox.Show("Select a row from the table");
-                return "";
-            }
-            return (string)row[key];
-        }
-
-        public string GetComboBoxItem(ComboBox comboBox)
-        {
-            string selectedValue = "";
-            try
-            {
-                selectedValue = ((ComboBoxItem)comboBox.SelectedItem).Content.ToString();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            return selectedValue;
         }
     }
 }

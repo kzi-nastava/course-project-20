@@ -114,6 +114,9 @@
     "DoctorID": 1,
     "HealthRecordID": 2,
     "HospitalRoomID": 1,
-    "PatientAnamnesis": null
+    "PatientAnamnesis": {
+      "ID": 8,
+      "Comment": "Anamnesisasd"
+    }
   }
 ]

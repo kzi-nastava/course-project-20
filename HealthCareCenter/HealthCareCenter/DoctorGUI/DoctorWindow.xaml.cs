@@ -14,7 +14,9 @@ namespace HealthCareCenter.DoctorGUI
 {
     public partial class DoctorWindow : Window
     {
-        private DoctorWindowService windowService;
+        private DoctorWindowService scheduleWindowService;
+        private MedicineCreationRequestWindowService medicineCreationWindowService;
+        private HealthRecordWindowService healthRecordWindowService;
 
         private Doctor signedUser;
 
@@ -29,7 +31,8 @@ namespace HealthCareCenter.DoctorGUI
         DataRow dr;
         public DoctorWindow(Model.User user,DoctorWindowService windowService)
         {
-            this.windowService = windowService;
+            healthRecordWindowService = new HealthRecordWindowService(windowService,user,this);
+            this.scheduleWindowService = windowService;
             signedUser = (Doctor)user;
             PrescriptionService.Initialise(signedUser.ID);
             CreateAppointmentTable();
@@ -221,13 +224,13 @@ namespace HealthCareCenter.DoctorGUI
         {
             startingGrid.Visibility = Visibility.Collapsed;
             scheduleGrid.Visibility = Visibility.Visible;
-            windowService.FillAppointmentsTable(AppointmentRepository.Appointments);
+            scheduleWindowService.FillAppointmentsTable(AppointmentRepository.Appointments);
         }
         private void DrugMenagmentButton_Click(object sender, RoutedEventArgs e)
         {
             startingGrid.Visibility = Visibility.Collapsed;
             drugManagementGrid.Visibility = Visibility.Visible;
-            windowService.FillMedicineRequestsTable();
+            medicineCreationWindowService = new MedicineCreationRequestWindowService(this,signedUser);
         }
 
 
@@ -235,42 +238,31 @@ namespace HealthCareCenter.DoctorGUI
         //Buttons on schedule rewiew menu
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            /*appointmentCreationGrid.Visibility = Visibility.Visible;
-            scheduleGrid.Visibility = Visibility.Collapsed;
-            alterAppointment.Visibility = Visibility.Collapsed;
-            sumbitAppointment.Visibility = Visibility.Visible;
-            windowService.FillPatientsTable();*/
-            AddDeleteAppointmentService appointmentService = new AddDeleteAppointmentService(signedUser,this,true,windowService);
+            AddDeleteAppointmentService appointmentService = new AddDeleteAppointmentService(signedUser,this,true,scheduleWindowService);
 
         }
         private void Alter_Click(object sender, RoutedEventArgs e)
         {
 
-            int rowIndex = windowService.GetSelectedIndex(scheduleDataGrid);
-            if (rowIndex == -1) return;/*
-            appointmentCreationGrid.Visibility = Visibility.Visible;
-            scheduleGrid.Visibility = Visibility.Collapsed;
-            alterAppointment.Visibility = Visibility.Visible;
-            sumbitAppointment.Visibility = Visibility.Collapsed;
-            windowService.FillPatientsTable();
-            windowService.CommitAlteringChanges(rowIndex);*/
-            AddDeleteAppointmentService appointmentService = new AddDeleteAppointmentService(signedUser, this, false, windowService, rowIndex);
+            int rowIndex = TableService.GetSelectedIndex(scheduleDataGrid);
+            if (rowIndex == -1) return;
+            AddDeleteAppointmentService appointmentService = new AddDeleteAppointmentService(signedUser, this, false, scheduleWindowService, rowIndex);
 
         }
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            int rowIndex = windowService.GetSelectedIndex(scheduleDataGrid);
+            int rowIndex = TableService.GetSelectedIndex(scheduleDataGrid);
             if(rowIndex == -1) return;
             AppointmentRepository.Appointments.RemoveAt(rowIndex);
-            windowService.FillAppointmentsTable(AppointmentRepository.Appointments);
+            scheduleWindowService.FillAppointmentsTable(AppointmentRepository.Appointments);
         }
         private void Search_Click(object sender, RoutedEventArgs e)
         {
-            windowService.SearchAppointments();
+            scheduleWindowService.SearchAppointments();
         }
         private void HealthRecord_Click(object sender, RoutedEventArgs e)
         {
-            bool sucessfull = windowService.FindHealthRecord();
+            bool sucessfull = healthRecordWindowService.FindHealthRecord();
             if (!sucessfull)
                 return;
             healthRecordGrid.Visibility = Visibility.Visible;
@@ -279,7 +271,7 @@ namespace HealthCareCenter.DoctorGUI
         }
         private void StartAppointment_Click(object sender, RoutedEventArgs e)
         {
-            bool sucessfull = windowService.FindRoomID();
+            bool sucessfull = scheduleWindowService.FindRoomID();
             if (!sucessfull)
                 return;
             healthRecordGrid.Visibility = Visibility.Visible;
@@ -290,7 +282,7 @@ namespace HealthCareCenter.DoctorGUI
             createAPrescription.Visibility = Visibility.Visible;
             referToADifferentPracticioner.Visibility = Visibility.Visible;
             medicineGrid.Visibility = Visibility.Visible;
-            windowService.UpdateHealthRecordWindow();
+            healthRecordWindowService.UpdateHealthRecordWindow();
         }
 
 
@@ -303,27 +295,26 @@ namespace HealthCareCenter.DoctorGUI
         }
         private void UpdateHealthRecord_Click(object sender, RoutedEventArgs e)
         {
-            exitHealthRecord();
-            windowService.UpdateHealthRecord();
+            ExitHealthRecord();
+            healthRecordWindowService.UpdateHealthRecord();
         }
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            exitHealthRecord();
+            ExitHealthRecord();
             scheduleGrid.Visibility = Visibility.Collapsed;
             equimpentUpdateGrid.Visibility = Visibility.Visible;
-            windowService.FillEquipmentTable();
+            scheduleWindowService.FillEquipmentTable();
         }
         private void ReferToADifferentPracticioner_Click(object sender, RoutedEventArgs e)
         {
             healthRecordGrid.Visibility = Visibility.Collapsed;
             doctorReferalGrid.Visibility = Visibility.Visible;
-            windowService.CreateAReferral();
-            windowService.CreateAReferral();
-            List<Doctor>doctors = windowService.GetDoctorsByType();
-            windowService.FillDoctorsTable(doctors);
+            scheduleWindowService.CreateAReferral();
+            List<Doctor>doctors = scheduleWindowService.GetDoctorsByType();
+            scheduleWindowService.FillDoctorsTable(doctors);
         }
 
-        private void exitHealthRecord()
+        private void ExitHealthRecord()
         {
             scheduleGrid.Visibility = Visibility.Visible;
             healthRecordGrid.Visibility = Visibility.Collapsed;
@@ -334,7 +325,7 @@ namespace HealthCareCenter.DoctorGUI
             medicineGrid.Visibility = Visibility.Collapsed;
         }
 
-        public void enableMedicineGrid(bool enable) {
+        public void EnableMedicineGrid(bool enable) {
             addMedicine.IsEnabled = enable;
             deleteMedicine.IsEnabled = enable;
             finishPrescriptionCreation.IsEnabled = enable;
@@ -346,66 +337,66 @@ namespace HealthCareCenter.DoctorGUI
             minuteOfMedicineTakingComboBox.IsEnabled = enable;
             addMedicineToPrescription.IsEnabled = enable;
         }
-        private void createAPrescription_Click(object sender, RoutedEventArgs e)
+        private void CreateAPrescription_Click(object sender, RoutedEventArgs e)
         {
-            enableMedicineGrid(true);
-            windowService.FillMedicineTakingComboBoxes();
+            EnableMedicineGrid(true);
+            healthRecordWindowService.FillMedicineTakingComboBoxes();
         }
-        private void addMedicine_Click(object sender, RoutedEventArgs e)
+        private void AddMedicine_Click(object sender, RoutedEventArgs e)
         {
-            bool sucessfull = windowService.SelectMedicine();
+            bool sucessfull = healthRecordWindowService.SelectMedicine();
             if (!sucessfull)
                 return;
-            windowService.FillSelectedMedicinesTable();
+            healthRecordWindowService.FillSelectedMedicinesTable();
         }
 
-        private void deleteMedicine_Click(object sender, RoutedEventArgs e)
+        private void DeleteMedicine_Click(object sender, RoutedEventArgs e)
         {
-            windowService.RemoveMedicineFromSelectedMedicine();
+            healthRecordWindowService.RemoveMedicineFromSelectedMedicine();
         }
-        private void addMedicineConsumptionTime_Click(object sender, RoutedEventArgs e)
+        private void AddMedicineConsumptionTime_Click(object sender, RoutedEventArgs e)
         {
-            windowService.AddMedicineConsumptionTime();
+            healthRecordWindowService.AddMedicineConsumptionTime();
         }
 
-        private void addMedicineToPrescription_Click(object sender, RoutedEventArgs e)
+        private void AddMedicineToPrescription_Click(object sender, RoutedEventArgs e)
         {
-            windowService.AddMedicineToPrescription();
+            healthRecordWindowService.AddMedicineToPrescription();
         }
-        private void finishPrescriptionCreation_Click(object sender, RoutedEventArgs e)
+        private void FinishPrescriptionCreation_Click(object sender, RoutedEventArgs e)
         {
-            windowService.CreateAPrescription();
+            healthRecordWindowService.CreateAPrescription();
         }
 
         //---------------------------------------------------------------------------------------
         //Anamnesis creation buttons
         private void SubmitAnamnesis_Click(object sender, RoutedEventArgs e)
         {
-            windowService.CreateAnamnessis();
+            scheduleWindowService.CreateAnamnessis();
             anamnesisGrid.Visibility = Visibility.Collapsed;
             healthRecordGrid.Visibility = Visibility.Visible;
         }
 
         //---------------------------------------------------------------------------------------
         //Refferal creation buttons
-        private void submitReferal_Click(object sender, RoutedEventArgs e)
+        private void SubmitReferal_Click(object sender, RoutedEventArgs e)
         {
-            bool sucessfull = windowService.FillReferralWithData();
+            bool sucessfull = scheduleWindowService.FillReferralWithData();
             if (!sucessfull)
                 return;
             doctorReferalGrid.Visibility = Visibility.Collapsed;
             healthRecordGrid.Visibility = Visibility.Visible;
 
         }
-        private void submitAutomaticReferal_Click(object sender, RoutedEventArgs e)
+        private void SubmitAutomaticReferal_Click(object sender, RoutedEventArgs e)
         {
-            bool sucessfull = windowService.FillAutomaticReferralWithData();
+            bool sucessfull = scheduleWindowService.FillAutomaticReferralWithData();
             if (!sucessfull)
                 return;
             doctorReferalGrid.Visibility = Visibility.Collapsed;
             healthRecordGrid.Visibility = Visibility.Visible;
         }
-        private void doctorReferalBack_Click(object sender, RoutedEventArgs e)
+        private void DoctorReferalBack_Click(object sender, RoutedEventArgs e)
         {
             doctorReferalGrid.Visibility = Visibility.Collapsed;
             healthRecordGrid.Visibility = Visibility.Visible;
@@ -413,51 +404,19 @@ namespace HealthCareCenter.DoctorGUI
 
         //---------------------------------------------------------------------------------------
         //Combo box events
-        private void doctorTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void DoctorTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            List<Doctor> doctors = windowService.GetDoctorsByType();
+            List<Doctor> doctors = scheduleWindowService.GetDoctorsByType();
             if (doctors == null)
                 return;
-            windowService.FillDoctorsTable(doctors);
+            scheduleWindowService.FillDoctorsTable(doctors);
         }
-        private void specializationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void SpecializationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            List<Doctor> doctors = windowService.GetDoctorsBySpecialization();
+            List<Doctor> doctors = scheduleWindowService.GetDoctorsBySpecialization();
             if (doctors == null)
                 return;
-            windowService.FillDoctorsTable(doctors);
-        }
-
-        //---------------------------------------------------------------------------------------
-        //Data manipulation methods
-
-        private int getRowItemID(DataGrid grid,string key)
-        {
-            DataRowView row;
-            try
-            {
-                row = (DataRowView)grid.SelectedItems[0];
-            }
-            catch
-            {
-                MessageBox.Show("Select a row from the table");
-                return -1;
-            }
-            return (int)row[key];
-        }
-        private string getRowItem(DataGrid grid, string key)
-        {
-            DataRowView row;
-            try
-            {
-                row = (DataRowView)grid.SelectedItems[0];
-            }
-            catch
-            {
-                MessageBox.Show("Select a row from the table");
-                return "";
-            }
-            return (string)row[key];
+            scheduleWindowService.FillDoctorsTable(doctors);
         }
 
         //---------------------------------------------------------------------------------------
@@ -480,94 +439,40 @@ namespace HealthCareCenter.DoctorGUI
             loginWindow.Show();
         }
 
-        private void acceptMedicineRequestButton_Click(object sender, RoutedEventArgs e)
+        private void AcceptMedicineRequestButton_Click(object sender, RoutedEventArgs e)
         {
 
-            int medicineCreationRequestID = getRowItemID(medicineCreationRequestDataGrid,"Id");
-            MedicineCreationRequest selectedRequest = MedicineCreationRequestService.getMedicineCreationRequest(medicineCreationRequestID);
-            selectedRequest.State = RequestState.Approved;
-            windowService.FillMedicineRequestsTable();
+            medicineCreationWindowService.AcceptRequestState();
             MessageBox.Show("Request approved");
         }
 
-        private void denyMedicineRequestButton_Click(object sender, RoutedEventArgs e)
+        private void DenyMedicineRequestButton_Click(object sender, RoutedEventArgs e)
         {
-            string denyMessage = medicineRequestDeniedTextBox.Text;
-            if(denyMessage == "")
-            {
-                MessageBox.Show("Please provide a reason");
+            bool sucessfull = medicineCreationWindowService.DenyRequestState();
+            if (!sucessfull)
                 return;
-            }
-            int medicineCreationRequestID = getRowItemID(medicineCreationRequestDataGrid, "Id");
-            if (medicineCreationRequestID == -1)
-                return;
-            MedicineCreationRequest selectedRequest = MedicineCreationRequestService.getMedicineCreationRequest(medicineCreationRequestID);
-            selectedRequest.State = RequestState.Denied;
-            selectedRequest.DenyComment = denyMessage;
-            windowService.FillMedicineRequestsTable();
             MessageBox.Show("Request denied");
         }
 
-        private void equimpentUpdateGrid_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void EquimpentUpdateGrid_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            string equipmentName = getRowItem(equipmentDataGrid, "Name");
-            if (equipmentName == "")
-                return;
-            Room room = RoomService.GetRoom(windowService.selectedRoomID);
-            int amount = room.GetEquipmentAmount(equipmentName);
-            equipmentTextBlock.Text = amount.ToString();
+            scheduleWindowService.UpdateEquipment(scheduleWindowService.selectedRoomID);
         }
 
-        private void submitEquipmentChanges_Click(object sender, RoutedEventArgs e)
+        private void SubmitEquipmentChanges_Click(object sender, RoutedEventArgs e)
         {
-            string equipmentName = getRowItem(equipmentDataGrid, "Name");
-            string unparsedAmount = equipmentTextBox.Text;
-            int usedAmount = CheckTheAmount(unparsedAmount, equipmentName);
-            if (usedAmount == -1) return;
-            Room room = RoomService.GetRoom(windowService.selectedRoomID);
-            room.EquipmentAmounts[equipmentName] -= usedAmount;
-            MessageBox.Show(equipmentName + " sucessfully updated");
-            equipmentTextBox.Text = "";
+            scheduleWindowService.SubmitEquipmentChanges(scheduleWindowService.selectedRoomID);
         }
 
-        private int CheckTheAmount(string unparsedAmount, string equipmentName)
-        {
-            int usedAmount = -1;
-            try
-            {
-                usedAmount = int.Parse(unparsedAmount);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Invalid number");
-                return -1;
-            }
-            Room room = RoomService.GetRoom(windowService.selectedRoomID);
-            int oldAmount = room.GetEquipmentAmount(equipmentName);
-            if(oldAmount < usedAmount)
-            {
-                MessageBox.Show("The number is too big");
-                return -1;
-            }
-            return usedAmount;
-
-        }
-        private void backEquipmentChanges_Click(object sender, RoutedEventArgs e)
+        private void BackEquipmentChanges_Click(object sender, RoutedEventArgs e)
         {
             scheduleGrid.Visibility = Visibility.Visible;
             equimpentUpdateGrid.Visibility = Visibility.Collapsed;
         }
 
-        private void medicineRequestsDataGrid_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void MedicineRequestsDataGrid_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            int medicineCreationRequestID = getRowItemID(medicineCreationRequestDataGrid,"Id");
-            MedicineCreationRequest request = MedicineCreationRequestService.getMedicineCreationRequest(medicineCreationRequestID);
-            string ingredients = "";
-            foreach(string ingredient in request.Ingredients){
-                ingredients += ingredient + ",";
-            }
-            ingredients = ingredients.Substring(0,ingredients.Length-1);
-            ingredientsTextBlock.Text = ingredients;
+            medicineCreationWindowService.ParseIngredients();
         }
     }
 }
