@@ -49,8 +49,8 @@ namespace HealthCareCenter.PatientGUI.ViewModels
             ShowSearchForDoctors = new NavigateCommand(_navigationStore, ViewType.SearchDoctors, _patient);
             ShowMyPrescriptions = new NavigateCommand(_navigationStore, ViewType.MyPrescriptions, _patient);
             ShowMyHealthRecord = new NavigateCommand(_navigationStore, ViewType.MyHealthRecord, _patient);
-            //ShowDoctorSurvey = new NavigateCommand(_navigationStore, ViewType.DoctorSurvey, _patient);
-            //ShowHealthCenterSurvey = new NavigateCommand(_navigationStore, ViewType.HealthCenterSurvey, _patient);
+            ShowDoctorSurvey = new NavigateCommand(_navigationStore, ViewType.DoctorSurvey, _patient);
+            ShowHealthCenterSurvey = new NavigateCommand(_navigationStore, ViewType.HealthCenterSurvey, _patient);
             LogOut = new LogOutCommand();
         }
 

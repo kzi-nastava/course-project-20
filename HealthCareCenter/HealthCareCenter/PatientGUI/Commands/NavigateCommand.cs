@@ -18,7 +18,7 @@ namespace HealthCareCenter.PatientGUI.Commands
                     _navigationStore.CurrentViewModel = new PrioritySchedulingViewModel(_navigationStore, _patient);
                     break;
                 case ViewType.MyHealthRecord:
-                    _navigationStore.CurrentViewModel = new MyHealthRecordViewModel(_navigationStore, _patient);
+                    _navigationStore.CurrentViewModel = new MyHealthRecordViewModel(_patient);
                     break;
                 case ViewType.MyPrescriptions:
                     _navigationStore.CurrentViewModel = new MyPrescriptionsViewModel(_navigationStore, _patient);

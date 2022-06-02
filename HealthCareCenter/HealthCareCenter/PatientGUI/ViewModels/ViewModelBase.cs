@@ -11,11 +11,5 @@ namespace HealthCareCenter.PatientGUI.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        public override string ToString()
-        {
-            string typeName = GetType().Name[0..^9];
-            return string.Join(" ", Regex.Split(typeName, @"(?<!^)(?=[A-Z])"));
-        }
     }
 }

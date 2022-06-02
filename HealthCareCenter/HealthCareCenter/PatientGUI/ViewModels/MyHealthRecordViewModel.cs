@@ -118,7 +118,7 @@ namespace HealthCareCenter.PatientGUI.ViewModels
         public ICommand SearchAppointments { get; }
         public ICommand ShowAnamnesis { get; }
 
-        public MyHealthRecordViewModel(NavigationStore navigationStore, Patient patient)
+        public MyHealthRecordViewModel(Patient patient)
         {
             Patient = patient;
             HealthRecord = HealthRecordService.Find(patient);

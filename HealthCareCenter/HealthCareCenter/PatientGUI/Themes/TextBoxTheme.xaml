@@ -10,4 +10,17 @@
         <Setter Property="FontFamily" Value="Comic sans MS" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
+    <Style TargetType="{x:Type TextBox}"
+           BasedOn="{StaticResource DefaultTextBoxTheme}"
+           x:Key="ReadonlyTextBoxTheme">
+        <Style.Setters>
+            <Setter Property="IsEnabled" Value="False" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="AcceptsReturn" Value="True" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+        </Style.Setters>
+    </Style>
 </ResourceDictionary>

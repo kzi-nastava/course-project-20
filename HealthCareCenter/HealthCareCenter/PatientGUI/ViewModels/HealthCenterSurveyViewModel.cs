@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HealthCareCenter.PatientGUI.ViewModels
 {
-    class HealthCenterSurveyViewModel
+    class HealthCenterSurveyViewModel : ViewModelBase
     {
     }
 }
