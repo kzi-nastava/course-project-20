@@ -175,5 +175,10 @@ namespace HealthCareCenter.Service
                 throw ex;
             }
         }
+
+        public static bool HasScheduledRearrangement(Equipment equipment)
+        {
+            return equipment.RearrangementID != -1;
+        }
     }
 }

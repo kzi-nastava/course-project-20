@@ -23,7 +23,7 @@ namespace HealthCareCenter
         private Manager _signedManager;
         private string[] _headerChangeRequests = { "ID", "Medicine Name" };
         private string[] _headerIngredient = { "Ingredient Name" };
-        private MedicineChangeRequest _displayedRequest;
+        private MedicineCreationRequest _displayedRequest = null;
 
         private bool IsValideIngredientName(string ingredient)
         {
@@ -32,7 +32,7 @@ namespace HealthCareCenter
 
         private bool IsIngridientAlreadyAdded(string ingredient)
         {
-            return _displayedRequest.Medicine.Ingredients.Contains(ingredient);
+            return _displayedRequest.Ingredients.Contains(ingredient);
         }
 
         private bool IsValideIngredientForAdding(string ingredient)
@@ -96,38 +96,35 @@ namespace HealthCareCenter
         private void FillDataGridChangeRequests()
         {
             DataGridChangeRequests.Items.Clear();
-            foreach (MedicineChangeRequest request in MedicineChangeRequestRepository.Requests)
+            foreach (MedicineCreationRequest request in MedicineCreationRequestRepository.Requests)
             {
-                List<string> row = new List<string>();
-                row.Add(request.Medicine.ID.ToString());
-                row.Add(request.Medicine.Name);
-                AddDataGridRow(DataGridChangeRequests, _headerChangeRequests, row);
+                if (request.State == Enums.RequestState.Denied)
+                {
+                    List<string> row = new List<string>();
+                    row.Add(request.ID.ToString());
+                    row.Add(request.Name);
+                    AddDataGridRow(DataGridChangeRequests, _headerChangeRequests, row);
+                }
             }
         }
 
-        private void FillDataGridIngredient(MedicineChangeRequest request)
+        private void FillDataGridIngredient(MedicineCreationRequest request)
         {
-            Medicine medicineForChange = request.Medicine;
             DataGridIngredient.Items.Clear();
 
             List<string> row = new List<string>();
-            foreach (string ingredient in medicineForChange.Ingredients)
+            foreach (string ingredient in request.Ingredients)
             {
                 row.Add(ingredient);
                 AddDataGridRow(DataGridIngredient, _headerIngredient, row);
             }
         }
 
-        private void FillAllFields(MedicineChangeRequest request)
+        private void FillAllFields(MedicineCreationRequest request)
         {
-            Medicine medicineForChange = request.Medicine;
-            string comment = request.Comment;
-
-            MedicineNameTextBox.Text = medicineForChange.Name;
-            CreationDatePicker.Text = medicineForChange.Creation.ToString();
-            ExpirationDatePicker.Text = medicineForChange.Expiration.ToString();
-            ManufacturerTextBox.Text = medicineForChange.Manufacturer;
-            CommentTextBlock.Text = comment;
+            MedicineNameTextBox.Text = request.Name;
+            ManufacturerTextBox.Text = request.Manufacturer;
+            CommentTextBlock.Text = request.DenyComment;
         }
 
         private void EnableComponentsAfterDispaly()
@@ -135,6 +132,9 @@ namespace HealthCareCenter
             IngredientTextBox.IsEnabled = true;
             AddButton.IsEnabled = true;
             RemoveButton.IsEnabled = true;
+            SendButton.IsEnabled = true;
+            MedicineNameTextBox.IsEnabled = true;
+            ManufacturerTextBox.IsEnabled = true;
         }
 
         private void DisableComponentsAfterSend()
@@ -142,14 +142,16 @@ namespace HealthCareCenter
             IngredientTextBox.IsEnabled = false;
             AddButton.IsEnabled = false;
             RemoveButton.IsEnabled = false;
+            SendButton.IsEnabled = false;
+            MedicineNameTextBox.IsEnabled = false;
+            ManufacturerTextBox.IsEnabled = false;
         }
 
         private void ClearAllElements()
         {
             ChangeRequestIdTextBox.Text = "";
             MedicineNameTextBox.Text = "";
-            CreationDatePicker.Text = "";
-            ExpirationDatePicker.Text = "";
+
             MedicineNameTextBox.Text = "";
             IngredientTextBox.Text = "";
             ManufacturerTextBox.Text = "";
@@ -171,6 +173,9 @@ namespace HealthCareCenter
             IngredientTextBox.IsEnabled = false;
             AddButton.IsEnabled = false;
             RemoveButton.IsEnabled = false;
+            SendButton.IsEnabled = false;
+            MedicineNameTextBox.IsEnabled = false;
+            ManufacturerTextBox.IsEnabled = false;
         }
 
         private bool IsChangeRequestIdInputValide(string id)
@@ -181,9 +186,12 @@ namespace HealthCareCenter
         private bool IsChangeRequestFound(string id)
         {
             int parsedId = Convert.ToInt32(id);
-            MedicineChangeRequest request = MedicineChangeRequsetService.Get(parsedId);
+            MedicineCreationRequest request = MedicineCreationRequestService.Get(parsedId);
 
-            return request != null;
+            if (request == null) { return false; }
+            else if (request.State != Enums.RequestState.Denied) { return false; }
+
+            return true;
         }
 
         private bool IsRequestValide(string id)
@@ -206,12 +214,10 @@ namespace HealthCareCenter
         private void DisplayButton_Click(object sender, RoutedEventArgs e)
         {
             string changeRequistId = ChangeRequestIdTextBox.Text;
-            if (!IsRequestValide(changeRequistId))
-            {
-                return;
-            }
+            if (!IsRequestValide(changeRequistId)) { return; }
+
             int parsedChangeRequestId = Convert.ToInt32(changeRequistId);
-            MedicineChangeRequest request = MedicineChangeRequsetService.Get(parsedChangeRequestId);
+            MedicineCreationRequest request = MedicineCreationRequestService.Get(parsedChangeRequestId);
 
             _displayedRequest = request;
 
@@ -223,25 +229,22 @@ namespace HealthCareCenter
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             string ingredient = IngredientTextBox.Text;
-            if (!IsValideIngredientForAdding(ingredient))
-            {
-                return;
-            }
-            _displayedRequest.Medicine.Ingredients.Add(ingredient);
+            if (!IsValideIngredientForAdding(ingredient)) { return; }
+
+            _displayedRequest.Ingredients.Add(ingredient);
+
             List<string> row = new List<string>();
             row.Add(ingredient);
+
             AddDataGridRow(DataGridIngredient, _headerIngredient, row);
         }
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
             string ingredient = IngredientTextBox.Text;
-            if (!IsValideIngredientForRemoving(ingredient))
-            {
-                return;
-            }
+            if (!IsValideIngredientForRemoving(ingredient)) { return; }
 
-            _displayedRequest.Medicine.Ingredients.Remove(ingredient);
+            _displayedRequest.Ingredients.Remove(ingredient);
             FillDataGridIngredient(_displayedRequest);
         }
 
@@ -257,7 +260,7 @@ namespace HealthCareCenter
 
         private bool DrugHasIngredient()
         {
-            return _displayedRequest.Medicine.Ingredients.Count != 0;
+            return _displayedRequest.Ingredients.Count != 0;
         }
 
         private bool IsValideMedicine(string name, string manfacturer)
@@ -283,92 +286,30 @@ namespace HealthCareCenter
             return true;
         }
 
-        private bool IsDateInputValide(string date)
+        private bool IsPosisbleToSendRequest(string medicineName, string manufacturer)
         {
-            return DateTime.TryParse(date, out DateTime _);
-        }
-
-        private bool IsDateBeforeCurrentTime(DateTime date)
-        {
-            DateTime now = DateTime.Now;
-            int value = DateTime.Compare(date, now);
-            return value < 0;
-        }
-
-        private bool IsCreationDateBeforeExpirationDate(DateTime creationDate, DateTime expirationDate)
-        {
-            int value = DateTime.Compare(expirationDate, creationDate);
-            return value < 0;
-        }
-
-        private bool IsDateValide(string creationDate, string expirationDate)
-        {
-            if (!IsDateInputValide(creationDate))
-            {
-                MessageBox.Show("Error, bad input for creation date!");
-                return false;
-            }
-            DateTime parsedStartDate = Convert.ToDateTime(creationDate);
-
-            if (!IsDateInputValide(expirationDate))
-            {
-                MessageBox.Show("Error, bad input for expiration date!");
-                return false;
-            }
-            DateTime parsedFinishDate = Convert.ToDateTime(expirationDate);
-
-            if (IsDateBeforeCurrentTime(parsedStartDate))
-            {
-                MessageBox.Show("Error, bad input for creation date!");
-                return false;
-            }
-
-            if (IsDateBeforeCurrentTime(parsedFinishDate))
-            {
-                MessageBox.Show("Error, bad input for expiration date!");
-                return false;
-            }
-
-            if (IsCreationDateBeforeExpirationDate(parsedStartDate, parsedFinishDate))
-            {
-                MessageBox.Show("Error, expiration date is before creation date!");
-                return false;
-            }
-
+            if (!IsValideMedicine(medicineName, manufacturer)) { return false; }
             return true;
         }
 
-        private void SendCreationRequest(Medicine medicine)
+        private void SendCreationRequest(MedicineCreationRequest request)
         {
-            MedicineCreationRequestService.Add(medicine);
-            MedicineChangeRequsetService.Delete(medicine.ID);
+            MedicineCreationRequestService.Delete(request);
+            MedicineCreationRequestService.Add(request);
         }
 
         private void SendButton_Click(object sender, RoutedEventArgs e)
         {
             string medicineName = MedicineNameTextBox.Text;
-            string creationDate = CreationDatePicker.Text;
-            string expirationDate = ExpirationDatePicker.Text;
             string manufacturer = ManufacturerTextBox.Text;
 
-            if (!IsValideMedicine(medicineName, manufacturer))
-            {
-                return;
-            }
-            if (!IsDateValide(creationDate, expirationDate))
-            {
-                return;
-            }
+            if (!IsPosisbleToSendRequest(medicineName, manufacturer)) { return; }
 
-            DateTime parsedCreationDate = Convert.ToDateTime(creationDate);
-            DateTime parsedExpirationDate = Convert.ToDateTime(expirationDate);
-
-            Medicine medicine = new Medicine(
-                _displayedRequest.Medicine.ID, medicineName,
-                parsedCreationDate, parsedExpirationDate,
-                _displayedRequest.Medicine.Ingredients, manufacturer
-                );
-            SendCreationRequest(medicine);
+            MedicineCreationRequest medicineCreationRequest = new MedicineCreationRequest(
+                _displayedRequest.ID, medicineName,
+                _displayedRequest.Ingredients, manufacturer,
+                Enums.RequestState.Waiting);
+            SendCreationRequest(medicineCreationRequest);
 
             ClearAllElements();
             DisableComponentsAfterSend();

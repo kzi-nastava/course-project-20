@@ -37,7 +37,7 @@ namespace HealthCareCenter
             int parsedRoomId = Convert.ToInt32(roomId);
             Room room = RoomService.Get(parsedRoomId);
 
-            if (room.IsStorage())
+            if (RoomService.IsStorage(room))
             {
                 MessageBox.Show($"You have entered id of storage");
                 return false;
@@ -49,19 +49,19 @@ namespace HealthCareCenter
                 return false;
             }
 
-            if (hospitalRoom.ContainAnyEquipment())
+            if (RoomService.ContainAnyEquipment(hospitalRoom))
             {
                 MessageBox.Show($"Hospital room with {hospitalRoom.ID} Id contain equipment.");
                 return false;
             }
 
-            if (hospitalRoom.ContainsAnyAppointment())
+            if (HospitalRoomService.ContainsAnyAppointment(hospitalRoom))
             {
                 MessageBox.Show($"Hospital room with {hospitalRoom.ID} Id contain apointments.");
                 return false;
             }
 
-            if (hospitalRoom.IsCurrentlyRenovating())
+            if (HospitalRoomService.IsCurrentlyRenovating(hospitalRoom))
             {
                 MessageBox.Show($"Hospital room with {hospitalRoom.ID} Id is renovating.");
                 return false;
@@ -86,7 +86,7 @@ namespace HealthCareCenter
             }
 
             Room room = RoomService.Get(parsedRoomId);
-            if (room.IsStorage())
+            if (RoomService.IsStorage(room))
             {
                 MessageBox.Show($"You have entered id of storage");
                 return false;
@@ -166,6 +166,7 @@ namespace HealthCareCenter
         {
             Enums.RoomType type = (Enums.RoomType)Enum.Parse(typeof(Enums.RoomType), RoomTypeComboBox.Text);
             string roomName = HospitalRoomNameTextBox.Text;
+
             if (!IsHospitalRoomNameInputValide(roomName))
             {
                 MessageBox.Show("You must enter room name");
@@ -180,10 +181,8 @@ namespace HealthCareCenter
 
         {
             string roomId = HospitalRoomIdTextBox.Text;
-            if (!IsPossibleToDeleteHospitalRoom(roomId))
-            {
-                return;
-            }
+            if (!IsPossibleToDeleteHospitalRoom(roomId)) { return; }
+
             int parsedRoomId = Convert.ToInt32(roomId);
             HospitalRoom hospitalRoom = HospitalRoomService.Get(parsedRoomId);
 
@@ -195,10 +194,7 @@ namespace HealthCareCenter
             Enums.RoomType newType = (Enums.RoomType)Enum.Parse(typeof(Enums.RoomType), RoomTypeComboBox.Text);
             string newRoomName = HospitalRoomNameTextBox.Text;
             string roomId = HospitalRoomIdTextBox.Text;
-            if (!IsPossibleRoomToUpdate(newRoomName, roomId))
-            {
-                return;
-            }
+            if (!IsPossibleRoomToUpdate(newRoomName, roomId)) { return; }
 
             int parsedRoomId = Convert.ToInt32(roomId);
             HospitalRoom hospitalRoom = HospitalRoomService.Get(parsedRoomId);

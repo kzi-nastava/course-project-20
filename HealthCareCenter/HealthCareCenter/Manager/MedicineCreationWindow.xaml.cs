@@ -106,66 +106,9 @@ namespace HealthCareCenter
             return true;
         }
 
-        private bool IsDateInputValide(string date)
-        {
-            return DateTime.TryParse(date, out DateTime _);
-        }
-
-        private bool IsDateBeforeCurrentTime(DateTime date)
-        {
-            DateTime now = DateTime.Now;
-            int value = DateTime.Compare(date, now);
-            return value < 0;
-        }
-
-        private bool IsCreationDateBeforeExpirationDate(DateTime creationDate, DateTime expirationDate)
-        {
-            int value = DateTime.Compare(expirationDate, creationDate);
-            return value < 0;
-        }
-
-        private bool IsDateValide(string creationDate, string expirationDate)
-        {
-            if (!IsDateInputValide(creationDate))
-            {
-                MessageBox.Show("Error, bad input for creation date!");
-                return false;
-            }
-            DateTime parsedStartDate = Convert.ToDateTime(creationDate);
-
-            if (!IsDateInputValide(expirationDate))
-            {
-                MessageBox.Show("Error, bad input for expiration date!");
-                return false;
-            }
-            DateTime parsedFinishDate = Convert.ToDateTime(expirationDate);
-
-            if (IsDateBeforeCurrentTime(parsedStartDate))
-            {
-                MessageBox.Show("Error, bad input for creation date!");
-                return false;
-            }
-
-            if (IsDateBeforeCurrentTime(parsedFinishDate))
-            {
-                MessageBox.Show("Error, bad input for expiration date!");
-                return false;
-            }
-
-            if (IsCreationDateBeforeExpirationDate(parsedStartDate, parsedFinishDate))
-            {
-                MessageBox.Show("Error, expiration date is before creation date!");
-                return false;
-            }
-
-            return true;
-        }
-
         private void ClearAllElements()
         {
             MedicineNameTextBox.Text = "";
-            CreationDatePicker.Text = "";
-            ExpirationDatePicker.Text = "";
             MedicineNameTextBox.Text = "";
             IngredientTextBox.Text = "";
             ManufacturerTextBox.Text = "";
@@ -244,39 +187,21 @@ namespace HealthCareCenter
             FillDataGridIngredient();
         }
 
-        private int GenerateMedicineId()
+        private bool IsPossibleToCreateMedicineCreationRequest(string medicineName, string medicineManufacturer)
         {
-            if (MedicineCreationRequestService.GetLargestId() > MedicineChangeRequsetService.GetLargestId())
-            {
-                return MedicineCreationRequestService.GetLargestId() + 1;
-            }
-            else
-            {
-                return MedicineChangeRequsetService.GetLargestId() + 1;
-            }
+            if (!IsValideMedicine(medicineName, medicineManufacturer)) { return false; }
+
+            return true;
         }
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
             string medicineName = MedicineNameTextBox.Text;
             string medicineManufacturer = ManufacturerTextBox.Text;
-            string creationDate = CreationDatePicker.Text;
-            string expirationDate = ExpirationDatePicker.Text;
-            if (!IsValideMedicine(medicineName, medicineManufacturer))
-            {
-                return;
-            }
-            if (!IsDateValide(creationDate, expirationDate))
-            {
-                return;
-            }
 
-            DateTime parsedCreationDate = Convert.ToDateTime(creationDate);
-            DateTime parsedExpirationDate = Convert.ToDateTime(expirationDate);
-
-            Medicine medicine = new Medicine(GenerateMedicineId(), medicineName, parsedCreationDate, parsedExpirationDate, _ingredients, medicineManufacturer);
-
-            MedicineCreationRequestService.Add(medicine);
+            if (!IsPossibleToCreateMedicineCreationRequest(medicineName, medicineManufacturer)) { return; }
+            MedicineCreationRequest medicineCreationRequest = new MedicineCreationRequest(medicineName, _ingredients, medicineManufacturer, Enums.RequestState.Waiting);
+            MedicineCreationRequestService.Add(medicineCreationRequest);
             ClearAllElements();
             MessageBox.Show("You have successfully created a medicine creation request!");
         }

@@ -233,5 +233,27 @@ namespace HealthCareCenter.Service
             }
             HospitalRoomRepository.Save();
         }
+
+        public static bool IsCurrentlyRenovating(HospitalRoom room)
+        {
+            foreach (HospitalRoom hospitalRoom in HospitalRoomForRenovationService.GetRooms())
+            {
+                if (room.ID == hospitalRoom.ID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Check if room contains any appointment
+        /// </summary>
+        /// <returns></returns>
+        public static bool ContainsAnyAppointment(HospitalRoom room)
+        {
+            return room.AppointmentIDs.Count != 0;
+        }
     }
 }

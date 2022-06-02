@@ -109,12 +109,12 @@ namespace HealthCareCenter
 
         private bool IsPossibleRenovation(HospitalRoom roomForRenovation)
         {
-            if (roomForRenovation.ContainsAnyAppointment())
+            if (HospitalRoomService.ContainsAnyAppointment(roomForRenovation))
             {
                 MessageBox.Show("Error, hospital room contains appointments!");
                 return false;
             }
-            if (roomForRenovation.ContaninsAnyRearrangement())
+            if (RoomService.ContaninsAnyRearrangement(roomForRenovation))
             {
                 MessageBox.Show("Error, hospital room contains rearrangements!");
                 return false;
@@ -167,32 +167,34 @@ namespace HealthCareCenter
             }
         }
 
+        private bool IsPossibleToScheduleRenovtion(string hospitalRoomForRenovationId, string startDate, string finishDate)
+        {
+            if (!IsHospitalRoomValide(hospitalRoomForRenovationId)) { return false; }
+            if (!IsDateValide(startDate, finishDate)) { return false; }
+
+            int parsedHospitalRoomForRenovationId = Convert.ToInt32(hospitalRoomForRenovationId);
+            HospitalRoom roomForRenovation = HospitalRoomService.Get(parsedHospitalRoomForRenovationId);
+            if (!IsPossibleRenovation(roomForRenovation)) { return false; }
+
+            return true;
+        }
+
         private void ScheduleRenovationButton_Click(object sender, RoutedEventArgs e)
         {
             string hospitalRoomForRenovationId = HospitalRoomIdTextBox.Text;
             string startDate = StartDatePicker.Text;
             string finishDate = EndDatePicker.Text;
 
-            if (!IsHospitalRoomValide(hospitalRoomForRenovationId))
-            {
-                return;
-            }
+            if (!IsPossibleToScheduleRenovtion(hospitalRoomForRenovationId, startDate, finishDate)) { return; }
+
             int parsedHospitalRoomForRenovationId = Convert.ToInt32(hospitalRoomForRenovationId);
             HospitalRoom roomForRenovation = HospitalRoomService.Get(parsedHospitalRoomForRenovationId);
 
-            if (!IsDateValide(startDate, finishDate))
-            {
-                return;
-            }
             DateTime parsedStartDate = Convert.ToDateTime(startDate);
             DateTime parsedFinishDate = Convert.ToDateTime(finishDate);
 
-            if (!IsPossibleRenovation(roomForRenovation))
-            {
-                return;
-            }
             RenovationSchedule renovation = new RenovationSchedule(parsedStartDate, parsedFinishDate, roomForRenovation);
-            renovation.ScheduleSimpleRenovation(roomForRenovation);
+            RenovationScheduleService.ScheduleSimpleRenovation(renovation, roomForRenovation);
 
             FillDataGridHospitalRoomsRenovation();
             FillDataGridHospitalRooms();
