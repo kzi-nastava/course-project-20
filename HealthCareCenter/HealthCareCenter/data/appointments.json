@@ -2,12 +2,12 @@
   {
     "ID": 2,
     "Type": 1,
-    "ScheduledDate": "10/04/2022 09:45",
-    "CreatedDate": "09/01/2022 19:06",
+    "ScheduledDate": "05/04/2023 09:15",
+    "CreatedDate": "01/06/2022 00:00",
     "Emergency": false,
     "DoctorID": 1,
     "HealthRecordID": 1,
-    "HospitalRoomID": 3,
+    "HospitalRoomID": 1,
     "PatientAnamnesis": {
       "ID": 1,
       "Comment": "This is comment"
@@ -66,12 +66,12 @@
   {
     "ID": 7,
     "Type": 1,
-    "ScheduledDate": "14/05/2022 15:45",
-    "CreatedDate": "14/05/2022 15:44",
+    "ScheduledDate": "06/06/2024 10:15",
+    "CreatedDate": "01/06/2022 00:00",
     "Emergency": true,
-    "DoctorID": 5,
+    "DoctorID": 1,
     "HealthRecordID": 1,
-    "HospitalRoomID": 3,
+    "HospitalRoomID": 1,
     "PatientAnamnesis": {
       "ID": 0,
       "Comment": "Comment, this is not"
@@ -80,12 +80,12 @@
   {
     "ID": 8,
     "Type": 1,
-    "ScheduledDate": "15/05/2022 11:00",
-    "CreatedDate": "14/05/2022 15:45",
+    "ScheduledDate": "04/04/2024 10:15",
+    "CreatedDate": "01/06/2022 00:00",
     "Emergency": false,
     "DoctorID": 1,
-    "HealthRecordID": 1,
-    "HospitalRoomID": 3,
+    "HealthRecordID": 2,
+    "HospitalRoomID": 1,
     "PatientAnamnesis": {
       "ID": 0,
       "Comment": "Comment yes yes yes"
@@ -94,8 +94,8 @@
   {
     "ID": 9,
     "Type": 1,
-    "ScheduledDate": "14/05/2022 16:00",
-    "CreatedDate": "14/05/2022 15:45",
+    "ScheduledDate": "10/04/2024 09:15",
+    "CreatedDate": "01/06/2022 00:00",
     "Emergency": true,
     "DoctorID": 1,
     "HealthRecordID": 1,

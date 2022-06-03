@@ -6,7 +6,7 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    public class HospitalRoomRepository
+    public static class HospitalRoomRepository
     {
         private const string _fileName = "hospitalRooms.json";
         public static List<HospitalRoom> Rooms = Load();
@@ -15,7 +15,7 @@ namespace HealthCareCenter.Model
         /// Loads all hospital rooms from file hospitalRooms.json.
         /// </summary>
         /// <returns>List of all hospital rooms.</returns>
-        private static List<HospitalRoom> Load()
+        public static List<HospitalRoom> Load()
         {
             try
             {
@@ -27,6 +27,7 @@ namespace HealthCareCenter.Model
 
                 string JSONTextHospitalRooms = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\" + _fileName);
                 rooms = (List<HospitalRoom>)JsonConvert.DeserializeObject<IEnumerable<HospitalRoom>>(JSONTextHospitalRooms, settings);
+                Rooms = rooms;
                 return rooms;
             }
             catch (Exception ex)
