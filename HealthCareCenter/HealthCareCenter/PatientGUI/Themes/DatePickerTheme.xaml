@@ -7,7 +7,7 @@
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="FontFamily" Value="Comic sans MS" />
             <Setter Property="Foreground" Value="#ce6565" />
-            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontSize" Value="18" />
             <Setter Property="BorderBrush" Value="White" />
             <Setter Property="BorderThickness" Value="5" />
         </Style.Setters>
@@ -16,7 +16,7 @@
            x:Key="CalendarTheme">
         <Style.Setters>
             <Setter Property="FontFamily" Value="Comic sans MS" />
-            <Setter Property="Background" Value="#e9aeae" />
+            <Setter Property="Background" Value="White" />
         </Style.Setters>
     </Style>
 
