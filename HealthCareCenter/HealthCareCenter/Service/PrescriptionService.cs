@@ -31,9 +31,9 @@ namespace HealthCareCenter.Service
             try
             {
                 DateTime time = DateTime.Parse(hour + ":" + minute);
-                foreach(DateTime t in _times)
+                foreach (DateTime t in _times)
                 {
-                    if(t == time)
+                    if (t == time)
                     {
                         MessageBox.Show("This time has already been added");
                         return false;
@@ -105,6 +105,25 @@ namespace HealthCareCenter.Service
             {
                 return false;
             }
+        }
+
+        public static List<Prescription> GetPatientPrescriptions(int healthRecordID)
+        {
+            if (PrescriptionRepository.Prescriptions == null)
+            {
+                return null;
+            }
+
+            List<Prescription> patientPrescriptions = new List<Prescription>();
+            foreach (Prescription prescription in PrescriptionRepository.Prescriptions)
+            {
+                if (prescription.HealthRecordID == healthRecordID)
+                {
+                    patientPrescriptions.Add(prescription);
+                }
+            }
+
+            return patientPrescriptions;
         }
     }
 }

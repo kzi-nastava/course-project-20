@@ -96,7 +96,7 @@ namespace HealthCareCenter
 
             int parsedHospitalRoomId = Convert.ToInt32(roomId);
 
-            HospitalRoom roomForRenovation = HospitalRoomService.GetRoom(parsedHospitalRoomId);
+            HospitalRoom roomForRenovation = HospitalRoomService.Get(parsedHospitalRoomId);
 
             if (!IsHospitalRoomFound(roomForRenovation))
             {
@@ -149,10 +149,10 @@ namespace HealthCareCenter
             InitializeComponent();
             FillDataGridHospitalRooms();
             FillDataGridHospitalRoomsRenovation();
-            
+
             DisplayNotifications();
         }
-        
+
         private void DisplayNotifications()
         {
             List<Notification> notifications = NotificationService.FindUnopened(_signedManager);
@@ -178,7 +178,7 @@ namespace HealthCareCenter
                 return;
             }
             int parsedHospitalRoomForRenovationId = Convert.ToInt32(hospitalRoomForRenovationId);
-            HospitalRoom roomForRenovation = HospitalRoomService.GetRoom(parsedHospitalRoomForRenovationId);
+            HospitalRoom roomForRenovation = HospitalRoomService.Get(parsedHospitalRoomForRenovationId);
 
             if (!IsDateValide(startDate, finishDate))
             {
@@ -232,6 +232,16 @@ namespace HealthCareCenter
         private void ComplexRenovationSplitItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager));
+        }
+
+        private void CreateMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new MedicineCreationWindow(_signedManager));
+        }
+
+        private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new ChangeMedicineRequestWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

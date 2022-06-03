@@ -1,13 +1,23 @@
 [
   {
     "ID": 0,
-    "Name": "Proba",
+    "Name": "asdasd",
+    "Creation": "2022-05-30T00:00:00",
+    "Expiration": "2022-05-31T00:00:00",
     "Ingredients": [
-      "Vitamin A",
-      "Tree pollen"
+      "asda"
     ],
-    "Manufacturer": "Proizvodjac",
-    "DenyComment": "Wat is dis",
-    "State": 0
+    "Manufacturer": "asdasd"
+  },
+  {
+    "ID": 1,
+    "Name": "asdfasdf",
+    "Creation": "2022-05-24T00:00:00",
+    "Expiration": "2022-05-24T00:00:00",
+    "Ingredients": [
+      "asdasd",
+      "sdf"
+    ],
+    "Manufacturer": "fdsgsdmfgsdf"
   }
 ]

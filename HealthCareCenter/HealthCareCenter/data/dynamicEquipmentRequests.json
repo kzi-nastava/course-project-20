@@ -1,0 +1,81 @@
+[
+  {
+    "ID": 0,
+    "Fulfilled": true,
+    "SecretaryID": 3,
+    "Created": "14/05/2022 23:06",
+    "AmountOfEquipment": {
+      "Band aid": 3,
+      "Paper": 8,
+      "Pen": 4
+    }
+  },
+  {
+    "ID": 1,
+    "Fulfilled": true,
+    "SecretaryID": 3,
+    "Created": "13/05/2022 23:07",
+    "AmountOfEquipment": {
+      "Band aid": 3,
+      "Paper": 8
+    }
+  },
+  {
+    "ID": 2,
+    "Fulfilled": true,
+    "SecretaryID": 3,
+    "Created": "13/05/2022 23:10",
+    "AmountOfEquipment": {
+      "Band aid": 2,
+      "Syringe": 5,
+      "Gauze": 7
+    }
+  },
+  {
+    "ID": 3,
+    "Fulfilled": true,
+    "SecretaryID": 3,
+    "Created": "13/05/2022 23:11",
+    "AmountOfEquipment": {
+      "Syringe": 25
+    }
+  },
+  {
+    "ID": 4,
+    "Fulfilled": true,
+    "SecretaryID": 3,
+    "Created": "13/05/2022 23:12",
+    "AmountOfEquipment": {
+      "Gauze": 25
+    }
+  },
+  {
+    "ID": 5,
+    "Fulfilled": true,
+    "SecretaryID": 3,
+    "Created": "13/05/2022 23:13",
+    "AmountOfEquipment": {
+      "Pen": 12,
+      "Buckle": 24
+    }
+  },
+  {
+    "ID": 6,
+    "Fulfilled": true,
+    "SecretaryID": 3,
+    "Created": "20/05/2022 00:40",
+    "AmountOfEquipment": {
+      "Gauze": 100
+    }
+  },
+  {
+    "ID": 7,
+    "Fulfilled": true,
+    "SecretaryID": 3,
+    "Created": "21/05/2022 00:40",
+    "AmountOfEquipment": {
+      "Band aid": 25,
+      "Buckle": 34
+    }
+  }
+]

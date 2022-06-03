@@ -1,4 +1,5 @@
-﻿using HealthCareCenter.Enums;
+﻿using HealthCareCenter.Controller;
+using HealthCareCenter.Enums;
 using HealthCareCenter.Model;
 using HealthCareCenter.Service;
 using System;
@@ -59,6 +60,7 @@ namespace HealthCareCenter.SecretaryGUI
             }
 
             List<string> terms = Utils.GetPossibleDailyTerms();
+
             RemoveOccupiedTerms(terms);
 
             termsListBox.ItemsSource = terms;
@@ -66,6 +68,12 @@ namespace HealthCareCenter.SecretaryGUI
 
         private void RemoveOccupiedTerms(List<string> terms)
         {
+            if (VacationRequestController.OnVacation(_referral.DoctorID, (DateTime)termDatePicker.SelectedDate))
+            {
+                terms.Clear();
+                MessageBox.Show("The doctor is on vacation at this time.");
+                return;
+            }
             foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
                 if (appointment.DoctorID != _referral.DoctorID || appointment.ScheduledDate.Date.CompareTo(termDatePicker.SelectedDate) != 0)
@@ -91,7 +99,8 @@ namespace HealthCareCenter.SecretaryGUI
             _rooms = new List<HospitalRoomDisplay>();
             foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
             {
-                if ((room.Type == Enums.RoomType.Checkup && (bool)checkupRadioButton.IsChecked) || (room.Type == Enums.RoomType.Operation && (bool)operationRadioButton.IsChecked))
+                bool correctRoom = (room.Type == Enums.RoomType.Checkup && (bool)checkupRadioButton.IsChecked) || (room.Type == Enums.RoomType.Operation && (bool)operationRadioButton.IsChecked);
+                if (correctRoom)
                 {
                     _rooms.Add(new HospitalRoomDisplay() { ID = room.ID, Name = room.Name });
                 }
@@ -116,6 +125,7 @@ namespace HealthCareCenter.SecretaryGUI
                 return;
 
             DateTime scheduledDate = GetScheduledDate();
+
             if (!TimePassed(scheduledDate))
                 return;
 
@@ -136,7 +146,7 @@ namespace HealthCareCenter.SecretaryGUI
             AppointmentRepository.Save();
 
             HospitalRoomService.Update(roomID, appointment);
-            HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
+            HospitalRoomRepository.Save();
 
             ReferralRepository.Referrals.Remove(_referral);
             ReferralRepository.Save();

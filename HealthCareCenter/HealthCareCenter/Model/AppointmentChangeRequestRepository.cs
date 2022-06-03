@@ -20,8 +20,8 @@ namespace HealthCareCenter.Model
                     DateFormatString = Constants.DateTimeFormat
                 };
 
-                string JSONTextAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointmentChangeRequests.json");
-                Requests = (List<AppointmentChangeRequest>)JsonConvert.DeserializeObject<IEnumerable<AppointmentChangeRequest>>(JSONTextAppointments, settings);
+                string JSONTextRequests = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointmentChangeRequests.json");
+                Requests = (List<AppointmentChangeRequest>)JsonConvert.DeserializeObject<IEnumerable<AppointmentChangeRequest>>(JSONTextRequests, settings);
                 LargestID = Requests.Count == 0 ? 0 : Requests[^1].ID;
             }
             catch (Exception ex)

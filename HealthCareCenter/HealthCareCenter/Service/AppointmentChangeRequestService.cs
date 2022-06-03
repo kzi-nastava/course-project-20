@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HealthCareCenter.Service;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,6 +18,7 @@ namespace HealthCareCenter.Model
             {
                 if (appointment.ID == request.AppointmentID)
                 {
+                    HospitalRoomService.Get(appointment.HospitalRoomID).AppointmentIDs.Remove(appointment.ID);
                     AppointmentRepository.Appointments.Remove(appointment);
                     break;
                 }

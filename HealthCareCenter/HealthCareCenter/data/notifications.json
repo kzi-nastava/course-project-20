@@ -1,1 +1,50 @@
-[]
+[
+  {
+    "ID": 0,
+    "Message": "The appointment you had scheduled at 20.5.2022. 18:30:00 has been postponed to 20.5.2022. 20:00:00.",
+    "Opened": true,
+    "UserID": 4
+  },
+  {
+    "ID": 1,
+    "Message": "The appointment you had scheduled at 20.5.2022. 18:30:00 has been postponed to 20.5.2022. 20:00:00.",
+    "Opened": true,
+    "UserID": 5
+  },
+  {
+    "ID": 2,
+    "Message": "A new urgent appointment has been scheduled for you at 20.5.2022. 18:30:00 in room Room4.",
+    "Opened": true,
+    "UserID": 1
+  },
+  {
+    "ID": 3,
+    "Message": "The appointment you had scheduled at 20.5.2022. 19:45:00 has been postponed to 21.5.2022. 08:00:00.",
+    "Opened": true,
+    "UserID": 4
+  },
+  {
+    "ID": 4,
+    "Message": "The appointment you had scheduled at 20.5.2022. 19:45:00 has been postponed to 21.5.2022. 08:00:00.",
+    "Opened": true,
+    "UserID": 1
+  },
+  {
+    "ID": 5,
+    "Message": "A new urgent appointment has been scheduled for you at 20.5.2022. 19:45:00 in room Room4.",
+    "Opened": true,
+    "UserID": 1
+  },
+  {
+    "ID": 6,
+    "Message": "The vacation you had requested, which would have started on 20/06/2022 is denied. Reasoning: No.",
+    "Opened": true,
+    "UserID": 5
+  },
+  {
+    "ID": 7,
+    "Message": "The vacation you had requested is accepted, and starts on 28/05/2022, lasting until 31/05/2022.",
+    "Opened": true,
+    "UserID": 1
+  }
+]

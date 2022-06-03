@@ -6,17 +6,18 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    public class MedicineCreationRequestRepository
     {
         public static List<MedicineCreationRequest> Requests{ get; set; }
         public static int LargestID { get; set; }
+        private const string _fileName = "medicineCreationRequests.json";
+        public static List<Medicine> Medicines = Load();
 
         public static List<MedicineCreationRequest> Load()
         {
-            var settings = new JsonSerializerSettings
-            {
+                var settings = new JsonSerializerSettings
+                {
                 DateFormatString = Constants.DateTimeFormat
-            };
+                };
 
             string JSONTextAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\medicineCreationRequests.json");
             Requests = (List<MedicineCreationRequest>)JsonConvert.DeserializeObject<IEnumerable<MedicineCreationRequest>>(JSONTextAppointments, settings);
@@ -38,6 +39,7 @@ namespace HealthCareCenter.Model
                 {
                     serializer.Serialize(writer, Requests);
                 }
+                return true;
             }
             catch (Exception ex)
             {

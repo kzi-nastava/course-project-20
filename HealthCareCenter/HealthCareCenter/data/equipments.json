@@ -1,7 +1,7 @@
 [
   {
     "ID": 0,
-    "CurrentRoomID": 5,
+    "CurrentRoomID": 3,
     "Type": 2,
     "Name": "Chair",
     "RearrangementID": -1
@@ -22,9 +22,9 @@
   },
   {
     "ID": 3,
-    "CurrentRoomID": 6,
+    "CurrentRoomID": 3,
     "Type": 2,
-    "Name": "Bad",
+    "Name": "Bed",
     "RearrangementID": -1
   },
   {

@@ -92,7 +92,7 @@ namespace HealthCareCenter
                 return false;
             }
             int parsedEquipmentId = Convert.ToInt32(equipmentId);
-            Equipment equipment = EquipmentService.GetEquipment(parsedEquipmentId);
+            Equipment equipment = EquipmentService.Get(parsedEquipmentId);
             if (!IsEquipmentFound(equipment))
             {
                 MessageBox.Show("Error, equipment not found!");
@@ -120,7 +120,7 @@ namespace HealthCareCenter
                     return;
                 }
                 int parsedEquipmentId = Convert.ToInt32(equipmentId);
-                Equipment equipment = EquipmentService.GetEquipment(parsedEquipmentId);
+                Equipment equipment = EquipmentService.Get(parsedEquipmentId);
 
                 if (newRoom == _room1.Name)
                 {

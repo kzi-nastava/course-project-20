@@ -8,20 +8,5 @@
     "ID": 1,
     "PatientID": 2,
     "DoctorID": 1
-  },
-  {
-    "ID": 2,
-    "PatientID": 2,
-    "DoctorID": 1
-  },
-  {
-    "ID": 3,
-    "PatientID": 2,
-    "DoctorID": 1
-  },
-  {
-    "ID": 5,
-    "PatientID": 2,
-    "DoctorID": 1
   }
 ]

@@ -93,7 +93,7 @@ namespace HealthCareCenter
             }
             int parsedNewRoomId = Convert.ToInt32(newRoomId);
 
-            Room newRoom = (HospitalRoom)RoomService.GetRoom(parsedNewRoomId);
+            Room newRoom = (HospitalRoom)RoomService.Get(parsedNewRoomId);
             if (!IsNewRoomFound(newRoom))
             {
                 MessageBox.Show($"Error, room with ID {parsedNewRoomId} not found!");
@@ -112,7 +112,7 @@ namespace HealthCareCenter
             }
 
             int parsedEquipmentForRearrangementId = Convert.ToInt32(equipmentId);
-            Equipment equipmentForRearrangement = EquipmentService.GetEquipment(parsedEquipmentForRearrangementId);
+            Equipment equipmentForRearrangement = EquipmentService.Get(parsedEquipmentForRearrangementId);
 
             if (!IsEquipmentForRearrangementFound(equipmentForRearrangement))
             {
@@ -157,8 +157,8 @@ namespace HealthCareCenter
             }
 
             // Checking are rooms available
-            HospitalRoom currentRoom = HospitalRoomService.GetRoom(rearrangement.OldRoomID);
-            HospitalRoom newRoom = HospitalRoomService.GetRoom(rearrangement.NewRoomID);
+            HospitalRoom currentRoom = HospitalRoomService.Get(rearrangement.OldRoomID);
+            HospitalRoom newRoom = HospitalRoomService.Get(rearrangement.NewRoomID);
             if (currentRoom == null)
             {
                 if (rearrangement.OldRoomID != 0)
@@ -188,7 +188,7 @@ namespace HealthCareCenter
             }
 
             int parsedEquipmentForRearrangementId = Convert.ToInt32(equipmentId);
-            Equipment equipmentForRearrangement = EquipmentService.GetEquipment(parsedEquipmentForRearrangementId);
+            Equipment equipmentForRearrangement = EquipmentService.Get(parsedEquipmentForRearrangementId);
             if (!IsEquipmentForRearrangementFound(equipmentForRearrangement))
             {
                 MessageBox.Show($"Error, equipment with ID {parsedEquipmentForRearrangementId} not found!");
@@ -305,7 +305,7 @@ namespace HealthCareCenter
                 return;
             }
             int parsedEquipmentForRearrangementId = Convert.ToInt32(equipmentForRearrangementId);
-            Equipment equipmentForRearrangement = EquipmentService.GetEquipment(parsedEquipmentForRearrangementId);
+            Equipment equipmentForRearrangement = EquipmentService.Get(parsedEquipmentForRearrangementId);
 
             if (!IsDateTimeInputValide(rearrangementDate, rearrangementTime))
             {
@@ -335,7 +335,7 @@ namespace HealthCareCenter
                 return;
             }
             int parsedEquipmentForRearrangementId = Convert.ToInt32(equipmentForRearrangementId);
-            Equipment equipmentForRearrangement = EquipmentService.GetEquipment(parsedEquipmentForRearrangementId);
+            Equipment equipmentForRearrangement = EquipmentService.Get(parsedEquipmentForRearrangementId);
 
             EquipmentRearrangement rearrangement = EquipmentRearrangementService.GetRearrangement(equipmentForRearrangement.RearrangementID);
             if (!IsPossibleToUndoEquipmentRearrangement(rearrangement, equipmentForRearrangement))
@@ -383,6 +383,16 @@ namespace HealthCareCenter
         private void ComplexRenovationSplitItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager));
+        }
+
+        private void CreateMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new MedicineCreationWindow(_signedManager));
+        }
+
+        private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new ChangeMedicineRequestWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

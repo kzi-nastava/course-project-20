@@ -18,7 +18,7 @@ namespace HealthCareCenter.Service
         /// <param name="id">id of wanted hospital room.</param>
         /// <returns>Hospital room with specific id, if room is found, or null if room is not found.</returns>
         /// <exception cref="HospitalRoomNotFound">Thrown when room with specific id is not found.</exception>
-        public static HospitalRoom GetRoom(int id)
+        public static HospitalRoom Get(int id)
         {
             try
             {
@@ -47,10 +47,10 @@ namespace HealthCareCenter.Service
         /// Add new hospital room in file hospitalRoomsForRenovation.json.
         /// </summary>
         /// <param name="newRoom"></param>
-        public static void AddRoom(HospitalRoom newRoom)
+        public static void Add(HospitalRoom newRoom)
         {
             HospitalRoomForRenovationRepository.Rooms.Add(newRoom);
-            HospitalRoomForRenovationRepository.SaveRooms(HospitalRoomForRenovationRepository.Rooms);
+            HospitalRoomForRenovationRepository.Save();
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace HealthCareCenter.Service
         /// <param name="id">id of the hospital room we want to delete.</param>
         /// <returns>True if room is deleted or false if it's not.</returns>
         /// <exception cref="HospitalRoomNotFound">Thrown when room with specific id is not found.</exception>
-        public static bool DeleteRoom(int id)
+        public static bool Delete(int id)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace HealthCareCenter.Service
                     if (id == HospitalRoomForRenovationRepository.Rooms[i].ID)
                     {
                         HospitalRoomForRenovationRepository.Rooms.RemoveAt(i);
-                        HospitalRoomForRenovationRepository.SaveRooms(HospitalRoomForRenovationRepository.Rooms);
+                        HospitalRoomForRenovationRepository.Save();
                         return true;
                     }
                 }
@@ -114,7 +114,7 @@ namespace HealthCareCenter.Service
         /// <param name="room">Room we want to delete.</param>
         /// <returns>true if room is deleted or false if it's not.</returns>
         /// <exception cref="HospitalRoomNotFound">Thrown when room is not found.</exception>
-        public static bool DeleteRoom(HospitalRoom room)
+        public static bool Delete(HospitalRoom room)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace HealthCareCenter.Service
                     if (room.ID == HospitalRoomForRenovationRepository.Rooms[i].ID)
                     {
                         HospitalRoomForRenovationRepository.Rooms.RemoveAt(i);
-                        HospitalRoomForRenovationRepository.SaveRooms(HospitalRoomForRenovationRepository.Rooms);
+                        HospitalRoomForRenovationRepository.Save();
                         return true;
                     }
                 }
@@ -140,7 +140,7 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static bool UpdateRoom(HospitalRoom room)
+        public static bool Update(HospitalRoom room)
         {
             try
             {
@@ -149,7 +149,7 @@ namespace HealthCareCenter.Service
                     if (room.ID == HospitalRoomForRenovationRepository.Rooms[i].ID)
                     {
                         HospitalRoomForRenovationRepository.Rooms[i] = room;
-                        HospitalRoomForRenovationRepository.SaveRooms(HospitalRoomForRenovationRepository.Rooms);
+                        HospitalRoomForRenovationRepository.Save();
                         return true;
                     }
                 }

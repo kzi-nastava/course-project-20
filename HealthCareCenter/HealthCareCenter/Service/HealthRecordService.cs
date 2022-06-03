@@ -55,7 +55,7 @@ namespace HealthCareCenter.Service
             return null;
         }
 
-        public static HealthRecord FindRecord(Appointment appointment)
+        public static HealthRecord Find(Appointment appointment)
         {
             foreach (HealthRecord record in HealthRecordRepository.Records)
             {
