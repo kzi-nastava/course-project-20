@@ -7,15 +7,15 @@ namespace HealthCareCenter.Service
 {
     internal class MedicineCreationRequestService
     {
-        public static Medicine Get(int id)
+        public static MedicineCreationRequest Get(int id)
         {
             try
             {
-                foreach (Medicine medicine in MedicineCreationRequestRepository.Medicines)
+                foreach (MedicineCreationRequest request in MedicineCreationRequestRepository.Requests)
                 {
-                    if (medicine.ID == id)
+                    if (request.ID == id)
                     {
-                        return medicine;
+                        return request;
                     }
                 }
 
@@ -32,14 +32,14 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static List<Medicine> GetMedicines()
+        public static List<MedicineCreationRequest> GetMedicines()
         {
-            return MedicineCreationRequestRepository.Medicines;
+            return MedicineCreationRequestRepository.Requests;
         }
 
-        public static void Add(Medicine newMedicine)
+        public static void Add(MedicineCreationRequest newMedicineCreationRequest)
         {
-            MedicineCreationRequestRepository.Medicines.Add(newMedicine);
+            MedicineCreationRequestRepository.Requests.Add(newMedicineCreationRequest);
             MedicineCreationRequestRepository.Save();
         }
 
@@ -47,14 +47,14 @@ namespace HealthCareCenter.Service
         {
             try
             {
-                List<Medicine> medicines = MedicineCreationRequestRepository.Medicines;
-                medicines.Sort((x, y) => x.ID.CompareTo(y.ID));
-                if (medicines.Count == 0)
+                List<MedicineCreationRequest> requests = MedicineCreationRequestRepository.Requests;
+                requests.Sort((x, y) => x.ID.CompareTo(y.ID));
+                if (requests.Count == 0)
                 {
                     return -1;
                 }
 
-                return medicines[medicines.Count - 1].ID;
+                return requests[requests.Count - 1].ID;
             }
             catch (Exception ex)
             {
@@ -66,11 +66,11 @@ namespace HealthCareCenter.Service
         {
             try
             {
-                for (int i = 0; i < MedicineCreationRequestRepository.Medicines.Count; i++)
+                for (int i = 0; i < MedicineCreationRequestRepository.Requests.Count; i++)
                 {
-                    if (id == MedicineCreationRequestRepository.Medicines[i].ID)
+                    if (id == MedicineCreationRequestRepository.Requests[i].ID)
                     {
-                        MedicineCreationRequestRepository.Medicines.RemoveAt(i);
+                        MedicineCreationRequestRepository.Requests.RemoveAt(i);
                         MedicineCreationRequestRepository.Save();
                         return true;
                     }
@@ -88,15 +88,15 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static bool Delete(Medicine medicine)
+        public static bool Delete(MedicineCreationRequest medicineCreationRequest)
         {
             try
             {
-                for (int i = 0; i < MedicineCreationRequestRepository.Medicines.Count; i++)
+                for (int i = 0; i < MedicineCreationRequestRepository.Requests.Count; i++)
                 {
-                    if (medicine.ID == MedicineCreationRequestRepository.Medicines[i].ID)
+                    if (medicineCreationRequest.ID == MedicineCreationRequestRepository.Requests[i].ID)
                     {
-                        MedicineCreationRequestRepository.Medicines.RemoveAt(i);
+                        MedicineCreationRequestRepository.Requests.RemoveAt(i);
                         MedicineCreationRequestRepository.Save();
                         return true;
                     }

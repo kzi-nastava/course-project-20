@@ -84,6 +84,19 @@ namespace HealthCareCenter
             return value < 0;
         }
 
+        private bool IsRoomAvailable(HospitalRoom room, EquipmentRearrangement rearrangement)
+        {
+            if (room == null)
+            {
+                if (rearrangement.OldRoomID != 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         private bool IsNewRoomValide(string newRoomId)
         {
             if (!IsNewRoomIdInputValide(newRoomId))
@@ -120,7 +133,7 @@ namespace HealthCareCenter
                 return false;
             }
 
-            if (equipmentForRearrangement.IsScheduledRearrangement())
+            if (EquipmentService.HasScheduledRearrangement(equipmentForRearrangement))
             {
                 MessageBox.Show("Error, equipment already has scheduled rearrangement!");
                 return false;
@@ -148,7 +161,7 @@ namespace HealthCareCenter
             return true;
         }
 
-        private bool IsPossibleRearrangement(EquipmentRearrangement rearrangement)
+        private bool IsPossibleToSetRearrangement(EquipmentRearrangement rearrangement)
         {
             if (WhetherRoomsAreSame(rearrangement.NewRoomID, rearrangement.OldRoomID))
             {
@@ -159,21 +172,16 @@ namespace HealthCareCenter
             // Checking are rooms available
             HospitalRoom currentRoom = HospitalRoomService.Get(rearrangement.OldRoomID);
             HospitalRoom newRoom = HospitalRoomService.Get(rearrangement.NewRoomID);
-            if (currentRoom == null)
+            if (!IsRoomAvailable(currentRoom, rearrangement))
             {
-                if (rearrangement.OldRoomID != 0)
-                {
-                    MessageBox.Show($"Error, current room with id={rearrangement.OldRoomID} is renovating");
-                    return false;
-                }
+                MessageBox.Show($"Error, current room with id={rearrangement.OldRoomID} is renovating");
+                return false;
             }
-            if (newRoom == null)
+
+            if (!IsRoomAvailable(newRoom, rearrangement))
             {
-                if (rearrangement.NewRoomID != 0)
-                {
-                    MessageBox.Show($"Error, new room with id={rearrangement.NewRoomID} is renovating!");
-                    return false;
-                }
+                MessageBox.Show($"Error, new room with id={rearrangement.NewRoomID} is renovating!");
+                return false;
             }
 
             return true;
@@ -189,6 +197,7 @@ namespace HealthCareCenter
 
             int parsedEquipmentForRearrangementId = Convert.ToInt32(equipmentId);
             Equipment equipmentForRearrangement = EquipmentService.Get(parsedEquipmentForRearrangementId);
+
             if (!IsEquipmentForRearrangementFound(equipmentForRearrangement))
             {
                 MessageBox.Show($"Error, equipment with ID {parsedEquipmentForRearrangementId} not found!");
@@ -205,7 +214,7 @@ namespace HealthCareCenter
                 MessageBox.Show($"Error, rearrangement for eqiupment with id={equipment.ID} is not found!");
                 return false;
             }
-            if (rearrangement.IsIrrevocable())
+            if (EquipmentRearrangementService.IsIrrevocable(rearrangement))
             {
                 MessageBox.Show("Error, rerrangement is irrevocable");
                 return false;
@@ -261,7 +270,7 @@ namespace HealthCareCenter
             List<Equipment> equipments = EquipmentService.GetEquipments();
             foreach (Equipment equipment in equipments)
             {
-                if (!equipment.IsScheduledRearrangement())
+                if (!EquipmentService.HasScheduledRearrangement(equipment))
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
                     AddEmptyFieldsForEquipmentDisplay(ref equipmentAttributesToDisplay);
@@ -270,7 +279,7 @@ namespace HealthCareCenter
                 else
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
-                    EquipmentRearrangement rearrangement = EquipmentRearrangementService.GetRearrangement(equipment.RearrangementID);
+                    EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipment.RearrangementID);
                     equipmentAttributesToDisplay.Add(rearrangement.MoveTime.ToString(Constants.DateFormat));
                     equipmentAttributesToDisplay.Add(rearrangement.NewRoomID.ToString());
                     AddDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
@@ -287,6 +296,17 @@ namespace HealthCareCenter
             FillDataGridEquipment();
         }
 
+        public bool IsPossibleToCreateRearrangement(string newRoomId, string equipmentForRearrangementId, string rearrangementDate, string rearrangementTime)
+        {
+            if (!IsNewRoomValide(newRoomId)) { return false; }
+
+            if (!IsEquipmentFroRearrangementValide(equipmentForRearrangementId)) { return false; }
+
+            if (!IsDateTimeInputValide(rearrangementDate, rearrangementTime)) { return false; }
+
+            return true;
+        }
+
         private void TransferButton_Click(object sender, RoutedEventArgs e)
         {
             string newRoomId = NewRoomIdTextBox.Text;
@@ -294,34 +314,19 @@ namespace HealthCareCenter
             string rearrangementDate = DatePicker.Text;
             string rearrangementTime = TimeComboBox.Text;
 
-            if (!IsNewRoomValide(newRoomId))
-            {
-                return;
-            }
-            int parsedNewRoomId = Convert.ToInt32(newRoomId);
+            if (!IsPossibleToCreateRearrangement(newRoomId, equipmentForRearrangementId, rearrangementDate, rearrangementTime)) { return; }
 
-            if (!IsEquipmentFroRearrangementValide(equipmentForRearrangementId))
-            {
-                return;
-            }
+            int parsedNewRoomId = Convert.ToInt32(newRoomId);
             int parsedEquipmentForRearrangementId = Convert.ToInt32(equipmentForRearrangementId);
             Equipment equipmentForRearrangement = EquipmentService.Get(parsedEquipmentForRearrangementId);
-
-            if (!IsDateTimeInputValide(rearrangementDate, rearrangementTime))
-            {
-                return;
-            }
             DateTime rearrangementDateTime = Convert.ToDateTime(rearrangementDate + " " + rearrangementTime);
 
             EquipmentRearrangement rearrangement = new EquipmentRearrangement(
                 equipmentForRearrangement.ID, rearrangementDateTime,
                 equipmentForRearrangement.CurrentRoomID, parsedNewRoomId);
-            if (!IsPossibleRearrangement(rearrangement))
-            {
-                return;
-            }
 
-            equipmentForRearrangement.SetRearrangement(rearrangement);
+            if (!IsPossibleToSetRearrangement(rearrangement)) { return; }
+            EquipmentRearrangementService.Set(rearrangement, equipmentForRearrangement);
 
             DataGridEquipments.Items.Clear();
             FillDataGridEquipment();
@@ -330,20 +335,14 @@ namespace HealthCareCenter
         private void UndoButton_Click(object sender, RoutedEventArgs e)
         {
             string equipmentForRearrangementId = EquipmentIdTextBox.Text;
-            if (!IsEqipmentForUndoigRearrangementValide(equipmentForRearrangementId))
-            {
-                return;
-            }
+            if (!IsEqipmentForUndoigRearrangementValide(equipmentForRearrangementId)) { return; }
+
             int parsedEquipmentForRearrangementId = Convert.ToInt32(equipmentForRearrangementId);
             Equipment equipmentForRearrangement = EquipmentService.Get(parsedEquipmentForRearrangementId);
+            EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipmentForRearrangement.RearrangementID);
 
-            EquipmentRearrangement rearrangement = EquipmentRearrangementService.GetRearrangement(equipmentForRearrangement.RearrangementID);
-            if (!IsPossibleToUndoEquipmentRearrangement(rearrangement, equipmentForRearrangement))
-            {
-                return;
-            }
-
-            equipmentForRearrangement.RemoveRearrangement();
+            if (!IsPossibleToUndoEquipmentRearrangement(rearrangement, equipmentForRearrangement)) { return; }
+            EquipmentRearrangementService.Remove(equipmentForRearrangement);
 
             DataGridEquipments.Items.Clear();
             FillDataGridEquipment();

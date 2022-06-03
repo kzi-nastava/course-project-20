@@ -32,32 +32,5 @@ namespace HealthCareCenter.Model
             this.Type = type;
             this.AppointmentIDs = new List<int>();
         }
-
-        /// <summary>
-        /// Check if room contains any appointment
-        /// </summary>
-        /// <returns></returns>
-        public bool ContainsAnyAppointment()
-        {
-            if (AppointmentIDs.Count != 0)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        public bool IsCurrentlyRenovating()
-        {
-            foreach (HospitalRoom room in HospitalRoomForRenovationService.GetRooms())
-            {
-                if (room.ID == this.ID)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
     }
 }
