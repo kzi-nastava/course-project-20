@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using HealthCareCenter.Model;
-using HealthCareCenter.SecretaryGUI;
+using HealthCareCenter.Secretary;
 using HealthCareCenter.Service;
 
 namespace HealthCareCenter
@@ -82,7 +82,7 @@ namespace HealthCareCenter
         {
             while (true)
             {
-                DynamicEquipmentRequestService.FulfillRequestsIfNeeded();
+                DynamicEquipmentService.FulfillRequestsIfNeeded();
                 Thread.Sleep(timeBetweenWork);
             }
         }
@@ -115,7 +115,7 @@ namespace HealthCareCenter
                 }
                 ShowWindow(new PatientWindow(user));
             }
-            else if (user.GetType() == typeof(Secretary))
+            else if (user.GetType() == typeof(Model.Secretary))
             {
                 ShowWindow(new SecretaryWindow(user));
             }

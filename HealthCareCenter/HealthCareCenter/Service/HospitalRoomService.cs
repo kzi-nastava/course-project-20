@@ -1,4 +1,6 @@
-﻿using HealthCareCenter.Model;
+﻿using HealthCareCenter.Enums;
+using HealthCareCenter.Model;
+using HealthCareCenter.Secretary;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -234,6 +236,7 @@ namespace HealthCareCenter.Service
             HospitalRoomRepository.Save();
         }
 
+
         public static bool IsCurrentlyRenovating(HospitalRoom room)
         {
             foreach (HospitalRoom hospitalRoom in HospitalRoomForRenovationService.GetRooms())
@@ -254,6 +257,62 @@ namespace HealthCareCenter.Service
         public static bool ContainsAnyAppointment(HospitalRoom room)
         {
             return room.AppointmentIDs.Count != 0;
+        }
+        public static List<HospitalRoomDisplay> GetRoomsForDisplay(bool checkup)
+        {
+            List<HospitalRoomDisplay> rooms = new List<HospitalRoomDisplay>();
+            foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
+            {
+                bool correctRoom = (room.Type == Enums.RoomType.Checkup && checkup) || (room.Type == Enums.RoomType.Operation && !checkup);
+                if (correctRoom)
+                {
+                    rooms.Add(new HospitalRoomDisplay() { ID = room.ID, Name = room.Name });
+                }
+            }
+            return rooms;
+        }
+
+        public static List<HospitalRoom> GetRoomsOfType(AppointmentType type)
+        {
+            List<HospitalRoom> rooms = new List<HospitalRoom>();
+            foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
+            {
+                bool correctRoom = (type == AppointmentType.Checkup && room.Type == RoomType.Checkup) || (type == AppointmentType.Operation && room.Type == RoomType.Operation);
+                if (correctRoom)
+                {
+                    rooms.Add(room);
+                }
+            }
+            return rooms;
+        }
+
+        public static bool IsOccupied(int roomID, DateTime time)
+        {
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            {
+                if (appointment.HospitalRoomID != roomID)
+                {
+                    continue;
+                }
+                if (appointment.ScheduledDate.CompareTo(time) == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static void RemoveUnavailableRooms(List<HospitalRoom> availableRooms, Appointment appointment)
+        {
+            foreach (HospitalRoom room in availableRooms)
+            {
+                if (room.ID == appointment.HospitalRoomID)
+                {
+                    availableRooms.Remove(room);
+                    return;
+                }
+            }
+
         }
     }
 }
