@@ -31,7 +31,7 @@ namespace HealthCareCenter.DoctorServices
             Room room;
             try
             {
-               room = RoomService.GetRoom(selectedRoomID);
+               room = RoomService.Get(selectedRoomID);
             }
             catch (Exception ex)
             {
@@ -196,7 +196,7 @@ namespace HealthCareCenter.DoctorServices
             string equipmentName = TableService.GetRowItem(window.equipmentDataGrid, "Name");
             if (equipmentName == "")
                 return;
-            Room room = RoomService.GetRoom(selectedRoomID);
+            Room room = RoomService.Get(selectedRoomID);
             int amount = room.GetEquipmentAmount(equipmentName);
             window.equipmentTextBlock.Text = amount.ToString();
         }
@@ -209,7 +209,7 @@ namespace HealthCareCenter.DoctorServices
             unparsedAmount = window.equipmentTextBox.Text;
             usedAmount = CheckTheAmount(unparsedAmount, equipmentName, selectedRoomID);
             if (usedAmount == -1) return;
-            Room room = RoomService.GetRoom(selectedRoomID);
+            Room room = RoomService.Get(selectedRoomID);
             room.EquipmentAmounts[equipmentName] -= usedAmount;
             MessageBox.Show(equipmentName + " sucessfully updated");
             window.equipmentTextBox.Text = "";
@@ -228,7 +228,7 @@ namespace HealthCareCenter.DoctorServices
                 MessageBox.Show("Invalid number");
                 return -1;
             }
-            room = RoomService.GetRoom(selectedRoomID);
+            room = RoomService.Get(selectedRoomID);
             oldAmount = room.GetEquipmentAmount(equipmentName);
             if (oldAmount < usedAmount)
             {

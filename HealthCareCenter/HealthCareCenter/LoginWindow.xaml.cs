@@ -147,14 +147,14 @@ namespace HealthCareCenter
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            TryLogin();
+            Login();
         }
 
         private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                TryLogin();
+                Login();
             }
         }
     }

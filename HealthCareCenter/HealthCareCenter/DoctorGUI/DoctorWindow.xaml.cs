@@ -429,7 +429,7 @@ namespace HealthCareCenter.DoctorGUI
             MedicineInstructionRepository.Save();
             ReferralRepository.Save();
             MedicineCreationRequestRepository.Save();
-            HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
+            HospitalRoomRepository.Save();
             LogOut();
         }
 

@@ -7,8 +7,8 @@ using System.Data;
 using HealthCareCenter.Enums;
 using System.Globalization;
 using System.ComponentModel;
-using HealthCareCenter.DoctorGUI;
 using HealthCareCenter.Service;
+using HealthCareCenter.DoctorGUI;
 
 namespace HealthCareCenter.DoctorServices
 {
