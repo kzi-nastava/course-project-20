@@ -40,6 +40,45 @@ namespace HealthCareCenter.Service
             types.AddRange(UserRepository.Doctors.Where(doctor => !types.Contains(doctor.Type)).Select(doctor => doctor.Type));
             return types;
         }
+      
+        public static Doctor GetDoctor(int ID)
+        {
+            foreach (Doctor doctor in UserRepository.Doctors)
+            {
+                if (doctor.ID == ID)
+                {
+                    return doctor;
+                }
+            }
+
+            return null;
+        }
+
+        public static Patient GetPatientByID(int patientID)
+        {
+            foreach (Patient patient in UserRepository.Patients)
+            {
+                if (patient.ID == patientID)
+                {
+                    return patient;
+                }
+            }
+
+            return null;
+        }
+
+        public static Patient GetPatientByHealthRecordID(int healthRecordID)
+        {
+            foreach (Patient patient in UserRepository.Patients)
+            {
+                if (patient.HealthRecordID == healthRecordID)
+                {
+                    return patient;
+                }
+            }
+
+            return null;
+        }
 
         public static void RemoveUnavailableDoctors(List<Doctor> availableDoctors, Appointment appointment)
         {

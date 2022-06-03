@@ -57,6 +57,11 @@ namespace HealthCareCenter.Service
 
         public static HealthRecord Find(Appointment appointment)
         {
+            if (HealthRecordRepository.Records == null)
+            {
+                HealthRecordRepository.Load();
+            }
+
             foreach (HealthRecord record in HealthRecordRepository.Records)
             {
                 if (appointment.HealthRecordID == record.ID)

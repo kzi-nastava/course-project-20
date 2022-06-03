@@ -8,7 +8,19 @@ namespace HealthCareCenter.Model
 {
     public static class PrescriptionRepository
     {
-        public static List<Prescription> Prescriptions { get; set; }
+        private static List<Prescription> _prescriptions;
+        public static List<Prescription> Prescriptions
+        {
+            get
+            {
+                if (_prescriptions == null)
+                {
+                    Load();
+                }
+                return _prescriptions;
+            }
+            set => _prescriptions = value;
+        }
         public static List<MedicineInstruction> MedicineInstructions { get; set; }
         public static int LargestID { get; set; }
         public static List<Prescription> Load()
@@ -19,9 +31,9 @@ namespace HealthCareCenter.Model
             };
 
             string JSONTextPrescriptions = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\prescriptions.json");
-            Prescriptions = (List<Prescription>)JsonConvert.DeserializeObject<IEnumerable<Prescription>>(JSONTextPrescriptions, settings);
-            LargestID = Prescriptions.Count == 0 ? 0 :Prescriptions[^1].ID;
-            return Prescriptions;
+            _prescriptions = (List<Prescription>)JsonConvert.DeserializeObject<IEnumerable<Prescription>>(JSONTextPrescriptions, settings);
+            LargestID = _prescriptions.Count == 0 ? 0 :Prescriptions[^1].ID;
+            return _prescriptions;
         }
         public static void Save()
         {

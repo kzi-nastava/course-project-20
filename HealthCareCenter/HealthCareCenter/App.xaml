@@ -1,9 +1,19 @@
 ﻿<Application x:Class="HealthCareCenter.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:HealthCareCenter"
-             StartupUri="LoginWindow.xaml">
+             xmlns:local="clr-namespace:HealthCareCenter">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="./PatientGUI/Themes/DatePickerTheme.xaml" />
+                <ResourceDictionary Source="./PatientGUI/Themes/MenuItemTheme.xaml" />
+                <ResourceDictionary Source="./PatientGUI/Themes/ComboBoxTheme.xaml" />
+                <ResourceDictionary Source="./PatientGUI/Themes/TextBoxTheme.xaml" />
+                <ResourceDictionary Source="./PatientGUI/Themes/ButtonTheme.xaml" />
+                <ResourceDictionary Source="./PatientGUI/Themes/TableTheme.xaml" />
+                <ResourceDictionary Source="./PatientGUI/Themes/LabelTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+        
     </Application.Resources>
 </Application>

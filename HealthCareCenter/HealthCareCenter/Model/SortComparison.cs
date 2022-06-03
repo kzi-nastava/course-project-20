@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HealthCareCenter.PatientGUI.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -68,33 +69,33 @@ namespace HealthCareCenter.Model
 
     class DoctorFirstNameCompare : IComparer<Doctor>
     {
-        public int Compare(Doctor doc1, Doctor doc2)
+        public int Compare(Doctor d1, Doctor d2)
         {
-            return doc1.FirstName.CompareTo(doc2.FirstName);
+            return d1.FirstName.CompareTo(d2.FirstName);
         }
     }
 
     class DoctorLastNameCompare : IComparer<Doctor>
     {
-        public int Compare(Doctor doc1, Doctor doc2)
+        public int Compare(Doctor d1, Doctor d2)
         {
-            return doc1.LastName.CompareTo(doc2.LastName);
+            return d1.LastName.CompareTo(d2.LastName);
         }
     }
 
     class DoctorProfessionalAreaCompare : IComparer<Doctor>
     {
-        public int Compare(Doctor doc1, Doctor doc2)
+        public int Compare(Doctor d1, Doctor d2)
         {
-            return doc1.Type.CompareTo(doc2.Type);
+            return d1.Type.CompareTo(d2.Type);
         }
     }
 
-    class DoctorRatingsCompare : IComparer<Doctor>
+    class DoctorRatingCompare : IComparer<Doctor>
     {
-        public int Compare(Doctor doc1, Doctor doc2)
+        public int Compare(Doctor d1, Doctor d2)
         {
-            return doc1.GetAverageRating().CompareTo(doc2.GetAverageRating());
+            return d1.GetAverageRating().CompareTo(d2.GetAverageRating());
         }
     }
 }

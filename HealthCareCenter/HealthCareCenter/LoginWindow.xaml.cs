@@ -117,7 +117,14 @@ namespace HealthCareCenter
                     passwordBox.Clear();
                     return false;
                 }
-                ShowWindow(new PatientWindow(user));
+
+                PatientGUI.Stores.NavigationStore navStore = PatientGUI.Stores.NavigationStore.GetInstance();
+                navStore.CurrentViewModel = new PatientGUI.ViewModels.MyAppointmentsViewModel(navStore, patient);
+                PatientGUI.MainWindow win = new PatientGUI.MainWindow()
+                {
+                    DataContext = new PatientGUI.ViewModels.MainViewModel(navStore, patient)
+                };
+                ShowWindow(win);
             }
             else if (user.GetType() == typeof(Model.Secretary))
             {
