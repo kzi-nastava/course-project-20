@@ -9,9 +9,9 @@ namespace HealthCareCenter.Model
     internal class RenovationScheduleRepository
     {
         private const string _fileName = "renovationSchedules.json";
-        public static List<RenovationSchedule> Renovations = LoadRenovations();
+        public static List<RenovationSchedule> Renovations = Load();
 
-        private static List<RenovationSchedule> LoadRenovations()
+        private static List<RenovationSchedule> Load()
         {
             try
             {
@@ -31,7 +31,7 @@ namespace HealthCareCenter.Model
             }
         }
 
-        public static bool SaveRenovations(List<RenovationSchedule> rooms)
+        public static bool Save()
         {
             try
             {
@@ -40,7 +40,7 @@ namespace HealthCareCenter.Model
                 using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + _fileName))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
-                    serializer.Serialize(writer, rooms);
+                    serializer.Serialize(writer, Renovations);
                 }
                 return true;
             }

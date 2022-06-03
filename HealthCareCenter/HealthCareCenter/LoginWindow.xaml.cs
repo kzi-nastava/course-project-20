@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,21 +15,23 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using HealthCareCenter.Model;
-using HealthCareCenter.SecretaryGUI;
 using HealthCareCenter.DoctorServices;
 using HealthCareCenter.DoctorGUI;
 using HealthCareCenter.Service;
+using HealthCareCenter.Secretary;
 
 namespace HealthCareCenter
 {
     public partial class LoginWindow : Window
     {
+        private static BackgroundWorker _backgroundWorker = null;
+
         private void DoEquipmentRearrangements()
         {
             List<Equipment> equipments = EquipmentService.GetEquipments();
             for (int i = 0; i < equipments.Count; i++)
             {
-                equipments[i].Rearrange();
+                EquipmentRearrangementService.DoPossibleRearrangement(equipments[i]);
             }
         }
 
@@ -36,7 +40,7 @@ namespace HealthCareCenter
             List<RenovationSchedule> renovations = RenovationScheduleService.GetRenovations();
             for (int i = 0; i < renovations.Count; i++)
             {
-                renovations[i].FinishRenovation();
+                RenovationScheduleService.FinishRenovation(renovations[i]);
             }
         }
 
@@ -56,6 +60,33 @@ namespace HealthCareCenter
             }
 
             NotificationRepository.Load();
+            DynamicEquipmentRequestRepository.Load();
+            StartBackgroundWorkerIfNeeded();
+        }
+
+        private void StartBackgroundWorkerIfNeeded()
+        {
+            if (_backgroundWorker == null)
+            {
+                _backgroundWorker = new BackgroundWorker();
+                _backgroundWorker.DoWork += new DoWorkEventHandler(BackgroundWorker_DoWork);
+                _backgroundWorker.RunWorkerAsync(30 * Constants.Minute);
+            }
+        }
+
+        private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int timeBetweenWork = (int)e.Argument;
+            BackgroundWork(timeBetweenWork);
+        }
+
+        private void BackgroundWork(int timeBetweenWork)
+        {
+            while (true)
+            {
+                DynamicEquipmentService.FulfillRequestsIfNeeded();
+                Thread.Sleep(timeBetweenWork);
+            }
         }
 
         private void ShowWindow(Window window)
@@ -64,48 +95,56 @@ namespace HealthCareCenter
             Close();
         }
 
-        private void Login()
+
+        private bool Login(User user)
+        {
+            if (user.GetType() == typeof(Doctor))
+            {
+                DoctorWindowService doctorWindowService = new DoctorWindowService((Doctor)user);
+                Close();
+            }
+            else if (user.GetType() == typeof(Manager))
+            {
+                ShowWindow(new ChangeMedicineRequestWindow((Manager)user));
+            }
+            else if (user.GetType() == typeof(Patient))
+            {
+                Patient patient = (Patient)user;
+                if (patient.IsBlocked)
+                {
+                    MessageBox.Show("This user is blocked");
+                    usernameTextBox.Clear();
+                    passwordBox.Clear();
+                    return false;
+                }
+                ShowWindow(new PatientWindow(user));
+            }
+            else if (user.GetType() == typeof(Model.Secretary))
+            {
+                ShowWindow(new SecretaryWindow(user));
+            }
+            return true;
+        }
+
+        private void TryLogin()
         {
             bool foundUser = false;
             foreach (User user in UserRepository.Users)
             {
-                if (user.Username == usernameTextBox.Text)
+                if (user.Username != usernameTextBox.Text)
                 {
-                    foundUser = true;
-                    if (user.Password == passwordBox.Password)
-                    {
-                        if (user.GetType() == typeof(Doctor))
-                        {
-                            DoctorWindowService doctorWindowService = new DoctorWindowService((Doctor)user);
-                            Close();
-                        }
-                        else if (user.GetType() == typeof(Manager))
-                        {
-                            ShowWindow(new CrudHospitalRoomWindow((Manager)user));
-                        }
-                        else if (user.GetType() == typeof(Patient))
-                        {
-                            Patient patient = (Patient)user;
-                            if (patient.IsBlocked)
-                            {
-                                MessageBox.Show("This user is blocked");
-                                usernameTextBox.Clear();
-                                passwordBox.Clear();
-                                return;
-                            }
-                            ShowWindow(new PatientWindow(user));
-                        }
-                        else if (user.GetType() == typeof(Secretary))
-                        {
-                            ShowWindow(new SecretaryWindow(user));
-                        }
-                    }
-                    else
-                    {
-                        passwordBox.Clear();
-
-                        MessageBox.Show("Invalid password.");
-                    }
+                    continue;
+                }
+                foundUser = true;
+                if (user.Password == passwordBox.Password)
+                {
+                    if (!Login(user))
+                        return;
+                }
+                else
+                {
+                    passwordBox.Clear();
+                    MessageBox.Show("Invalid password.");
                 }
             }
             if (!foundUser)
@@ -113,17 +152,16 @@ namespace HealthCareCenter
                 MessageBox.Show("Invalid username.");
             }
         }
-
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            Login();
+            TryLogin();
         }
 
         private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                Login();
+                TryLogin();
             }
         }
     }

@@ -48,6 +48,7 @@ namespace HealthCareCenter.DoctorGUI
             MedicineInstructionRepository.Load();
             ReferralRepository.Load();
             MedicineCreationRequestRepository.Load();
+            HospitalRoomRepository.Load();
             InitializeComponent();
 
             DisplayNotifications();
@@ -429,7 +430,7 @@ namespace HealthCareCenter.DoctorGUI
             MedicineInstructionRepository.Save();
             ReferralRepository.Save();
             MedicineCreationRequestRepository.Save();
-            HospitalRoomRepository.SaveRooms(HospitalRoomRepository.Rooms);
+            HospitalRoomRepository.Save();
             LogOut();
         }
 

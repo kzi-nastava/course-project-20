@@ -173,7 +173,7 @@ namespace HealthCareCenter.DoctorServices
             if (id == -1 || appointmentIndex == -1)
                 return false;
             Patient patient = PatientService.FindPatient(id);
-            HealthRecord healthRecord = HealthRecordService.FindRecord(patient);
+            HealthRecord healthRecord = HealthRecordService.Find(patient);
             if (patient == null || healthRecord == null)
                 return false;
             healthRecordIndex = PatientService.FindPatientIndex(id);

@@ -35,9 +35,9 @@ namespace HealthCareCenter
             }
 
             int parsedRoomId = Convert.ToInt32(roomId);
-            Room room = RoomService.GetRoom(parsedRoomId);
+            Room room = RoomService.Get(parsedRoomId);
 
-            if (room.IsStorage())
+            if (RoomService.IsStorage(room))
             {
                 MessageBox.Show($"You have entered id of storage");
                 return false;
@@ -49,19 +49,19 @@ namespace HealthCareCenter
                 return false;
             }
 
-            if (hospitalRoom.ContainAnyEquipment())
+            if (RoomService.ContainAnyEquipment(hospitalRoom))
             {
                 MessageBox.Show($"Hospital room with {hospitalRoom.ID} Id contain equipment.");
                 return false;
             }
 
-            if (hospitalRoom.ContainsAnyAppointment())
+            if (HospitalRoomService.ContainsAnyAppointment(hospitalRoom))
             {
                 MessageBox.Show($"Hospital room with {hospitalRoom.ID} Id contain apointments.");
                 return false;
             }
 
-            if (hospitalRoom.IsCurrentlyRenovating())
+            if (HospitalRoomService.IsCurrentlyRenovating(hospitalRoom))
             {
                 MessageBox.Show($"Hospital room with {hospitalRoom.ID} Id is renovating.");
                 return false;
@@ -85,8 +85,8 @@ namespace HealthCareCenter
                 return false;
             }
 
-            Room room = RoomService.GetRoom(parsedRoomId);
-            if (room.IsStorage())
+            Room room = RoomService.Get(parsedRoomId);
+            if (RoomService.IsStorage(room))
             {
                 MessageBox.Show($"You have entered id of storage");
                 return false;
@@ -133,14 +133,14 @@ namespace HealthCareCenter
 
         private void DeleteHospitalRoom(HospitalRoom room)
         {
-            HospitalRoomService.DeleteRoom(room);
+            HospitalRoomService.Delete(room);
             FillDataGridHospitalRooms();
             SetAllTextBoxesToBeBlank();
         }
 
         private void CreateNewHospitalRoom(HospitalRoom room)
         {
-            HospitalRoomService.AddRoom(room);
+            HospitalRoomService.Add(room);
             DataGridHospitalRooms.Items.Add(room);
             SetAllTextBoxesToBeBlank();
         }
@@ -149,7 +149,7 @@ namespace HealthCareCenter
         {
             room.Name = newRoomName;
             room.Type = newType;
-            RoomService.UpdateRoom(room);
+            RoomService.Update(room);
             FillDataGridHospitalRooms();
             SetAllTextBoxesToBeBlank();
         }
@@ -166,6 +166,7 @@ namespace HealthCareCenter
         {
             Enums.RoomType type = (Enums.RoomType)Enum.Parse(typeof(Enums.RoomType), RoomTypeComboBox.Text);
             string roomName = HospitalRoomNameTextBox.Text;
+
             if (!IsHospitalRoomNameInputValide(roomName))
             {
                 MessageBox.Show("You must enter room name");
@@ -180,12 +181,10 @@ namespace HealthCareCenter
 
         {
             string roomId = HospitalRoomIdTextBox.Text;
-            if (!IsPossibleToDeleteHospitalRoom(roomId))
-            {
-                return;
-            }
+            if (!IsPossibleToDeleteHospitalRoom(roomId)) { return; }
+
             int parsedRoomId = Convert.ToInt32(roomId);
-            HospitalRoom hospitalRoom = HospitalRoomService.GetRoom(parsedRoomId);
+            HospitalRoom hospitalRoom = HospitalRoomService.Get(parsedRoomId);
 
             DeleteHospitalRoom(hospitalRoom);
         }
@@ -195,13 +194,10 @@ namespace HealthCareCenter
             Enums.RoomType newType = (Enums.RoomType)Enum.Parse(typeof(Enums.RoomType), RoomTypeComboBox.Text);
             string newRoomName = HospitalRoomNameTextBox.Text;
             string roomId = HospitalRoomIdTextBox.Text;
-            if (!IsPossibleRoomToUpdate(newRoomName, roomId))
-            {
-                return;
-            }
+            if (!IsPossibleRoomToUpdate(newRoomName, roomId)) { return; }
 
             int parsedRoomId = Convert.ToInt32(roomId);
-            HospitalRoom hospitalRoom = HospitalRoomService.GetRoom(parsedRoomId);
+            HospitalRoom hospitalRoom = HospitalRoomService.Get(parsedRoomId);
             UpdateHospitalRoom(hospitalRoom, newRoomName, newType);
         }
 
@@ -239,6 +235,16 @@ namespace HealthCareCenter
         private void ComplexRenovationSplitItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager));
+        }
+
+        private void CreateMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new MedicineCreationWindow(_signedManager));
+        }
+
+        private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new ChangeMedicineRequestWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

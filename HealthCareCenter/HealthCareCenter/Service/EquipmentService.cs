@@ -13,7 +13,7 @@ namespace HealthCareCenter.Service
         /// <param name="id">id of wanted equipment</param>
         /// <returns>Equipment with specific id, if equipment is found, or null if equipment is not found.</returns>
         /// <exception cref="EquipmentNotFound">Thrown when equipment with specific id is not found.</exception>
-        public static Equipment GetEquipment(int id)
+        public static Equipment Get(int id)
         {
             try
             {
@@ -51,10 +51,10 @@ namespace HealthCareCenter.Service
         /// Add new equipment in file equipments.json.
         /// </summary>
         /// <param name="newEquipment"></param>
-        public static void AddEquipment(Equipment newEquipment)
+        public static void Add(Equipment newEquipment)
         {
             EquipmentRepository.Equipments.Add(newEquipment);
-            EquipmentRepository.SaveEquipments(EquipmentRepository.Equipments);
+            EquipmentRepository.Save();
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace HealthCareCenter.Service
         /// <param name="id">id of the equipment we want to delete.</param>
         /// <returns>true if equipment is deleted or false if it's not.</returns>
         /// <exception cref="EquipmentNotFound">Thrown when equipment with specific id is not found.</exception>
-        public static bool DeleteEquipment(int id)
+        public static bool Delete(int id)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace HealthCareCenter.Service
                     if (id == EquipmentRepository.Equipments[i].ID)
                     {
                         EquipmentRepository.Equipments.RemoveAt(i);
-                        EquipmentRepository.SaveEquipments(EquipmentRepository.Equipments);
+                        EquipmentRepository.Save();
                         return true;
                     }
                 }
@@ -118,7 +118,7 @@ namespace HealthCareCenter.Service
         /// <param name="equipment">equipment we want to delete</param>
         /// <returns>true if equipment is deleted or false if it's not</returns>
         /// <exception cref="EquipmentNotFound">Thrown when equipment with specific id is not found</exception>
-        public static bool DeleteEquipment(Equipment equipment)
+        public static bool Delete(Equipment equipment)
         {
             try
             {
@@ -127,7 +127,7 @@ namespace HealthCareCenter.Service
                     if (equipment.ID == EquipmentRepository.Equipments[i].ID)
                     {
                         EquipmentRepository.Equipments.RemoveAt(i);
-                        EquipmentRepository.SaveEquipments(EquipmentRepository.Equipments);
+                        EquipmentRepository.Save();
                         return true;
                     }
                 }
@@ -150,7 +150,7 @@ namespace HealthCareCenter.Service
         /// <param name="equipment"></param>
         /// <returns>true if equipment is found or false if it's not.</returns>
         /// <exception cref="EquipmentNotFound">Thrown when equipment is not found.</exception>
-        public static bool UpdateEquipment(Equipment equipment)
+        public static bool Update(Equipment equipment)
         {
             try
             {
@@ -159,7 +159,7 @@ namespace HealthCareCenter.Service
                     if (equipment.ID == EquipmentRepository.Equipments[i].ID)
                     {
                         EquipmentRepository.Equipments[i] = equipment;
-                        EquipmentRepository.SaveEquipments(EquipmentRepository.Equipments);
+                        EquipmentRepository.Save();
                         return true;
                     }
                 }
@@ -174,6 +174,11 @@ namespace HealthCareCenter.Service
             {
                 throw ex;
             }
+        }
+
+        public static bool HasScheduledRearrangement(Equipment equipment)
+        {
+            return equipment.RearrangementID != -1;
         }
     }
 }

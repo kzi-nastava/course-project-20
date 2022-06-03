@@ -37,7 +37,7 @@ namespace HealthCareCenter.DoctorServices
         public void AcceptRequestState()
         {
             int medicineCreationRequestID = TableService.GetRowItemID(window.medicineCreationRequestDataGrid, "Id");
-            MedicineCreationRequest selectedRequest = MedicineCreationRequestService.getMedicineCreationRequest(medicineCreationRequestID);
+            MedicineCreationRequest selectedRequest = MedicineCreationRequestService.GetMedicineCreationRequest(medicineCreationRequestID);
             selectedRequest.State = RequestState.Approved;
             FillMedicineRequestsTable();
         }
@@ -53,7 +53,7 @@ namespace HealthCareCenter.DoctorServices
             int medicineCreationRequestID = TableService.GetRowItemID(window.medicineCreationRequestDataGrid, "Id");
             if (medicineCreationRequestID == -1)
                 return false;
-            MedicineCreationRequest selectedRequest = MedicineCreationRequestService.getMedicineCreationRequest(medicineCreationRequestID);
+            MedicineCreationRequest selectedRequest = MedicineCreationRequestService.GetMedicineCreationRequest(medicineCreationRequestID);
             selectedRequest.State = RequestState.Denied;
             selectedRequest.DenyComment = denyMessage;
             FillMedicineRequestsTable();
@@ -64,7 +64,7 @@ namespace HealthCareCenter.DoctorServices
         public void ParseIngredients()
         {
             int medicineCreationRequestID = TableService.GetRowItemID(window.medicineCreationRequestDataGrid, "Id");
-            MedicineCreationRequest request = MedicineCreationRequestService.getMedicineCreationRequest(medicineCreationRequestID);
+            MedicineCreationRequest request = MedicineCreationRequestService.GetMedicineCreationRequest(medicineCreationRequestID);
             string ingredients = MedicineCreationRequestService.GetIngredients(request);
             window.ingredientsTextBlock.Text = ingredients;
         }

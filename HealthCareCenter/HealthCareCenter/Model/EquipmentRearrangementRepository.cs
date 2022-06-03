@@ -9,13 +9,13 @@ namespace HealthCareCenter.Model
     public class EquipmentRearrangementRepository
     {
         private const string _fileName = "equipmentRearrangement.json";
-        public static List<EquipmentRearrangement> Rearrangements = LoadRearrangments();
+        public static List<EquipmentRearrangement> Rearrangements = Load();
 
         /// <summary>
         /// Loads all rearrangements from file equipmentRearrangement.json.
         /// </summary>
         /// <returns>List of all rearrangements.</returns>
-        private static List<EquipmentRearrangement> LoadRearrangments()
+        private static List<EquipmentRearrangement> Load()
         {
             try
             {
@@ -40,7 +40,7 @@ namespace HealthCareCenter.Model
         /// </summary>
         /// <param name="rearrangements"></param>
         /// <returns>True if content override is ended successfully.</returns>
-        public static bool SaveRearrangements(List<EquipmentRearrangement> rearrangements)
+        public static bool Save()
         {
             try
             {
@@ -49,7 +49,7 @@ namespace HealthCareCenter.Model
                 using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + _fileName))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
-                    serializer.Serialize(writer, rearrangements);
+                    serializer.Serialize(writer, Rearrangements);
                 }
                 return true;
             }

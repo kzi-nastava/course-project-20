@@ -1,0 +1,58 @@
+﻿<Window x:Class="HealthCareCenter.MedicineCreationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HealthCareCenter"
+        mc:Ignorable="d"
+        Title="MedicineCreationWindow" Height="400" Width="650">
+    <Grid>
+
+        <Menu IsMainMenu="True">
+            <MenuItem Header="Hospital premises">
+                <MenuItem Header="CRUD hospital rooms" Click="CrudHospitalRoomMenuItemClick"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Hospital equipment">
+                <MenuItem Header="Equipment review" Click="EquipmentReviewMenuItemClick"></MenuItem>
+                <MenuItem Header="Arranging equipment" Click="ArrangingEquipmentItemClick"></MenuItem>
+            </MenuItem>
+
+            <MenuItem Header="Renovation">
+                <MenuItem Header="Simple renovation" Click="SimpleRenovationItemClick"></MenuItem>
+                <MenuItem Header="Complex renovation - merge" Click="ComplexRenovationMergeItemClick"></MenuItem>
+                <MenuItem Header="Complex renovation - split" Click="ComplexRenovationSplitItemClick"></MenuItem>
+            </MenuItem>
+
+            <MenuItem Header="Medicine">
+                <MenuItem Header="Create medicine" Click="CreateMedicineClick"></MenuItem>
+                <MenuItem Header="Change reffused medicine - merge" Click="ReffusedMedicineClick"></MenuItem>
+            </MenuItem>
+
+            <MenuItem Header="Log off" Click="LogOffItemClick"></MenuItem>
+        </Menu>
+
+        <DataGrid x:Name="DataGridIngredient" Margin="370,39,25,202" IsReadOnly="True">
+
+            <!-- Font Color / Style of Column Headings-->
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="FontWeight" Value="SemiBold"></Setter>
+                    <Setter Property="BorderThickness" Value="0,0,1,2"></Setter>
+                    <Setter Property="BorderBrush" Value="Black"></Setter>
+                </Style>
+            </DataGrid.Resources>
+        </DataGrid>
+
+        <Label Content="Name" HorizontalAlignment="Left" Margin="12,36,0,0" VerticalAlignment="Top" />
+        <TextBox x:Name="MedicineNameTextBox" HorizontalAlignment="Left" Margin="120,40,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+
+        <Label Content="Ingredient" HorizontalAlignment="Left" Margin="370,187,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.526,-0.653" />
+        <TextBox x:Name="IngredientTextBox" HorizontalAlignment="Left" Margin="440,192,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <Button x:Name="AddButton" Content="Add" HorizontalAlignment="Left" Margin="440,226,0,0" VerticalAlignment="Top" Width="45" Click="AddButton_Click" />
+        <Button x:Name="RemoveButton" Content="Remove" HorizontalAlignment="Left" Margin="500,226,0,0" VerticalAlignment="Top" Width="60" Click="RemoveButton_Click" />
+
+        <Button x:Name="CreateButton" Content="Create" HorizontalAlignment="Left" Margin="12,226,0,0" VerticalAlignment="Top" Width="71" Height="35" Click="CreateButton_Click" />
+        <Label Content="Manufacturer" HorizontalAlignment="Left" Margin="14,0,0,0" VerticalAlignment="Center" />
+        <TextBox x:Name="ManufacturerTextBox" HorizontalAlignment="Left" Margin="120,0,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Center" Width="120" />
+    </Grid>
+</Window>

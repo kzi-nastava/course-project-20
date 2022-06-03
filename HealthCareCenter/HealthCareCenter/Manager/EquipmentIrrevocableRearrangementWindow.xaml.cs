@@ -55,7 +55,7 @@ namespace HealthCareCenter
             _finishDate = finshDate;
             _room1 = room1;
             _room2 = room2;
-            _splitRoomEquipments = _splitRoom.GetAllEquipments();
+            _splitRoomEquipments = RoomService.GetAllEquipments(_splitRoom);
 
             InitializeComponent();
             FillNewRoomComboBox();
@@ -92,7 +92,7 @@ namespace HealthCareCenter
                 return false;
             }
             int parsedEquipmentId = Convert.ToInt32(equipmentId);
-            Equipment equipment = EquipmentService.GetEquipment(parsedEquipmentId);
+            Equipment equipment = EquipmentService.Get(parsedEquipmentId);
             if (!IsEquipmentFound(equipment))
             {
                 MessageBox.Show("Error, equipment not found!");
@@ -105,7 +105,19 @@ namespace HealthCareCenter
         {
             _splitRoomEquipments.Remove(equipment);
             EquipmentRearrangement rearrangement = new EquipmentRearrangement(equipment, _finishDate, roomId);
-            equipment.SetRearrangement(rearrangement);
+            EquipmentRearrangementService.Set(rearrangement, equipment);
+        }
+
+        private void DoIrrevocableRearrangement(string newRoom, Equipment equipment)
+        {
+            if (newRoom == _room1.Name)
+            {
+                SetIrrevocableRearrangement(equipment, _room1.ID);
+            }
+            else if (newRoom == _room2.Name)
+            {
+                SetIrrevocableRearrangement(equipment, _room2.ID);
+            }
         }
 
         private void TransferButton_Click(object sender, RoutedEventArgs e)
@@ -115,21 +127,10 @@ namespace HealthCareCenter
                 string equipmentId = EquipmentIdTextBox.Text;
                 string newRoom = NewRoomComboBox.Text;
 
-                if (!IsEquipmentValide(equipmentId))
-                {
-                    return;
-                }
+                if (!IsEquipmentValide(equipmentId)) { return; }
                 int parsedEquipmentId = Convert.ToInt32(equipmentId);
-                Equipment equipment = EquipmentService.GetEquipment(parsedEquipmentId);
-
-                if (newRoom == _room1.Name)
-                {
-                    SetIrrevocableRearrangement(equipment, _room1.ID);
-                }
-                else if (newRoom == _room2.Name)
-                {
-                    SetIrrevocableRearrangement(equipment, _room2.ID);
-                }
+                Equipment equipment = EquipmentService.Get(parsedEquipmentId);
+                DoIrrevocableRearrangement(newRoom, equipment);
             }
 
             if (!IsSplitRoomContainsEquipment())
@@ -139,10 +140,6 @@ namespace HealthCareCenter
             }
 
             FillDataGridEquipment();
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
         }
     }
 }

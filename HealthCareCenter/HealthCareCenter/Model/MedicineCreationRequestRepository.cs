@@ -8,7 +8,7 @@ namespace HealthCareCenter.Model
 {
     public class MedicineCreationRequestRepository
     {
-        public static List<MedicineCreationRequest> Requests{ get; set; }
+        public static List<MedicineCreationRequest> Requests = Load();
         public static int LargestID { get; set; }
 
         public static List<MedicineCreationRequest> Load()

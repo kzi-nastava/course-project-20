@@ -9,6 +9,19 @@ namespace HealthCareCenter.Model
     public static class HealthRecordRepository
     {
         public static List<HealthRecord> Records { get; set; }
+        public static int maxID = -1;
+
+        public static void CalculateMaxID()
+        {
+            maxID = -1;
+            foreach (HealthRecord record in Records)
+            {
+                if (record.ID > maxID)
+                {
+                    maxID = record.ID;
+                }
+            }
+        }
 
         public static void Load()
         {

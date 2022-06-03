@@ -7,7 +7,18 @@
       "Tree pollen"
     ],
     "Manufacturer": "Proizvodjac",
-    "DenyComment": "Wat is dis",
-    "State": 0
+    "State": 2,
+    "DenyComment": "Comment"
+  },
+  {
+    "ID": 1,
+    "Name": "dfgdg",
+    "Ingredients": [
+      "asd",
+      "fh"
+    ],
+    "Manufacturer": "dfgsdfg",
+    "State": 2,
+    "DenyComment": ""
   }
 ]

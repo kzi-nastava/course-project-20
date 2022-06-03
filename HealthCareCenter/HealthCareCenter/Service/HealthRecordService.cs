@@ -32,7 +32,7 @@ namespace HealthCareCenter.Service
             }
             return null;
         }
-        public static HealthRecord FindRecord(int ID)
+        public static HealthRecord Find(int ID)
         {
             foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
             {
@@ -43,7 +43,7 @@ namespace HealthCareCenter.Service
             }
             return null;
         }
-        public static HealthRecord FindRecord(Patient patient)
+        public static HealthRecord Find(Patient patient)
         {
             foreach (HealthRecord record in HealthRecordRepository.Records)
             {
@@ -55,7 +55,7 @@ namespace HealthCareCenter.Service
             return null;
         }
 
-        public static HealthRecord FindRecord(Appointment appointment)
+        public static HealthRecord Find(Appointment appointment)
         {
             foreach (HealthRecord record in HealthRecordRepository.Records)
             {
@@ -147,5 +147,21 @@ namespace HealthCareCenter.Service
             return "";
         }
         
+        public static void Delete(Patient patient)
+        {
+            foreach (HealthRecord record in HealthRecordRepository.Records)
+            {
+                if (patient.HealthRecordID != record.ID)
+                {
+                    continue;
+                }
+                HealthRecordRepository.Records.Remove(record);
+                if (patient.HealthRecordID == HealthRecordRepository.maxID)
+                {
+                    HealthRecordRepository.CalculateMaxID();
+                }
+                return;
+            }
+        }
     }
 }

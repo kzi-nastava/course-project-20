@@ -2,23 +2,12 @@
   {
     "ID": 1,
     "DoctorID": 1,
+    "MedicineInstructions": {
+      "0": 1
+    },
     "MedicineInstructionIDs": [
-      1,
-      2
-    ]
-  },
-  {
-    "ID": 2,
-    "DoctorID": 1,
-    "MedicineInstructionIDs": [
-      3
-    ]
-  },
-  {
-    "ID": 3,
-    "DoctorID": 1,
-    "MedicineInstructionIDs": [
-      4
-    ]
+      1
+    ],
+    "HealthRecordID": 1
   }
 ]

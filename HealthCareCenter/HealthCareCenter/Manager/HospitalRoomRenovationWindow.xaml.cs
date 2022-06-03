@@ -96,7 +96,7 @@ namespace HealthCareCenter
 
             int parsedHospitalRoomId = Convert.ToInt32(roomId);
 
-            HospitalRoom roomForRenovation = HospitalRoomService.GetRoom(parsedHospitalRoomId);
+            HospitalRoom roomForRenovation = HospitalRoomService.Get(parsedHospitalRoomId);
 
             if (!IsHospitalRoomFound(roomForRenovation))
             {
@@ -109,12 +109,12 @@ namespace HealthCareCenter
 
         private bool IsPossibleRenovation(HospitalRoom roomForRenovation)
         {
-            if (roomForRenovation.ContainsAnyAppointment())
+            if (HospitalRoomService.ContainsAnyAppointment(roomForRenovation))
             {
                 MessageBox.Show("Error, hospital room contains appointments!");
                 return false;
             }
-            if (roomForRenovation.ContaninsAnyRearrangement())
+            if (RoomService.ContaninsAnyRearrangement(roomForRenovation))
             {
                 MessageBox.Show("Error, hospital room contains rearrangements!");
                 return false;
@@ -149,10 +149,10 @@ namespace HealthCareCenter
             InitializeComponent();
             FillDataGridHospitalRooms();
             FillDataGridHospitalRoomsRenovation();
-            
+
             DisplayNotifications();
         }
-        
+
         private void DisplayNotifications()
         {
             List<Notification> notifications = NotificationService.FindUnopened(_signedManager);
@@ -167,32 +167,34 @@ namespace HealthCareCenter
             }
         }
 
+        private bool IsPossibleToScheduleRenovtion(string hospitalRoomForRenovationId, string startDate, string finishDate)
+        {
+            if (!IsHospitalRoomValide(hospitalRoomForRenovationId)) { return false; }
+            if (!IsDateValide(startDate, finishDate)) { return false; }
+
+            int parsedHospitalRoomForRenovationId = Convert.ToInt32(hospitalRoomForRenovationId);
+            HospitalRoom roomForRenovation = HospitalRoomService.Get(parsedHospitalRoomForRenovationId);
+            if (!IsPossibleRenovation(roomForRenovation)) { return false; }
+
+            return true;
+        }
+
         private void ScheduleRenovationButton_Click(object sender, RoutedEventArgs e)
         {
             string hospitalRoomForRenovationId = HospitalRoomIdTextBox.Text;
             string startDate = StartDatePicker.Text;
             string finishDate = EndDatePicker.Text;
 
-            if (!IsHospitalRoomValide(hospitalRoomForRenovationId))
-            {
-                return;
-            }
-            int parsedHospitalRoomForRenovationId = Convert.ToInt32(hospitalRoomForRenovationId);
-            HospitalRoom roomForRenovation = HospitalRoomService.GetRoom(parsedHospitalRoomForRenovationId);
+            if (!IsPossibleToScheduleRenovtion(hospitalRoomForRenovationId, startDate, finishDate)) { return; }
 
-            if (!IsDateValide(startDate, finishDate))
-            {
-                return;
-            }
+            int parsedHospitalRoomForRenovationId = Convert.ToInt32(hospitalRoomForRenovationId);
+            HospitalRoom roomForRenovation = HospitalRoomService.Get(parsedHospitalRoomForRenovationId);
+
             DateTime parsedStartDate = Convert.ToDateTime(startDate);
             DateTime parsedFinishDate = Convert.ToDateTime(finishDate);
 
-            if (!IsPossibleRenovation(roomForRenovation))
-            {
-                return;
-            }
             RenovationSchedule renovation = new RenovationSchedule(parsedStartDate, parsedFinishDate, roomForRenovation);
-            renovation.ScheduleSimpleRenovation(roomForRenovation);
+            RenovationScheduleService.ScheduleSimpleRenovation(renovation, roomForRenovation);
 
             FillDataGridHospitalRoomsRenovation();
             FillDataGridHospitalRooms();
@@ -232,6 +234,16 @@ namespace HealthCareCenter
         private void ComplexRenovationSplitItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager));
+        }
+
+        private void CreateMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new MedicineCreationWindow(_signedManager));
+        }
+
+        private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new ChangeMedicineRequestWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

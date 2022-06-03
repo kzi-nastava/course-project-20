@@ -38,7 +38,7 @@
     "HospitalRoomID": 3,
     "PatientAnamnesis": {
       "ID": 1,
-      "Comment": "This is comment"
+      "Comment": "This is comment, yea"
     }
   },
   {
@@ -74,7 +74,7 @@
     "HospitalRoomID": 1,
     "PatientAnamnesis": {
       "ID": 0,
-      "Comment": null
+      "Comment": "Comment, this is not"
     }
   },
   {
@@ -87,8 +87,8 @@
     "HealthRecordID": 2,
     "HospitalRoomID": 1,
     "PatientAnamnesis": {
-      "ID": 6,
-      "Comment": "This is going to be patients anamnesis"
+      "ID": 0,
+      "Comment": "Comment yes yes yes"
     }
   },
   {
@@ -98,25 +98,225 @@
     "CreatedDate": "01/06/2022 00:00",
     "Emergency": true,
     "DoctorID": 1,
-    "HealthRecordID": 2,
-    "HospitalRoomID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
     "PatientAnamnesis": {
       "ID": 0,
-      "Comment": null
+      "Comment": "No"
     }
   },
   {
     "ID": 10,
     "Type": 1,
-    "ScheduledDate": "06/07/2024 11:15",
-    "CreatedDate": "01/06/2022 00:00",
+    "ScheduledDate": "20/05/2022 19:30",
+    "CreatedDate": "20/05/2022 17:51",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": {
+      "ID": 0,
+      "Comment": "You have 3 seconds to live"
+    }
+  },
+  {
+    "ID": 11,
+    "Type": 1,
+    "ScheduledDate": "20/05/2022 18:00",
+    "CreatedDate": "20/05/2022 17:51",
+    "Emergency": true,
+    "DoctorID": 5,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": {
+      "ID": 0,
+      "Comment": "Why are there so many appointments"
+    }
+  },
+  {
+    "ID": 12,
+    "Type": 1,
+    "ScheduledDate": "21/05/2022 10:30",
+    "CreatedDate": "20/05/2022 17:52",
+    "Emergency": false,
+    "DoctorID": 5,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 14,
+    "Type": 1,
+    "ScheduledDate": "21/05/2022 11:30",
+    "CreatedDate": "20/05/2022 17:54",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 15,
+    "Type": 1,
+    "ScheduledDate": "20/05/2022 18:15",
+    "CreatedDate": "20/05/2022 17:59",
     "Emergency": true,
     "DoctorID": 1,
     "HealthRecordID": 2,
-    "HospitalRoomID": 1,
+    "HospitalRoomID": 3,
     "PatientAnamnesis": {
-      "ID": 8,
-      "Comment": "Anamnesisasd"
+      "ID": 0,
+      "Comment": "Seriously!?"
     }
+  },
+  {
+    "ID": 16,
+    "Type": 1,
+    "ScheduledDate": "20/05/2022 20:00",
+    "CreatedDate": "20/05/2022 17:59",
+    "Emergency": true,
+    "DoctorID": 5,
+    "HealthRecordID": 2,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": {
+      "ID": 0,
+      "Comment": "Oh, come on!"
+    }
+  },
+  {
+    "ID": 17,
+    "Type": 1,
+    "ScheduledDate": "20/05/2022 18:45",
+    "CreatedDate": "20/05/2022 17:59",
+    "Emergency": true,
+    "DoctorID": 1,
+    "HealthRecordID": 2,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": {
+      "ID": 0,
+      "Comment": "This is getting dull..."
+    }
+  },
+  {
+    "ID": 18,
+    "Type": 1,
+    "ScheduledDate": "20/05/2022 19:00",
+    "CreatedDate": "20/05/2022 17:59",
+    "Emergency": true,
+    "DoctorID": 1,
+    "HealthRecordID": 2,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": {
+      "ID": 0,
+      "Comment": "..."
+    }
+  },
+  {
+    "ID": 19,
+    "Type": 1,
+    "ScheduledDate": "20/05/2022 19:15",
+    "CreatedDate": "20/05/2022 17:59",
+    "Emergency": true,
+    "DoctorID": 5,
+    "HealthRecordID": 2,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": {
+      "ID": 0,
+      "Comment": "Wow"
+    }
+  },
+  {
+    "ID": 22,
+    "Type": 1,
+    "ScheduledDate": "21/05/2022 14:00",
+    "CreatedDate": "20/05/2022 18:46",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": {
+      "ID": 0,
+      "Comment": "Robo Lenny"
+    }
+  },
+  {
+    "ID": 23,
+    "Type": 1,
+    "ScheduledDate": "20/05/2022 20:15",
+    "CreatedDate": "20/05/2022 18:46",
+    "Emergency": true,
+    "DoctorID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": {
+      "ID": 0,
+      "Comment": "I am hilarious and you will quote everything I say"
+    }
+  },
+  {
+    "ID": 27,
+    "Type": 1,
+    "ScheduledDate": "13/06/2022 09:30",
+    "CreatedDate": "22/05/2022 14:16",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 2,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 28,
+    "Type": 1,
+    "ScheduledDate": "28/07/2022 10:15",
+    "CreatedDate": "22/05/2022 14:24",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 2,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 29,
+    "Type": 1,
+    "ScheduledDate": "13/06/2022 09:45",
+    "CreatedDate": "22/05/2022 14:25",
+    "Emergency": false,
+    "DoctorID": 5,
+    "HealthRecordID": 2,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 30,
+    "Type": 1,
+    "ScheduledDate": "07/11/2022 18:00",
+    "CreatedDate": "22/05/2022 19:24",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 31,
+    "Type": 1,
+    "ScheduledDate": "14/03/2023 09:30",
+    "CreatedDate": "22/05/2022 19:24",
+    "Emergency": false,
+    "DoctorID": 5,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 32,
+    "Type": 1,
+    "ScheduledDate": "07/06/2022 13:30",
+    "CreatedDate": "23/05/2022 20:10",
+    "Emergency": false,
+    "DoctorID": 5,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
   }
 ]

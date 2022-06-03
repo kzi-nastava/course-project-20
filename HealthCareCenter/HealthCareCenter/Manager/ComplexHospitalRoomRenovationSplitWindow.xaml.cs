@@ -62,6 +62,80 @@ namespace HealthCareCenter
             return value < 0;
         }
 
+        private bool IsDateValide(string startDate, string finishDate)
+        {
+            if (!IsDateInputValide(startDate))
+            {
+                MessageBox.Show("Error, bad input for start date");
+                return false;
+            }
+
+            if (!IsDateInputValide(finishDate))
+            {
+                MessageBox.Show("Error, bad input for finish date");
+                return false;
+            }
+
+            DateTime parsedStartDate = Convert.ToDateTime(startDate);
+            DateTime parsedFinishDate = Convert.ToDateTime(finishDate);
+            if (IsDateInputBeforeCurrentTime(parsedStartDate))
+            {
+                MessageBox.Show("Error, start date is before today");
+                return false;
+            }
+
+            if (IsDateInputBeforeCurrentTime(parsedFinishDate))
+            {
+                MessageBox.Show("Error, finish date is before today");
+                return false;
+            }
+
+            if (IsEndDateBeforeStartDate(parsedStartDate, parsedFinishDate))
+            {
+                MessageBox.Show("Error, finish date is before start date");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsSplitRoomValide(string splitRoomId)
+        {
+            if (!IsRoomIdInputValide(splitRoomId))
+            {
+                MessageBox.Show($"Error, bad input for room id!");
+                return false;
+            }
+
+            int parsedSplitRoomId = Convert.ToInt32(splitRoomId);
+            HospitalRoom splitRoom = HospitalRoomService.Get(parsedSplitRoomId);
+
+            if (!IsHospitalRoomFound(splitRoom))
+            {
+                MessageBox.Show($"Error, hospital room with id={parsedSplitRoomId} not found!");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsPossibleRenovation(HospitalRoom splitRoom)
+        {
+            if (HospitalRoomService.ContainsAnyAppointment(splitRoom))
+            {
+                MessageBox.Show($"Error, split room contains appointmnt!");
+                return false;
+            }
+
+            if (RoomService.ContaninsAnyRearrangement(splitRoom))
+            {
+                MessageBox.Show("Error, split room contains rearrngement");
+                return false;
+            }
+
+            return true;
+        }
+
         private void FillAllComboBoxes()
         {
             Room1TypeComboBox.Items.Add(new ComboBoxItem() { Content = Enums.RoomType.Checkup });
@@ -129,9 +203,9 @@ namespace HealthCareCenter
             {
                 if (renovation.RenovationType == Enums.RenovationType.Split)
                 {
-                    HospitalRoom room1 = HospitalRoomUnderConstructionService.GetRoom(renovation.Room1ID);
-                    HospitalRoom room2 = HospitalRoomUnderConstructionService.GetRoom(renovation.Room2ID);
-                    HospitalRoom splitRoom = HospitalRoomForRenovationService.GetRoom(renovation.MainRoomID);
+                    HospitalRoom room1 = HospitalRoomUnderConstructionService.Get(renovation.Room1ID);
+                    HospitalRoom room2 = HospitalRoomUnderConstructionService.Get(renovation.Room2ID);
+                    HospitalRoom splitRoom = HospitalRoomForRenovationService.Get(renovation.MainRoomID);
 
                     List<string> row = new List<string> {
                     room1.ID.ToString(),room1.Name,room1.Type.ToString(),
@@ -181,124 +255,58 @@ namespace HealthCareCenter
             ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager));
         }
 
+        private void CreateMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new MedicineCreationWindow(_signedManager));
+        }
+
+        private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new ChangeMedicineRequestWindow(_signedManager));
+        }
+
         private void LogOffItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new LoginWindow());
         }
 
-        private bool IsDateValide(string startDate, string finishDate)
+        private bool IsSplittingPossible(string splitRoomId, string room1Name, string room2Name, string startDate, string finishDate)
         {
-            if (!IsDateInputValide(startDate))
-            {
-                MessageBox.Show("Error, bad input for start date");
-                return false;
-            }
-
-            if (!IsDateInputValide(finishDate))
-            {
-                MessageBox.Show("Error, bad input for finish date");
-                return false;
-            }
-
-            DateTime parsedStartDate = Convert.ToDateTime(startDate);
-            DateTime parsedFinishDate = Convert.ToDateTime(finishDate);
-            if (IsDateInputBeforeCurrentTime(parsedStartDate))
-            {
-                MessageBox.Show("Error, start date is before today");
-                return false;
-            }
-
-            if (IsDateInputBeforeCurrentTime(parsedFinishDate))
-            {
-                MessageBox.Show("Error, finish date is before today");
-                return false;
-            }
-
-            if (IsEndDateBeforeStartDate(parsedStartDate, parsedFinishDate))
-            {
-                MessageBox.Show("Error, finish date is before start date");
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool IsSplitRoomValide(string splitRoomId)
-        {
-            if (!IsRoomIdInputValide(splitRoomId))
-            {
-                MessageBox.Show($"Error, bad input for room id!");
-                return false;
-            }
+            if (!IsSplitRoomValide(splitRoomId)) { return false; }
 
             int parsedSplitRoomId = Convert.ToInt32(splitRoomId);
-            HospitalRoom splitRoom = HospitalRoomService.GetRoom(parsedSplitRoomId);
-
-            if (!IsHospitalRoomFound(splitRoom))
+            HospitalRoom splitRoom = HospitalRoomService.Get(parsedSplitRoomId);
+            if (!IsPossibleRenovation(splitRoom)) { return false; }
+            if (!IsHospitalRoomNameInputValide(room1Name) || !IsHospitalRoomNameInputValide(room2Name))
             {
-                MessageBox.Show($"Error, hospital room with id={parsedSplitRoomId} not found!");
+                MessageBox.Show("Error, bad input for room name!");
                 return false;
             }
-
-            return true;
-        }
-
-        private bool IsPossibleRenovation(HospitalRoom splitRoom)
-        {
-            if (splitRoom.ContainsAnyAppointment())
-            {
-                MessageBox.Show($"Error, split room contains appointmnt!");
-                return false;
-            }
-
-            if (splitRoom.ContaninsAnyRearrangement())
-            {
-                MessageBox.Show("Error, split room contains rearrngement");
-                return false;
-            }
-
+            if (!IsDateValide(startDate, finishDate)) { return false; }
             return true;
         }
 
         private void SplitButton_Click(object sender, RoutedEventArgs e)
         {
             string splitRoomId = RoomIDTextBox.Text;
-
             string room1Name = Room1NameTextBox.Text;
             string room2Name = Room2NameTextBox.Text;
-
             string room1Type = Room1TypeComboBox.Text;
             string room2Type = Room2TypeComboBox.Text;
             Enum.TryParse(room1Type, out Enums.RoomType parsedRoom1Type);
             Enum.TryParse(room2Type, out Enums.RoomType parsedRoom2Type);
-
             string startDate = StartDatePicker.Text;
             string finishDate = FinishDatePicker.Text;
 
-            if (!IsSplitRoomValide(splitRoomId))
-            {
-                return;
-            }
-            int parsedSplitRoomId = Convert.ToInt32(splitRoomId);
-            HospitalRoom splitRoom = HospitalRoomService.GetRoom(parsedSplitRoomId);
-            if (!IsPossibleRenovation(splitRoom))
-            {
-                return;
-            }
+            if (!IsSplittingPossible(splitRoomId, room1Name, room2Name, startDate, finishDate)) { return; }
 
-            if (!IsHospitalRoomNameInputValide(room1Name) || !IsHospitalRoomNameInputValide(room2Name))
-            {
-                MessageBox.Show("Error, bad input for room name!");
-                return;
-            }
+            int parsedSplitRoomId = Convert.ToInt32(splitRoomId);
+            HospitalRoom splitRoom = HospitalRoomService.Get(parsedSplitRoomId);
+
             HospitalRoom newRoom1 = new HospitalRoom(parsedRoom1Type, room1Name);
             HospitalRoom newRoom2 = new HospitalRoom(parsedRoom2Type, room2Name);
             newRoom2.ID += 1;
 
-            if (!IsDateValide(startDate, finishDate))
-            {
-                return;
-            }
             DateTime parsedStartDate = Convert.ToDateTime(startDate);
             DateTime parsedFinishDate = Convert.ToDateTime(finishDate);
 
@@ -308,7 +316,8 @@ namespace HealthCareCenter
                 parsedStartDate, parsedFinishDate,
                 newRoom1, newRoom2, splitRoom,
                 Enums.RenovationType.Split);
-            splitRenovation.ScheduleSplitRenovation(newRoom1, newRoom2, splitRoom);
+
+            RenovationScheduleService.ScheduleSplitRenovation(splitRenovation, newRoom1, newRoom2, splitRoom);
             // ------------------------------
 
             FillDataGridHospitalRooms();

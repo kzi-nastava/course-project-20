@@ -117,7 +117,7 @@ namespace HealthCareCenter
             List<Equipment> equipments = EquipmentService.GetEquipments();
             foreach (Equipment equipment in equipments)
             {
-                if (!equipment.IsScheduledRearrangement())
+                if (!EquipmentService.HasScheduledRearrangement(equipment))
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
                     AddEmptyFieldsForEquipmentDisplay(ref equipmentAttributesToDisplay);
@@ -126,7 +126,7 @@ namespace HealthCareCenter
                 else
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
-                    EquipmentRearrangement rearrangement = EquipmentRearrangementService.GetRearrangement(equipment.RearrangementID);
+                    EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipment.RearrangementID);
                     equipmentAttributesToDisplay.Add(rearrangement.MoveTime.ToString(Constants.DateFormat));
                     equipmentAttributesToDisplay.Add(rearrangement.NewRoomID.ToString());
                     AddDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
@@ -178,7 +178,7 @@ namespace HealthCareCenter
             }
             else if (currentRoomId != "0")
             {
-                HospitalRoom room = (HospitalRoom)RoomService.GetRoom(Convert.ToInt32(currentRoomId));
+                HospitalRoom room = (HospitalRoom)RoomService.Get(Convert.ToInt32(currentRoomId));
                 if (roomType == room.Type.ToString())
                 {
                     return true;
@@ -224,40 +224,26 @@ namespace HealthCareCenter
                 return true;
             }
 
-            Room storage = StorageRepository.GetStorage();
+            Room storage = StorageRepository.Load();
 
             if (amount == "Out of stock")
             {
-                if (!storage.ContainsEquipment(equipmentName))
-                {
-                    return true;
-                }
+                if (!RoomService.ContainsEquipment(storage, equipmentName)) { return true; }
             }
 
             if (amount == "0-10")
             {
-                if (!storage.ContainsEquipment(equipmentName))
-                {
-                    return false;
-                }
+                if (!RoomService.ContainsEquipment(storage, equipmentName)) { return false; }
 
-                if (storage.GetEquipmentAmount(equipmentName) > 0 && storage.GetEquipmentAmount(equipmentName) < 10)
-                {
-                    return true;
-                }
+                if (RoomService.GetEquipmentAmount(storage, equipmentName) > 0 &&
+                    RoomService.GetEquipmentAmount(storage, equipmentName) < 10) { return true; }
             }
 
             if (amount == "10+")
             {
-                if (!storage.ContainsEquipment(equipmentName))
-                {
-                    return false;
-                }
+                if (!RoomService.ContainsEquipment(storage, equipmentName)) { return false; }
 
-                if (storage.GetEquipmentAmount(equipmentName) > 10)
-                {
-                    return true;
-                }
+                if (RoomService.GetEquipmentAmount(storage, equipmentName) > 10) { return true; }
             }
 
             return false;
@@ -291,7 +277,7 @@ namespace HealthCareCenter
 
             foreach (Equipment equipment in equipments)
             {
-                if (!equipment.IsScheduledRearrangement())
+                if (!EquipmentService.HasScheduledRearrangement(equipment))
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
                     AddEmptyFieldsForEquipmentDisplay(ref equipmentAttributesToDisplay);
@@ -300,7 +286,7 @@ namespace HealthCareCenter
                 else
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
-                    EquipmentRearrangement rearrangement = EquipmentRearrangementService.GetRearrangement(equipment.RearrangementID);
+                    EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipment.RearrangementID);
                     equipmentAttributesToDisplay.Add(rearrangement.MoveTime.ToString(Constants.DateFormat));
                     equipmentAttributesToDisplay.Add(rearrangement.NewRoomID.ToString());
                     FilterEquipment(equipmentAttributesToDisplay);
@@ -342,6 +328,16 @@ namespace HealthCareCenter
         private void ComplexRenovationSplitItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager));
+        }
+
+        private void CreateMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new MedicineCreationWindow(_signedManager));
+        }
+
+        private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new ChangeMedicineRequestWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

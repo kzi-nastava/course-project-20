@@ -1,0 +1,32 @@
+[
+  {
+    "ID": 0,
+    "StartDate": "28/05/2022",
+    "EndDate": "31/05/2022",
+    "RequestReason": "Vacation",
+    "DenialReason": "",
+    "Emergency": false,
+    "State": 1,
+    "DoctorID": 1
+  },
+  {
+    "ID": 1,
+    "StartDate": "20/06/2022",
+    "EndDate": "28/06/2022",
+    "RequestReason": "Vacation too",
+    "DenialReason": "No.",
+    "Emergency": false,
+    "State": 0,
+    "DoctorID": 5
+  },
+  {
+    "ID": 2,
+    "StartDate": "24/06/2022",
+    "EndDate": "30/06/2022",
+    "RequestReason": "Vacation as well",
+    "DenialReason": "",
+    "Emergency": false,
+    "State": 2,
+    "DoctorID": 1
+  }
+]

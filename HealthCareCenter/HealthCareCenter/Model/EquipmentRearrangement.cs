@@ -33,19 +33,5 @@ namespace HealthCareCenter.Model
             this.OldRoomID = oldRoomID;
             this.NewRoomID = newRoomID;
         }
-
-        public bool IsIrrevocable()
-        {
-            List<HospitalRoom> rooms = HospitalRoomUnderConstructionService.GetRooms();
-            foreach (HospitalRoom room in rooms)
-            {
-                if (room.ID == OldRoomID || room.ID == NewRoomID)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
     }
 }
