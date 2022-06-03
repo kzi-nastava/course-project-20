@@ -148,15 +148,15 @@ namespace HealthCareCenter
             return true;
         }
 
-        private bool IsPossibleRenovation(HospitalRoom room)
+        private bool IsPossibleRoomRenovation(HospitalRoom room)
         {
-            if (room.ContainsAnyAppointment())
+            if (HospitalRoomService.ContainsAnyAppointment(room))
             {
                 MessageBox.Show($"Error, room with id={room.ID} contains appointmnt!");
                 return false;
             }
 
-            if (room.ContaninsAnyRearrangement())
+            if (RoomService.ContainAnyEquipment(room))
             {
                 MessageBox.Show($"Error, room with id={room.ID} contains rearrangements!");
                 return false;
@@ -193,6 +193,65 @@ namespace HealthCareCenter
             FillNewRoomTypeComboBox();
         }
 
+        private bool WhetherRoomsAreSame(string room1Id, string room2Id)
+        {
+            if (room1Id == room2Id)
+            {
+                MessageBox.Show("Error, rooms have same id!");
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ValidateRooms(string room1Id, string room2Id, string newRoomName)
+        {
+            if (!IsHospitalRoomValide(room1Id)) { return false; }
+            if (!IsHospitalRoomValide(room2Id)) { return false; }
+            if (WhetherRoomsAreSame(room1Id, room2Id)) { return false; }
+            if (!IsHospitalRoomNameInputValide(newRoomName))
+            {
+                MessageBox.Show("Error, bad input for name of new hospital room!");
+                return false;
+            }
+            return true;
+        }
+
+        private bool IsPossibleRenovation(string room1Id, string room2Id)
+        {
+            int parsedRoom1Id = Convert.ToInt32(room1Id);
+            int parsedRoom2Id = Convert.ToInt32(room2Id);
+            HospitalRoom room1 = HospitalRoomService.Get(parsedRoom1Id);
+            HospitalRoom room2 = HospitalRoomService.Get(parsedRoom2Id);
+
+            if (!IsPossibleRoomRenovation(room1)) { return false; }
+            if (!IsPossibleRoomRenovation(room2)) { return false; }
+            return true;
+        }
+
+        private bool DateValidation(string renovationStartDate, string renovationFinishDate)
+        {
+            if (!IsDateValide(renovationStartDate)) { return false; }
+            if (!IsDateValide(renovationFinishDate)) { return false; }
+
+            DateTime parsedRenovationStartDate = Convert.ToDateTime(renovationStartDate);
+            DateTime parsedRenovationFinishDate = Convert.ToDateTime(renovationFinishDate);
+            if (IsFinishDateBeforeStartDate(parsedRenovationStartDate, parsedRenovationFinishDate))
+            {
+                MessageBox.Show("Error, finish date is before start date");
+                return false;
+            }
+            return true;
+        }
+
+        private bool IsPossibleMerge(string room1Id, string room2Id, string renovationStartDate, string renovationFinishDate, string newRoomName, string newRoomType)
+        {
+            if (!ValidateRooms(room1Id, room2Id, newRoomName)) { return false; }
+            if (!IsPossibleRenovation(room1Id, room2Id)) { return false; }
+            if (!DateValidation(renovationStartDate, renovationFinishDate)) { return false; }
+            return true;
+        }
+
         private void MergeButton_Click(object sender, RoutedEventArgs e)
         {
             string room1Id = Room1IDTextBox.Text;
@@ -202,61 +261,26 @@ namespace HealthCareCenter
             string newRoomName = NewRoomNameTextBox.Text;
             string newRoomType = NewRoomTypeComboBox.Text;
 
-            if (!IsHospitalRoomValide(room1Id))
-            {
-                return;
-            }
-            if (!IsHospitalRoomValide(room2Id))
-            {
-                return;
-            }
-            if (room1Id == room2Id)
-            {
-                MessageBox.Show("Error, rooms have same id!");
-                return;
-            }
+            if (!IsPossibleMerge(room1Id, room2Id, renovationStartDate, renovationFinishDate, newRoomName, newRoomType)) { return; }
+
             int parsedRoom1Id = Convert.ToInt32(room1Id);
             int parsedRoom2Id = Convert.ToInt32(room2Id);
             HospitalRoom room1 = HospitalRoomService.Get(parsedRoom1Id);
             HospitalRoom room2 = HospitalRoomService.Get(parsedRoom2Id);
 
-            if (!IsPossibleRenovation(room1))
-            {
-                return;
-            }
-            if (!IsPossibleRenovation(room2))
-            {
-                return;
-            }
-
-            if (!IsDateValide(renovationStartDate))
-            {
-                return;
-            }
-            if (!IsDateValide(renovationFinishDate))
-            {
-                return;
-            }
             DateTime parsedRenovationStartDate = Convert.ToDateTime(renovationStartDate);
             DateTime parsedRenovationFinishDate = Convert.ToDateTime(renovationFinishDate);
-            if (IsFinishDateBeforeStartDate(parsedRenovationStartDate, parsedRenovationFinishDate))
-            {
-                MessageBox.Show("Error, finish date is before start date");
-                return;
-            }
 
             Enum.TryParse(newRoomType, out Enums.RoomType parsedNewRoomType);
-            if (!IsHospitalRoomNameInputValide(newRoomName))
-            {
-                MessageBox.Show("Error, bad input for name of new hospital room!");
-                return;
-            }
             HospitalRoom newRoom = new HospitalRoom(parsedNewRoomType, newRoomName);
 
             // SetMergeRenovation
             // -----------------------------------------
-            RenovationSchedule mergeRenovation = new RenovationSchedule(parsedRenovationStartDate, parsedRenovationFinishDate, room1, room2, newRoom, Enums.RenovationType.Merge);
-            mergeRenovation.ScheduleMergeRenovation(room1, room2, newRoom);
+            RenovationSchedule mergeRenovation = new RenovationSchedule(
+                parsedRenovationStartDate, parsedRenovationFinishDate,
+                room1, room2, newRoom, Enums.RenovationType.Merge
+                );
+            RenovationScheduleService.ScheduleMergeRenovation(mergeRenovation, room1, room2, newRoom);
             // -----------------------------------------
 
             FillDataGridHospitalRooms();

@@ -1,11 +1,7 @@
-﻿using HealthCareCenter.Controller;
-using HealthCareCenter.Enums;
+﻿using HealthCareCenter.Service;
 using HealthCareCenter.Model;
-using HealthCareCenter.Service;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace HealthCareCenter.Secretary.Controllers
 {
@@ -16,9 +12,9 @@ namespace HealthCareCenter.Secretary.Controllers
             VacationRequestRepository.Load();
         }
 
-        public ObservableCollection<VacationRequestDisplay> Refresh()
+        public ObservableCollection<VacationRequestDisplay> Get()
         {
-            return VacationRequestService.Refresh();
+            return VacationRequestService.Get();
         }
 
         public ObservableCollection<VacationRequestDisplay> Accept(int id)

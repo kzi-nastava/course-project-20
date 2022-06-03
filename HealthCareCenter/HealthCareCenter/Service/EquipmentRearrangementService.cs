@@ -7,32 +7,25 @@ namespace HealthCareCenter.Service
 {
     public static class EquipmentRearrangementService
     {
-        /// <summary>
-        /// Return all equipment rearrangements loaded in list.
-        /// </summary>
-        /// <returns>Loaded list of equipment rearrangements.</returns>
+        private static bool IsDateTimeBeforeCurrentTime(DateTime rearrangementDate)
+        {
+            DateTime now = DateTime.Now;
+            int value = DateTime.Compare(rearrangementDate, now);
+            return value < 0;
+        }
+
         public static List<EquipmentRearrangement> GetRearrangements()
         {
             return EquipmentRearrangementRepository.Rearrangements;
         }
 
-        /// <summary>
-        /// Adding new rearrangement in file equipmentRearrangement.json.
-        /// </summary>
-        /// <param name="newRearrangement"></param>
-        public static void AddRearrangement(EquipmentRearrangement newRearrangement)
+        public static void Add(EquipmentRearrangement newRearrangement)
         {
             EquipmentRearrangementRepository.Rearrangements.Add(newRearrangement);
             EquipmentRearrangementRepository.Save();
         }
 
-        /// <summary>
-        /// Finding rearragement with specific id
-        /// </summary>
-        /// <param name="id">Id of wanted rearragement</param>
-        /// <returns>Equipment rearragement with specific id, if rearragement is found, or null if rearragement is not found</returns>
-        /// <exception cref="EquipmentRearrangementNotFound">Thrown when rearragement with specific id is not found</exception>
-        public static EquipmentRearrangement GetRearrangement(int id)
+        public static EquipmentRearrangement Get(int id)
         {
             try
             {
@@ -57,10 +50,6 @@ namespace HealthCareCenter.Service
             }
         }
 
-        /// <summary>
-        /// Finiding last (largest) id of equipment rearrangement.
-        /// </summary>
-        /// <returns>Last (largest) id of rearrangement</returns>
         public static int GetLargestID()
         {
             try
@@ -80,13 +69,7 @@ namespace HealthCareCenter.Service
             }
         }
 
-        /// <summary>
-        /// Deleting equipment rearrangement with specific id.
-        /// </summary>
-        /// <param name="id">Equipment  rearrangement id</param>
-        /// <returns>True if equipment rearrangement is deleted or false if is not</returns>
-        /// <exception cref="EquipmentRearrangementNotFound">Thrown when equipment rearrangement not found</exception>
-        public static bool DeleteRearrangement(int id)
+        public static bool Delete(int id)
         {
             try
             {
@@ -112,13 +95,7 @@ namespace HealthCareCenter.Service
             }
         }
 
-        /// <summary>
-        /// Updating equipment rearrangemnt.
-        /// </summary>
-        /// <param name="rearrangement"></param>
-        /// <returns>True if updating is performed or false if is not.</returns>
-        /// <exception cref="EquipmentRearrangementNotFound">Thrown when equipment is not found.</exception>
-        public static bool UpdateRearrangement(EquipmentRearrangement rearrangement)
+        public static bool Update(EquipmentRearrangement rearrangement)
         {
             try
             {
@@ -142,6 +119,111 @@ namespace HealthCareCenter.Service
             {
                 throw ex;
             }
+        }
+
+        public static void Remove(Equipment equipment)
+        {
+            Room currentRoom = RoomService.Get(equipment.CurrentRoomID);
+
+            if (EquipmentService.HasScheduledRearrangement(equipment))
+            {
+                // Get rearrangement
+                EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipment.RearrangementID);
+                Room newRoomOfRearrangement = RoomService.Get(equipment.CurrentRoomID);
+
+                // Romeve rearrangement id from list RearrangemetIDs of newRoomOfPreviusRearrangement and currenRoom
+                newRoomOfRearrangement.EquipmentRearrangementsIDs.Remove(rearrangement.ID);
+                currentRoom.EquipmentRearrangementsIDs.Remove(rearrangement.ID);
+
+                // Remove rearrangement from file
+                EquipmentRearrangementService.Delete(rearrangement.ID);
+
+                // Update rooms
+                //********************************************
+                RoomService.Update(newRoomOfRearrangement);
+                RoomService.Update(currentRoom);
+                //********************************************
+
+                // Rearrangement removed
+                equipment.RearrangementID = -1;
+                EquipmentService.Update(equipment);
+            }
+        }
+
+        public static void Set(EquipmentRearrangement rearrangement, Equipment equipment)
+        {
+            Room currentRoom = RoomService.Get(equipment.CurrentRoomID);
+            Room newRoomOfCurrentRearrangement = RoomService.Get(rearrangement.NewRoomID);
+
+            // Equipment already has rearrangemt
+            if (EquipmentService.HasScheduledRearrangement(equipment))
+            {
+                Remove(equipment);
+            }
+
+            equipment.RearrangementID = rearrangement.ID;
+
+            // Add new rearrangement id to list RearrangemetIDs of currenRoom and newRoomOfCurrentRearrangement
+            currentRoom.EquipmentRearrangementsIDs.Add(rearrangement.ID);
+            newRoomOfCurrentRearrangement.EquipmentRearrangementsIDs.Add(rearrangement.ID);
+
+            // Add new rearrangemnt to file
+            EquipmentRearrangementService.Add(rearrangement);
+
+            // Update Rooms
+            //********************************************
+            RoomService.Update(newRoomOfCurrentRearrangement);
+            RoomService.Update(currentRoom);
+            //********************************************
+
+            // Update equipment information
+            EquipmentService.Update(equipment);
+        }
+
+        public static void DoPossibleRearrangement(Equipment equipment)
+        {
+            if (EquipmentService.HasScheduledRearrangement(equipment))
+            {
+                EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipment.RearrangementID);
+
+                if (IsDateTimeBeforeCurrentTime(rearrangement.MoveTime))
+                {
+                    Room currentRoom = RoomService.Get(equipment.CurrentRoomID);
+                    Room newRoomOfRearrangement = RoomService.Get(rearrangement.NewRoomID);
+
+                    // update data about equipment number in rooms
+                    currentRoom.EquipmentAmounts[equipment.Name]--;
+
+                    if (newRoomOfRearrangement.EquipmentAmounts.ContainsKey(equipment.Name))
+                    {
+                        newRoomOfRearrangement.EquipmentAmounts[equipment.Name]++;
+                    }
+                    else
+                    {
+                        newRoomOfRearrangement.EquipmentAmounts.Add(equipment.Name, 1);
+                    }
+
+                    RoomService.Update(currentRoom);
+                    RoomService.Update(newRoomOfRearrangement);
+                    equipment.CurrentRoomID = rearrangement.NewRoomID;
+                    Remove(equipment);
+                    EquipmentService.Update(equipment);
+                }
+            }
+        }
+
+        public static bool IsIrrevocable(EquipmentRearrangement rearrangement)
+        {
+            List<HospitalRoom> rooms = HospitalRoomUnderConstructionService.GetRooms();
+            foreach (HospitalRoom room in rooms)
+            {
+                if (room.ID == rearrangement.OldRoomID || room.ID == rearrangement.NewRoomID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

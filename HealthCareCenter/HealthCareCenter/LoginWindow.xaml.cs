@@ -29,7 +29,7 @@ namespace HealthCareCenter
             List<Equipment> equipments = EquipmentService.GetEquipments();
             for (int i = 0; i < equipments.Count; i++)
             {
-                equipments[i].Rearrange();
+                EquipmentRearrangementService.DoPossibleRearrangement(equipments[i]);
             }
         }
 
@@ -38,7 +38,7 @@ namespace HealthCareCenter
             List<RenovationSchedule> renovations = RenovationScheduleService.GetRenovations();
             for (int i = 0; i < renovations.Count; i++)
             {
-                renovations[i].FinishRenovation();
+                RenovationScheduleService.FinishRenovation(renovations[i]);
             }
         }
 
@@ -82,7 +82,7 @@ namespace HealthCareCenter
         {
             while (true)
             {
-                DynamicEquipmentRequestService.FulfillRequestsIfNeeded();
+                DynamicEquipmentService.FulfillRequestsIfNeeded();
                 Thread.Sleep(timeBetweenWork);
             }
         }

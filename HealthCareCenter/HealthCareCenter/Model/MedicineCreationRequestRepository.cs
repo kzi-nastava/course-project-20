@@ -6,46 +6,38 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    internal class MedicineCreationRequestRepository
+    public class MedicineCreationRequestRepository
     {
-        private const string _fileName = "medicineCreationRequests.json";
-        public static List<Medicine> Medicines = Load();
+        public static List<MedicineCreationRequest> Requests = Load();
+        public static int LargestID { get; set; }
 
-        private static List<Medicine> Load()
+        public static List<MedicineCreationRequest> Load()
         {
-            try
+            var settings = new JsonSerializerSettings
             {
-                List<Medicine> medicines = new List<Medicine>();
-                var settings = new JsonSerializerSettings
-                {
-                    DateFormatString = Constants.DateFormat
-                };
+                DateFormatString = Constants.DateTimeFormat
+            };
 
-                string JSONTextMedicine = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\" + _fileName);
-                medicines = (List<Medicine>)JsonConvert.DeserializeObject<IEnumerable<Medicine>>(JSONTextMedicine, settings);
-                return medicines;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            string JSONTextAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\medicineCreationRequests.json");
+            Requests = (List<MedicineCreationRequest>)JsonConvert.DeserializeObject<IEnumerable<MedicineCreationRequest>>(JSONTextAppointments, settings);
+            LargestID = Requests.Count == 0 ? 0 : Requests[^1].ID;
+            return Requests;
         }
 
-        public static bool Save()
+        public static void Save()
         {
             try
             {
                 JsonSerializer serializer = new JsonSerializer
                 {
-                    Formatting = Formatting.Indented
+                    Formatting = Formatting.Indented,
+                    DateFormatString = Constants.DateTimeFormat
                 };
-
-                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + _fileName))
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\medicineCreationRequests.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
-                    serializer.Serialize(writer, Medicines);
+                    serializer.Serialize(writer, Requests);
                 }
-                return true;
             }
             catch (Exception ex)
             {

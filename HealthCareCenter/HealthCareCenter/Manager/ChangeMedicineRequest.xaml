@@ -52,12 +52,6 @@
         <Label Content="Name" HorizontalAlignment="Left" Margin="17,271,0,0" VerticalAlignment="Top" />
         <TextBox x:Name="MedicineNameTextBox" HorizontalAlignment="Left" Margin="125,275,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
 
-        <Label Content="Creation Date" HorizontalAlignment="Left" Margin="17,322,0,0" VerticalAlignment="Top" />
-        <DatePicker x:Name="CreationDatePicker" HorizontalAlignment="Left" Margin="125,323,0,0" VerticalAlignment="Top" Width="120" />
-
-        <Label Content="Expiration Date" HorizontalAlignment="Left" Margin="17,366,0,0" VerticalAlignment="Top" />
-        <DatePicker x:Name="ExpirationDatePicker" HorizontalAlignment="Left" Margin="125,367,0,0" VerticalAlignment="Top" Width="120" />
-
         <Label Content="Ingredient" HorizontalAlignment="Left" Margin="300,451,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.526,-0.653" />
         <TextBox x:Name="IngredientTextBox" HorizontalAlignment="Left" Margin="370,456,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
         <Button x:Name="AddButton" Content="Add" HorizontalAlignment="Left" Margin="370,490,0,0" VerticalAlignment="Top" Width="45" Click="AddButton_Click" />

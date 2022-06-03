@@ -7,27 +7,8 @@ namespace HealthCareCenter.Service
 {
     public static class HealthRecordService
     {
-        public static int maxID = -1;
-
-        public static void CalculateMaxID()
-        {
-            maxID = -1;
-            foreach (HealthRecord record in HealthRecordRepository.Records)
-            {
-                if (record.ID > maxID)
-                {
-                    maxID = record.ID;
-                }
-            }
-        }
-
         public static HealthRecord Find(Patient patient)
         {
-            if (HealthRecordRepository.Records == null)
-            {
-                HealthRecordRepository.Load();
-            }
-
             foreach (HealthRecord record in HealthRecordRepository.Records)
             {
                 if (patient.HealthRecordID == record.ID)
@@ -40,6 +21,11 @@ namespace HealthCareCenter.Service
 
         public static HealthRecord Find(Appointment appointment)
         {
+            if (HealthRecordRepository.Records == null)
+            {
+                HealthRecordRepository.Load();
+            }
+
             foreach (HealthRecord record in HealthRecordRepository.Records)
             {
                 if (appointment.HealthRecordID == record.ID)
@@ -48,6 +34,23 @@ namespace HealthCareCenter.Service
                 }
             }
             return null;
+        }
+
+        public static void Delete(Patient patient)
+        {
+            foreach (HealthRecord record in HealthRecordRepository.Records)
+            {
+                if (patient.HealthRecordID != record.ID)
+                {
+                    continue;
+                }
+                HealthRecordRepository.Records.Remove(record);
+                if (patient.HealthRecordID == HealthRecordRepository.maxID)
+                {
+                    HealthRecordRepository.CalculateMaxID();
+                }
+                return;
+            }
         }
     }
 }

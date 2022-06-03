@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using HealthCareCenter.Service;
+using HealthCareCenter.Secretary.Controllers;
 
 namespace HealthCareCenter.Secretary
 {
@@ -21,6 +22,7 @@ namespace HealthCareCenter.Secretary
     {
         private readonly Model.Secretary _secretary;
         private List<string> _request;
+        private readonly DynamicEquipmentRequestController _controller;
 
         public DynamicEquipmentRequestWindow()
         {
@@ -31,69 +33,41 @@ namespace HealthCareCenter.Secretary
         {
             _secretary = secretary;
             _request = new List<string>();
+            _controller = new DynamicEquipmentRequestController();
 
             InitializeComponent();
 
             Refresh();
-
-            DynamicEquipmentRequestService.CalculateMaxID();
         }
 
         private void Refresh()
         {
-            RefreshMissingEquipment();
+            missingEquipmentListBox.ItemsSource = _controller.GetMissingEquipment();
             allEquipmentComboBox.ItemsSource = Constants.DynamicEquipment;
             requestedEquipmentListBox.ItemsSource = _request;
         }
 
-        private void RefreshMissingEquipment()
-        {
-            Room storage = StorageRepository.Load();
-            List<string> missingEquipment = new List<string>(Constants.DynamicEquipment);
-            foreach (string equipment in storage.EquipmentAmounts.Keys)
-            {
-                if (storage.EquipmentAmounts[equipment] > 0)
-                {
-                    missingEquipment.Remove(equipment);
-                }
-            }
-            missingEquipmentListBox.ItemsSource = missingEquipment;
-        }
-
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!int.TryParse(quantityTextBox.Text, out int quantity) || quantity <= 0)
-            {
-                MessageBox.Show("Quantity must be a positive number.");
-                return;
-            }
             if (allEquipmentComboBox.SelectedItem == null)
             {
                 MessageBox.Show("You must select the dynamic equipment that you wish to add to the request.");
                 return;
             }
-            if (IsAlreadyAdded())
+
+            int quantity;
+            try
             {
-                MessageBox.Show("You cannot add equipment that you have already added.");
+                quantity = _controller.Add(allEquipmentComboBox.Text.Split(":")[0], quantityTextBox.Text, _request);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
                 return;
             }
 
             _request.Add(allEquipmentComboBox.Text + ": " + quantity);
             requestedEquipmentListBox.Items.Refresh();
-        }
-
-        private bool IsAlreadyAdded()
-        {
-            string selectedEquipment = allEquipmentComboBox.Text.Split(":")[0];
-            foreach (string equipmentWithQuantity in _request)
-            {
-                string equipment = equipmentWithQuantity.Split(":")[0];
-                if (selectedEquipment == equipment)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
@@ -110,14 +84,16 @@ namespace HealthCareCenter.Secretary
 
         private void SendRequestButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_request.Count == 0)
+            try
             {
-                MessageBox.Show("You must first add equipment to the request.");
+                _controller.Send(_request, _secretary);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
                 return;
             }
 
-            Dictionary<string, int> amountOfEquipment = GetAmountOfEquipment();
-            SendRequest(amountOfEquipment);
             Reset();
             MessageBox.Show("Successfully sent a request for acquisition of dynamic equipment.");
         }
@@ -128,28 +104,6 @@ namespace HealthCareCenter.Secretary
             quantityTextBox.Text = "";
             _request = new List<string>();
             requestedEquipmentListBox.ItemsSource = _request;
-        }
-
-        private void SendRequest(Dictionary<string, int> amountOfEquipment)
-        {
-            DynamicEquipmentRequest request = new DynamicEquipmentRequest(++DynamicEquipmentRequestService.maxID, false, _secretary.ID, DateTime.Now, amountOfEquipment);
-            DynamicEquipmentRequestRepository.Requests.Add(request);
-            DynamicEquipmentRequestRepository.Save();
-        }
-
-        private Dictionary<string, int> GetAmountOfEquipment()
-        {
-            Dictionary<string, int> amountOfEquipment = new Dictionary<string, int>();
-
-            foreach (string equipmentWithQuantity in _request)
-            {
-                var equipmentAndQuantity = equipmentWithQuantity.Split(":");
-                string equipment = equipmentAndQuantity[0];
-                int quantity = int.Parse(equipmentAndQuantity[1]);
-                amountOfEquipment.Add(equipment, quantity);
-            }
-
-            return amountOfEquipment;
         }
     }
 }

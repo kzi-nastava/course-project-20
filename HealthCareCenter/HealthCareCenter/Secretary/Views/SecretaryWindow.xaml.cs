@@ -1,18 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using HealthCareCenter.Model;
+using HealthCareCenter.Secretary.Controllers;
 using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Secretary
@@ -20,17 +10,25 @@ namespace HealthCareCenter.Secretary
     public partial class SecretaryWindow : Window
     {
         private readonly Model.Secretary _signedUser;
+        private readonly SecretaryController _controller;
+
         public SecretaryWindow(User user)
         {
             _signedUser = (Model.Secretary)user;
+            _controller = new SecretaryController();
+
             InitializeComponent();
             DisplayNotifications();
         }
 
         private void DisplayNotifications()
         {
-            List<Notification> notifications = NotificationService.FindUnopened(_signedUser);
-            if (notifications.Count == 0)
+            List<Notification> notifications;
+            try
+            {
+                notifications = _controller.GetNotifications(_signedUser);
+            }
+            catch (Exception)
             {
                 return;
             }
