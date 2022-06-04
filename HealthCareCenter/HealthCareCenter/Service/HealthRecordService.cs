@@ -7,20 +7,6 @@ namespace HealthCareCenter.Service
 {
     public static class HealthRecordService
     {
-        public static int maxID = -1;
-
-        public static void CalculateMaxID()
-        {
-            maxID = -1;
-            foreach (HealthRecord record in HealthRecordRepository.Records)
-            {
-                if (record.ID > maxID)
-                {
-                    maxID = record.ID;
-                }
-            }
-        }
-
         public static HealthRecord FindRecordByPatientID(int ID)
         {
             foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
@@ -32,17 +18,19 @@ namespace HealthCareCenter.Service
             }
             return null;
         }
-        public static HealthRecord Find(int ID)
+
+        public static HealthRecord Find(int id)
         {
             foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
             {
-                if (ID == healthRecord.ID)
+                if (id == healthRecord.ID)
                 {
                     return healthRecord;
                 }
             }
             return null;
         }
+
         public static HealthRecord Find(Patient patient)
         {
             foreach (HealthRecord record in HealthRecordRepository.Records)
@@ -71,12 +59,13 @@ namespace HealthCareCenter.Service
             }
             return null;
         }
-        public static string CheckAlergens(HealthRecord healthRecord)
+
+        public static string CheckAlergens(HealthRecord record)
         {
             string alergens = "";
-            if (healthRecord.Allergens != null)
+            if (record.Allergens != null)
             {
-                foreach (string s in healthRecord.Allergens)
+                foreach (string s in record.Allergens)
                 {
                     alergens += "," + s;
                 }
@@ -88,12 +77,12 @@ namespace HealthCareCenter.Service
                 return "none";
             }
         }
-        public static string CheckPreviousDiseases(HealthRecord healthRecord)
+        public static string CheckPreviousDiseases(HealthRecord record)
         {
             string previousDiseases = "";
-            if (healthRecord.PreviousDiseases != null)
+            if (record.PreviousDiseases != null)
             {
-                foreach (string s in healthRecord.PreviousDiseases)
+                foreach (string s in record.PreviousDiseases)
                 {
                     previousDiseases += "," + s;
                 }
@@ -106,20 +95,18 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static void UpdateHealthRecord(double height, double weight, string[] previousDiseases, string[] alergens, int healthRecordIndex)
+        public static void UpdateHealthRecord(double height, double weight, string[] previousDiseases, string[] allergens, int recordIndex)
         {
-            HealthRecord healthRecord = HealthRecordRepository.Records[healthRecordIndex];
+            HealthRecord healthRecord = HealthRecordRepository.Records[recordIndex];
             healthRecord.Height = height;
             healthRecord.Weight = weight;
             FillPreviousDiseases(previousDiseases, healthRecord);
-            FillAlergens(alergens, healthRecord);
-
-
+            FillAlergens(allergens, healthRecord);
         }
 
-        public static void FillPreviousDiseases(string[] previousDiseases, HealthRecord healthRecord)
+        public static void FillPreviousDiseases(string[] previousDiseases, HealthRecord record)
         {
-            healthRecord.PreviousDiseases.Clear();
+            record.PreviousDiseases.Clear();
             foreach (string disease in previousDiseases)
             {
                 if (string.IsNullOrWhiteSpace(disease))
@@ -127,12 +114,12 @@ namespace HealthCareCenter.Service
                     continue;
                 }
 
-                healthRecord.PreviousDiseases.Add(disease);
+                record.PreviousDiseases.Add(disease);
             }
         }
-        public static void FillAlergens(string[] allergens, HealthRecord healthRecord)
+        public static void FillAlergens(string[] allergens, HealthRecord record)
         {
-            healthRecord.Allergens.Clear();
+            record.Allergens.Clear();
             foreach (string allergen in allergens)
             {
                 if (string.IsNullOrWhiteSpace(allergen))
@@ -140,14 +127,14 @@ namespace HealthCareCenter.Service
                     continue;
                 }
 
-                healthRecord.Allergens.Add(allergen);
+                record.Allergens.Add(allergen);
             }
         }
 
-        public static string IsAllergicTo(Medicine medicine,HealthRecord healthRecord)
+        public static string IsAllergicTo(Medicine medicine, HealthRecord record)
         {
             foreach (string ingredient in medicine.Ingredients)
-                if (healthRecord.Allergens.Contains(ingredient))
+                if (record.Allergens.Contains(ingredient))
                     return ingredient;
             return "";
         }
