@@ -98,15 +98,35 @@ namespace HealthCareCenter.Service
                 }
                 if (room == null)
                 {
-                    throw new HospitalPremisesNotFound();
+                    return null;
                 }
 
                 return room;
             }
-            catch (HospitalPremisesNotFound ex)
+            catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                return null;
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Method return usable hospital room or storage
+        /// </summary>
+        public static Room GetUsableHospitalPremesisForEquipmentTransfer(int roomId)
+        {
+            try
+            {
+                Room room = null;
+                if (roomId == 0)
+                {
+                    room = StorageRepository.Load();
+                }
+                if (room == null)
+                {
+                    room = HospitalRoomService.Get(roomId);
+                }
+
+                return room;
             }
             catch (Exception ex)
             {
