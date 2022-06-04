@@ -325,12 +325,12 @@ namespace HealthCareCenter
 
         private void CreateMedicineClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new MedicineCreationWindow(_signedManager));
+            ShowWindow(new MedicineCreationRequestWindow(_signedManager));
         }
 
         private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ChangeMedicineRequestWindow(_signedManager));
+            ShowWindow(new ChangedMedicineCreationRequestWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

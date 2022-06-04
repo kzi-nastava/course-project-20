@@ -1,4 +1,5 @@
-﻿using HealthCareCenter.Model;
+﻿using HealthCareCenter.Controller;
+using HealthCareCenter.Model;
 using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;
@@ -10,94 +11,15 @@ namespace HealthCareCenter
     public partial class CrudHospitalRoomWindow : Window
     {
         private Manager _signedManager;
+        private CRUDHospitalRoomController _CRUDcontroler = new CRUDHospitalRoomController();
 
-        private bool IsHospitalRoomNameInputValide(string roomName)
+        public CrudHospitalRoomWindow(Manager manager)
         {
-            return roomName != "";
-        }
-
-        private bool IsHospitalRoomIdInputValide(string roomId)
-        {
-            return Int32.TryParse(roomId, out int _);
-        }
-
-        private bool IsHospitalRoomFound(HospitalRoom room)
-        {
-            return room != null;
-        }
-
-        private bool IsPossibleToDeleteHospitalRoom(string roomId)
-        {
-            if (!IsHospitalRoomIdInputValide(roomId))
-            {
-                MessageBox.Show("You must enter hospital room Id!");
-                return false;
-            }
-
-            int parsedRoomId = Convert.ToInt32(roomId);
-            Room room = RoomService.Get(parsedRoomId);
-
-            if (RoomService.IsStorage(room))
-            {
-                MessageBox.Show($"You have entered id of storage");
-                return false;
-            }
-            HospitalRoom hospitalRoom = (HospitalRoom)room;
-            if (!IsHospitalRoomFound(hospitalRoom))
-            {
-                MessageBox.Show($"Hospital room with {hospitalRoom.ID} Id it's not found!");
-                return false;
-            }
-
-            if (RoomService.ContainAnyEquipment(hospitalRoom))
-            {
-                MessageBox.Show($"Hospital room with {hospitalRoom.ID} Id contain equipment.");
-                return false;
-            }
-
-            if (HospitalRoomService.ContainsAnyAppointment(hospitalRoom))
-            {
-                MessageBox.Show($"Hospital room with {hospitalRoom.ID} Id contain apointments.");
-                return false;
-            }
-
-            if (HospitalRoomService.IsCurrentlyRenovating(hospitalRoom))
-            {
-                MessageBox.Show($"Hospital room with {hospitalRoom.ID} Id is renovating.");
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool IsPossibleRoomToUpdate(string newRoomName, string roomId)
-        {
-            if (!IsHospitalRoomIdInputValide(roomId))
-            {
-                MessageBox.Show("Bad input for hospital room Id");
-                return false;
-            }
-            int parsedRoomId = Convert.ToInt32(roomId);
-
-            if (!IsHospitalRoomNameInputValide(newRoomName))
-            {
-                MessageBox.Show("You must enter room name");
-                return false;
-            }
-
-            Room room = RoomService.Get(parsedRoomId);
-            if (RoomService.IsStorage(room))
-            {
-                MessageBox.Show($"You have entered id of storage");
-                return false;
-            }
-            HospitalRoom hospitalRoom = (HospitalRoom)room;
-            if (!IsHospitalRoomFound(hospitalRoom))
-            {
-                MessageBox.Show($"Hospital room with {parsedRoomId} id it's not found");
-                return false;
-            }
-            return true;
+            _signedManager = manager;
+            InitializeComponent();
+            FillRoomTypeComboBox();
+            FillDataGridHospitalRooms();
+            DisplayNotifications();
         }
 
         private void SetAllTextBoxesToBeBlank()
@@ -118,88 +40,78 @@ namespace HealthCareCenter
         private void FillDataGridHospitalRooms()
         {
             DataGridHospitalRooms.Items.Clear();
-            List<HospitalRoom> rooms = HospitalRoomService.GetRooms();
-            foreach (HospitalRoom room in rooms)
-            {
-                DataGridHospitalRooms.Items.Add(room);
-            }
-
-            rooms = HospitalRoomForRenovationService.GetRooms();
-            foreach (HospitalRoom room in rooms)
+            List<HospitalRoom> roomsForDisplay = _CRUDcontroler.GetRoomsToDisplay();
+            foreach (HospitalRoom room in roomsForDisplay)
             {
                 DataGridHospitalRooms.Items.Add(room);
             }
         }
 
-        private void DeleteHospitalRoom(HospitalRoom room)
+        private void UpdateInterfaceAfterDeleteOfHospitalRoom()
         {
-            HospitalRoomService.Delete(room);
             FillDataGridHospitalRooms();
             SetAllTextBoxesToBeBlank();
         }
 
-        private void CreateNewHospitalRoom(HospitalRoom room)
+        private void UpdateInterfaceAfterAddingHospitalRoom(HospitalRoom room)
         {
-            HospitalRoomService.Add(room);
             DataGridHospitalRooms.Items.Add(room);
             SetAllTextBoxesToBeBlank();
         }
 
-        private void UpdateHospitalRoom(HospitalRoom room, string newRoomName, Enums.RoomType newType)
+        private void UpdateInterfaceAfterUpdateOfHospitalRoom()
         {
-            room.Name = newRoomName;
-            room.Type = newType;
-            RoomService.Update(room);
             FillDataGridHospitalRooms();
             SetAllTextBoxesToBeBlank();
         }
 
-        public CrudHospitalRoomWindow(Manager manager)
-        {
-            _signedManager = manager;
-            InitializeComponent();
-            FillRoomTypeComboBox();
-            FillDataGridHospitalRooms();
-            DisplayNotifications();
-        }
-
         private void AddHospitalRoomButton_Click(object sender, RoutedEventArgs e)
         {
-            Enums.RoomType type = (Enums.RoomType)Enum.Parse(typeof(Enums.RoomType), RoomTypeComboBox.Text);
-            string roomName = HospitalRoomNameTextBox.Text;
-
-            if (!IsHospitalRoomNameInputValide(roomName))
+            try
             {
-                MessageBox.Show("You must enter room name");
-                return;
-            }
+                Enums.RoomType type = (Enums.RoomType)Enum.Parse(typeof(Enums.RoomType), RoomTypeComboBox.Text);
+                string roomName = HospitalRoomNameTextBox.Text;
 
-            HospitalRoom room = new HospitalRoom(type, roomName);
-            CreateNewHospitalRoom(room);
+                _CRUDcontroler.Create(type, roomName);
+                HospitalRoom room = new HospitalRoom(type, roomName);
+                UpdateInterfaceAfterAddingHospitalRoom(room);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void DeleteHospitalRoomButton_Click(object sender, RoutedEventArgs e)
 
         {
-            string roomId = HospitalRoomIdTextBox.Text;
-            if (!IsPossibleToDeleteHospitalRoom(roomId)) { return; }
-
-            int parsedRoomId = Convert.ToInt32(roomId);
-            HospitalRoom hospitalRoom = HospitalRoomService.Get(parsedRoomId);
-
-            DeleteHospitalRoom(hospitalRoom);
+            try
+            {
+                string roomId = HospitalRoomIdTextBox.Text;
+                _CRUDcontroler.Delete(roomId);
+                UpdateInterfaceAfterDeleteOfHospitalRoom();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void UpdateHospitalRoomButton_Click(object sender, RoutedEventArgs e)
         {
-            Enums.RoomType newType = (Enums.RoomType)Enum.Parse(typeof(Enums.RoomType), RoomTypeComboBox.Text);
-            string newRoomName = HospitalRoomNameTextBox.Text;
-            string roomId = HospitalRoomIdTextBox.Text;
-            if (!IsPossibleRoomToUpdate(newRoomName, roomId)) { return; }
+            try
+            {
+                Enums.RoomType newType = (Enums.RoomType)Enum.Parse(typeof(Enums.RoomType), RoomTypeComboBox.Text);
+                string newRoomName = HospitalRoomNameTextBox.Text;
+                string roomId = HospitalRoomIdTextBox.Text;
 
-            int parsedRoomId = Convert.ToInt32(roomId);
-            HospitalRoom hospitalRoom = HospitalRoomService.Get(parsedRoomId);
-            UpdateHospitalRoom(hospitalRoom, newRoomName, newType);
+                _CRUDcontroler.Update(newRoomName, newType, roomId);
+                UpdateInterfaceAfterUpdateOfHospitalRoom();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void ShowWindow(Window window)
@@ -240,12 +152,12 @@ namespace HealthCareCenter
 
         private void CreateMedicineClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new MedicineCreationWindow(_signedManager));
+            ShowWindow(new MedicineCreationRequestWindow(_signedManager));
         }
 
         private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ChangeMedicineRequestWindow(_signedManager));
+            ShowWindow(new ChangedMedicineCreationRequestWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)
