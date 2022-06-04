@@ -10,14 +10,15 @@ namespace HealthCareCenter.Model
     {
         public static List<Referral> Referrals { get; set; }
         public static int LargestID { get; set; }
+
         public static List<Referral> Load()
         {
-
             string JSONTextReferrals = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\referrals.json");
             Referrals = (List<Referral>)JsonConvert.DeserializeObject<IEnumerable<Referral>>(JSONTextReferrals);
             LargestID = Referrals.Count == 0 ? 0 : Referrals[^1].ID;
             return Referrals;
         }
+
         public static void Save()
         {
             try

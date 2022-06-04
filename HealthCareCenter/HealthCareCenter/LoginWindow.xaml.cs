@@ -15,8 +15,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using HealthCareCenter.Model;
-using HealthCareCenter.SecretaryGUI;
+using HealthCareCenter.DoctorServices;
+using HealthCareCenter.DoctorGUI;
 using HealthCareCenter.Service;
+using HealthCareCenter.Secretary;
 
 namespace HealthCareCenter
 {
@@ -82,7 +84,7 @@ namespace HealthCareCenter
         {
             while (true)
             {
-                DynamicEquipmentRequestService.FulfillRequestsIfNeeded();
+                DynamicEquipmentService.FulfillRequestsIfNeeded();
                 Thread.Sleep(timeBetweenWork);
             }
         }
@@ -93,11 +95,13 @@ namespace HealthCareCenter
             Close();
         }
 
+
         private bool Login(User user)
         {
             if (user.GetType() == typeof(Doctor))
             {
-                ShowWindow(new DoctorWindow(user));
+                DoctorWindowService doctorWindowService = new DoctorWindowService((Doctor)user);
+                Close();
             }
             else if (user.GetType() == typeof(Manager))
             {
@@ -113,9 +117,16 @@ namespace HealthCareCenter
                     passwordBox.Clear();
                     return false;
                 }
-                ShowWindow(new PatientWindow(user));
+
+                PatientGUI.Stores.NavigationStore navStore = PatientGUI.Stores.NavigationStore.GetInstance();
+                navStore.CurrentViewModel = new PatientGUI.ViewModels.MyAppointmentsViewModel(navStore, patient);
+                PatientGUI.MainWindow win = new PatientGUI.MainWindow()
+                {
+                    DataContext = new PatientGUI.ViewModels.MainViewModel(navStore, patient)
+                };
+                ShowWindow(win);
             }
-            else if (user.GetType() == typeof(Secretary))
+            else if (user.GetType() == typeof(Model.Secretary))
             {
                 ShowWindow(new SecretaryWindow(user));
             }
@@ -148,7 +159,6 @@ namespace HealthCareCenter
                 MessageBox.Show("Invalid username.");
             }
         }
-
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             TryLogin();

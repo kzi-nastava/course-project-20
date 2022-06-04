@@ -9,6 +9,19 @@ namespace HealthCareCenter.Model
     class NotificationRepository
     {
         public static List<Notification> Notifications { get; set; }
+        public static int maxID = -1;
+
+        public static void CalculateMaxID()
+        {
+            maxID = -1;
+            foreach (Notification notification in Notifications)
+            {
+                if (notification.ID > maxID)
+                {
+                    maxID = notification.ID;
+                }
+            }
+        }
 
         public static void Load()
         {

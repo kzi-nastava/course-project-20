@@ -5,7 +5,7 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    class Notification
+    public class Notification
     {
         public int ID { get; set; }
         public string Message { get; set; }
@@ -15,7 +15,7 @@ namespace HealthCareCenter.Model
         public Notification() { }
         public Notification(string message, int userID)
         {
-            ID = ++NotificationService.maxID;
+            ID = ++NotificationRepository.maxID;
             Message = message;
             Opened = false;
             UserID = userID;

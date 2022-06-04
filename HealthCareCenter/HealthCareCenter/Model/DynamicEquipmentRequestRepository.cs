@@ -9,6 +9,19 @@ namespace HealthCareCenter.Model
     public static class DynamicEquipmentRequestRepository
     {
         public static List<DynamicEquipmentRequest> Requests { get; set; }
+        public static int maxID = -1;
+
+        public static void CalculateMaxID()
+        {
+            maxID = -1;
+            foreach (DynamicEquipmentRequest request in Requests)
+            {
+                if (request.ID > maxID)
+                {
+                    maxID = request.ID;
+                }
+            }
+        }
 
         public static void Load()
         {

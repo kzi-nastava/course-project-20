@@ -8,14 +8,40 @@ namespace HealthCareCenter.Model
 {
     public static class HealthRecordRepository
     {
-        public static List<HealthRecord> Records { get; set; }
+        public static int maxID = -1;
+
+        public static void CalculateMaxID()
+        {
+            maxID = -1;
+            foreach (HealthRecord record in HealthRecordRepository.Records)
+            {
+                if (record.ID > maxID)
+                {
+                    maxID = record.ID;
+                }
+            }
+        }
+
+        private static List<HealthRecord> _records;
+        public static List<HealthRecord> Records
+        {
+            get
+            {
+                if (_records == null)
+                {
+                    Load();
+                }
+                return _records;
+            }
+            set => _records = value;
+        }
 
         public static void Load()
         {
             try
             {
                 string JSONTextHealthRecords = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\healthRecords.json");
-                Records = (List<HealthRecord>)JsonConvert.DeserializeObject<IEnumerable<HealthRecord>>(JSONTextHealthRecords);
+                _records = (List<HealthRecord>)JsonConvert.DeserializeObject<IEnumerable<HealthRecord>>(JSONTextHealthRecords);
             }
             catch (Exception ex)
             {

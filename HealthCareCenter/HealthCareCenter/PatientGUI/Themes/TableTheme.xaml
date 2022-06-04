@@ -1,0 +1,40 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style TargetType="{x:Type ListView}"
+           x:Key="TableTheme">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="BorderThickness" Value="3" />
+        <Setter Property="BorderBrush" Value="White" />
+    </Style>
+
+    <Style TargetType="{x:Type ListViewItem}"
+           x:Key="TableRowTheme">
+        <Style.Setters>
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontFamily" Value="Comic sans MS" />
+        </Style.Setters>
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Background" Value="#e9aeae" />
+                <Setter Property="Foreground" Value="White" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#e9aeae" />
+                <Setter Property="Foreground" Value="White" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="TableHeaderTheme" 
+           TargetType="{x:Type GridViewColumnHeader}">
+        <Style.Setters>
+            <Setter Property="Background" Value="#ce6565"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="Comic sans MS"/>
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="14" />
+        </Style.Setters>
+    </Style>
+
+</ResourceDictionary>

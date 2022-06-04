@@ -9,7 +9,18 @@ namespace HealthCareCenter.Model
 {
     class AppointmentRepository
     {
-        public static List<Appointment> Appointments { get; set; }
+        private static List<Appointment> _appointments;
+        public static List<Appointment> Appointments
+        {
+            get
+            {
+                if (_appointments == null)
+                {
+                    Load();
+                }
+                return _appointments;
+            }
+        }
         public static int LargestID { get; set; }
 
         public static List<Appointment> Load()
@@ -20,43 +31,9 @@ namespace HealthCareCenter.Model
             };
 
             string JSONTextAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\appointments.json");
-            Appointments = (List<Appointment>)JsonConvert.DeserializeObject<IEnumerable<Appointment>>(JSONTextAppointments, settings);
-            LargestID = Appointments.Count == 0 ? 0 : Appointments[^1].ID;
-            return Appointments;
-        }
-
-        public static List<Appointment> GetPatientUnfinishedAppointments(int patientHealthRecordID)
-        {
-            List<Appointment> unfinishedAppointments = new List<Appointment>();
-            foreach (Appointment potentialAppointment in Appointments)
-            {
-                if (potentialAppointment.HealthRecordID == patientHealthRecordID)
-                {
-                    if (potentialAppointment.ScheduledDate.CompareTo(DateTime.Now) > 0)
-                    {
-                        unfinishedAppointments.Add(potentialAppointment);
-                    }
-                }
-            }
-
-            return unfinishedAppointments;
-        }
-
-        public static List<Appointment> GetPatientFinishedAppointments(int patientHealthRecordID)
-        {
-            List<Appointment> finishedAppointments = new List<Appointment>();
-            foreach (Appointment potentialAppointment in Appointments)
-            {
-                if (potentialAppointment.HealthRecordID == patientHealthRecordID)
-                {
-                    if (potentialAppointment.ScheduledDate.CompareTo(DateTime.Now) < 0)
-                    {
-                        finishedAppointments.Add(potentialAppointment);
-                    }
-                }
-            }
-
-            return finishedAppointments;
+            _appointments = (List<Appointment>)JsonConvert.DeserializeObject<IEnumerable<Appointment>>(JSONTextAppointments, settings);
+            LargestID = _appointments.Count == 0 ? 0 : _appointments[^1].ID;
+            return _appointments;
         }
 
         public static void Save()
@@ -78,6 +55,20 @@ namespace HealthCareCenter.Model
             {
                 throw ex;
             }
+        }
+
+        public static int GetLargestID()
+        {
+            int largestID = -1;
+            foreach (Appointment appointment in Appointments)
+            {
+                if (appointment.ID > largestID)
+                {
+                    largestID = appointment.ID;
+                }
+            }
+
+            return largestID;
         }
     }
 }

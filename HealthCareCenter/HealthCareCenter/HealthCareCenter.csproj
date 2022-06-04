@@ -19,6 +19,16 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Qhta.DispatchedObjects" Version="1.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="DoctorServices\AddDeleteAppointmentService.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
+    <Compile Update="DoctorServices\HealthRecordWindowService.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
   </ItemGroup>
 
 </Project>
