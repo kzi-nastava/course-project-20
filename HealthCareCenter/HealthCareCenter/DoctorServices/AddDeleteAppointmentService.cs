@@ -157,7 +157,7 @@ namespace HealthCareCenter.DoctorServices
                 appointmentTypeIndex = 1;
             }
 
-            patientIndex = PatientService.FindPatientIndex(appointment.HealthRecordID);
+            patientIndex = PatientService.GetIndex(appointment.HealthRecordID);
             window.FillAppointmentWithDefaultValues(year, month, day, hour, minute, appointmentTypeIndex, patientIndex, emergency);
 
         }

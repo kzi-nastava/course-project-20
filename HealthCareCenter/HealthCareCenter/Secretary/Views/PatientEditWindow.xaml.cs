@@ -29,8 +29,8 @@ namespace HealthCareCenter.Secretary
 
         public PatientEditWindow(Patient patient, HealthRecord record)
         {
-            this._patient = patient;
-            this._record = record;
+            _patient = patient;
+            _record = record;
             InitializeComponent();
 
             _controller = new PatientEditController();

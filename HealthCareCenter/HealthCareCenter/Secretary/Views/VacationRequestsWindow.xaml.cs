@@ -1,19 +1,6 @@
-﻿using HealthCareCenter.Enums;
-using HealthCareCenter.Model;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using HealthCareCenter.Service;
 using HealthCareCenter.Secretary.Controllers;
-using System.Collections.ObjectModel;
 
 namespace HealthCareCenter.Secretary
 {

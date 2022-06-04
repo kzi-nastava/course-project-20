@@ -18,7 +18,7 @@ namespace HealthCareCenter.Secretary.Controllers
             {
                 throw new Exception("The doctor is on vacation at this time.");
             }
-            return AppointmentService.GetAvailableTerms(doctorID, when);
+            return TermsService.GetAvailableTerms(doctorID, when);
         }
 
         public List<HospitalRoomDisplay> GetRooms(bool checkup)

@@ -176,7 +176,7 @@ namespace HealthCareCenter.DoctorServices
             HealthRecord healthRecord = HealthRecordService.Get(patient);
             if (patient == null || healthRecord == null)
                 return false;
-            healthRecordIndex = PatientService.FindPatientIndex(id);
+            healthRecordIndex = PatientService.GetIndex(id);
             ParseHealthRecordData(healthRecord);
             return true;
         }

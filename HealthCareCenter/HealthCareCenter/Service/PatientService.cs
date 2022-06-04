@@ -33,7 +33,7 @@ namespace HealthCareCenter.Service
             return null;
         }
 
-        public static int FindPatientIndex(int id)
+        public static int GetIndex(int id)
         {
             int counter = 0;
             foreach (Patient patient in UserRepository.Patients)

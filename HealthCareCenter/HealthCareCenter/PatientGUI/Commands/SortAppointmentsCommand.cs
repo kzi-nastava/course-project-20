@@ -17,7 +17,7 @@ namespace HealthCareCenter.PatientGUI.Commands
                 appointments.Add(AppointmentService.Get(appointmentViewModel.AppointmentID));
             }
 
-            appointments = AppointmentService.SortAppointments(appointments, _viewModel.ChosenSortCriteria);
+            appointments = AppointmentService.Sort(appointments, _viewModel.ChosenSortCriteria);
 
             List<AppointmentViewModel> sortedAppointmentViewModels = new List<AppointmentViewModel>();
             foreach (Appointment appointment in appointments)

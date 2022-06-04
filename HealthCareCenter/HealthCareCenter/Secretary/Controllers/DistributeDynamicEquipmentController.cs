@@ -28,5 +28,10 @@ namespace HealthCareCenter.Secretary.Controllers
 
             DynamicEquipmentService.Transfer(quantity, selectedEquipment, roomWithEquipment, roomWithShortage, storage);
         }
+
+        public Room GetRoom(int roomID)
+        {
+            return HospitalRoomService.Get(roomID);
+        }
     }
 }

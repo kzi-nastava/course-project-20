@@ -13,7 +13,7 @@ namespace HealthCareCenter.Model
         public static void CalculateMaxID()
         {
             maxID = -1;
-            foreach (HealthRecord record in HealthRecordRepository.Records)
+            foreach (HealthRecord record in Records)
             {
                 if (record.ID > maxID)
                 {

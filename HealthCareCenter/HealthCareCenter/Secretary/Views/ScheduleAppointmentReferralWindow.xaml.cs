@@ -1,5 +1,4 @@
-﻿using HealthCareCenter.Service;
-using HealthCareCenter.Enums;
+﻿using HealthCareCenter.Enums;
 using HealthCareCenter.Model;
 using System;
 using System.Collections.Generic;

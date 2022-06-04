@@ -71,7 +71,7 @@ namespace HealthCareCenter.PatientGUI.Commands
             MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure?", "Schedule appointment?", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                bool passed = AppointmentService.Schedule(newAppointment);
+                bool passed = AppointmentService.Schedule(newAppointment, true);
                 if (!passed)
                 {
                     _ = MessageBox.Show("Trolling limit reached! This account will be blocked", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);

@@ -57,7 +57,7 @@ namespace HealthCareCenter.PatientGUI.ViewModels
 
         private void DisplayNotifications()
         {
-            List<Notification> notifications = NotificationService.FindUnopened(_patient);
+            List<Notification> notifications = NotificationService.GetUnopened(_patient);
             if (notifications.Count == 0)
             {
                 return;

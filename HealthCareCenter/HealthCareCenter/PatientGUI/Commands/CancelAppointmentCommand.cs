@@ -26,7 +26,7 @@ namespace HealthCareCenter.PatientGUI.Commands
                         "My App", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
-                bool passed = AppointmentService.CancelAppointment(
+                bool passed = AppointmentService.Cancel(
                     _viewModel.ChosenAppointment.AppointmentID, _viewModel.Patient.ID, _viewModel.ChosenAppointment.AppointmentDate);
 
                 if (!passed)

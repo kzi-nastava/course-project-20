@@ -17,12 +17,12 @@ namespace HealthCareCenter.Secretary.Controllers
         public ScheduleUrgentAppointmentController(UrgentAppointmentInfo info)
         {
             AppointmentRepository.Load();
-            AppointmentService.UrgentInfo = info;
+            UrgentAppointmentService.UrgentInfo = info;
         }
 
         public bool TryScheduling(AppointmentType type, string doctorType, Patient patient)
         {
-            return AppointmentService.TryScheduling(type, doctorType, patient);
+            return UrgentAppointmentService.TryScheduling(type, doctorType, patient);
         }
 
         public List<string> GetTypesOfDoctors()

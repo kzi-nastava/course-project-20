@@ -10,7 +10,7 @@ namespace HealthCareCenter.Secretary.Controllers
     {
         public List<Notification> GetNotifications(User user)
         {
-            List<Notification> notifications = NotificationService.FindUnopened(user);
+            List<Notification> notifications = NotificationService.GetUnopened(user);
             if (notifications.Count == 0)
             {
                 throw new Exception("No new notifications to show.");

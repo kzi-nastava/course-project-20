@@ -1,19 +1,8 @@
-﻿using HealthCareCenter.Enums;
-using HealthCareCenter.Model;
+﻿using HealthCareCenter.Model;
 using HealthCareCenter.Secretary.Controllers;
-using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace HealthCareCenter.Secretary
 {
@@ -36,7 +25,7 @@ namespace HealthCareCenter.Secretary
 
         public ViewChangeRequestsWindow(Patient patient)
         {
-            this._patient = patient;
+            _patient = patient;
 
             _controller = new ViewChangeRequestsController();
 
@@ -72,7 +61,7 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            int requestID = (int)((DeleteRequest)deleteRequestsDataGrid.SelectedItem).ID;
+            int requestID = ((DeleteRequest)deleteRequestsDataGrid.SelectedItem).ID;
             try
             {
                 _controller.AcceptDeleteRequest(requestID);
@@ -94,7 +83,7 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            int requestID = (int)((DeleteRequest)deleteRequestsDataGrid.SelectedItem).ID;
+            int requestID = ((DeleteRequest)deleteRequestsDataGrid.SelectedItem).ID;
             try
             {
                 _controller.RejectDeleteRequest(requestID);
@@ -116,7 +105,7 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            int requestID = (int)((EditRequest)editRequestsDataGrid.SelectedItem).ID;
+            int requestID = ((EditRequest)editRequestsDataGrid.SelectedItem).ID;
             try
             {
                 _controller.AcceptEditRequest(requestID);
@@ -138,7 +127,7 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            int requestID = (int)((EditRequest)editRequestsDataGrid.SelectedItem).ID;
+            int requestID = ((EditRequest)editRequestsDataGrid.SelectedItem).ID;
             try
             {
                 _controller.RejectEditRequest(requestID);

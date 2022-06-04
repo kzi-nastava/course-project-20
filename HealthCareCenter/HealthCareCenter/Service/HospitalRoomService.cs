@@ -3,7 +3,6 @@ using HealthCareCenter.Model;
 using HealthCareCenter.Secretary;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace HealthCareCenter.Service
 {

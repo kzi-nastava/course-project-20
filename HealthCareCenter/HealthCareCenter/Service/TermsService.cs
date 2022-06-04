@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace HealthCareCenter.Model
 {
@@ -74,6 +73,25 @@ namespace HealthCareCenter.Model
             int termMinute = int.Parse(term.Split(":")[1]);
             DateTime time = DateTime.Now.Date.AddHours(termHour).AddMinutes(termMinute);
             return time;
+        }
+
+        public static List<string> GetAvailableTerms(int doctorID, DateTime when)
+        {
+            List<string> terms = GetPossibleDailyTerms();
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            {
+                if (appointment.DoctorID != doctorID || appointment.ScheduledDate.Date.CompareTo(when) != 0)
+                {
+                    continue;
+                }
+                string unavailableTerm = appointment.ScheduledDate.Hour.ToString();
+                if (appointment.ScheduledDate.Minute != 0)
+                    unavailableTerm += ":" + appointment.ScheduledDate.Minute;
+                else
+                    unavailableTerm += ":" + appointment.ScheduledDate.Minute + "0";
+                terms.Remove(unavailableTerm);
+            }
+            return terms;
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows;
 using HealthCareCenter.Model;
 using HealthCareCenter.Secretary.Controllers;
-using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Secretary
 {

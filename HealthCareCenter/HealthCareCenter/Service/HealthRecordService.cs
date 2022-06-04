@@ -98,7 +98,7 @@ namespace HealthCareCenter.Service
             healthRecord.Height = height;
             healthRecord.Weight = weight;
             FillPreviousDiseases(previousDiseases, healthRecord);
-            FillAlergens(allergens, healthRecord);
+            FillAllergens(allergens, healthRecord);
         }
 
         public static void FillPreviousDiseases(string[] previousDiseases, HealthRecord record)
@@ -114,7 +114,7 @@ namespace HealthCareCenter.Service
                 record.PreviousDiseases.Add(disease);
             }
         }
-        public static void FillAlergens(string[] allergens, HealthRecord record)
+        public static void FillAllergens(string[] allergens, HealthRecord record)
         {
             record.Allergens.Clear();
             foreach (string allergen in allergens)

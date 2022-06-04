@@ -1,6 +1,5 @@
 ﻿using HealthCareCenter.Model;
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using HealthCareCenter.Enums;
 using HealthCareCenter.Secretary.Controllers;

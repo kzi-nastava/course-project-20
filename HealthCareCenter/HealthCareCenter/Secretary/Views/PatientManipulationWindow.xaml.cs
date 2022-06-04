@@ -1,17 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using HealthCareCenter.Model;
 using HealthCareCenter.Secretary.Controllers;
-using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Secretary
 {
@@ -36,13 +27,12 @@ namespace HealthCareCenter.Secretary
             try
             {
                 _blockedPatients = _controller.GetBlockedPatients();
+                _controller.UpdateMaxIDsIfNeeded();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-
-            _controller.UpdateMaxIDsIfNeeded();
         }
 
         private void ShowEveryoneRadioButton_Click(object sender, RoutedEventArgs e)
@@ -145,8 +135,17 @@ namespace HealthCareCenter.Secretary
         private void OpenViewWindow()
         {
             Patient patient = (Patient)patientsDataGrid.SelectedItem;
-            HealthRecord record = _controller.FindRecord(patient);
-
+            HealthRecord record;
+            try
+            {
+                record = _controller.GetRecord(patient);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+            
             PatientViewWindow window = new PatientViewWindow(patient, record);
             window.ShowDialog();
             try
@@ -177,7 +176,7 @@ namespace HealthCareCenter.Secretary
             HealthRecord record;
             try
             {
-                record = _controller.FindRecord(patient);
+                record = _controller.GetRecord(patient);
             }
             catch (Exception ex)
             {

@@ -109,7 +109,7 @@ namespace HealthCareCenter.PatientGUI.Commands
                     _ = MessageBox.Show("Since there are less than 2 days until this appointment starts, a request will be sent to the secretary",
                         "My App", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-                bool passed = AppointmentService.Modify(
+                bool passed = AppointmentService.Edit(
                     scheduleDate, _viewModel.ChosenAppointment.AppointmentDate, _viewModel.ChosenAppointment.AppointmentID,
                     _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.ID, hospitalRoomID);
                 _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _viewModel.Patient);

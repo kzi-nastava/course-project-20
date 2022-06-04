@@ -6,7 +6,7 @@ namespace HealthCareCenter.Service
 {
     class NotificationService
     {
-        public static List<Notification> FindUnopened(User user)
+        public static List<Notification> GetUnopened(User user)
         {
             List<Notification> notifications = new List<Notification>();
             foreach (Notification notification in NotificationRepository.Notifications)

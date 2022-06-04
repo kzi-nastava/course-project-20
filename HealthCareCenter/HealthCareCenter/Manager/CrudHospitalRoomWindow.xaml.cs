@@ -167,7 +167,7 @@ namespace HealthCareCenter
 
         private void DisplayNotifications()
         {
-            List<Notification> notifications = NotificationService.FindUnopened(_signedManager);
+            List<Notification> notifications = NotificationService.GetUnopened(_signedManager);
             if (notifications.Count == 0)
             {
                 return;

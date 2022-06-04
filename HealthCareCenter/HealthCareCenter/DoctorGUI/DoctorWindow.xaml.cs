@@ -56,7 +56,7 @@ namespace HealthCareCenter.DoctorGUI
 
         private void DisplayNotifications()
         {
-            List<Notification> notifications = NotificationService.FindUnopened(signedUser);    
+            List<Notification> notifications = NotificationService.GetUnopened(signedUser);    
             if (notifications.Count == 0)
             {
                 return;

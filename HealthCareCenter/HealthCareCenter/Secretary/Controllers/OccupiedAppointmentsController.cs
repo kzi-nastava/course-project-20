@@ -11,22 +11,22 @@ namespace HealthCareCenter.Secretary.Controllers
     {
         public OccupiedAppointmentsController(OccupiedAppointmentInfo info)
         {
-            AppointmentService.OccupiedInfo = info;
+            UrgentAppointmentService.OccupiedInfo = info;
         }
 
         public Appointment Postpone(ref string notification, Patient patient, AppointmentType type, AppointmentDisplay appointmentDisplay)
         {
-            return AppointmentService.Postpone(ref notification, patient, type, appointmentDisplay);
+            return UrgentAppointmentService.Postpone(ref notification, patient, type, appointmentDisplay);
         }
 
         public List<AppointmentDisplay> GetAppointmentsForDisplay()
         {
-            return AppointmentService.GetAppointmentsForDisplay();
+            return UrgentAppointmentService.GetAppointmentsForDisplay();
         }
 
         public void SortAppointments()
         {
-            AppointmentService.SortPostponableAppointments();
+            UrgentAppointmentService.SortPostponableAppointments();
         }
     }
 }

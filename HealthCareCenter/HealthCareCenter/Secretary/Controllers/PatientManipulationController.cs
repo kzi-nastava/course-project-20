@@ -53,7 +53,7 @@ namespace HealthCareCenter.Secretary.Controllers
             PatientService.Delete(patient);
         }
 
-        public HealthRecord FindRecord(Patient patient)
+        public HealthRecord GetRecord(Patient patient)
         {
             return HealthRecordService.Get(patient);
         }
