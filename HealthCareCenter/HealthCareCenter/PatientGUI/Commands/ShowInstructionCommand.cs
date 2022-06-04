@@ -17,10 +17,9 @@ namespace HealthCareCenter.PatientGUI.Commands
                 return;
             }
 
-            PatientFunctionality patFunc = PatientFunctionality.GetInstance();
             MedicineInstruction instruction = MedicineInstructionService.GetSingle(_viewModel.ChosenInstruction.InstructionID);
 
-            _viewModel.MedicineInstructionInfo = patFunc.GetMedicineInstructionInfo(instruction);
+            _viewModel.MedicineInstructionInfo = MedicineInstructionService.GetInfo(instruction);
         }
 
         private readonly MyPrescriptionsViewModel _viewModel;

@@ -1,6 +1,7 @@
 ﻿using HealthCareCenter.Model;
 using HealthCareCenter.PatientGUI.Models;
 using HealthCareCenter.PatientGUI.ViewModels;
+using HealthCareCenter.Service;
 using System.Collections.Generic;
 
 namespace HealthCareCenter.PatientGUI.Commands
@@ -9,8 +10,7 @@ namespace HealthCareCenter.PatientGUI.Commands
     {
         public override void Execute(object parameter)
         {
-            PatientFunctionality patFunc = PatientFunctionality.GetInstance();
-            List<Appointment> appointmentsByKeyword = patFunc.GetAppointmentsByAnamnesisKeyword(
+            List<Appointment> appointmentsByKeyword = AppointmentService.GetByAnamnesisKeyword(
                 _viewModel.SearchKeyword, _viewModel.HealthRecord.ID);
 
             List<AppointmentViewModel> searchedAppointmentViewModels = new List<AppointmentViewModel>();

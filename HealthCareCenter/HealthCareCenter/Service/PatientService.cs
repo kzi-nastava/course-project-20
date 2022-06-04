@@ -8,6 +8,9 @@ namespace HealthCareCenter.Service
 {
     public static class PatientService
     {
+        private const int _creationTrollLimit = 100;
+        private const int _modificationTrollLimit = 100;
+
         public static Patient Get(int id)
         {
             foreach(Patient patient in UserRepository.Patients)
@@ -157,6 +160,72 @@ namespace HealthCareCenter.Service
             HealthRecordRepository.Records.Add(record);
             UserRepository.Patients.Add(patient);
             UserRepository.Users.Add(patient);
+        }
+
+        public static bool CheckCreationTroll(Patient possibleTroll)
+        {
+            int creationCount = 0;
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            {
+                if (appointment.HealthRecordID == possibleTroll.HealthRecordID)
+                {
+                    TimeSpan timePassedSinceScheduling = DateTime.Now.Subtract(appointment.CreatedDate);
+                    if (timePassedSinceScheduling.TotalDays < 30)
+                    {
+                        ++creationCount;
+                    }
+                }
+            }
+
+            if (creationCount >= _creationTrollLimit)
+            {
+                foreach (Patient patient in UserRepository.Patients)
+                {
+                    if (possibleTroll.ID == patient.ID)
+                    {
+                        patient.IsBlocked = true;
+                        patient.BlockedBy = Enums.Blocker.System;
+                        break;
+                    }
+
+                }
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool CheckModificationTroll(Patient possibleTroll)
+        {
+            int modificationCount = 0;
+            foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
+            {
+                if (changeRequest.PatientID == possibleTroll.ID)
+                {
+                    TimeSpan timePassedSinceScheduling = DateTime.Now.Subtract(changeRequest.DateSent);
+                    if (timePassedSinceScheduling.TotalDays < 30)
+                    {
+                        ++modificationCount;
+                    }
+                }
+            }
+
+            if (modificationCount >= _modificationTrollLimit)
+            {
+                foreach (Patient patient in UserRepository.Patients)
+                {
+                    if (possibleTroll.ID == patient.ID)
+                    {
+                        patient.IsBlocked = true;
+                        patient.BlockedBy = Enums.Blocker.System;
+                        break;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

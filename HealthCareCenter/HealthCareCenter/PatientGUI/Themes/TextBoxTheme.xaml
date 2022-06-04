@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Style TargetType="{x:Type TextBox}"
            x:Key="DefaultTextBoxTheme">
-        <Setter Property="Background" Value="#ce6565" />
+        <Setter Property="Background" Value="#B7A7AE" />
         <Setter Property="BorderThickness" Value="2" />
         <Setter Property="BorderBrush" Value="White" />
         <Setter Property="Foreground" Value="White" />
@@ -14,7 +14,7 @@
            BasedOn="{StaticResource DefaultTextBoxTheme}"
            x:Key="ReadonlyTextBoxTheme">
         <Style.Setters>
-            <Setter Property="IsEnabled" Value="False" />
+            <Setter Property="IsReadOnly" Value="True" />
             <Setter Property="VerticalContentAlignment" Value="Top" />
             <Setter Property="BorderThickness" Value="2" />
             <Setter Property="TextWrapping" Value="Wrap" />

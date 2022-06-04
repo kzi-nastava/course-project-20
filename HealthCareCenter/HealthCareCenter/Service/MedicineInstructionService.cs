@@ -24,5 +24,23 @@ namespace HealthCareCenter.Service
 
             return null;
         }
+
+        public static string GetInfo(MedicineInstruction instruction)
+        {
+            string medicineInstructionInfo = "";
+            medicineInstructionInfo += "Comment:\n";
+            medicineInstructionInfo += "- " + instruction.Comment + "\n";
+            medicineInstructionInfo += "Consumption time:\n";
+            foreach (DateTime consumptionTime in instruction.ConsumptionTime)
+            {
+                medicineInstructionInfo += "- " + consumptionTime.ToString("t") + "h\n";
+            }
+            medicineInstructionInfo += "Daily consumption amount:\n";
+            medicineInstructionInfo += "- " + instruction.DailyConsumption + "\n";
+            medicineInstructionInfo += "Consumption period:\n";
+            medicineInstructionInfo += "- " + instruction.ConsumptionPeriod;
+
+            return medicineInstructionInfo;
+        }
     }
 }
