@@ -149,22 +149,6 @@ namespace HealthCareCenter
             InitializeComponent();
             FillDataGridHospitalRooms();
             FillDataGridHospitalRoomsRenovation();
-
-            DisplayNotifications();
-        }
-
-        private void DisplayNotifications()
-        {
-            List<Notification> notifications = NotificationService.FindUnopened(_signedManager);
-            if (notifications.Count == 0)
-            {
-                return;
-            }
-            MessageBox.Show("You have new notifications.");
-            foreach (Notification notification in notifications)
-            {
-                MessageBox.Show(notification.Message);
-            }
         }
 
         private bool IsPossibleToScheduleRenovtion(string hospitalRoomForRenovationId, string startDate, string finishDate)

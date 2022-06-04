@@ -63,25 +63,6 @@ namespace HealthCareCenter.Service
             MedicineCreationRequestRepository.Save();
         }
 
-        public static int GetLargestId()
-        {
-            try
-            {
-                List<MedicineCreationRequest> requests = MedicineCreationRequestRepository.Requests;
-                requests.Sort((x, y) => x.ID.CompareTo(y.ID));
-                if (requests.Count == 0)
-                {
-                    return -1;
-                }
-
-                return requests[requests.Count - 1].ID;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
         public static bool Delete(int id)
         {
             try

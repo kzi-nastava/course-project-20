@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Collections.Generic;
 using HealthCareCenter.Model;
-using System.Data;
-using HealthCareCenter.Enums;
-using System.Globalization;
-using System.ComponentModel;
 
 namespace HealthCareCenter.Service
 {

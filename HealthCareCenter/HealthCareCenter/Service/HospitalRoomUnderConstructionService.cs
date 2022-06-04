@@ -43,25 +43,6 @@ namespace HealthCareCenter.Service
             HospitalRoomUnderConstructionRepository.Save();
         }
 
-        public static int GetLargestRoomId()
-        {
-            try
-            {
-                List<HospitalRoom> rooms = HospitalRoomUnderConstructionRepository.Rooms;
-                rooms.Sort((x, y) => x.ID.CompareTo(y.ID));
-                if (rooms.Count == 0)
-                {
-                    return 0;
-                }
-
-                return rooms[rooms.Count - 1].ID;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
         public static bool Delete(int id)
         {
             try

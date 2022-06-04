@@ -36,7 +36,7 @@ namespace HealthCareCenter.DoctorServices
             weight = double.Parse(window.weigthTextBox.Text);
             previousDiseases = window.previousDiseasesTextBox.Text.Split(",");
             allergens = window.alergensTextBox.Text.Split(",");
-            HealthRecordService.UpdateHealthRecord(height, weight, previousDiseases, allergens, healthRecordIndex);  
+            HealthRecordService.Update(height, weight, previousDiseases, allergens, healthRecordIndex);  
         }
 
         public void RemoveMedicineFromSelectedMedicine()
@@ -93,7 +93,7 @@ namespace HealthCareCenter.DoctorServices
 
         public void CreateAPrescription()
         {
-            bool successful = PrescriptionService.CreateAPrescription();
+            bool successful = PrescriptionService.Create();
             if (!successful)
                 return;
             window.EnableMedicineGrid(false);
@@ -105,7 +105,7 @@ namespace HealthCareCenter.DoctorServices
         public void UpdateHealthRecordWindow()
         {
             FillMedicinesTable();
-            HealthRecord healthRecord = HealthRecordService.FindRecordByPatientID(windowService.selectedPatientID);
+            HealthRecord healthRecord = HealthRecordService.GetRecordByPatientID(windowService.selectedPatientID);
             ParseHealthRecordData(healthRecord);
             selectedPatientsHealthRecord = healthRecord;
         }
@@ -120,7 +120,7 @@ namespace HealthCareCenter.DoctorServices
                 MessageBox.Show("No row is selected");
                 return;
             }
-            alergens = HealthRecordService.CheckAlergens(healthRecord);
+            alergens = HealthRecordService.CheckAllergens(healthRecord);
             previousDiseases = HealthRecordService.CheckPreviousDiseases(healthRecord);
             healthRecordID = healthRecord.ID.ToString();
             height = healthRecord.Height.ToString();
@@ -172,8 +172,8 @@ namespace HealthCareCenter.DoctorServices
             appointmentIndex = GetSelectedIndex(window.scheduleDataGrid);
             if (id == -1 || appointmentIndex == -1)
                 return false;
-            Patient patient = PatientService.FindPatient(id);
-            HealthRecord healthRecord = HealthRecordService.Find(patient);
+            Patient patient = PatientService.Get(id);
+            HealthRecord healthRecord = HealthRecordService.Get(patient);
             if (patient == null || healthRecord == null)
                 return false;
             healthRecordIndex = PatientService.FindPatientIndex(id);

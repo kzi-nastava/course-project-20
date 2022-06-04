@@ -12,6 +12,29 @@ namespace HealthCareCenter.Model
         public static List<HospitalRoom> Rooms = Load();
 
         /// <summary>
+        /// Finding last(largest) id in file hospitalRooms.json.
+        /// </summary>
+        /// <returns>last(largest) id.</returns>
+        public static int GetLargestRoomId()
+        {
+            try
+            {
+                List<HospitalRoom> rooms = HospitalRoomRepository.Rooms;
+                rooms.Sort((x, y) => x.ID.CompareTo(y.ID));
+                if (rooms.Count == 0)
+                {
+                    return 0;
+                }
+
+                return rooms[rooms.Count - 1].ID;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
         /// Loads all hospital rooms from file hospitalRooms.json.
         /// </summary>
         /// <returns>List of all hospital rooms.</returns>

@@ -160,6 +160,7 @@ namespace HealthCareCenter
             InitializeComponent();
             FillRoomTypeComboBox();
             FillDataGridHospitalRooms();
+            DisplayNotifications();
         }
 
         private void AddHospitalRoomButton_Click(object sender, RoutedEventArgs e)
@@ -250,6 +251,20 @@ namespace HealthCareCenter
         private void LogOffItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new LoginWindow());
+        }
+
+        private void DisplayNotifications()
+        {
+            List<Notification> notifications = NotificationService.FindUnopened(_signedManager);
+            if (notifications.Count == 0)
+            {
+                return;
+            }
+            MessageBox.Show("You have new notifications.");
+            foreach (Notification notification in notifications)
+            {
+                MessageBox.Show(notification.Message);
+            }
         }
     }
 }

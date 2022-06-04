@@ -11,6 +11,25 @@ namespace HealthCareCenter.Model
         public static List<MedicineCreationRequest> Requests = Load();
         public static int LargestID { get; set; }
 
+        public static int GetLargestId()
+        {
+            try
+            {
+                List<MedicineCreationRequest> requests = MedicineCreationRequestRepository.Requests;
+                requests.Sort((x, y) => x.ID.CompareTo(y.ID));
+                if (requests.Count == 0)
+                {
+                    return -1;
+                }
+
+                return requests[requests.Count - 1].ID;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public static List<MedicineCreationRequest> Load()
         {
             var settings = new JsonSerializerSettings

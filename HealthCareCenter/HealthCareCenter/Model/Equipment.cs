@@ -22,7 +22,7 @@ namespace HealthCareCenter.Model
         /// </summary>
         public Equipment(EquipmentType type, string name)
         {
-            this.ID = EquipmentService.GetLargestEquipmentId() + 1;
+            this.ID = EquipmentRepository.GetLargestEquipmentId() + 1;
             this.CurrentRoomID = 0;
             this.Type = type;
             this.Name = name;

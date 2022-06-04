@@ -26,7 +26,7 @@ namespace HealthCareCenter.Secretary.Controllers
 
         public void SortAppointments()
         {
-            AppointmentService.SortAppointments();
+            AppointmentService.SortPostponableAppointments();
         }
     }
 }

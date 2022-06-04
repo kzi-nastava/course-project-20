@@ -55,7 +55,7 @@ namespace HealthCareCenter.Secretary.Controllers
 
         public HealthRecord FindRecord(Patient patient)
         {
-            return HealthRecordService.Find(patient);
+            return HealthRecordService.Get(patient);
         }
     }
 }

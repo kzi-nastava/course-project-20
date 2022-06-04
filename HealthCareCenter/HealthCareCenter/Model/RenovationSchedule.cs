@@ -20,7 +20,7 @@ namespace HealthCareCenter.Model
 
         public RenovationSchedule(DateTime startDate, DateTime finishDate, HospitalRoom roomForRenovation)
         {
-            this.ID = RenovationScheduleService.GetLargestId() + 1;
+            this.ID = RenovationScheduleRepository.GetLargestId() + 1;
             this.StartDate = startDate;
             this.FinishDate = finishDate;
             this.Room1ID = -1;
@@ -31,7 +31,7 @@ namespace HealthCareCenter.Model
 
         public RenovationSchedule(DateTime startDate, DateTime finishDate, int roomForRenovationId)
         {
-            this.ID = RenovationScheduleService.GetLargestId() + 1;
+            this.ID = RenovationScheduleRepository.GetLargestId() + 1;
             this.StartDate = startDate;
             this.FinishDate = finishDate;
             this.Room1ID = -1;
@@ -42,7 +42,7 @@ namespace HealthCareCenter.Model
 
         public RenovationSchedule(DateTime startDate, DateTime finishDate, HospitalRoom firstRoomForRenovation, HospitalRoom secondRoomForRenovation, HospitalRoom newRoom, Enums.RenovationType renovationType)
         {
-            this.ID = RenovationScheduleService.GetLargestId() + 1;
+            this.ID = RenovationScheduleRepository.GetLargestId() + 1;
             this.StartDate = startDate;
             this.FinishDate = finishDate;
             this.Room1ID = firstRoomForRenovation.ID;
@@ -53,7 +53,7 @@ namespace HealthCareCenter.Model
 
         public RenovationSchedule(DateTime startDate, DateTime finishDate, int firstRoomForRenovationId, int secondRoomForRenovationId, int newRoomId, Enums.RenovationType renovationType)
         {
-            this.ID = RenovationScheduleService.GetLargestId() + 1;
+            this.ID = RenovationScheduleRepository.GetLargestId() + 1;
             this.StartDate = startDate;
             this.FinishDate = finishDate;
             this.Room1ID = firstRoomForRenovationId;

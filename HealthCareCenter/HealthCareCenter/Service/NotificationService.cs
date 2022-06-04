@@ -31,7 +31,7 @@ namespace HealthCareCenter.Service
         public static string Send(Appointment postponedAppointment, Appointment newAppointment, Patient patient)
         {
             string notificationToShowNow = null;
-            HealthRecord postponedRecord = HealthRecordService.Find(postponedAppointment);
+            HealthRecord postponedRecord = HealthRecordService.Get(postponedAppointment);
 
             NotificationRepository.CalculateMaxID();
             Notification postponedPatientNotification = new Notification($"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedRecord.PatientID);

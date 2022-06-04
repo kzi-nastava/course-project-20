@@ -8,11 +8,11 @@ namespace HealthCareCenter.Service
 {
     public static class PatientService
     {
-        public static Patient FindPatient(int ID)
+        public static Patient Get(int id)
         {
             foreach(Patient patient in UserRepository.Patients)
             {
-                if(patient.ID == ID) 
+                if(patient.ID == id) 
                     return patient; 
             }
             return null; 
@@ -29,6 +29,7 @@ namespace HealthCareCenter.Service
             }
             return counter; 
         }
+
         public static List<Patient> GetBlockedPatients()
         {
             List<Patient> blockedPatients = new List<Patient>();

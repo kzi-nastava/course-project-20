@@ -290,7 +290,7 @@ namespace HealthCareCenter.Service
             return true;
         }
 
-        public static void SortAppointments()
+        public static void SortPostponableAppointments()
         {
             List<string> allPossibleTerms = TermsService.GetPossibleDailyTerms();
             List<string> terms = TermsService.GetTermsAfterTwoHours(allPossibleTerms);

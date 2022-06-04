@@ -11,6 +11,25 @@ namespace HealthCareCenter.Model
         private const string _fileName = "renovationSchedules.json";
         public static List<RenovationSchedule> Renovations = Load();
 
+        public static int GetLargestId()
+        {
+            try
+            {
+                List<RenovationSchedule> renovations = RenovationScheduleRepository.Renovations;
+                renovations.Sort((x, y) => x.ID.CompareTo(y.ID));
+                if (renovations.Count == 0)
+                {
+                    return 0;
+                }
+
+                return renovations[renovations.Count - 1].ID;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         private static List<RenovationSchedule> Load()
         {
             try

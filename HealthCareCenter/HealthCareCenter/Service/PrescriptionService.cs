@@ -48,7 +48,7 @@ namespace HealthCareCenter.Service
             }
         }
         public static bool CreateMedicineInstruction(int id,string comment,int dailyConsumption,ConsumptionPeriod consumptionPeriod, int medicineID) {
-            bool sucessfull = checkData(false);
+            bool sucessfull = CheckData(false);
             if (!sucessfull)
                 return false;
             try
@@ -63,9 +63,9 @@ namespace HealthCareCenter.Service
                 return false;
             }
         }
-        public static bool CreateAPrescription()
+        public static bool Create()
         {
-            bool sucessfull = checkData(true);
+            bool sucessfull = CheckData(true);
             if (!sucessfull)
                 return false;
             List<int> medicineInstructions = new List<int>(MedicineInstructions);
@@ -74,7 +74,7 @@ namespace HealthCareCenter.Service
             return true;
         }
 
-        private static bool checkData(bool finishing)
+        private static bool CheckData(bool finishing)
         {
             if(_times.Count == 0 && !finishing)            
             {
@@ -93,7 +93,8 @@ namespace HealthCareCenter.Service
             }
             return true;
         }
-        public static bool AddPrescription(Prescription prescription)
+
+        public static bool Add(Prescription prescription)
         {
             try
             {
