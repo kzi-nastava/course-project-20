@@ -14,7 +14,7 @@ namespace HealthCareCenter.Model
         public static void CalculateMaxID()
         {
             maxID = -1;
-            foreach (DynamicEquipmentRequest request in DynamicEquipmentRequestRepository.Requests)
+            foreach (DynamicEquipmentRequest request in Requests)
             {
                 if (request.ID > maxID)
                 {

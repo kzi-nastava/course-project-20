@@ -142,13 +142,13 @@ namespace HealthCareCenter.Model
 
         public static void RejectEditRequest(int requestID)
         {
-            Find(requestID).State = RequestState.Denied;
+            Get(requestID).State = RequestState.Denied;
             AppointmentChangeRequestRepository.Save();
         }
 
         public static void AcceptEditRequest(int requestID)
         {
-            AppointmentChangeRequest request = Find(requestID);
+            AppointmentChangeRequest request = Get(requestID);
             request.State = RequestState.Approved;
             EditAppointment(request);
 
@@ -158,13 +158,13 @@ namespace HealthCareCenter.Model
 
         public static void RejectDeleteRequest(int requestID)
         {
-            Find(requestID).State = RequestState.Denied;
+            Get(requestID).State = RequestState.Denied;
             AppointmentChangeRequestRepository.Save();
         }
 
         public static void AcceptDeleteRequest(int requestID)
         {
-            AppointmentChangeRequest request = Find(requestID);
+            AppointmentChangeRequest request = Get(requestID);
             request.State = RequestState.Approved;
             DeleteAppointment(request);
 
@@ -172,7 +172,7 @@ namespace HealthCareCenter.Model
             AppointmentChangeRequestRepository.Save();
         }
 
-        private static AppointmentChangeRequest Find(int requestID)
+        private static AppointmentChangeRequest Get(int requestID)
         {
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {

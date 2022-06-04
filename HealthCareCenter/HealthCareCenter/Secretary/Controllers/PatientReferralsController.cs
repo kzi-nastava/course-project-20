@@ -13,14 +13,14 @@ namespace HealthCareCenter.Secretary.Controllers
             ReferralRepository.Load();
         }
 
-        public List<PatientReferral> Get(Patient patient)
+        public List<PatientReferralForDisplay> Get(Patient patient)
         {
             return ReferralsService.Get(patient);
         }
 
-        public Referral Find(int referralID)
+        public Referral Get(int referralID)
         {
-            return ReferralsService.Find(referralID);
+            return ReferralsService.Get(referralID);
         }
     }
 }

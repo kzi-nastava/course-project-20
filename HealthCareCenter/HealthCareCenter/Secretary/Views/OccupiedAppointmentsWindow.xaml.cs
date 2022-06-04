@@ -14,10 +14,8 @@ namespace HealthCareCenter.Secretary
     {
         private readonly Patient _patient;
         private readonly AppointmentType _type;
-        private List<Appointment> _occupiedAppointments;
         private List<AppointmentDisplay> _appointmentsForDisplay;
-        private Dictionary<int, DateTime> _newDateOf;
-        private readonly Dictionary<int, Appointment> _newAppointmentsInfo;
+        private OccupiedAppointmentInfo _info;
 
         private readonly OccupiedAppointmentsController _controller;
 
@@ -26,18 +24,17 @@ namespace HealthCareCenter.Secretary
             InitializeComponent();
         }
 
-        public OccupiedAppointmentsWindow(Patient patient, AppointmentType type, List<Appointment> occupiedAppointments, Dictionary<int, Appointment> newAppointmentsInfo)
+        public OccupiedAppointmentsWindow(Patient patient, AppointmentType type, UrgentAppointmentInfo info)
         {
             _patient = patient;
             _type = type;
-            _occupiedAppointments = occupiedAppointments;
-            _newAppointmentsInfo = newAppointmentsInfo;
-            _controller = new OccupiedAppointmentsController();
+            _info = new OccupiedAppointmentInfo(info);
+            _controller = new OccupiedAppointmentsController(_info);
 
             InitializeComponent();
             try
             {
-                _controller.SortAppointments(ref _occupiedAppointments, ref _newDateOf);
+                _controller.SortAppointments();
             }
             catch (Exception ex)
             {
@@ -45,7 +42,7 @@ namespace HealthCareCenter.Secretary
             }
             try
             {
-                _appointmentsForDisplay = _controller.GetAppointmentsForDisplay(_occupiedAppointments, _newDateOf);
+                _appointmentsForDisplay = _controller.GetAppointmentsForDisplay();
             }
             catch (Exception ex)
             {
@@ -67,7 +64,7 @@ namespace HealthCareCenter.Secretary
             Appointment postponedAppointment;
             try
             {
-                postponedAppointment = _controller.Postpone(ref notification, _patient, _newAppointmentsInfo, _type, (AppointmentDisplay)occupiedAppointmentsDataGrid.SelectedItem);
+                postponedAppointment = _controller.Postpone(ref notification, _patient, _type, (AppointmentDisplay)occupiedAppointmentsDataGrid.SelectedItem);
             }
             catch (Exception ex)
             {

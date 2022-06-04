@@ -6,9 +6,9 @@ namespace HealthCareCenter.Service
 {
     public static class ReferralsService
     {
-        public static List<PatientReferral> Get(Patient patient)
+        public static List<PatientReferralForDisplay> Get(Patient patient)
         {
-            List<PatientReferral> referrals = new List<PatientReferral>();
+            List<PatientReferralForDisplay> referrals = new List<PatientReferralForDisplay>();
             foreach (Referral referral in ReferralRepository.Referrals)
             {
                 if (referral.PatientID != patient.ID)
@@ -21,15 +21,15 @@ namespace HealthCareCenter.Service
             return referrals;
         }
 
-        private static void Add(Referral referral, List<PatientReferral> referrals)
+        private static void Add(Referral referral, List<PatientReferralForDisplay> referrals)
         {
-            PatientReferral patientReferral = new PatientReferral(referral.ID);
+            PatientReferralForDisplay patientReferral = new PatientReferralForDisplay(referral.ID);
 
             LinkDoctor(referral, patientReferral);
             referrals.Add(patientReferral);
         }
 
-        private static void LinkDoctor(Referral referral, PatientReferral patientReferral)
+        private static void LinkDoctor(Referral referral, PatientReferralForDisplay patientReferral)
         {
             foreach (Doctor doctor in UserRepository.Doctors)
             {
@@ -44,7 +44,7 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static Referral Find(int referralID)
+        public static Referral Get(int referralID)
         {
             foreach (Referral referral in ReferralRepository.Referrals)
             {

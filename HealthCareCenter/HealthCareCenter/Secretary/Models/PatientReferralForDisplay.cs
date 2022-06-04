@@ -7,15 +7,15 @@ namespace HealthCareCenter.Secretary
     /// <summary>
     /// Class used only for displaying referrals of a specific patient in PatientReferralsWindow
     /// </summary>
-    public class PatientReferral
+    public class PatientReferralForDisplay
     {
         public int ID { get; set; }
         public string DoctorUsername { get; set; }
         public string DoctorFirstName { get; set; }
         public string DoctorLastName { get; set; }
 
-        public PatientReferral() { }
-        public PatientReferral(int id)
+        public PatientReferralForDisplay() { }
+        public PatientReferralForDisplay(int id)
         {
             ID = id;
         }

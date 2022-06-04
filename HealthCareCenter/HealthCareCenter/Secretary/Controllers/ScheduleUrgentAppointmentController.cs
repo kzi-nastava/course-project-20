@@ -14,9 +14,15 @@ namespace HealthCareCenter.Secretary.Controllers
             AppointmentRepository.Load();
         }
 
-        public bool TryScheduling(AppointmentType type, string doctorType, Patient patient, ref List<Appointment> occupiedAppointments, ref Dictionary<int, Appointment> newAppointmentsInfo)
+        public ScheduleUrgentAppointmentController(UrgentAppointmentInfo info)
         {
-            return AppointmentService.TryScheduling(type, doctorType, patient, ref occupiedAppointments, ref newAppointmentsInfo);
+            AppointmentRepository.Load();
+            AppointmentService.UrgentInfo = info;
+        }
+
+        public bool TryScheduling(AppointmentType type, string doctorType, Patient patient)
+        {
+            return AppointmentService.TryScheduling(type, doctorType, patient);
         }
 
         public List<string> GetTypesOfDoctors()

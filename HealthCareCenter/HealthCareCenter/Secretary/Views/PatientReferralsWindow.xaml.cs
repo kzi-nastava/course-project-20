@@ -20,7 +20,7 @@ namespace HealthCareCenter.Secretary
     public partial class PatientReferralsWindow : Window
     {
         private readonly Patient _patient;
-        private List<PatientReferral> _referrals;
+        private List<PatientReferralForDisplay> _referrals;
 
         private readonly PatientReferralsController _controller;
 
@@ -53,7 +53,7 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            Referral selectedReferral = _controller.Find(((PatientReferral)referralsDataGrid.SelectedItem).ID);
+            Referral selectedReferral = _controller.Get(((PatientReferralForDisplay)referralsDataGrid.SelectedItem).ID);
 
             ScheduleAppointmentReferralWindow window = new ScheduleAppointmentReferralWindow(_patient, selectedReferral);
             window.ShowDialog();

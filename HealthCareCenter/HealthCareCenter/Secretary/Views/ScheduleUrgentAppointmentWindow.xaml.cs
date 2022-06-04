@@ -13,8 +13,7 @@ namespace HealthCareCenter.Secretary
     public partial class ScheduleUrgentAppointmentWindow : Window
     {
         private readonly Patient _patient;
-        private List<Appointment> _occupiedAppointments;
-        private Dictionary<int, Appointment> _newAppointmentsInfo;
+        private UrgentAppointmentInfo _info;
 
         private readonly ScheduleUrgentAppointmentController _controller;
 
@@ -26,7 +25,8 @@ namespace HealthCareCenter.Secretary
         public ScheduleUrgentAppointmentWindow(Patient patient)
         {
             _patient = patient;
-            _controller = new ScheduleUrgentAppointmentController();
+            _info = new UrgentAppointmentInfo();
+            _controller = new ScheduleUrgentAppointmentController(_info);
 
             InitializeComponent();
 
@@ -54,7 +54,7 @@ namespace HealthCareCenter.Secretary
             AppointmentType type = GetSelectedAppointmentType();
             try
             {
-                if (!_controller.TryScheduling(type, doctorTypesListBox.SelectedItem.ToString(), _patient, ref _occupiedAppointments, ref _newAppointmentsInfo))
+                if (!_controller.TryScheduling(type, doctorTypesListBox.SelectedItem.ToString(), _patient))
                 {
                     OpenPostponingWindow(type);
                 }
@@ -66,6 +66,7 @@ namespace HealthCareCenter.Secretary
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.StackTrace);
                 return;
             }
             Close();
@@ -81,13 +82,13 @@ namespace HealthCareCenter.Secretary
 
         private void OpenPostponingWindow(AppointmentType type)
         {
-            if (_occupiedAppointments.Count == 0)
+            if (_info.OccupiedAppointments.Count == 0)
             {
                 MessageBox.Show("No available term was found in the next 2 hours. Unfortunately, there are no terms to postpone at this time neither.");
                 return;
             }
             MessageBox.Show("No available term was found in the next 2 hours. You can, however, postpone an occupied term in the next window.");
-            OccupiedAppointmentsWindow window = new OccupiedAppointmentsWindow(_patient, type, _occupiedAppointments, _newAppointmentsInfo);
+            OccupiedAppointmentsWindow window = new OccupiedAppointmentsWindow(_patient, type, _info);
             window.ShowDialog();
             Close();
         }
