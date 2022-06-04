@@ -17,7 +17,7 @@ namespace HealthCareCenter.Service
         {
             if (AppointmentRepository.Appointments == null)
             {
-                return null;
+                AppointmentRepository.Load();
             }
 
             foreach (Appointment appointment in AppointmentRepository.Appointments)
@@ -29,12 +29,43 @@ namespace HealthCareCenter.Service
             }
             return null;
         }
+      
+        public static Appointment Find(int appointmentID)
+        {
+            if (AppointmentRepository.Appointments == null)
+            {
+                AppointmentRepository.Load();
+            }
+
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            {
+                if (appointment.ID == appointmentID)
+                {
+                    return appointment;
+                }
+            }
+            return null;
+        }
+
+        public static List<Appointment> GetAppointmentsInTheFollowingDays(DateTime date, int numberOfDays)
+        {
+            List<Appointment> appointments = new List<Appointment>();
+            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            {
+                TimeSpan timeSpan = appointment.ScheduledDate.Subtract(date);
+                if (timeSpan.TotalDays <= 3 && timeSpan.TotalDays >= 0)
+                {
+                    appointments.Add(appointment);
+                }
+            }
+            return appointments;
+        } 
 
         public static List<Appointment> GetPatientUnfinishedAppointments(int patientHealthRecordID)
         {
             if (AppointmentRepository.Appointments == null)
             {
-                return null;
+                AppointmentRepository.Load();
             }
 
             List<Appointment> unfinishedAppointments = new List<Appointment>();
@@ -56,7 +87,7 @@ namespace HealthCareCenter.Service
         {
             if (AppointmentRepository.Appointments == null)
             {
-                return null;
+                AppointmentRepository.Load();
             }
 
             List<Appointment> finishedAppointments = new List<Appointment>();

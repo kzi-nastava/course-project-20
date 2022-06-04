@@ -1,0 +1,181 @@
+﻿<UserControl x:Class="HealthCareCenter.PatientGUI.View.PrioritySchedulingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HealthCareCenter.PatientGUI.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ListView Grid.Row="0"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="2"
+                  Grid.RowSpan="2"
+                  Margin="10"
+                  ItemsSource="{Binding Doctors}"
+                  SelectedItem="{Binding ChosenDoctor}"
+                  Style="{StaticResource TableTheme}"
+                  ItemContainerStyle="{StaticResource TableRowTheme}">
+
+            <ListView.View>
+                <GridView ColumnHeaderContainerStyle="{StaticResource TableHeaderTheme}">
+
+                    <GridViewColumn Header="Doctor ID" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DoctorID}" 
+                                           Padding="20 5"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Doctor first name" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DoctorFirstName}" 
+                                           Padding="20 5"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Doctor last name" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DoctorLastName}" 
+                                           Padding="20 5"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Doctor professional area" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DoctorProfessionalArea}" 
+                                           Padding="20 5"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <ListView Grid.Row="0"
+                  Grid.Column="2"
+                  Margin="10"
+                  ItemsSource="{Binding PriorityNotFoundChoices}"
+                  SelectedItem="{Binding PriorityNotFoundChoice}"
+                  Style="{StaticResource TableTheme}"
+                  ItemContainerStyle="{StaticResource TableRowTheme}">
+
+            <ListView.View>
+                <GridView  ColumnHeaderContainerStyle="{StaticResource TableHeaderTheme}">
+
+                    <GridViewColumn Header="Doctor ID" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DoctorID}" 
+                                           Padding="20 5"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Appointment date" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding AppointmentDate}" 
+                                           Padding="20 5"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <StackPanel Grid.Row="2"
+                    Grid.Column="2">
+            <Grid Margin="5"
+                  MinHeight="35">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Priority: "
+                           Grid.Column="0"
+                           FontWeight="SemiBold"
+                           Margin="0 0 10 0" 
+                           VerticalAlignment="Center"
+                           Style="{StaticResource LabelTheme}" />
+                <RadioButton IsChecked="{Binding IsDoctorPriority}"
+                             Content="Doctor" 
+                             GroupName="priority" 
+                             Grid.Column="1" 
+                             Style="{StaticResource PriorityRadioButtonTheme}" />
+                <RadioButton Content="Time" 
+                             GroupName="priority" 
+                             Grid.Column="2"
+                             Style="{StaticResource PriorityRadioButtonTheme}" />
+            </Grid>
+            <DatePicker Margin="5"
+                        SelectedDate="{Binding ChosenDate}"
+                        Style="{StaticResource DatePickerTheme}"/>
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Select term range" 
+                           Grid.Column="0"
+                           Grid.Row="0"
+                           Grid.ColumnSpan="2" 
+                           Style="{StaticResource LabelTheme}"/>
+                <TextBlock Text="Start term range" 
+                           Grid.Row="1"
+                           Grid.Column="0" />
+                <ComboBox Grid.Row="2"
+                          Grid.Column="0" 
+                          Margin="0 0 5 0"
+                          ItemsSource="{Binding AllPossibleTerms}"
+                          SelectedValue="{Binding StartRange}" 
+                          Style="{StaticResource ComboBoxTheme}"/>
+                <TextBlock Text="End term range" 
+                           Grid.Row="1"
+                           Grid.Column="1"
+                           Margin="5 0 0 0" />
+                <ComboBox Grid.Row="2"
+                          Grid.Column="1" 
+                          Margin="5 0 0 0"
+                          ItemsSource="{Binding AllPossibleTerms}"
+                          SelectedValue="{Binding EndRange}" 
+                          Style="{StaticResource ComboBoxTheme}"/>
+
+            </Grid>
+            <Button Content="Schedule appointment"
+                    Padding="20 10"
+                    Margin="5 10" 
+                    Command="{Binding PriorityScheduleAppointment}" 
+                    Style="{StaticResource HealthcareCenterButtonTheme}" />
+
+        </StackPanel>
+
+    </Grid>
+</UserControl>

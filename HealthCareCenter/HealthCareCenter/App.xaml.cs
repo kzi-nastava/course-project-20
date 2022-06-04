@@ -13,5 +13,11 @@ namespace HealthCareCenter
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            LoginWindow win = new LoginWindow();
+            win.Show();
+            base.OnStartup(e);
+        }
     }
 }

@@ -1,37 +1,28 @@
 [
   {
     "Type": "General practitioner",
-    "VacationRequestIDs": [
-      0
-    ],
+    "VacationRequestIDs": [ 0 ],
     "MedicineCreationRequestIDs": [],
-    "Ratings": [
-      4.3,
-      2.2
-    ],
     "ID": 1,
     "Username": "jovan",
     "Password": "jovan",
     "FirstName": "Jovan",
     "LastName": "Jovanovic",
-    "DateOfBirth": "15/06/1994"
+    "DateOfBirth": "15/06/1994",
+    "Ratings": [ 4.3, 2.2 ]
   },
   {
     "Type": "Cardiology",
-    "VacationRequestIDs": [
-      1,
-      2
-    ],
+    "VacationRequestIDs": [],
     "MedicineCreationRequestIDs": [],
-    "Ratings": [
-      5.0,
-      4.8
-    ],
+
     "ID": 5,
     "Username": "marko",
     "Password": "marko",
     "FirstName": "Marko",
     "LastName": "Markovic",
-    "DateOfBirth": "12/04/1992"
-  }
+    "DateOfBirth": "12/04/1992",
+    "Ratings": [ 5.0, 2.8 ]
+  },
+
 ]
