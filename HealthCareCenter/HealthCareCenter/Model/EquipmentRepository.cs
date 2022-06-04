@@ -12,6 +12,29 @@ namespace HealthCareCenter.Model
         public static List<Equipment> Equipments = Load();
 
         /// <summary>
+        /// Finding last(largest) id in file equipments.json.
+        /// </summary>
+        /// <returns>last(largest) id.</returns>
+        public static int GetLargestEquipmentId()
+        {
+            try
+            {
+                List<Equipment> equipments = EquipmentRepository.Equipments;
+                equipments.Sort((x, y) => x.ID.CompareTo(y.ID));
+                if (equipments.Count == 0)
+                {
+                    return -1;
+                }
+
+                return equipments[equipments.Count - 1].ID;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
         /// Load all equipments from file equipments.json.
         /// </summary>
         /// <returns>List of all hospital rooms.</returns>

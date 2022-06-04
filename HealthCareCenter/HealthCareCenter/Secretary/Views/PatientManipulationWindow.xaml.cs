@@ -33,7 +33,7 @@ namespace HealthCareCenter.Secretary
             _controller = new PatientManipulationController();
 
             patientsDataGrid.ItemsSource = UserRepository.Patients;
-            _blockedPatients = _controller.LoadBlockedPatients();
+            _blockedPatients = _controller.GetBlockedPatients();
 
             _controller.UpdateMaxIDsIfNeeded();
         }
@@ -142,7 +142,7 @@ namespace HealthCareCenter.Secretary
 
             PatientViewWindow window = new PatientViewWindow(patient, record);
             window.ShowDialog();
-            _blockedPatients = _controller.LoadBlockedPatients();
+            _blockedPatients = _controller.GetBlockedPatients();
             patientsDataGrid.Items.Refresh();
         }
 

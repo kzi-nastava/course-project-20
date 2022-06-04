@@ -58,29 +58,6 @@ namespace HealthCareCenter.Service
         }
 
         /// <summary>
-        /// Finding last(largest) id in file equipments.json.
-        /// </summary>
-        /// <returns>last(largest) id.</returns>
-        public static int GetLargestEquipmentId()
-        {
-            try
-            {
-                List<Equipment> equipments = EquipmentRepository.Equipments;
-                equipments.Sort((x, y) => x.ID.CompareTo(y.ID));
-                if (equipments.Count == 0)
-                {
-                    return -1;
-                }
-
-                return equipments[equipments.Count - 1].ID;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        /// <summary>
         /// Delete equipment from file Equipments.josn with specific id.
         /// </summary>
         /// <param name="id">id of the equipment we want to delete.</param>

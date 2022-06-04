@@ -44,6 +44,7 @@ namespace HealthCareCenter.PatientGUI.ViewModels
             CurrentViewLabel = CurrentViewModel.ToString();
             OnPropertyChanged(nameof(CurrentViewLabel));
             StartNotificationChecks();
+            DisplayNotifications();
 
             ShowMyAppointments = new NavigateCommand(_navigationStore, ViewType.MyAppointments, _patient);
             ShowSearchForDoctors = new NavigateCommand(_navigationStore, ViewType.SearchDoctors, _patient);
@@ -52,6 +53,20 @@ namespace HealthCareCenter.PatientGUI.ViewModels
             ShowDoctorSurvey = new NavigateCommand(_navigationStore, ViewType.DoctorSurvey, _patient);
             ShowHealthCenterSurvey = new NavigateCommand(_navigationStore, ViewType.HealthCenterSurvey, _patient);
             LogOut = new LogOutCommand();
+        }
+
+        private void DisplayNotifications()
+        {
+            List<Notification> notifications = NotificationService.FindUnopened(_patient);
+            if (notifications.Count == 0)
+            {
+                return;
+            }
+            MessageBox.Show("You have new notifications.");
+            foreach (Notification notification in notifications)
+            {
+                MessageBox.Show(notification.Message);
+            }
         }
 
         private void OnCurrentViewModelChanged()

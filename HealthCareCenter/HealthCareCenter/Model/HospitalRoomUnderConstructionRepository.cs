@@ -11,6 +11,25 @@ namespace HealthCareCenter.Model
         private const string fileName = "hospitalRoomsUnderConstruction.json";
         public static List<HospitalRoom> Rooms = Load();
 
+        public static int GetLargestRoomId()
+        {
+            try
+            {
+                List<HospitalRoom> rooms = HospitalRoomUnderConstructionRepository.Rooms;
+                rooms.Sort((x, y) => x.ID.CompareTo(y.ID));
+                if (rooms.Count == 0)
+                {
+                    return 0;
+                }
+
+                return rooms[rooms.Count - 1].ID;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         private static List<HospitalRoom> Load()
         {
             try

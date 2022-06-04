@@ -67,5 +67,12 @@ namespace HealthCareCenter.Service
             ReferralRepository.Referrals.Remove(referral);
             ReferralRepository.Save();
         }
+
+        public static void Fill(int doctorID, int patientID, Referral referral)
+        {
+            referral.ID = ReferralRepository.LargestID;
+            referral.DoctorID = doctorID;
+            referral.PatientID = patientID;
+        }
     }
 }

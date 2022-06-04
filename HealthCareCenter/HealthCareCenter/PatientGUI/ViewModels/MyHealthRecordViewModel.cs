@@ -121,7 +121,7 @@ namespace HealthCareCenter.PatientGUI.ViewModels
         public MyHealthRecordViewModel(Patient patient)
         {
             Patient = patient;
-            HealthRecord = HealthRecordService.Find(patient);
+            HealthRecord = HealthRecordService.Get(patient);
             _patientHeight = HealthRecord.Height.ToString() + "cm";
             _patientWeight = HealthRecord.Weight.ToString() + "kg";
             foreach (string allergen in HealthRecord.Allergens)

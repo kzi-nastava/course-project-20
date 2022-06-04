@@ -23,6 +23,7 @@ namespace HealthCareCenter.Service
             }
             return rowIndex;
         }
+
         public static int GetRowItemID(DataGrid grid, string key)
         {
             DataRowView row;

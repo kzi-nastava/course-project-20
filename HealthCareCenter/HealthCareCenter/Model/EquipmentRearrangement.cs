@@ -18,7 +18,7 @@ namespace HealthCareCenter.Model
 
         public EquipmentRearrangement(Equipment equipment, DateTime moveTime, int newRoomID)
         {
-            this.ID = EquipmentRearrangementService.GetLargestID() + 1;
+            this.ID = EquipmentRearrangementRepository.GetLargestID() + 1;
             this.EquipmentID = equipment.ID;
             this.MoveTime = moveTime;
             this.OldRoomID = equipment.CurrentRoomID;
@@ -27,7 +27,7 @@ namespace HealthCareCenter.Model
 
         public EquipmentRearrangement(int equipmentID, DateTime moveTime, int oldRoomID, int newRoomID)
         {
-            this.ID = EquipmentRearrangementService.GetLargestID() + 1;
+            this.ID = EquipmentRearrangementRepository.GetLargestID() + 1;
             this.EquipmentID = equipmentID;
             this.MoveTime = moveTime;
             this.OldRoomID = oldRoomID;

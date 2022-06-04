@@ -104,7 +104,7 @@ namespace HealthCareCenter.DoctorServices
                 {
                     continue;
                 }
-                HealthRecord patientsHealthRecord = HealthRecordService.Find(appointment.HealthRecordID);
+                HealthRecord patientsHealthRecord = HealthRecordService.Get(appointment.HealthRecordID);
                 if (patientsHealthRecord != null)
                     window.AddAppointmentToAppointmentsTable(appointment, patientsHealthRecord.PatientID);
                 else
@@ -158,7 +158,7 @@ namespace HealthCareCenter.DoctorServices
             int doctorID = TableService.GetRowItemID(window.doctorsDataGrid, "Id");
             if (doctorID == -1) 
                 return false;
-            ReferralService.FillReferral(doctorID, selectedPatientID, referral);
+            ReferralsService.Fill(doctorID, selectedPatientID, referral);
             ReferralRepository.Referrals.Add(referral);
             return true;
         }
@@ -168,7 +168,7 @@ namespace HealthCareCenter.DoctorServices
             int doctorID = TableService.GetRowItemID(window.doctorsDataGrid, "Id");
             if (doctorID == -1) 
                 return false;
-            ReferralService.FillReferral(doctorID,selectedPatientID,referral);
+            ReferralsService.Fill(doctorID,selectedPatientID,referral);
             ReferralRepository.Referrals.Add(referral);
             return true;
         }

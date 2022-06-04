@@ -7,11 +7,11 @@ namespace HealthCareCenter.Service
 {
     public static class HealthRecordService
     {
-        public static HealthRecord FindRecordByPatientID(int ID)
+        public static HealthRecord GetRecordByPatientID(int id)
         {
             foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
             {
-                if (ID == healthRecord.PatientID)
+                if (id == healthRecord.PatientID)
                 {
                     return healthRecord;
                 }
@@ -19,7 +19,7 @@ namespace HealthCareCenter.Service
             return null;
         }
 
-        public static HealthRecord Find(int id)
+        public static HealthRecord Get(int id)
         {
             foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
             {
@@ -31,7 +31,7 @@ namespace HealthCareCenter.Service
             return null;
         }
 
-        public static HealthRecord Find(Patient patient)
+        public static HealthRecord Get(Patient patient)
         {
             foreach (HealthRecord record in HealthRecordRepository.Records)
             {
@@ -43,7 +43,7 @@ namespace HealthCareCenter.Service
             return null;
         }
 
-        public static HealthRecord Find(Appointment appointment)
+        public static HealthRecord Get(Appointment appointment)
         {
             if (HealthRecordRepository.Records == null)
             {
@@ -60,7 +60,7 @@ namespace HealthCareCenter.Service
             return null;
         }
 
-        public static string CheckAlergens(HealthRecord record)
+        public static string CheckAllergens(HealthRecord record)
         {
             string alergens = "";
             if (record.Allergens != null)
@@ -95,7 +95,7 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static void UpdateHealthRecord(double height, double weight, string[] previousDiseases, string[] allergens, int recordIndex)
+        public static void Update(double height, double weight, string[] previousDiseases, string[] allergens, int recordIndex)
         {
             HealthRecord healthRecord = HealthRecordRepository.Records[recordIndex];
             healthRecord.Height = height;

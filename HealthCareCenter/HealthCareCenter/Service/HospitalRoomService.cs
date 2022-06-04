@@ -67,29 +67,6 @@ namespace HealthCareCenter.Service
         }
 
         /// <summary>
-        /// Finding last(largest) id in file hospitalRooms.json.
-        /// </summary>
-        /// <returns>last(largest) id.</returns>
-        public static int GetLargestRoomId()
-        {
-            try
-            {
-                List<HospitalRoom> rooms = HospitalRoomRepository.Rooms;
-                rooms.Sort((x, y) => x.ID.CompareTo(y.ID));
-                if (rooms.Count == 0)
-                {
-                    return 0;
-                }
-
-                return rooms[rooms.Count - 1].ID;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        /// <summary>
         /// Delete room from file HospitalRooms.josn with specific id.
         /// </summary>
         /// <param name="id">id of the hospital room we want to delete.</param>
@@ -258,7 +235,7 @@ namespace HealthCareCenter.Service
         {
             return room.AppointmentIDs.Count != 0;
         }
-        public static List<HospitalRoomDisplay> GetRoomsForDisplay(bool checkup)
+        public static List<HospitalRoomDisplay> GetRooms(bool checkup)
         {
             List<HospitalRoomDisplay> rooms = new List<HospitalRoomDisplay>();
             foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
@@ -286,11 +263,11 @@ namespace HealthCareCenter.Service
             return rooms;
         }
 
-        public static bool IsOccupied(int roomID, DateTime time)
+        public static bool IsOccupied(int id, DateTime time)
         {
             foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
-                if (appointment.HospitalRoomID != roomID)
+                if (appointment.HospitalRoomID != id)
                 {
                     continue;
                 }

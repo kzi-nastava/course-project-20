@@ -54,29 +54,6 @@ namespace HealthCareCenter.Service
         }
 
         /// <summary>
-        /// Finding last(largest) id in file hospitalRoomsForRenovation.json.
-        /// </summary>
-        /// <returns>last(largest) id.</returns>
-        public static int GetLargestRoomId()
-        {
-            try
-            {
-                List<HospitalRoom> rooms = HospitalRoomForRenovationRepository.Rooms;
-                rooms.Sort((x, y) => x.ID.CompareTo(y.ID));
-                if (rooms.Count == 0)
-                {
-                    return 0;
-                }
-
-                return rooms[rooms.Count - 1].ID;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        /// <summary>
         /// Delete room from file hospitalRoomsForRenovation.josn with specific id.
         /// </summary>
         /// <param name="id">id of the hospital room we want to delete.</param>

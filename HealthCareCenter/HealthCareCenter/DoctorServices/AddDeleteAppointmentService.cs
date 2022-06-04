@@ -76,7 +76,7 @@ namespace HealthCareCenter.DoctorServices
             sucessfull = TimeIsAvailable(appointment, displayedDate);
             if (!sucessfull) return false;
 
-            Patient patient = PatientService.FindPatient(id);
+            Patient patient = PatientService.Get(id);
             if (patient == null) return false;
 
             currentDate = DateTime.Today;

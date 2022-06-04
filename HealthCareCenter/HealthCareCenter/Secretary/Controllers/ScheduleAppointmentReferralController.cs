@@ -23,7 +23,7 @@ namespace HealthCareCenter.Secretary.Controllers
 
         public List<HospitalRoomDisplay> GetRooms(bool checkup)
         {
-            return HospitalRoomService.GetRoomsForDisplay(checkup);
+            return HospitalRoomService.GetRooms(checkup);
         }
 
         public void Schedule(Referral referral, Appointment appointment)

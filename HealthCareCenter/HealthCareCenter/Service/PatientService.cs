@@ -12,10 +12,12 @@ namespace HealthCareCenter.Service
         private const int _modificationTrollLimit = 100;
 
         public static Patient FindPatient(int ID)
+
+        public static Patient Get(int id)
         {
             foreach(Patient patient in UserRepository.Patients)
             {
-                if(patient.ID == ID) 
+                if(patient.ID == id) 
                     return patient; 
             }
             return null; 
@@ -32,7 +34,8 @@ namespace HealthCareCenter.Service
             }
             return counter; 
         }
-        public static List<Patient> LoadBlockedPatients()
+
+        public static List<Patient> GetBlockedPatients()
         {
             List<Patient> blockedPatients = new List<Patient>();
             foreach (Patient patient in UserRepository.Patients)
