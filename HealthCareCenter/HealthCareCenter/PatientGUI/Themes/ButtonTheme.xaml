@@ -25,13 +25,13 @@
                 </Setter.Value>
             </Setter>
 
-            <Setter Property="Background" Value="#ce6565" />
+            <Setter Property="Background" Value="#B7A7AE" />
 
         </Style.Setters>
 
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#9e4d4d" />
+                <Setter Property="Background" Value="#8A7999" />
             </Trigger>
         </Style.Triggers>
 

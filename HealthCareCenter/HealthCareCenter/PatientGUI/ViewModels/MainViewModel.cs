@@ -37,7 +37,7 @@ namespace HealthCareCenter.PatientGUI.ViewModels
 
             _patient = patient;
 
-            _notificationsFromPrescriptionsToSend = PatientFunctionality.GetInstance().GetNotificationsSentDict(
+            _notificationsFromPrescriptionsToSend = NotificationService.GetNotificationsSentDict(
                 PrescriptionService.GetPatientPrescriptions(_patient.HealthRecordID));
             ShowNotifications();  // show notifications on startup
 
@@ -76,7 +76,7 @@ namespace HealthCareCenter.PatientGUI.ViewModels
 
         private void ShowNotifications()
         {
-            List<string> notificationsToSend = PatientFunctionality.GetInstance().GetNotifications(
+            List<string> notificationsToSend = NotificationService.GetNotifications(
                 _notificationsFromPrescriptionsToSend, _patient);
 
             foreach (string notificationInfo in notificationsToSend)

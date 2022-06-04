@@ -6,7 +6,7 @@
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="FontFamily" Value="Comic sans MS" />
-            <Setter Property="Foreground" Value="#ce6565" />
+            <Setter Property="Foreground" Value="#B7A7AE" />
             <Setter Property="FontSize" Value="18" />
             <Setter Property="BorderBrush" Value="White" />
             <Setter Property="BorderThickness" Value="5" />

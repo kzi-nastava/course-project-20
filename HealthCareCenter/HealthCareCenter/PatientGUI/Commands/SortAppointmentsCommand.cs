@@ -17,8 +17,7 @@ namespace HealthCareCenter.PatientGUI.Commands
                 appointments.Add(AppointmentService.Find(appointmentViewModel.AppointmentID));
             }
 
-            PatientFunctionality patFunc = PatientFunctionality.GetInstance();
-            appointments = patFunc.SortAppointments(appointments, _viewModel.ChosenSortCriteria);
+            appointments = AppointmentService.SortAppointments(appointments, _viewModel.ChosenSortCriteria);
 
             List<AppointmentViewModel> sortedAppointmentViewModels = new List<AppointmentViewModel>();
             foreach (Appointment appointment in appointments)
@@ -27,6 +26,7 @@ namespace HealthCareCenter.PatientGUI.Commands
             }
 
             _viewModel.Appointments = sortedAppointmentViewModels;
+            _viewModel.AnamnesisInfo = "";
         }
 
         private readonly MyHealthRecordViewModel _viewModel;
