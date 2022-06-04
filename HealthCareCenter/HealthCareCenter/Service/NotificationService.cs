@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Model;
+using System;
 using System.Collections.Generic;
 
 namespace HealthCareCenter.Service
@@ -61,8 +62,6 @@ namespace HealthCareCenter.Service
 
             return notificationsFromPrescriptionsToSend;
         }
-
-        public static string SendNotifications(Appointment postponedAppointment, Appointment newAppointment, Patient patient)
           
         public static string Send(Appointment postponedAppointment, Appointment newAppointment, Patient patient)
         {

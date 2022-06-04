@@ -11,8 +11,6 @@ namespace HealthCareCenter.Service
         private const int _creationTrollLimit = 100;
         private const int _modificationTrollLimit = 100;
 
-        public static Patient FindPatient(int ID)
-
         public static Patient Get(int id)
         {
             foreach(Patient patient in UserRepository.Patients)
