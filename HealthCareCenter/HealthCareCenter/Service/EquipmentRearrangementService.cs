@@ -7,7 +7,7 @@ namespace HealthCareCenter.Service
 {
     public static class EquipmentRearrangementService
     {
-        private static bool IsDateTimeBeforeCurrentTime(DateTime rearrangementDate)
+        private static bool IsBeforeCurrentTime(DateTime rearrangementDate)
         {
             DateTime now = DateTime.Now;
             int value = DateTime.Compare(rearrangementDate, now);
@@ -149,7 +149,7 @@ namespace HealthCareCenter.Service
             newRoomOfCurrentRearrangement.EquipmentRearrangementsIDs.Add(rearrangement.ID);
 
             // Add new rearrangemnt to file
-            EquipmentRearrangementService.Add(rearrangement);
+            Add(rearrangement);
 
             // Update Rooms
             //********************************************
@@ -167,7 +167,7 @@ namespace HealthCareCenter.Service
             {
                 EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipment.RearrangementID);
 
-                if (IsDateTimeBeforeCurrentTime(rearrangement.MoveTime))
+                if (IsBeforeCurrentTime(rearrangement.MoveTime))
                 {
                     Room currentRoom = RoomService.Get(equipment.CurrentRoomID);
                     Room newRoomOfRearrangement = RoomService.Get(rearrangement.NewRoomID);

@@ -255,7 +255,7 @@ namespace HealthCareCenter.DoctorServices
                 case 0: chosenType = "General practitioner"; window.specializationComboBox.IsEnabled = false; window.submitAutomaticReferal.IsEnabled = false; break;
                 case 1: chosenType = "Special"; window.specializationComboBox.IsEnabled = true; return GetDoctorsBySpecialization();
             }
-            return DoctorService.GetDoctorsByType(chosenType);
+            return DoctorService.GetDoctorsOfType(chosenType);
         }
 
         public List<Doctor> GetDoctorsBySpecialization()
@@ -270,7 +270,7 @@ namespace HealthCareCenter.DoctorServices
                 case 1: chosenType = "Cardiologist"; break;
                 default: return null;
             }
-            return DoctorService.GetDoctorsBySpecialization(chosenType);
+            return DoctorService.GetDoctorsOfType(chosenType);
         }
     }
 }

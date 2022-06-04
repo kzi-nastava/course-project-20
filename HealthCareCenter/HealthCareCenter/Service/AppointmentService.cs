@@ -136,7 +136,7 @@ namespace HealthCareCenter.Service
                 {
                     return false;
                 }
-                UserService.RemoveUnavailableDoctors(availableDoctors, appointment);
+                DoctorService.RemoveUnavailableDoctors(availableDoctors, appointment);
                 HospitalRoomService.RemoveUnavailableRooms(availableRooms, appointment);
             }
             return true;
@@ -208,7 +208,7 @@ namespace HealthCareCenter.Service
 
         public static bool TryScheduling(AppointmentType type, string doctorType, Patient patient)
         {
-            List<Doctor> doctors = UserService.GetDoctorsOfType(doctorType);
+            List<Doctor> doctors = DoctorService.GetDoctorsOfType(doctorType);
 
             UrgentInfo.OccupiedAppointments = new List<Appointment>();
             UrgentInfo.NewAppointmentsInfo = new Dictionary<int, Appointment>();

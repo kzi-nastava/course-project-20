@@ -27,7 +27,7 @@ namespace HealthCareCenter.Secretary.Controllers
 
         public List<string> GetTypesOfDoctors()
         {
-            return UserService.GetTypesOfDoctors();
+            return DoctorService.GetTypesOfDoctors();
         }
     }
 }

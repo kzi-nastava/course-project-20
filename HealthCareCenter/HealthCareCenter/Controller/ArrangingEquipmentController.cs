@@ -93,7 +93,7 @@ namespace HealthCareCenter.Controller
         {
             if (!IsNewRoomIdInputValide(newRoomId)) { throw new InvalideHospitalRoomIdException(newRoomId); }
             int parsedNewRoomId = Convert.ToInt32(newRoomId);
-            Room newRoom = RoomService.GetUsableHospitalPremesisForEquipmentTransfer(parsedNewRoomId);
+            Room newRoom = RoomService.GetPremesisForEquipmentTransfer(parsedNewRoomId);
             if (!RoomService.IsStorage(newRoom))
             {
                 HospitalRoom newHospitalRoom = (HospitalRoom)newRoom;
@@ -134,8 +134,8 @@ namespace HealthCareCenter.Controller
             }
 
             // Checking are rooms available
-            Room currentRoom = RoomService.GetUsableHospitalPremesisForEquipmentTransfer(rearrangement.OldRoomID);
-            Room newRoom = RoomService.GetUsableHospitalPremesisForEquipmentTransfer(rearrangement.NewRoomID);
+            Room currentRoom = RoomService.GetPremesisForEquipmentTransfer(rearrangement.OldRoomID);
+            Room newRoom = RoomService.GetPremesisForEquipmentTransfer(rearrangement.NewRoomID);
 
             if (!IsRoomAvailable(currentRoom, rearrangement))
             {

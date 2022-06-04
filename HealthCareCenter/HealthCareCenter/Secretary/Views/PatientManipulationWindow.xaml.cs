@@ -33,7 +33,14 @@ namespace HealthCareCenter.Secretary
             _controller = new PatientManipulationController();
 
             patientsDataGrid.ItemsSource = UserRepository.Patients;
-            _blockedPatients = _controller.GetBlockedPatients();
+            try
+            {
+                _blockedPatients = _controller.GetBlockedPatients();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
 
             _controller.UpdateMaxIDsIfNeeded();
         }
@@ -142,7 +149,14 @@ namespace HealthCareCenter.Secretary
 
             PatientViewWindow window = new PatientViewWindow(patient, record);
             window.ShowDialog();
-            _blockedPatients = _controller.GetBlockedPatients();
+            try
+            {
+                _blockedPatients = _controller.GetBlockedPatients();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             patientsDataGrid.Items.Refresh();
         }
 
@@ -160,7 +174,16 @@ namespace HealthCareCenter.Secretary
         private void OpenEditWindow()
         {
             Patient patient = (Patient)patientsDataGrid.SelectedItem;
-            HealthRecord record = _controller.FindRecord(patient);
+            HealthRecord record;
+            try
+            {
+                record = _controller.FindRecord(patient);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
 
             PatientEditWindow window = new PatientEditWindow(patient, record);
             window.ShowDialog();

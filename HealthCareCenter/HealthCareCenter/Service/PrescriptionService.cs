@@ -47,7 +47,7 @@ namespace HealthCareCenter.Service
                 return false;
             }
         }
-        public static bool CreateMedicineInstruction(int id,string comment,int dailyConsumption,ConsumptionPeriod consumptionPeriod, int medicineID) {
+        public static bool CreateMedicineInstruction(int id, string comment, int dailyConsumption, ConsumptionPeriod consumptionPeriod, int medicineID) {
             bool sucessfull = CheckData(false);
             if (!sucessfull)
                 return false;

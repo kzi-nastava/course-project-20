@@ -30,7 +30,14 @@ namespace HealthCareCenter.Secretary
 
             InitializeComponent();
 
-            vacationRequestsDataGrid.ItemsSource = _controller.Get();
+            try
+            {
+                vacationRequestsDataGrid.ItemsSource = _controller.Get();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
@@ -42,7 +49,16 @@ namespace HealthCareCenter.Secretary
             }
 
             int id = ((VacationRequestDisplay)vacationRequestsDataGrid.SelectedItem).ID;
-            vacationRequestsDataGrid.ItemsSource = _controller.Accept(id);
+
+            try
+            {
+                vacationRequestsDataGrid.ItemsSource = _controller.Accept(id);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
             MessageBox.Show("Successfully accepted the vacation request.");
         }
 

@@ -102,29 +102,5 @@
       "Band aid": 5
     },
     "EquipmentRearrangementsIDs": []
-  },
-  {
-    "Type": 2,
-    "Name": "gdfgdf",
-    "AppointmentIDs": [
-      40,
-      47,
-      47
-    ],
-    "ID": 5,
-    "EquipmentAmounts": {
-      "Chair": 1
-    },
-    "EquipmentRearrangementsIDs": []
-  },
-  {
-    "Type": 2,
-    "Name": "hfdghdfgh",
-    "AppointmentIDs": [],
-    "ID": 6,
-    "EquipmentAmounts": {
-      "Bad": 1
-    },
-    "EquipmentRearrangementsIDs": []
   }
 ]

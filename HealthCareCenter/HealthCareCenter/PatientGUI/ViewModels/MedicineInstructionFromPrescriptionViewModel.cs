@@ -10,7 +10,7 @@ namespace HealthCareCenter.PatientGUI.ViewModels
 
         public int PrescriptionID => _prescription.ID;
         public int DoctorID => _prescription.DoctorID;
-        public string DoctorName => UserService.GetUserFullName(_prescription.DoctorID);
+        public string DoctorName => UserService.GetFullName(_prescription.DoctorID);
         public int InstructionID => _medicineInstruction.ID;
         public int MedicineID => _medicineInstruction.MedicineID;
         public string MedicineName => MedicineService.GetName(_medicineInstruction.MedicineID);

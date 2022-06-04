@@ -112,7 +112,7 @@ namespace HealthCareCenter.Service
         /// <summary>
         /// Method return usable hospital room or storage
         /// </summary>
-        public static Room GetUsableHospitalPremesisForEquipmentTransfer(int roomId)
+        public static Room GetPremesisForEquipmentTransfer(int roomId)
         {
             try
             {
@@ -281,7 +281,7 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static bool ContaninsAnyRearrangement(Room room)
+        public static bool ContainsAnyRearrangement(Room room)
         {
             List<EquipmentRearrangement> rearrangements = EquipmentRearrangementService.GetRearrangements();
             foreach (EquipmentRearrangement rearrangement in rearrangements)
@@ -294,7 +294,7 @@ namespace HealthCareCenter.Service
             return false;
         }
 
-        public static List<Equipment> GetAllEquipments(Room room)
+        public static List<Equipment> GetAllEquipment(Room room)
         {
             List<Equipment> roomEquipments = new List<Equipment>();
             List<Equipment> equipments = EquipmentService.GetEquipments();

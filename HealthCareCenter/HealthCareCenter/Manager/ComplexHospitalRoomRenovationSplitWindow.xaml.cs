@@ -127,7 +127,7 @@ namespace HealthCareCenter
                 return false;
             }
 
-            if (RoomService.ContaninsAnyRearrangement(splitRoom))
+            if (RoomService.ContainsAnyRearrangement(splitRoom))
             {
                 MessageBox.Show("Error, split room contains rearrngement");
                 return false;

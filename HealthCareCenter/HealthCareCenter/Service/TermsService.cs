@@ -6,11 +6,10 @@ namespace HealthCareCenter.Model
 {
     public static class TermsService
     {
+        // returns all terms from 8:00 to 21:00 knowing that an appointment lasts 15 minutes
+        // example { "8:00", "8:15", "8:30" ... "20:30", "20:45" }
         public static List<string> GetPossibleDailyTerms()
         {
-            // returns all terms from 8:00 to 21:00 knowing that an appointment lasts 15 minutes
-            // example { "8:00", "8:15", "8:30" ... "20:30", "20:45" }
-
             int hours = 8;
             int minutes = 0;
             List<string> possibleTerms = new List<string>();
@@ -54,14 +53,6 @@ namespace HealthCareCenter.Model
             return termsWithinTwoHours;
         }
 
-        public static DateTime CreateTime(string term)
-        {
-            int termHour = int.Parse(term.Split(":")[0]);
-            int termMinute = int.Parse(term.Split(":")[1]);
-            DateTime time = DateTime.Now.Date.AddHours(termHour).AddMinutes(termMinute);
-            return time;
-        }
-
         public static List<string> GetTermsAfterTwoHours(List<string> allPossibleTerms)
         {
             List<string> terms = new List<string>();
@@ -75,6 +66,14 @@ namespace HealthCareCenter.Model
                 }
             }
             return terms;
+        }
+
+        public static DateTime CreateTime(string term)
+        {
+            int termHour = int.Parse(term.Split(":")[0]);
+            int termMinute = int.Parse(term.Split(":")[1]);
+            DateTime time = DateTime.Now.Date.AddHours(termHour).AddMinutes(termMinute);
+            return time;
         }
     }
 }

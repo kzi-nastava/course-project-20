@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using HealthCareCenter.Model;
+﻿using HealthCareCenter.Model;
 
 namespace HealthCareCenter.Service
 {

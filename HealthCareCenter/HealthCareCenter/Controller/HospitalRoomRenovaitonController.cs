@@ -90,7 +90,7 @@ namespace HealthCareCenter.Controller
         private void IsPossibleRenovation(HospitalRoom roomForRenovation)
         {
             if (HospitalRoomService.ContainsAnyAppointment(roomForRenovation)) { throw new HospitalRoomContainAppointmentException(roomForRenovation.ID.ToString()); }
-            if (RoomService.ContaninsAnyRearrangement(roomForRenovation)) { throw new HospitalRoomContainEquipmentRearrangementException(roomForRenovation.ID.ToString()); }
+            if (RoomService.ContainsAnyRearrangement(roomForRenovation)) { throw new HospitalRoomContainEquipmentRearrangementException(roomForRenovation.ID.ToString()); }
         }
 
         private void IsPossibleToScheduleRenovtion(string hospitalRoomForRenovationId, string startDate, string finishDate)

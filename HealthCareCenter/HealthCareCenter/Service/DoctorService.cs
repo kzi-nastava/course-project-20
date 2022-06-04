@@ -1,29 +1,56 @@
-﻿using System.Collections.Generic;
-using HealthCareCenter.Model;
+﻿using HealthCareCenter.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace HealthCareCenter.Service
 {
     public static class DoctorService
     {
-        public static List<Doctor> GetDoctorsByType(string chosenType)
+        public static List<Doctor> GetDoctorsOfType(string type)
         {
             List<Doctor> doctors = new List<Doctor>();
             foreach (Doctor doctor in UserRepository.Doctors)
             {
-                if (doctor.Type.Equals(chosenType))
+                if (doctor.Type == type)
+                {
                     doctors.Add(doctor);
+                }
             }
             return doctors;
         }
-        public static List<Doctor> GetDoctorsBySpecialization(string chosenType)
+
+        public static List<string> GetTypesOfDoctors()
         {
-            List<Doctor>doctors = new List<Doctor>();
+            List<string> types = new List<string>();
+            types.AddRange(UserRepository.Doctors.Where(doctor => !types.Contains(doctor.Type)).Select(doctor => doctor.Type));
+            return types;
+        }
+      
+        public static Doctor Get(int id)
+        {
             foreach (Doctor doctor in UserRepository.Doctors)
             {
-                if (doctor.Type.Equals(chosenType))
-                    doctors.Add(doctor);
+                if (doctor.ID == id)
+                {
+                    return doctor;
+                }
             }
-            return doctors;
+
+            return null;
+        }
+
+        public static void RemoveUnavailableDoctors(List<Doctor> availableDoctors, Appointment appointment)
+        {
+            foreach (Doctor doctor in availableDoctors)
+            {
+                if (doctor.ID == appointment.DoctorID)
+                {
+                    availableDoctors.Remove(doctor);
+                    return;
+                }
+            }
         }
     }
 }

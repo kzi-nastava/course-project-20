@@ -55,7 +55,7 @@ namespace HealthCareCenter
             _finishDate = finshDate;
             _room1 = room1;
             _room2 = room2;
-            _splitRoomEquipments = RoomService.GetAllEquipments(_splitRoom);
+            _splitRoomEquipments = RoomService.GetAllEquipment(_splitRoom);
 
             InitializeComponent();
             FillNewRoomComboBox();

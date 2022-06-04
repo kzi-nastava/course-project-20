@@ -50,7 +50,15 @@ namespace HealthCareCenter.Secretary
             _deleteRequests = new List<DeleteRequest>();
             _editRequests = new List<EditRequest>();
 
-            _controller.Refresh(_deleteRequests, _editRequests, _patient);
+            try
+            {
+                _controller.Refresh(_deleteRequests, _editRequests, _patient);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
 
             deleteRequestsDataGrid.ItemsSource = _deleteRequests;
             editRequestsDataGrid.ItemsSource = _editRequests;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace HealthCareCenter.Service
 {
-    internal class EquipmentService
+    public class EquipmentService
     {
         /// <summary>
         /// Finding equipment with specific id.

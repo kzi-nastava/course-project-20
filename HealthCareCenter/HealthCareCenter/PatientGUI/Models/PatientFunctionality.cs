@@ -51,7 +51,7 @@ namespace HealthCareCenter.PatientGUI.Models
 
         public void ScheduleAppointment(DateTime scheduleDate, int doctorID, int healthRecordID, int hospitalRoomID)
         {
-            if (CheckCreationTroll(UserService.GetPatientByHealthRecordID(healthRecordID)))
+            if (CheckCreationTroll(PatientService.GetPatientByHealthRecordID(healthRecordID)))
             {
                 return;
             }
@@ -76,7 +76,7 @@ namespace HealthCareCenter.PatientGUI.Models
 
         public void ScheduleAppointment(Appointment newAppointment)
         {
-            if (CheckCreationTroll(UserService.GetPatientByHealthRecordID(newAppointment.HealthRecordID)))
+            if (CheckCreationTroll(PatientService.GetPatientByHealthRecordID(newAppointment.HealthRecordID)))
             {
                 return;
             }
@@ -129,7 +129,7 @@ namespace HealthCareCenter.PatientGUI.Models
 
         public void ModifyAppointment(DateTime scheduleDate, DateTime oldScheduleDate, int appointmentID, int doctorID, int patientID, int hospitalRoomID)
         {
-            if (CheckModificationTroll(UserService.GetPatientByID(patientID)))
+            if (CheckModificationTroll(PatientService.Get(patientID)))
             {
                 return;
             }
@@ -178,7 +178,7 @@ namespace HealthCareCenter.PatientGUI.Models
 
         public void CancelAppointment(int appointmentID, int patientID, DateTime appointmentScheduleDate)
         {
-            if (CheckModificationTroll(UserService.GetPatientByID(patientID)))
+            if (CheckModificationTroll(PatientService.Get(patientID)))
             {
                 return;
             }

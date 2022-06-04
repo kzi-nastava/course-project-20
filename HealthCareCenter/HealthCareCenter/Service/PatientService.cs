@@ -18,12 +18,24 @@ namespace HealthCareCenter.Service
             return null; 
         }
 
-        public static int FindPatientIndex(int ID)
+        public static Patient GetPatientByHealthRecordID(int healthRecordID)
+        {
+            foreach (Patient patient in UserRepository.Patients)
+            {
+                if (patient.HealthRecordID == healthRecordID)
+                {
+                    return patient;
+                }
+            }
+            return null;
+        }
+
+        public static int FindPatientIndex(int id)
         {
             int counter = 0;
             foreach (Patient patient in UserRepository.Patients)
             {
-                if (patient.ID == ID)
+                if (patient.ID == id)
                     return counter;
                 counter++;
             }

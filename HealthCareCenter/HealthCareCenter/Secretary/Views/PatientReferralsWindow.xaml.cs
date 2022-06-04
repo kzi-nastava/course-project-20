@@ -41,7 +41,14 @@ namespace HealthCareCenter.Secretary
 
         private void Refresh()
         {
-            _referrals = _controller.Get(_patient);
+            try
+            {
+                _referrals = _controller.Get(_patient);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             referralsDataGrid.ItemsSource = _referrals;
         }
 
@@ -53,8 +60,16 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            Referral selectedReferral = _controller.Get(((PatientReferralForDisplay)referralsDataGrid.SelectedItem).ID);
-
+            Referral selectedReferral;
+            try
+            {
+                selectedReferral = _controller.Get(((PatientReferralForDisplay)referralsDataGrid.SelectedItem).ID);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
             ScheduleAppointmentReferralWindow window = new ScheduleAppointmentReferralWindow(_patient, selectedReferral);
             window.ShowDialog();
             Refresh();

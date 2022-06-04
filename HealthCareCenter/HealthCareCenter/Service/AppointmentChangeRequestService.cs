@@ -1,9 +1,7 @@
 ﻿using HealthCareCenter.Enums;
 using HealthCareCenter.Secretary;
 using HealthCareCenter.Service;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace HealthCareCenter.Model
 {
