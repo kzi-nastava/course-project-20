@@ -101,7 +101,7 @@ namespace HealthCareCenter
             }
             else if (user.GetType() == typeof(Manager))
             {
-                ShowWindow(new ChangeMedicineRequestWindow((Manager)user));
+                ShowWindow(new ChangedMedicineCreationRequestWindow((Manager)user));
             }
             else if (user.GetType() == typeof(Patient))
             {
