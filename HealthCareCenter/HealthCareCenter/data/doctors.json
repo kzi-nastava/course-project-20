@@ -1,7 +1,10 @@
 [
   {
     "Type": "General practitioner",
-    "VacationRequestIDs": [ 0 ],
+    "VacationRequestIDs": [
+      0,
+      2
+    ],
     "MedicineCreationRequestIDs": [],
     "ID": 1,
     "Username": "jovan",
@@ -13,9 +16,10 @@
   },
   {
     "Type": "Cardiology",
-    "VacationRequestIDs": [],
+    "VacationRequestIDs": [
+      1
+    ],
     "MedicineCreationRequestIDs": [],
-
     "ID": 5,
     "Username": "marko",
     "Password": "marko",
@@ -23,6 +27,5 @@
     "LastName": "Markovic",
     "DateOfBirth": "12/04/1992",
     "Ratings": [ 5.0, 2.8 ]
-  },
-
+  }
 ]

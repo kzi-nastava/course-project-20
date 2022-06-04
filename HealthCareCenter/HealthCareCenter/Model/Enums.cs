@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace HealthCareCenter.Enums
+﻿namespace HealthCareCenter.Enums
 {
     public enum Blocker
     {

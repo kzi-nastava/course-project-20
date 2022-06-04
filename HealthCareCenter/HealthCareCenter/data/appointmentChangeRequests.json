@@ -1,42 +1,9 @@
 [
   {
-    "ID": 1,
-    "AppointmentID": 1,
-    "RequestType": 1,
-    "State": 1,
-    "NewDate": "06/05/2022 08:00",
-    "NewAppointmentType": 1,
-    "NewDoctorID": 1,
-    "DateSent": "28/04/2022 18:42",
-    "PatientID": 2
-  },
-  {
-    "ID": 2,
-    "AppointmentID": 1,
-    "RequestType": 0,
-    "State": 1,
-    "NewDate": "01/01/0001 00:00",
-    "NewAppointmentType": 0,
-    "NewDoctorID": 1,
-    "DateSent": "28/04/2022 18:50",
-    "PatientID": 2
-  },
-  {
-    "ID": 5,
-    "AppointmentID": 3,
-    "RequestType": 1,
-    "State": 1,
-    "NewDate": "13/05/2022 15:15",
-    "NewAppointmentType": 1,
-    "NewDoctorID": 1,
-    "DateSent": "06/05/2022 18:33",
-    "PatientID": 2
-  },
-  {
     "ID": 6,
     "AppointmentID": 2,
     "RequestType": 0,
-    "State": 0,
+    "State": 2,
     "NewDate": "01/01/0001 00:00",
     "NewAppointmentType": 0,
     "NewDoctorID": 0,
@@ -44,47 +11,14 @@
     "PatientID": 2
   },
   {
-    "ID": 7,
-    "AppointmentID": 43,
-    "RequestType": 0,
-    "State": 2,
-    "NewDate": "01/01/0001 00:00",
-    "NewAppointmentType": 1,
-    "NewDoctorID": 0,
-    "DateSent": "30/05/2022 18:25",
-    "PatientID": 2
-  },
-  {
-    "ID": 8,
-    "AppointmentID": 45,
-    "RequestType": 1,
-    "State": 2,
-    "NewDate": "02/06/2022 08:15",
-    "NewAppointmentType": 1,
-    "NewDoctorID": 3,
-    "DateSent": "31/05/2022 12:29",
-    "PatientID": 2
-  },
-  {
     "ID": 9,
-    "AppointmentID": 47,
+    "AppointmentID": 3,
     "RequestType": 1,
     "State": 2,
-    "NewDate": "01/06/2022 11:00",
+    "NewDate": "20/06/2022 11:00",
     "NewAppointmentType": 1,
     "NewDoctorID": 1,
     "DateSent": "31/05/2022 18:53",
-    "PatientID": 2
-  },
-  {
-    "ID": 10,
-    "AppointmentID": 52,
-    "RequestType": 0,
-    "State": 0,
-    "NewDate": "01/01/0001 00:00",
-    "NewAppointmentType": 0,
-    "NewDoctorID": 0,
-    "DateSent": "04/06/2022 16:20",
     "PatientID": 2
   }
 ]
