@@ -13,7 +13,7 @@ namespace HealthCareCenter.Service
         public static UrgentAppointmentInfo UrgentInfo { get; set; }
         public static OccupiedAppointmentInfo OccupiedInfo { get; set; }
 
-        public static Appointment Find(AppointmentDisplay appointmentDisplay)
+        public static Appointment Get(AppointmentDisplay appointmentDisplay)
         {
             if (AppointmentRepository.Appointments == null)
             {
@@ -30,7 +30,7 @@ namespace HealthCareCenter.Service
             return null;
         }
       
-        public static Appointment Find(int appointmentID)
+        public static Appointment Get(int appointmentID)
         {
             if (AppointmentRepository.Appointments == null)
             {
@@ -186,7 +186,7 @@ namespace HealthCareCenter.Service
             List<HospitalRoom> rooms = HospitalRoomService.GetRoomsOfType(type);
             foreach (string term in TermsService.GetTermsWithinTwoHours())
             {
-                DateTime potentialTime = TermsService.CreatePotentialTime(term);
+                DateTime potentialTime = TermsService.CreateTime(term);
 
                 List<Doctor> availableDoctors = new List<Doctor>(doctors);
                 List<HospitalRoom> availableRooms = new List<HospitalRoom>(rooms);
@@ -220,33 +220,33 @@ namespace HealthCareCenter.Service
             return true;
         }
 
-        public static Appointment Postpone(ref string notification, Patient patient, AppointmentType type, AppointmentDisplay appointmentDisplay)
+        public static Appointment Postpone(ref string notification, Patient patient, AppointmentType type, AppointmentDisplay selectedAppointment)
         {
-            Appointment postponedAppointment = Find(appointmentDisplay);
+            Appointment postponedAppointment = Get(selectedAppointment);
 
-            Appointment newAppointment = new Appointment(appointmentDisplay.ScheduledDate, OccupiedInfo.NewAppointmentsInfo[postponedAppointment.ID].HospitalRoomID, OccupiedInfo.NewAppointmentsInfo[postponedAppointment.ID].DoctorID, patient.HealthRecordID, type, true);
+            Appointment newAppointment = new Appointment(selectedAppointment.ScheduledDate, OccupiedInfo.NewAppointmentsInfo[postponedAppointment.ID].HospitalRoomID, OccupiedInfo.NewAppointmentsInfo[postponedAppointment.ID].DoctorID, patient.HealthRecordID, type, true);
             AppointmentRepository.Appointments.Add(newAppointment);
-            postponedAppointment.ScheduledDate = appointmentDisplay.PostponedTime;
+            postponedAppointment.ScheduledDate = selectedAppointment.PostponedTime;
             AppointmentRepository.Save();
 
             HospitalRoomService.Update(newAppointment.HospitalRoomID, newAppointment);
             HospitalRoomRepository.Save();
 
-            notification = NotificationService.SendNotifications(postponedAppointment, newAppointment, patient);
+            notification = NotificationService.Send(postponedAppointment, newAppointment, patient);
             return postponedAppointment;
         }
 
         public static List<AppointmentDisplay> GetAppointmentsForDisplay()
         {
-            List<AppointmentDisplay> appointmentsForDisplay = new List<AppointmentDisplay>();
+            List<AppointmentDisplay> appointments = new List<AppointmentDisplay>();
             foreach (Appointment appointment in OccupiedInfo.OccupiedAppointments)
             {
                 AppointmentDisplay appointmentDisplay = new AppointmentDisplay(appointment.ID, appointment.Type, appointment.ScheduledDate, appointment.Emergency, OccupiedInfo.NewDateOf[appointment.ID]);
                 LinkDoctor(appointment, appointmentDisplay);
                 LinkPatient(appointment, appointmentDisplay);
-                appointmentsForDisplay.Add(appointmentDisplay);
+                appointments.Add(appointmentDisplay);
             }
-            return appointmentsForDisplay;
+            return appointments;
         }
 
         private static void LinkPatient(Appointment appointment, AppointmentDisplay appointmentDisplay)
@@ -293,7 +293,7 @@ namespace HealthCareCenter.Service
         public static void SortAppointments()
         {
             List<string> allPossibleTerms = TermsService.GetPossibleDailyTerms();
-            List<string> terms = TermsService.FormTodaysPossibleTerms(allPossibleTerms);
+            List<string> terms = TermsService.GetTermsAfterTwoHours(allPossibleTerms);
             List<Appointment> sortedAppointments = new List<Appointment>();
             Dictionary<int, DateTime> newDateOf = new Dictionary<int, DateTime>();
             bool foundAll = false;

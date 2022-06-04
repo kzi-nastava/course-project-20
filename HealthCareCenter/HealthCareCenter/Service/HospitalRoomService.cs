@@ -258,7 +258,7 @@ namespace HealthCareCenter.Service
         {
             return room.AppointmentIDs.Count != 0;
         }
-        public static List<HospitalRoomDisplay> GetRoomsForDisplay(bool checkup)
+        public static List<HospitalRoomDisplay> GetRooms(bool checkup)
         {
             List<HospitalRoomDisplay> rooms = new List<HospitalRoomDisplay>();
             foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
@@ -286,11 +286,11 @@ namespace HealthCareCenter.Service
             return rooms;
         }
 
-        public static bool IsOccupied(int roomID, DateTime time)
+        public static bool IsOccupied(int id, DateTime time)
         {
             foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
-                if (appointment.HospitalRoomID != roomID)
+                if (appointment.HospitalRoomID != id)
                 {
                     continue;
                 }

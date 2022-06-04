@@ -69,7 +69,7 @@ namespace HealthCareCenter.Secretary.Controllers
 
         protected void ValidateHeight(HealthRecordDTO record)
         {
-            if (!Double.TryParse(record.Height, out _))
+            if (!double.TryParse(record.Height, out _))
             {
                 throw new Exception("Height must be a number.");
             }
@@ -77,7 +77,7 @@ namespace HealthCareCenter.Secretary.Controllers
 
         protected void ValidateWeight(HealthRecordDTO record)
         {
-            if (!Double.TryParse(record.Weight, out _))
+            if (!double.TryParse(record.Weight, out _))
             {
                 throw new Exception("Weight must be a number.");
             }

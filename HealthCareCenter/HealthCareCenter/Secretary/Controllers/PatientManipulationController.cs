@@ -14,9 +14,9 @@ namespace HealthCareCenter.Secretary.Controllers
             VacationRequestRepository.Load();
         }
 
-        public List<Patient> LoadBlockedPatients()
+        public List<Patient> GetBlockedPatients()
         {
-            return PatientService.LoadBlockedPatients();
+            return PatientService.GetBlockedPatients();
         }
 
         public void Block(Patient patient, List<Patient> blockedPatients)

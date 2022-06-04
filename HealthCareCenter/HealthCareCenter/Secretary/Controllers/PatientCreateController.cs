@@ -21,8 +21,8 @@ namespace HealthCareCenter.Secretary.Controllers
                 throw;
             }
 
-            double height = Double.Parse(recordDTO.Height);
-            double weight = Double.Parse(recordDTO.Weight);
+            double height = double.Parse(recordDTO.Height);
+            double weight = double.Parse(recordDTO.Weight);
 
             HealthRecord record = new HealthRecord(recordDTO.ID, height, weight, recordDTO.PreviousDiseases, recordDTO.Allergens, recordDTO.PatientID);
             Patient patient = new Patient(patientDTO.ID, patientDTO.Username, patientDTO.Password, patientDTO.FirstName, patientDTO.LastName, (DateTime)patientDTO.DateOfBirth, patientDTO.IsBlocked, patientDTO.BlockedBy, patientDTO.PrescriptionIDs, patientDTO.HealthRecordID);

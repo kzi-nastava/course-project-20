@@ -54,15 +54,15 @@ namespace HealthCareCenter.Model
             return termsWithinTwoHours;
         }
 
-        public static DateTime CreatePotentialTime(string term)
+        public static DateTime CreateTime(string term)
         {
             int termHour = int.Parse(term.Split(":")[0]);
             int termMinute = int.Parse(term.Split(":")[1]);
-            DateTime potentialTime = DateTime.Now.Date.AddHours(termHour).AddMinutes(termMinute);
-            return potentialTime;
+            DateTime time = DateTime.Now.Date.AddHours(termHour).AddMinutes(termMinute);
+            return time;
         }
 
-        public static List<string> FormTodaysPossibleTerms(List<string> allPossibleTerms)
+        public static List<string> GetTermsAfterTwoHours(List<string> allPossibleTerms)
         {
             List<string> terms = new List<string>();
             foreach (string term in allPossibleTerms)

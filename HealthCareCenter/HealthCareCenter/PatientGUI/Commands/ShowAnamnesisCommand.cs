@@ -16,7 +16,7 @@ namespace HealthCareCenter.PatientGUI.Commands
                 return;
             }
 
-            Appointment appointment = AppointmentService.Find(_viewModel.ChosenAppointment.AppointmentID);
+            Appointment appointment = AppointmentService.Get(_viewModel.ChosenAppointment.AppointmentID);
             _viewModel.AnamnesisInfo = appointment.PatientAnamnesis.Comment;
         }
 

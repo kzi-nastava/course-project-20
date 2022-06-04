@@ -74,7 +74,7 @@ namespace HealthCareCenter.Service
                 }
             }
             VacationRequestRepository.Save();
-            NotificationService.SendNotification(acceptedRequest.DoctorID, $"The vacation you had requested is accepted, and starts on {acceptedRequest.StartDate.ToShortDateString()}, lasting until {acceptedRequest.EndDate.ToShortDateString()}.");
+            NotificationService.Send(acceptedRequest.DoctorID, $"The vacation you had requested is accepted, and starts on {acceptedRequest.StartDate.ToShortDateString()}, lasting until {acceptedRequest.EndDate.ToShortDateString()}.");
         }
 
         public static ObservableCollection<VacationRequestDisplay> Deny(int id, string reason)
@@ -97,7 +97,7 @@ namespace HealthCareCenter.Service
                 }
             }
             VacationRequestRepository.Save();
-            NotificationService.SendNotification(deniedRequest.DoctorID, $"The vacation you had requested, which would have started on {deniedRequest.StartDate.ToShortDateString()} is denied. Reasoning: {deniedRequest.DenialReason}");
+            NotificationService.Send(deniedRequest.DoctorID, $"The vacation you had requested, which would have started on {deniedRequest.StartDate.ToShortDateString()} is denied. Reasoning: {deniedRequest.DenialReason}");
         }
     }
 }

@@ -14,7 +14,7 @@ namespace HealthCareCenter.PatientGUI.Commands
             List<Appointment> appointments = new List<Appointment>();
             foreach (AppointmentViewModel appointmentViewModel in _viewModel.Appointments)
             {
-                appointments.Add(AppointmentService.Find(appointmentViewModel.AppointmentID));
+                appointments.Add(AppointmentService.Get(appointmentViewModel.AppointmentID));
             }
 
             PatientFunctionality patFunc = PatientFunctionality.GetInstance();

@@ -29,7 +29,7 @@ namespace HealthCareCenter.Service
             }
             return counter; 
         }
-        public static List<Patient> LoadBlockedPatients()
+        public static List<Patient> GetBlockedPatients()
         {
             List<Patient> blockedPatients = new List<Patient>();
             foreach (Patient patient in UserRepository.Patients)

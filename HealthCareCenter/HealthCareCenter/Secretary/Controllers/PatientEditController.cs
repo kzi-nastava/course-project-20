@@ -21,8 +21,8 @@ namespace HealthCareCenter.Secretary.Controllers
                 throw;
             }
 
-            double height = Double.Parse(editedRecordDTO.Height);
-            double weight = Double.Parse(editedRecordDTO.Weight);
+            double height = double.Parse(editedRecordDTO.Height);
+            double weight = double.Parse(editedRecordDTO.Weight);
 
             HealthRecord editedRecord = new HealthRecord(editedRecordDTO.ID, height, weight, editedRecordDTO.PreviousDiseases, editedRecordDTO.Allergens, editedRecordDTO.PatientID);
             Patient editedPatient = new Patient(editedPatientDTO.ID, editedPatientDTO.Username, editedPatientDTO.Password, editedPatientDTO.FirstName, editedPatientDTO.LastName, (DateTime)editedPatientDTO.DateOfBirth, editedPatientDTO.IsBlocked, editedPatientDTO.BlockedBy, editedPatientDTO.PrescriptionIDs, editedPatientDTO.HealthRecordID);
