@@ -25,7 +25,7 @@
 
         <Style.Triggers>
             <Trigger Property="IsChecked" Value="True">
-                <Setter Property="Background" Value="#ce6565" />
+                <Setter Property="Background" Value="#A47271" />
             </Trigger>
         </Style.Triggers>
         
@@ -66,7 +66,7 @@
                         <ControlTemplate TargetType="RadioButton">
                             <Border CornerRadius="50"
                                     BorderThickness="3"
-                                    BorderBrush="#ce6565">
+                                    BorderBrush="#A47271">
                                 <Grid VerticalAlignment="Stretch"
                                       HorizontalAlignment="Stretch"
                                       Background="{TemplateBinding Background}">
@@ -88,7 +88,7 @@
                         <ControlTemplate TargetType="RadioButton">
                             <Border CornerRadius="50"
                                     BorderThickness="5"
-                                    BorderBrush="#ce6565">
+                                    BorderBrush="#A47271">
                                 <Grid VerticalAlignment="Stretch"
                                       HorizontalAlignment="Stretch"
                                       Background="{TemplateBinding Background}">

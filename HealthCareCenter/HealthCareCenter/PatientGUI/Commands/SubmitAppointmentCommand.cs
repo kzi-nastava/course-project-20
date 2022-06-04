@@ -60,8 +60,7 @@ namespace HealthCareCenter.PatientGUI.Commands
                 return false;
             }
 
-            PatientFunctionality patFunc = PatientFunctionality.GetInstance();
-            if (!patFunc.IsAvailable(scheduleDate, _viewModel.ChosenDoctor.DoctorID))
+            if (!AppointmentService.IsAvailable(scheduleDate, _viewModel.ChosenDoctor.DoctorID))
             {
                 _ = MessageBox.Show("That schedule is unavailable", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
@@ -78,31 +77,55 @@ namespace HealthCareCenter.PatientGUI.Commands
 
         private void ScheduleAppointment(DateTime scheduleDate, int hospitalRoomID)
         {
-            PatientFunctionality patFunc = PatientFunctionality.GetInstance();
             MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure?", "Schedule appointment?", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                patFunc.ScheduleAppointment(
+                bool passed = AppointmentService.Schedule(
                     scheduleDate, _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.HealthRecordID, hospitalRoomID);
                 _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _viewModel.Patient);
+                
+                if (!passed)
+                {
+                    _ = MessageBox.Show("Trolling limit reached! This account will be blocked", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    _viewModel.Patient.IsBlocked = true;
+                    _viewModel.Patient.BlockedBy = Enums.Blocker.System;
+
+                    LoginWindow win = new LoginWindow();
+                    win.Show();
+                    Application.Current.Windows[0].Close();
+
+                    return;
+                }
             }
         }
 
         private void ModifyAppointment(DateTime scheduleDate, int hospitalRoomID)
         {
-            PatientFunctionality patFunc = PatientFunctionality.GetInstance();
             MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure?", "Schedule appointment?", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                if (patFunc.ShouldSendToSecretary(_viewModel.ChosenAppointment.AppointmentDate))
+                if (AppointmentService.ShouldSendToSecretary(_viewModel.ChosenAppointment.AppointmentDate))
                 {
                     _ = MessageBox.Show("Since there are less than 2 days until this appointment starts, a request will be sent to the secretary",
                         "My App", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-                patFunc.ModifyAppointment(
+                bool passed = AppointmentService.Modify(
                     scheduleDate, _viewModel.ChosenAppointment.AppointmentDate, _viewModel.ChosenAppointment.AppointmentID,
                     _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.ID, hospitalRoomID);
                 _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _viewModel.Patient);
+                
+                if (!passed)
+                {
+                    _ = MessageBox.Show("Trolling limit reached! This account will be blocked", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    _viewModel.Patient.IsBlocked = true;
+                    _viewModel.Patient.BlockedBy = Enums.Blocker.System;
+
+                    LoginWindow win = new LoginWindow();
+                    win.Show();
+                    Application.Current.Windows[0].Close();
+
+                    return;
+                }
             }
         }
     }

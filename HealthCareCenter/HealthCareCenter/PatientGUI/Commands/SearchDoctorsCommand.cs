@@ -1,6 +1,7 @@
 ﻿using HealthCareCenter.Model;
 using HealthCareCenter.PatientGUI.Models;
 using HealthCareCenter.PatientGUI.ViewModels;
+using HealthCareCenter.Service;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -16,8 +17,7 @@ namespace HealthCareCenter.PatientGUI.Commands
                 return;
             }
 
-            PatientFunctionality patFunc = PatientFunctionality.GetInstance();
-            List<Doctor> doctorsByKeyword = patFunc.SearchDoctorByKeyword(
+            List<Doctor> doctorsByKeyword = DoctorService.SearchByKeyword(
                 _viewModel.SearchKeyword.Trim().ToLower(), _viewModel.ChosenSearchCriteria);
 
             List<DoctorViewModel> searchedDoctors = new List<DoctorViewModel>();

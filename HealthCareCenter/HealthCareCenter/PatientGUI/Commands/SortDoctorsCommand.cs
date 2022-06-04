@@ -18,15 +18,13 @@ namespace HealthCareCenter.PatientGUI.Commands
                 return;
             }
 
-            PatientFunctionality patFunc = PatientFunctionality.GetInstance();
-
             List<Doctor> searchedDoctors = new List<Doctor>();
             foreach (DoctorViewModel doctorViewModel in _viewModel.Doctors)
             {
                 searchedDoctors.Add(UserService.GetDoctor(doctorViewModel.DoctorID));
             }
 
-            List<Doctor> sortedDoctors = patFunc.GetSortedDoctorsByCriteria(
+            List<Doctor> sortedDoctors = DoctorService.GetSortedByCriteria(
                 searchedDoctors, _viewModel.ChosenSortCriteria, _viewModel.ChosenSearchCriteria);
 
             List<DoctorViewModel> sortedDoctorViewModels = new List<DoctorViewModel>();

@@ -24,10 +24,10 @@ namespace HealthCareCenter.PatientGUI.Commands
                     _navigationStore.CurrentViewModel = new MyPrescriptionsViewModel(_navigationStore, _patient);
                     break;
                 case ViewType.DoctorSurvey:
-
+                    _navigationStore.CurrentViewModel = new DoctorSurveyViewModel();
                     break;
                 case ViewType.HealthCenterSurvey:
-
+                    _navigationStore.CurrentViewModel = new HealthCenterSurveyViewModel();
                     break;
                 case ViewType.SearchDoctors:
                     _navigationStore.CurrentViewModel = new SearchDoctorsViewModel(_navigationStore, _patient);

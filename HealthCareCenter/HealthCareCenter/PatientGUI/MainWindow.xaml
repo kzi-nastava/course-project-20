@@ -13,7 +13,7 @@
         Background="Transparent"
         AllowsTransparency="True">
     <Border CornerRadius="20"
-            Background="#e9aeae">
+            Background="#C19897">
         <Grid>
             <Grid.Resources>
                 <DataTemplate DataType="{x:Type vms:MyAppointmentsViewModel}">

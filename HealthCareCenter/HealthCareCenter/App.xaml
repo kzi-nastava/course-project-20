@@ -4,6 +4,12 @@
              xmlns:local="clr-namespace:HealthCareCenter">
     <Application.Resources>
         <ResourceDictionary>
+            <SolidColorBrush x:Key="TextBrush" Color="White" />
+            <SolidColorBrush x:Key="AppBackgroundBrush" Color="#C19897" />
+            <SolidColorBrush x:Key="ButtonBrush" Color="#B7A7AE" />
+            <SolidColorBrush x:Key="ButtonPressedBrush" Color="#8A7999" />
+            <SolidColorBrush x:Key="ItemBorderBrush" Color="White" />
+            <SolidColorBrush x:Key="MenuItemSelectedBrush" Color="#A47271" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="./PatientGUI/Themes/DatePickerTheme.xaml" />
                 <ResourceDictionary Source="./PatientGUI/Themes/MenuItemTheme.xaml" />
