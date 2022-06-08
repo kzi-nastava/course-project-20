@@ -4,7 +4,7 @@
            x:Key="LabelTheme">
         <Style.Setters>
             <Setter Property="FontFamily" Value="Comic sans MS" />
-            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
             <Setter Property="FontSize" Value="14" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style.Setters>

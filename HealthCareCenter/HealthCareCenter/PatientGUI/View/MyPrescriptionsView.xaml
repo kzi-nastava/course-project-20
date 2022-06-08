@@ -59,7 +59,7 @@
                            Style="{StaticResource LabelTheme}"/>
                 <TextBox Grid.Row="1" 
                          Text="{Binding SearchKeyword}"
-                         Style="{StaticResource DefaultTextBoxTheme}" />
+                         Style="{StaticResource SearchTextBox}" />
                 <Button Content="Search"
                         Grid.Row="2"
                         Padding="20 10"

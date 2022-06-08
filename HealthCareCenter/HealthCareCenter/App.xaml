@@ -5,11 +5,11 @@
     <Application.Resources>
         <ResourceDictionary>
             <SolidColorBrush x:Key="TextBrush" Color="White" />
-            <SolidColorBrush x:Key="AppBackgroundBrush" Color="#C19897" />
-            <SolidColorBrush x:Key="ButtonBrush" Color="#B7A7AE" />
-            <SolidColorBrush x:Key="ButtonPressedBrush" Color="#8A7999" />
+            <SolidColorBrush x:Key="AppBackgroundBrush" Color="#5099AC" />
+            <SolidColorBrush x:Key="ButtonBrush" Color="#c24a42" />
+            <SolidColorBrush x:Key="ButtonPressedBrush" Color="#981d15" />
             <SolidColorBrush x:Key="ItemBorderBrush" Color="White" />
-            <SolidColorBrush x:Key="MenuItemSelectedBrush" Color="#A47271" />
+            <SolidColorBrush x:Key="C62D2C" Color="#C62D2C" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="./PatientGUI/Themes/DatePickerTheme.xaml" />
                 <ResourceDictionary Source="./PatientGUI/Themes/MenuItemTheme.xaml" />

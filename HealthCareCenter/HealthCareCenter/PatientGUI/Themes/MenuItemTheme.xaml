@@ -13,26 +13,28 @@
                             <TextBlock Text="{TemplateBinding Content}"
                                        VerticalAlignment="Center"
                                        Margin="25 0 0 0"
-                                       FontFamily="Comic sans MS" />
+                                       FontFamily="Comic sans MS"
+                                       Foreground="{DynamicResource TextBrush}"/>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
 
             <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Opacity" Value="0.8" />
             <Setter Property="BorderThickness" Value="0" />
         </Style.Setters>
 
         <Style.Triggers>
             <Trigger Property="IsChecked" Value="True">
-                <Setter Property="Background" Value="#A47271" />
+                <Setter Property="Background" Value="{DynamicResource ButtonPressedBrush}" />
             </Trigger>
         </Style.Triggers>
         
     </Style>
     <Style BasedOn="{StaticResource {x:Type ToggleButton}}"
            TargetType="{x:Type RadioButton}"
-           x:Key="PriorityRadioButtonTheme">
+           x:Key="HealthcareRadioButtonTheme">
         <Style.Setters>
             <Setter Property="Template">
                 <Setter.Value>
@@ -46,7 +48,7 @@
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center" 
                                        FontFamily="Comic sans MS"
-                                       Foreground="White"
+                                       Foreground="{DynamicResource TextBrush}"
                                        FontSize="14"/>
                             </Grid>
                         </Border>
@@ -66,7 +68,7 @@
                         <ControlTemplate TargetType="RadioButton">
                             <Border CornerRadius="50"
                                     BorderThickness="3"
-                                    BorderBrush="#A47271">
+                                    BorderBrush="{DynamicResource ButtonPressedBrush}">
                                 <Grid VerticalAlignment="Stretch"
                                       HorizontalAlignment="Stretch"
                                       Background="{TemplateBinding Background}">
@@ -74,7 +76,7 @@
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center"
                                                FontFamily="Comic sans MS"
-                                               Foreground="White"
+                                               Foreground="{DynamicResource TextBrush}"
                                                FontSize="14"/>
                                 </Grid>
                             </Border>
@@ -88,7 +90,7 @@
                         <ControlTemplate TargetType="RadioButton">
                             <Border CornerRadius="50"
                                     BorderThickness="5"
-                                    BorderBrush="#A47271">
+                                    BorderBrush="{DynamicResource ButtonPressedBrush}">
                                 <Grid VerticalAlignment="Stretch"
                                       HorizontalAlignment="Stretch"
                                       Background="{TemplateBinding Background}">

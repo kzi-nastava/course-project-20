@@ -83,7 +83,7 @@ namespace HealthCareCenter.PatientGUI.Commands
                 bool passed = AppointmentService.Schedule(
                     scheduleDate, _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.HealthRecordID, hospitalRoomID);
                 _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _viewModel.Patient);
-                
+        
                 if (!passed)
                 {
                     _ = MessageBox.Show("Trolling limit reached! This account will be blocked", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);

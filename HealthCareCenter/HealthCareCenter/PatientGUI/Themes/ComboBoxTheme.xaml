@@ -3,7 +3,7 @@
     <Style TargetType="{x:Type ComboBox}"
            x:Key="ComboBoxTheme">
         <Style.Setters>
-            <Setter Property="Foreground" Value="#B7A7AE" />
+            <Setter Property="Foreground" Value="{DynamicResource ButtonBrush}" />
             <Setter Property="FontFamily" Value="Comic sans MS" />
             <Setter Property="FontSize" Value="16" />
             <Setter Property="VerticalContentAlignment" Value="Center" />

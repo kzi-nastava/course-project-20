@@ -31,7 +31,8 @@
 
                 <TextBlock Text="Height"
                            FontWeight="SemiBold" 
-                           Grid.Row="0" />
+                           Grid.Row="0" 
+                           Style="{StaticResource LabelTheme}" />
                 <TextBox Grid.Row="1" 
                          Text="{Binding PatientHeight}" 
                          FontFamily="Comic sans MS"
@@ -47,7 +48,8 @@
 
                 <TextBlock Text="Weight"
                            FontWeight="SemiBold"
-                           Grid.Row="0" />
+                           Grid.Row="0" 
+                           Style="{StaticResource LabelTheme}" />
                 <TextBox Grid.Row="1"
                          Text="{Binding PatientWeight}" 
                          FontFamily="Comic sans MS" 
@@ -63,7 +65,8 @@
 
                 <TextBlock Text="Allergens"
                            FontWeight="SemiBold" 
-                           Grid.Row="0" />
+                           Grid.Row="0"
+                           Style="{StaticResource LabelTheme}"  />
                 <TextBox Grid.Row="1"
                          Text="{Binding PatientAllergens}"  
                          FontFamily="Comic sans MS"
@@ -80,7 +83,8 @@
 
                 <TextBlock Text="Previous diseases"
                            FontWeight="SemiBold" 
-                           Grid.Row="0" />
+                           Grid.Row="0"
+                           Style="{StaticResource LabelTheme}"  />
                 <TextBox Grid.Row="1" 
                          Text="{Binding PatientPreviousDiseases}" 
                          FontFamily="Comic sans MS"
@@ -135,7 +139,7 @@
                          Grid.Column="2" 
                          Margin="5 0" 
                          Text="{Binding SearchKeyword}" 
-                         Style="{StaticResource DefaultTextBoxTheme}" />
+                         Style="{StaticResource SearchTextBox}" />
                 <Button Content="Search"
                         Grid.Row="0"
                         Grid.Column="3"

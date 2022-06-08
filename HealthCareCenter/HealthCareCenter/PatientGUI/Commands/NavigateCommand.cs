@@ -24,7 +24,7 @@ namespace HealthCareCenter.PatientGUI.Commands
                     _navigationStore.CurrentViewModel = new MyPrescriptionsViewModel(_navigationStore, _patient);
                     break;
                 case ViewType.DoctorSurvey:
-                    _navigationStore.CurrentViewModel = new DoctorSurveyViewModel();
+                    _navigationStore.CurrentViewModel = new DoctorSurveyViewModel(_navigationStore, _patient);
                     break;
                 case ViewType.HealthCenterSurvey:
                     _navigationStore.CurrentViewModel = new HealthCenterSurveyViewModel();

@@ -41,10 +41,11 @@ namespace HealthCareCenter.PatientGUI.ViewModels
                 PrescriptionService.GetPatientPrescriptions(_patient.HealthRecordID));
             ShowNotifications();  // show notifications on startup
 
-            CurrentViewLabel = CurrentViewModel.ToString();
-            OnPropertyChanged(nameof(CurrentViewLabel));
             StartNotificationChecks();
             DisplayNotifications();
+
+            CurrentViewLabel = CurrentViewModel.ToString();
+            OnPropertyChanged(nameof(CurrentViewLabel));
 
             ShowMyAppointments = new NavigateCommand(_navigationStore, ViewType.MyAppointments, _patient);
             ShowSearchForDoctors = new NavigateCommand(_navigationStore, ViewType.SearchDoctors, _patient);

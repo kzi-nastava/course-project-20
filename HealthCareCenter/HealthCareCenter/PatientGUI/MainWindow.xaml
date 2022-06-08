@@ -12,8 +12,10 @@
         ResizeMode="NoResize"
         Background="Transparent"
         AllowsTransparency="True">
-    <Border CornerRadius="20"
-            Background="#C19897">
+    <Border CornerRadius="20">
+        <Border.Background>
+            <ImageBrush ImageSource="./Images/bg.png" />
+        </Border.Background>
         <Grid>
             <Grid.Resources>
                 <DataTemplate DataType="{x:Type vms:MyAppointmentsViewModel}">
@@ -103,6 +105,7 @@
                              FontSize="14" 
                              Style="{StaticResource MenuItemTheme}"
                              Command="{Binding ShowHealthCenterSurvey}" />
+                <TextBlock Height="150" />
                 <RadioButton Content="Log out"
                              Height="50"
                              Width="auto"
