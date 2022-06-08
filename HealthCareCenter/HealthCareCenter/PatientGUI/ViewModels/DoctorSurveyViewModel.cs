@@ -1,10 +1,7 @@
 ﻿using HealthCareCenter.Model;
 using HealthCareCenter.PatientGUI.Commands;
-using HealthCareCenter.PatientGUI.Stores;
 using HealthCareCenter.Service;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Input;
 
 namespace HealthCareCenter.PatientGUI.ViewModels
@@ -72,7 +69,7 @@ namespace HealthCareCenter.PatientGUI.ViewModels
         public ICommand ChooseDoctorFromAppointment { get; }
         public ICommand SubmitReview { get; }
 
-        public DoctorSurveyViewModel(NavigationStore navigationStore, Patient patient)
+        public DoctorSurveyViewModel(Patient patient)
         {
             Patient = patient;
 
@@ -85,11 +82,11 @@ namespace HealthCareCenter.PatientGUI.ViewModels
 
             DoctorFullName = "N/A";
 
-            ServiceQualityTicked3 = true;
-            WouldRecommendTicked3 = true;
+            ServiceQualityTicked5 = true;
+            WouldRecommendTicked5 = true;
 
             ChooseDoctorFromAppointment = new ChooseDoctorFromAppointmentCommand(this);
-            SubmitReview = new SubmitDoctorReviewCommand(this, navigationStore);
+            SubmitReview = new SubmitDoctorReviewCommand(this);
         }
 
     }

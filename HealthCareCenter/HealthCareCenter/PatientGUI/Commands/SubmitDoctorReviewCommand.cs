@@ -1,10 +1,6 @@
 ﻿using HealthCareCenter.Model;
-using HealthCareCenter.PatientGUI.Stores;
 using HealthCareCenter.PatientGUI.ViewModels;
 using HealthCareCenter.Service;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 
 namespace HealthCareCenter.PatientGUI.Commands
@@ -25,32 +21,41 @@ namespace HealthCareCenter.PatientGUI.Commands
             string comment = _viewModel.CommentOnDoctor;
             double rating = (serviceQualityRating + wouldRecommendRating) / 2.0;
             DoctorSurveyRating surveyRating = new DoctorSurveyRating(
-                _viewModel.ChosenAppointment.DoctorID, _viewModel.Patient.ID, rating, comment);
+                _viewModel.ChosenAppointment.DoctorID, _viewModel.Patient.ID, comment, rating);
 
             string confirmationMessage = "Submit review?";
+            bool isOverwrite = false;
             if (DoctorSurveyRatingService.HasPatientAlreadyReviewed(_viewModel.Patient.ID, _viewModel.ChosenAppointment.DoctorID))
             {
                 _ = MessageBox.Show("You already reviewed this doctor", "My App", MessageBoxButton.OK, MessageBoxImage.Information);
                 confirmationMessage = "Do you want to overwrite your previous review?";
+                isOverwrite = true;
             }
 
-            MessageBoxResult messageBoxResult = MessageBox.Show(confirmationMessage, "Schedule appointment?", MessageBoxButton.YesNo);
+            MessageBoxResult messageBoxResult = MessageBox.Show(confirmationMessage, "", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                DoctorSurveyRatingRepository.Ratings.Add(surveyRating);
+                if (isOverwrite)
+                {
+                    _ = DoctorSurveyRatingService.OverwriteExistingReview(surveyRating);
+                }
+                else
+                {
+                    DoctorSurveyRatingRepository.Ratings.Add(surveyRating);
+                }
                 DoctorSurveyRatingRepository.Save();
+
+                _viewModel.DoctorFullName = "N/A";
+                _viewModel.ChosenAppointment = null;
+                _viewModel.CommentOnDoctor = "";
             }
-
-
         }
 
         private readonly DoctorSurveyViewModel _viewModel;
-        private readonly NavigationStore _navigationStore;
 
-        public SubmitDoctorReviewCommand(DoctorSurveyViewModel viewModel, NavigationStore navigatonStore)
+        public SubmitDoctorReviewCommand(DoctorSurveyViewModel viewModel)
         {
             _viewModel = viewModel;
-            _navigationStore = navigatonStore;
         }
 
         private double GetTickedGradeServiceQuality()

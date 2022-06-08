@@ -1,7 +1,4 @@
 ﻿using HealthCareCenter.Model;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace HealthCareCenter.Service
 {
@@ -29,6 +26,21 @@ namespace HealthCareCenter.Service
             {
                 if (patientID == rating.PatientID && doctorID == rating.DoctorID)
                 {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool OverwriteExistingReview(DoctorSurveyRating surveyRating)
+        {
+            foreach (DoctorSurveyRating rating in DoctorSurveyRatingRepository.Ratings)
+            {
+                if (rating.DoctorID == surveyRating.DoctorID && rating.PatientID == surveyRating.PatientID)
+                {
+                    rating.Comment = surveyRating.Comment;
+                    rating.Rating = surveyRating.Rating;
                     return true;
                 }
             }

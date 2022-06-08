@@ -7,6 +7,249 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Margin="5"
+              Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0"
+                  Margin="0 5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Style="{StaticResource LabelTheme}"
+                           Grid.Row="0"
+                           Grid.ColumnSpan="5"
+                           Text="Service quality" />
+                <RadioButton GroupName="serviceQuality"
+                             Content="1"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="0"
+                             IsChecked="{Binding ServiceQualityTicked1}" />
+                <RadioButton GroupName="serviceQuality"
+                             Content="2"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="1" 
+                             IsChecked="{Binding ServiceQualityTicked2}" />
+                <RadioButton GroupName="serviceQuality"
+                             Content="3"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="2"
+                             IsChecked="{Binding ServiceQualityTicked3}"/>
+                <RadioButton GroupName="serviceQuality"
+                             Content="4"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="3"
+                             IsChecked="{Binding ServiceQualityTicked4}" />
+                <RadioButton GroupName="serviceQuality"
+                             Content="5"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="4"
+                             IsChecked="{Binding ServiceQualityTicked5}" />
+
+            </Grid>
+
+            <Grid Grid.Row="1"
+                  Margin="0 5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Style="{StaticResource LabelTheme}"
+                           Grid.Row="0"
+                           Grid.ColumnSpan="5"
+                           Text="Hygiene quality" />
+                <RadioButton GroupName="hygieneQuality"
+                             Content="1"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="0"
+                             IsChecked="{Binding HygieneQualityTicked1}" />
+                <RadioButton GroupName="hygieneQuality"
+                             Content="2"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="1" 
+                             IsChecked="{Binding HygieneQualityTicked2}" />
+                <RadioButton GroupName="hygieneQuality"
+                             Content="3"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="2"
+                             IsChecked="{Binding HygieneQualityTicked3}"/>
+                <RadioButton GroupName="hygieneQuality"
+                             Content="4"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="3"
+                             IsChecked="{Binding HygieneQualityTicked4}" />
+                <RadioButton GroupName="hygieneQuality"
+                             Content="5"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="4"
+                             IsChecked="{Binding HygieneQualityTicked5}" />
+
+            </Grid>
             
+            <Grid Grid.Row="2"
+                  Margin="0 5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Style="{StaticResource LabelTheme}"
+                           Grid.Row="0"
+                           Grid.ColumnSpan="5"
+                           Text="Satisfied" />
+                <RadioButton GroupName="satisfied"
+                             Content="1"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="0"
+                             IsChecked="{Binding SatisfiedTicked1}" />
+                <RadioButton GroupName="satisfied"
+                             Content="2"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="1" 
+                             IsChecked="{Binding SatisfiedTicked2}" />
+                <RadioButton GroupName="satisfied"
+                             Content="3"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="2"
+                             IsChecked="{Binding SatisfiedTicked3}"/>
+                <RadioButton GroupName="satisfied"
+                             Content="4"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="3"
+                             IsChecked="{Binding SatisfiedTicked4}" />
+                <RadioButton GroupName="satisfied"
+                             Content="5"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="4"
+                             IsChecked="{Binding SatisfiedTicked5}" />
+
+            </Grid>
+
+            <Grid Grid.Row="3"
+                  Margin="0 5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Style="{StaticResource LabelTheme}"
+                           Grid.Row="0"
+                           Grid.ColumnSpan="5"
+                           Text="Would recommend" />
+                <RadioButton GroupName="wouldRecommend"
+                             Content="1"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="0"
+                             IsChecked="{Binding WouldRecommendTicked1}" />
+                <RadioButton GroupName="wouldRecommend"
+                             Content="2"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="1"
+                             IsChecked="{Binding WouldRecommendTicked2}" />
+                <RadioButton GroupName="wouldRecommend"
+                             Content="3"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="2"
+                             IsChecked="{Binding WouldRecommendTicked3}" />
+                <RadioButton GroupName="wouldRecommend"
+                             Content="4"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="3"
+                             IsChecked="{Binding WouldRecommendTicked4}" />
+                <RadioButton GroupName="wouldRecommend"
+                             Content="5"
+                             Style="{StaticResource HealthcareSurveyRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="4"
+                             IsChecked="{Binding WouldRecommendTicked5}" />
+
+            </Grid>
+
+        </Grid>
+
+        <Grid Grid.Column="1"
+              Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0"
+                       Text="Leave comment on Healthcare Center"
+                       Style="{StaticResource LabelTheme}" />
+            <TextBox Text="{Binding CommentOnHealthcareCenter}"
+                     Margin="0 5"
+                     Grid.Row="1"
+                     Style="{StaticResource CommentTextBoxTheme}" />
+            <Button Content="Submit"
+                    Grid.Row="2"
+                    Style="{StaticResource HealthcareCenterButtonTheme}"
+                    Margin="0 10"
+                    Height="75"
+                    Command="{Binding SubmitReview}" />
+
+        </Grid>
+        
     </Grid>
 </UserControl>
