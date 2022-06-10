@@ -1,5 +1,5 @@
 ﻿using HealthCareCenter.Model;
-using HealthCareCenter.Secretary.DTOs;
+using HealthCareCenter.Secretary.DTO;
 using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;

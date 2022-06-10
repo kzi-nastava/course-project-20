@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using HealthCareCenter.Model;
-using HealthCareCenter.Secretary.DTOs;
+using HealthCareCenter.Secretary.DTO;
 using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Secretary.Controllers
