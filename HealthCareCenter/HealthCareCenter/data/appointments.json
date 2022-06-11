@@ -125,5 +125,16 @@
     "HealthRecordID": 2,
     "HospitalRoomID": 3,
     "PatientAnamnesis": null
+  },
+  {
+    "ID": 13,
+    "Type": 1,
+    "ScheduledDate": "26/06/2022 12:30",
+    "CreatedDate": "10/06/2022 18:22",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
   }
 ]

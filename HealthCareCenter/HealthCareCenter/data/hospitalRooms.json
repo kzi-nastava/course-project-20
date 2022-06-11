@@ -9,7 +9,7 @@
       "Bad": 1,
       "Chair": 1,
       "Gauze": 8,
-      "Buckle": 10,
+      "Buckle": 18,
       "Band aid": 8,
       "Syringe": 0,
       "Paper": 24,
@@ -50,7 +50,8 @@
       9,
       10,
       11,
-      12
+      12,
+      13
     ],
     "ID": 3,
     "EquipmentAmounts": {
