@@ -1,5 +1,4 @@
 ﻿using HealthCareCenter.Model;
-using HealthCareCenter.PatientGUI.Models;
 using HealthCareCenter.PatientGUI.ViewModels;
 using HealthCareCenter.Service;
 using System.Collections.Generic;

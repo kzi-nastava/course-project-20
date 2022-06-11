@@ -14,12 +14,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="PatientGUI\Themes\bg.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Include="App.xaml" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Qhta.DispatchedObjects" Version="1.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="PatientGUI\Images\bg.png" />
   </ItemGroup>
 
   <ItemGroup>

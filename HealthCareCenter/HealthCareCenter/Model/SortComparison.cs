@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.PatientGUI.ViewModels;
+using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -95,7 +96,7 @@ namespace HealthCareCenter.Model
     {
         public int Compare(Doctor d1, Doctor d2)
         {
-            return d1.GetAverageRating().CompareTo(d2.GetAverageRating());
+            return DoctorSurveyRatingService.GetAverageRating(d1.ID).CompareTo(DoctorSurveyRatingService.GetAverageRating(d2.ID));
         }
     }
 }

@@ -2,13 +2,27 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Style TargetType="{x:Type TextBox}"
            x:Key="DefaultTextBoxTheme">
-        <Setter Property="Background" Value="#B7A7AE" />
-        <Setter Property="BorderThickness" Value="2" />
-        <Setter Property="BorderBrush" Value="White" />
-        <Setter Property="Foreground" Value="White" />
-        <Setter Property="FontSize" Value="14" />
-        <Setter Property="FontFamily" Value="Comic sans MS" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Style.Setters>
+            <Setter Property="Background" Value="{DynamicResource ButtonBrush}" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ItemBorderBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontFamily" Value="Comic sans MS" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style.Setters>
+    </Style>
+    <Style TargetType="{x:Type TextBox}"
+           BasedOn="{StaticResource DefaultTextBoxTheme}"
+           x:Key="CommentTextBoxTheme">
+        <Style.Setters>
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="AcceptsReturn" Value="True" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+        </Style.Setters>
     </Style>
     <Style TargetType="{x:Type TextBox}"
            BasedOn="{StaticResource DefaultTextBoxTheme}"
@@ -22,5 +36,41 @@
             <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
             <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
         </Style.Setters>
+    </Style>
+    <Style TargetType="{x:Type TextBox}"
+           BasedOn="{StaticResource DefaultTextBoxTheme}"
+           x:Key="SearchTextBox">
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="Text" Value="" />
+                    <Condition Property="IsFocused" Value="False" />
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TextBox">
+                                <Border BorderBrush="{DynamicResource ItemBorderBrush}"
+                                        BorderThickness="2"
+                                        Background="{TemplateBinding Background}">
+                                    <Grid VerticalAlignment="Stretch"
+                                          HorizontalAlignment="Stretch">
+                                        <TextBlock Text="Search"
+                                                   Margin="5 0 0 0"
+                                                   IsHitTestVisible="False"
+                                                   VerticalAlignment="Center"
+                                                   FontFamily="Comic sans MS"
+                                                   Foreground="DarkGray"/>
+                                    </Grid>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Cursor" Value="IBeam" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 </ResourceDictionary>

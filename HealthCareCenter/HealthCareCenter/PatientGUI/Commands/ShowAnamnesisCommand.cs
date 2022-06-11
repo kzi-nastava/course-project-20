@@ -17,7 +17,10 @@ namespace HealthCareCenter.PatientGUI.Commands
             }
 
             Appointment appointment = AppointmentService.Get(_viewModel.ChosenAppointment.AppointmentID);
-            _viewModel.AnamnesisInfo = appointment.PatientAnamnesis.Comment;
+            if (appointment.PatientAnamnesis != null)
+            {
+                _viewModel.AnamnesisInfo = appointment.PatientAnamnesis.Comment;
+            }
         }
 
         private readonly MyHealthRecordViewModel _viewModel;

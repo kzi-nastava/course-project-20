@@ -77,5 +77,14 @@
       "Band aid": 25,
       "Buckle": 34
     }
+  },
+  {
+    "ID": 8,
+    "Fulfilled": true,
+    "SecretaryID": 3,
+    "Created": "10/05/2022 17:48",
+    "AmountOfEquipment": {
+      "Gauze": 15
+    }
   }
 ]

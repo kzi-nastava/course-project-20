@@ -9,7 +9,7 @@
       "Bad": 1,
       "Chair": 1,
       "Gauze": 8,
-      "Buckle": 10,
+      "Buckle": 18,
       "Band aid": 8,
       "Syringe": 0,
       "Paper": 24,
@@ -37,7 +37,21 @@
     "Name": "Room4",
     "AppointmentIDs": [
       2,
-      3
+      3,
+      2,
+      2,
+      4,
+      4,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
     ],
     "ID": 3,
     "EquipmentAmounts": {

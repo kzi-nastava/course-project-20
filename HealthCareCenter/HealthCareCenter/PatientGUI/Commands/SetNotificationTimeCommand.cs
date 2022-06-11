@@ -1,4 +1,5 @@
-﻿using HealthCareCenter.PatientGUI.ViewModels;
+﻿using HealthCareCenter.Model;
+using HealthCareCenter.PatientGUI.ViewModels;
 using System;
 using System.Windows;
 
@@ -24,6 +25,7 @@ namespace HealthCareCenter.PatientGUI.Commands
                 }
 
                 _viewModel.Patient.NotificationReceiveTime = notificationReceiveTime;
+                UserRepository.SavePatients();
                 _ = MessageBox.Show("Notification time set successfully", "My App", MessageBoxButton.OK, MessageBoxImage.Information);
                 _viewModel.NotificationReceiveTime = "";
             }

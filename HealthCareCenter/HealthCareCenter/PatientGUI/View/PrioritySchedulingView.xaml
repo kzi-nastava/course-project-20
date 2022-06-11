@@ -123,11 +123,11 @@
                              Content="Doctor" 
                              GroupName="priority" 
                              Grid.Column="1" 
-                             Style="{StaticResource PriorityRadioButtonTheme}" />
+                             Style="{StaticResource HealthcareRadioButtonTheme}" />
                 <RadioButton Content="Time" 
                              GroupName="priority" 
                              Grid.Column="2"
-                             Style="{StaticResource PriorityRadioButtonTheme}" />
+                             Style="{StaticResource HealthcareRadioButtonTheme}" />
             </Grid>
             <DatePicker Margin="5"
                         SelectedDate="{Binding ChosenDate}"

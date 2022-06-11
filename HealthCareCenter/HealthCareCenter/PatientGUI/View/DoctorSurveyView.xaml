@@ -7,6 +7,236 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.7*" />
+            <ColumnDefinition Width="0.3*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0"
+              Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <ListView Grid.Column="0"
+                      ItemsSource="{Binding Appointments}"
+                      SelectedItem="{Binding ChosenAppointment}"
+                      Margin="5"
+                      Style="{StaticResource TableTheme}"
+                      ItemContainerStyle="{StaticResource TableRowTheme}">
+
+                <ListView.View>
+                    <GridView ColumnHeaderContainerStyle="{StaticResource TableHeaderTheme}">
+
+                        <GridViewColumn Header="Appointment ID" >
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding AppointmentID}" 
+                                               Padding="20 5"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Appointment Type">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding AppointmentType}" 
+                                               Padding="20 5" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Appointment date">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding AppointmentDate}"
+                                               Padding="20 5" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Creation date">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding CreationDate}" 
+                                               Padding="20 5" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Is emergency">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding IsEmergency}"
+                                               Padding="20 5" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Doctor ID">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding DoctorID}" 
+                                               Padding="20 5" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Room ID">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding RoomID}"
+                                               Padding="20 5" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Button Content="Choose doctor"
+                    Grid.Row="6"
+                    Style="{StaticResource HealthcareCenterButtonTheme}"
+                    Margin="5"
+                    Command="{Binding ChooseDoctorFromAppointment}"/>
+        </Grid>
+        
+
+        <Grid Grid.Column="1"
+              Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Style="{StaticResource LabelTheme}"
+                       Grid.Row="0" 
+                       Text="Doctor full name" 
+                       Margin="0 5 0 0" />
+            <TextBlock Style="{StaticResource LabelTheme}"
+                       Grid.Row="1" 
+                       Text="{Binding DoctorFullName}" 
+                       Margin="0 0 0 5" />
+            <Grid Grid.Row="2"
+                  Margin="0 5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Style="{StaticResource LabelTheme}"
+                           Grid.Row="0"
+                           Grid.ColumnSpan="5"
+                           Text="Service quality" />
+                <RadioButton GroupName="serviceQuality"
+                             Content="1"
+                             Style="{StaticResource HealthcareRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="0"
+                             IsChecked="{Binding ServiceQualityTicked1}" />
+                <RadioButton GroupName="serviceQuality"
+                             Content="2"
+                             Style="{StaticResource HealthcareRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="1" 
+                             IsChecked="{Binding ServiceQualityTicked2}" />
+                <RadioButton GroupName="serviceQuality"
+                             Content="3"
+                             Style="{StaticResource HealthcareRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="2"
+                             IsChecked="{Binding ServiceQualityTicked3}"/>
+                <RadioButton GroupName="serviceQuality"
+                             Content="4"
+                             Style="{StaticResource HealthcareRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="3"
+                             IsChecked="{Binding ServiceQualityTicked4}" />
+                <RadioButton GroupName="serviceQuality"
+                             Content="5"
+                             Style="{StaticResource HealthcareRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="4"
+                             IsChecked="{Binding ServiceQualityTicked5}" />
+
+            </Grid>
+            <Grid Grid.Row="3"
+                  Margin="0 5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Style="{StaticResource LabelTheme}"
+                           Grid.Row="0"
+                           Grid.ColumnSpan="5"
+                           Text="Would recommend" />
+                <RadioButton GroupName="wouldRecommend"
+                             Content="1"
+                             Style="{StaticResource HealthcareRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="0"
+                             IsChecked="{Binding WouldRecommendTicked1}" />
+                <RadioButton GroupName="wouldRecommend"
+                             Content="2"
+                             Style="{StaticResource HealthcareRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="1"
+                             IsChecked="{Binding WouldRecommendTicked2}" />
+                <RadioButton GroupName="wouldRecommend"
+                             Content="3"
+                             Style="{StaticResource HealthcareRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="2"
+                             IsChecked="{Binding WouldRecommendTicked3}" />
+                <RadioButton GroupName="wouldRecommend"
+                             Content="4"
+                             Style="{StaticResource HealthcareRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="3"
+                             IsChecked="{Binding WouldRecommendTicked4}" />
+                <RadioButton GroupName="wouldRecommend"
+                             Content="5"
+                             Style="{StaticResource HealthcareRadioButtonTheme}" 
+                             Grid.Row="1"
+                             Grid.Column="4"
+                             IsChecked="{Binding WouldRecommendTicked5}" />
+
+            </Grid>
+            <TextBlock Grid.Row="4"
+                       Text="Leave comment on doctor"
+                       Style="{StaticResource LabelTheme}"
+                       Margin="0 5 0 0" />
+            <TextBox Text="{Binding CommentOnDoctor}"
+                     Margin="0 5"
+                     Grid.Row="5"
+                     Style="{StaticResource CommentTextBoxTheme}" />
+            <Button Content="Submit"
+                    Grid.Row="6"
+                    Style="{StaticResource HealthcareCenterButtonTheme}"
+                    Margin="0 5"
+                    Command="{Binding SubmitReview}" />
+
+        </Grid>
+        
     </Grid>
 </UserControl>

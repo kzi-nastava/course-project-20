@@ -6,9 +6,9 @@
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="FontFamily" Value="Comic sans MS" />
-            <Setter Property="Foreground" Value="#B7A7AE" />
+            <Setter Property="Foreground" Value="{DynamicResource ButtonBrush}" />
             <Setter Property="FontSize" Value="18" />
-            <Setter Property="BorderBrush" Value="White" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ItemBorderBrush}" />
             <Setter Property="BorderThickness" Value="5" />
         </Style.Setters>
     </Style>
@@ -16,7 +16,6 @@
            x:Key="CalendarTheme">
         <Style.Setters>
             <Setter Property="FontFamily" Value="Comic sans MS" />
-            <Setter Property="Background" Value="White" />
         </Style.Setters>
     </Style>
 

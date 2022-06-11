@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Model;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter.PatientGUI.ViewModels
 {
@@ -10,7 +11,7 @@ namespace HealthCareCenter.PatientGUI.ViewModels
         public string DoctorFirstName => _doctor.FirstName;
         public string DoctorLastName => _doctor.LastName;
         public string DoctorProfessionalArea => _doctor.Type;
-        public double DoctorRating => _doctor.GetAverageRating();
+        public double DoctorRating => DoctorSurveyRatingService.GetAverageRating(_doctor.ID);
 
         public DoctorViewModel(Doctor doctor)
         {

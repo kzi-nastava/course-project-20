@@ -7,7 +7,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border BorderThickness="2"
-                                BorderBrush="White">
+                                BorderBrush="{DynamicResource ItemBorderBrush}">
                             <Grid VerticalAlignment="Stretch"
                                   HorizontalAlignment="Stretch"
                                   Background="{TemplateBinding Background}">
@@ -18,20 +18,20 @@
                                            FontSize="14"
                                            FontWeight="SemiBold"
                                            Padding="5"
-                                           Foreground="White" />
+                                           Foreground="{DynamicResource TextBrush}" />
                             </Grid>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
 
-            <Setter Property="Background" Value="#B7A7AE" />
+            <Setter Property="Background" Value="{DynamicResource ButtonBrush}" />
 
         </Style.Setters>
 
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#8A7999" />
+                <Setter Property="Background" Value="{DynamicResource ButtonPressedBrush}" />
             </Trigger>
         </Style.Triggers>
 

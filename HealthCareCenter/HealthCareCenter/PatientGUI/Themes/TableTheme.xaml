@@ -4,7 +4,7 @@
            x:Key="TableTheme">
         <Setter Property="Background" Value="White" />
         <Setter Property="BorderThickness" Value="3" />
-        <Setter Property="BorderBrush" Value="White" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ItemBorderBrush}" />
     </Style>
 
     <Style TargetType="{x:Type ListViewItem}"
@@ -16,11 +16,11 @@
         </Style.Setters>
         <Style.Triggers>
             <Trigger Property="IsFocused" Value="True">
-                <Setter Property="Background" Value="#8A7999" />
+                <Setter Property="Background" Value="{DynamicResource ButtonPressedBrush}" />
                 <Setter Property="Foreground" Value="White" />
             </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#8A7999" />
+                <Setter Property="Background" Value="{DynamicResource ButtonPressedBrush}" />
                 <Setter Property="Foreground" Value="White" />
             </Trigger>
         </Style.Triggers>
@@ -29,8 +29,8 @@
     <Style x:Key="TableHeaderTheme" 
            TargetType="{x:Type GridViewColumnHeader}">
         <Style.Setters>
-            <Setter Property="Background" Value="#B7A7AE"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{DynamicResource ButtonBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
             <Setter Property="FontFamily" Value="Comic sans MS"/>
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="FontSize" Value="14" />
