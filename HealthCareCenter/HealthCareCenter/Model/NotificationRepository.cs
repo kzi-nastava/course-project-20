@@ -6,12 +6,15 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    class NotificationRepository
+    public class NotificationRepository : BaseNotificationRepository
     {
-        public static List<Notification> Notifications { get; set; }
-        public static int maxID = -1;
+        public NotificationRepository()
+        {
+            Load();
+            CalculateMaxID();
+        }
 
-        public static void CalculateMaxID()
+        public override void CalculateMaxID()
         {
             maxID = -1;
             foreach (Notification notification in Notifications)
@@ -23,7 +26,7 @@ namespace HealthCareCenter.Model
             }
         }
 
-        public static void Load()
+        public override void Load()
         {
             try
             {
@@ -36,7 +39,7 @@ namespace HealthCareCenter.Model
             }
         }
 
-        public static void Save()
+        public override void Save()
         {
             try
             {

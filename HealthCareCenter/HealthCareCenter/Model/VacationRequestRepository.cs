@@ -6,11 +6,14 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    public static class VacationRequestRepository
+    public class VacationRequestRepository : BaseVacationRequestRepository
     {
-        public static List<VacationRequest> Requests { get; set; }
+        public VacationRequestRepository()
+        {
+            Load();
+        }
 
-        public static void Load()
+        public override void Load()
         {
             try
             {
@@ -28,7 +31,7 @@ namespace HealthCareCenter.Model
             }
         }
 
-        public static void Save()
+        public override void Save()
         {
             try
             {

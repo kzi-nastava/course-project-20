@@ -12,10 +12,12 @@ namespace HealthCareCenter
     {
         private Manager _signedManager;
         private CRUDHospitalRoomController _CRUDcontroler = new CRUDHospitalRoomController();
+        private INotificationService _notificationService;
 
-        public CrudHospitalRoomWindow(Manager manager)
+        public CrudHospitalRoomWindow(Manager manager, INotificationService notificationService)
         {
             _signedManager = manager;
+            _notificationService = notificationService;
             InitializeComponent();
             FillRoomTypeComboBox();
             FillDataGridHospitalRooms();
@@ -122,7 +124,7 @@ namespace HealthCareCenter
 
         private void CrudHospitalRoomMenuItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new CrudHospitalRoomWindow(_signedManager));
+            ShowWindow(new CrudHospitalRoomWindow(_signedManager, _notificationService));
         }
 
         private void EquipmentReviewMenuItemClick(object sender, RoutedEventArgs e)
@@ -167,7 +169,7 @@ namespace HealthCareCenter
 
         private void DisplayNotifications()
         {
-            List<Notification> notifications = NotificationService.GetUnopened(_signedManager);
+            List<Notification> notifications = _notificationService.GetUnopened(_signedManager);
             if (notifications.Count == 0)
             {
                 return;

@@ -17,6 +17,7 @@ namespace HealthCareCenter.DoctorGUI
         private DoctorWindowService scheduleWindowService;
         private MedicineCreationRequestWindowService medicineCreationWindowService;
         private HealthRecordWindowService healthRecordWindowService;
+        private NotificationService _notificationService;
 
         private Doctor signedUser;
 
@@ -29,9 +30,10 @@ namespace HealthCareCenter.DoctorGUI
         public DataTable equipmentDataTable;
 
         DataRow dr;
-        public DoctorWindow(Model.User user,DoctorWindowService windowService)
+        public DoctorWindow(Model.User user,DoctorWindowService windowService, NotificationService notificationService)
         {
-            healthRecordWindowService = new HealthRecordWindowService(windowService,user,this);
+            _notificationService = notificationService;
+            healthRecordWindowService = new HealthRecordWindowService(windowService, user, this);
             this.scheduleWindowService = windowService;
             signedUser = (Doctor)user;
             PrescriptionService.Initialise(signedUser.ID);
@@ -44,19 +46,19 @@ namespace HealthCareCenter.DoctorGUI
             HealthRecordRepository.Load();
             AppointmentRepository.Load();
             MedicineRepository.Load();
-            PrescriptionRepository.Load();  
+            PrescriptionRepository.Load();
             MedicineInstructionRepository.Load();
-            ReferralRepository.Load();
             MedicineCreationRequestRepository.Load();
             HospitalRoomRepository.Load();
             InitializeComponent();
 
             DisplayNotifications();
+            
         }
 
         private void DisplayNotifications()
         {
-            List<Notification> notifications = NotificationService.GetUnopened(signedUser);    
+            List<Notification> notifications = _notificationService.GetUnopened(signedUser);    
             if (notifications.Count == 0)
             {
                 return;
@@ -428,7 +430,6 @@ namespace HealthCareCenter.DoctorGUI
             AppointmentRepository.Save();
             PrescriptionRepository.Save();
             MedicineInstructionRepository.Save();
-            ReferralRepository.Save();
             MedicineCreationRequestRepository.Save();
             HospitalRoomRepository.Save();
             LogOut();

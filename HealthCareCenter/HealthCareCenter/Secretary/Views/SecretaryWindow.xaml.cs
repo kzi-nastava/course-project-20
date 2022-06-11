@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using HealthCareCenter.Model;
 using HealthCareCenter.Secretary.Controllers;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Secretary
 {
@@ -10,11 +11,15 @@ namespace HealthCareCenter.Secretary
     {
         private readonly Model.Secretary _signedUser;
         private readonly SecretaryController _controller;
+        private readonly IDynamicEquipmentService _dynamicEquipmentService;
+        private readonly INotificationService _notificationService;
 
-        public SecretaryWindow(User user)
+        public SecretaryWindow(User user, INotificationService notificationService, IDynamicEquipmentService dynamicEquipmentService)
         {
             _signedUser = (Model.Secretary)user;
-            _controller = new SecretaryController();
+            _controller = new SecretaryController(notificationService);
+            _dynamicEquipmentService = dynamicEquipmentService;
+            _notificationService = notificationService;
 
             InitializeComponent();
             DisplayNotifications();
@@ -52,19 +57,19 @@ namespace HealthCareCenter.Secretary
 
         private void EquipmentDistributionButton_Click(object sender, RoutedEventArgs e)
         {
-            DistributeDynamicEquipmentWindow window = new DistributeDynamicEquipmentWindow();
+            DistributeDynamicEquipmentWindow window = new DistributeDynamicEquipmentWindow(_dynamicEquipmentService);
             window.ShowDialog();
         }
         
         private void EquipmentAcquisitionButton_Click(object sender, RoutedEventArgs e)
         {
-            DynamicEquipmentRequestWindow window = new DynamicEquipmentRequestWindow(_signedUser);
+            DynamicEquipmentRequestWindow window = new DynamicEquipmentRequestWindow(_signedUser, _dynamicEquipmentService);
             window.ShowDialog();
         }
 
         private void VacationButton_Click(object sender, RoutedEventArgs e)
         {
-            VacationRequestsWindow window = new VacationRequestsWindow();
+            VacationRequestsWindow window = new VacationRequestsWindow(_notificationService);
             window.ShowDialog();
         }
     }

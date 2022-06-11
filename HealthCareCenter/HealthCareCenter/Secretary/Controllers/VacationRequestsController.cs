@@ -7,19 +7,21 @@ namespace HealthCareCenter.Secretary.Controllers
 {
     public class VacationRequestsController
     {
-        public VacationRequestsController()
+        private IVacationRequestService _vacationRequestService;
+
+        public VacationRequestsController(IVacationRequestService vacationRequestService)
         {
-            VacationRequestRepository.Load();
+            _vacationRequestService = vacationRequestService;
         }
 
         public ObservableCollection<VacationRequestDisplay> Get()
         {
-            return VacationRequestService.Get();
+            return _vacationRequestService.Get();
         }
 
         public ObservableCollection<VacationRequestDisplay> Accept(int id)
         {
-            return VacationRequestService.Accept(id);
+            return _vacationRequestService.Accept(id);
         }
 
         public ObservableCollection<VacationRequestDisplay> Deny(int id, string reason)
@@ -28,7 +30,7 @@ namespace HealthCareCenter.Secretary.Controllers
             {
                 throw new Exception("You must enter the reason for denial first.");
             }
-            return VacationRequestService.Deny(id, reason);
+            return _vacationRequestService.Deny(id, reason);
         }
     }
 }

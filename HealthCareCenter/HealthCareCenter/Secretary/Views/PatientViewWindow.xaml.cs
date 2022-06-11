@@ -2,6 +2,7 @@
 using System.Windows;
 using HealthCareCenter.Model;
 using HealthCareCenter.Secretary.Controllers;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Secretary
 {
@@ -101,7 +102,7 @@ namespace HealthCareCenter.Secretary
 
         private void ViewReferralsButton_Click(object sender, RoutedEventArgs e)
         {
-            PatientReferralsWindow window = new PatientReferralsWindow(_patient);
+            PatientReferralsWindow window = new PatientReferralsWindow(_patient, new ReferralsService(new ReferralRepository()));
             window.ShowDialog();
         }
 

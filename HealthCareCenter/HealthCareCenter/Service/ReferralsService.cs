@@ -4,12 +4,19 @@ using System.Collections.Generic;
 
 namespace HealthCareCenter.Service
 {
-    public static class ReferralsService
+    public class ReferralsService : IReferralsService
     {
-        public static List<PatientReferralForDisplay> Get(Patient patient)
+        private BaseReferralRepository _referralsRepository;
+
+        public ReferralsService(BaseReferralRepository repository)
+        {
+            _referralsRepository = repository;
+        }
+
+        public List<PatientReferralForDisplay> Get(Patient patient)
         {
             List<PatientReferralForDisplay> referrals = new List<PatientReferralForDisplay>();
-            foreach (Referral referral in ReferralRepository.Referrals)
+            foreach (Referral referral in _referralsRepository.Referrals)
             {
                 if (referral.PatientID != patient.ID)
                 {
@@ -21,7 +28,7 @@ namespace HealthCareCenter.Service
             return referrals;
         }
 
-        private static void Add(Referral referral, List<PatientReferralForDisplay> referrals)
+        private void Add(Referral referral, List<PatientReferralForDisplay> referrals)
         {
             PatientReferralForDisplay patientReferral = new PatientReferralForDisplay(referral.ID);
 
@@ -29,7 +36,7 @@ namespace HealthCareCenter.Service
             referrals.Add(patientReferral);
         }
 
-        private static void LinkDoctor(Referral referral, PatientReferralForDisplay patientReferral)
+        private void LinkDoctor(Referral referral, PatientReferralForDisplay patientReferral)
         {
             foreach (Doctor doctor in UserRepository.Doctors)
             {
@@ -44,9 +51,9 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static Referral Get(int referralID)
+        public Referral Get(int referralID)
         {
-            foreach (Referral referral in ReferralRepository.Referrals)
+            foreach (Referral referral in _referralsRepository.Referrals)
             {
                 if (referral.ID == referralID)
                 {
@@ -56,7 +63,7 @@ namespace HealthCareCenter.Service
             return null;
         }
 
-        public static void Schedule(Referral referral, Appointment appointment)
+        public void Schedule(Referral referral, Appointment appointment)
         {
             AppointmentRepository.Appointments.Add(appointment);
             AppointmentRepository.Save();
@@ -64,13 +71,13 @@ namespace HealthCareCenter.Service
             HospitalRoomService.Update(appointment.HospitalRoomID, appointment);
             HospitalRoomRepository.Save();
 
-            ReferralRepository.Referrals.Remove(referral);
-            ReferralRepository.Save();
+            _referralsRepository.Referrals.Remove(referral);
+            _referralsRepository.Save();
         }
 
-        public static void Fill(int doctorID, int patientID, Referral referral)
+        public void Fill(int doctorID, int patientID, Referral referral)
         {
-            referral.ID = ReferralRepository.LargestID;
+            referral.ID = _referralsRepository.LargestID;
             referral.DoctorID = doctorID;
             referral.PatientID = patientID;
         }

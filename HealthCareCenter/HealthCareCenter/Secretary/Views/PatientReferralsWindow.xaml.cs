@@ -1,5 +1,6 @@
 ﻿using HealthCareCenter.Model;
 using HealthCareCenter.Secretary.Controllers;
+using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -15,16 +16,18 @@ namespace HealthCareCenter.Secretary
         private List<PatientReferralForDisplay> _referrals;
 
         private readonly PatientReferralsController _controller;
+        private IReferralsService _service;
 
         public PatientReferralsWindow()
         {
             InitializeComponent();
         }
 
-        public PatientReferralsWindow(Patient patient)
+        public PatientReferralsWindow(Patient patient, IReferralsService service)
         {
             _patient = patient;
-            _controller = new PatientReferralsController();
+            _service = service;
+            _controller = new PatientReferralsController(service);
 
             InitializeComponent();
 
@@ -62,7 +65,7 @@ namespace HealthCareCenter.Secretary
                 MessageBox.Show(ex.Message);
                 return;
             }
-            ScheduleAppointmentReferralWindow window = new ScheduleAppointmentReferralWindow(_patient, selectedReferral);
+            ScheduleAppointmentReferralWindow window = new ScheduleAppointmentReferralWindow(_patient, selectedReferral, _service);
             window.ShowDialog();
             Refresh();
         }

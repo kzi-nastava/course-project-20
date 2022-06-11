@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace HealthCareCenter.Model
 {
-    public static class AppointmentChangeRequestService
+    public class AppointmentChangeRequestService : IAppointmentChangeRequestService
     {
         public static void DeleteAppointment(AppointmentChangeRequest request)
         {
@@ -44,7 +44,7 @@ namespace HealthCareCenter.Model
             }
         }
 
-        public static void Refresh(List<DeleteRequest> deleteRequests, List<EditRequest> editRequests, Patient patient)
+        public void Refresh(List<DeleteRequest> deleteRequests, List<EditRequest> editRequests, Patient patient)
         {
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {
@@ -63,7 +63,7 @@ namespace HealthCareCenter.Model
             }
         }
 
-        private static void AddEditRequest(AppointmentChangeRequest request, List<EditRequest> editRequests)
+        private void AddEditRequest(AppointmentChangeRequest request, List<EditRequest> editRequests)
         {
             EditRequest editRequest = new EditRequest(request.ID, request.DateSent);
 
@@ -85,7 +85,7 @@ namespace HealthCareCenter.Model
             editRequests.Add(editRequest);
         }
 
-        private static void LinkDoctor(AppointmentChangeRequest request, EditRequest editRequest, Appointment appointment)
+        private void LinkDoctor(AppointmentChangeRequest request, EditRequest editRequest, Appointment appointment)
         {
             bool foundOld = false;
             bool foundNew = false;
@@ -108,7 +108,7 @@ namespace HealthCareCenter.Model
             }
         }
 
-        private static void AddDeleteRequest(AppointmentChangeRequest request, List<DeleteRequest> deleteRequests)
+        private void AddDeleteRequest(AppointmentChangeRequest request, List<DeleteRequest> deleteRequests)
         {
             DeleteRequest deleteRequest = new DeleteRequest(request.ID, request.DateSent);
 
@@ -126,7 +126,7 @@ namespace HealthCareCenter.Model
             deleteRequests.Add(deleteRequest);
         }
 
-        private static void LinkDoctor(DeleteRequest deleteRequest, Appointment appointment)
+        private void LinkDoctor(DeleteRequest deleteRequest, Appointment appointment)
         {
             foreach (Doctor doctor in UserRepository.Doctors)
             {
@@ -138,13 +138,13 @@ namespace HealthCareCenter.Model
             }
         }
 
-        public static void RejectEditRequest(int requestID)
+        public void RejectEditRequest(int requestID)
         {
             Get(requestID).State = RequestState.Denied;
             AppointmentChangeRequestRepository.Save();
         }
 
-        public static void AcceptEditRequest(int requestID)
+        public void AcceptEditRequest(int requestID)
         {
             AppointmentChangeRequest request = Get(requestID);
             request.State = RequestState.Approved;
@@ -154,13 +154,13 @@ namespace HealthCareCenter.Model
             AppointmentChangeRequestRepository.Save();
         }
 
-        public static void RejectDeleteRequest(int requestID)
+        public void RejectDeleteRequest(int requestID)
         {
             Get(requestID).State = RequestState.Denied;
             AppointmentChangeRequestRepository.Save();
         }
 
-        public static void AcceptDeleteRequest(int requestID)
+        public void AcceptDeleteRequest(int requestID)
         {
             AppointmentChangeRequest request = Get(requestID);
             request.State = RequestState.Approved;
@@ -170,7 +170,7 @@ namespace HealthCareCenter.Model
             AppointmentChangeRequestRepository.Save();
         }
 
-        private static AppointmentChangeRequest Get(int requestID)
+        private AppointmentChangeRequest Get(int requestID)
         {
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {

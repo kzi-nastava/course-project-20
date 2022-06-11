@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using HealthCareCenter.Secretary.Controllers;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Secretary
 {
@@ -22,12 +23,12 @@ namespace HealthCareCenter.Secretary
             InitializeComponent();
         }
 
-        public ScheduleAppointmentReferralWindow(Patient patient, Referral referral)
+        public ScheduleAppointmentReferralWindow(Patient patient, Referral referral, IReferralsService referralsService)
         {
             _patient = patient;
             _referral = referral;
 
-            _controller = new ScheduleAppointmentReferralController();
+            _controller = new ScheduleAppointmentReferralController(new VacationRequestService(new NotificationService(new NotificationRepository()), new VacationRequestRepository()), new TermsService(), referralsService);
 
             InitializeComponent();
 

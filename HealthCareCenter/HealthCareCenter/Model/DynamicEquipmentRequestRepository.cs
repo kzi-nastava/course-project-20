@@ -6,12 +6,15 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    public static class DynamicEquipmentRequestRepository
+    public class DynamicEquipmentRequestRepository : BaseDynamicEquipmentRequestRepository
     {
-        public static List<DynamicEquipmentRequest> Requests { get; set; }
-        public static int maxID = -1;
+        public DynamicEquipmentRequestRepository()
+        {
+            Load();
+            CalculateMaxID();
+        }
 
-        public static void CalculateMaxID()
+        public override void CalculateMaxID()
         {
             maxID = -1;
             foreach (DynamicEquipmentRequest request in Requests)
@@ -23,7 +26,7 @@ namespace HealthCareCenter.Model
             }
         }
 
-        public static void Load()
+        public override void Load()
         {
             try
             {
@@ -41,7 +44,7 @@ namespace HealthCareCenter.Model
             }
         }
 
-        public static void Save()
+        public override void Save()
         {
             try
             {

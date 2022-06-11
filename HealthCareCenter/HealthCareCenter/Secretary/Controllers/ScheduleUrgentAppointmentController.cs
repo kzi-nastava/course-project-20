@@ -9,20 +9,17 @@ namespace HealthCareCenter.Secretary.Controllers
 {
     public class ScheduleUrgentAppointmentController
     {
-        public ScheduleUrgentAppointmentController()
-        {
-            AppointmentRepository.Load();
-        }
+        private BaseUrgentAppointmentService _urgentAppointmentService;
 
-        public ScheduleUrgentAppointmentController(UrgentAppointmentInfo info)
+        public ScheduleUrgentAppointmentController(BaseUrgentAppointmentService service)
         {
             AppointmentRepository.Load();
-            UrgentAppointmentService.UrgentInfo = info;
+            _urgentAppointmentService = service;
         }
 
         public bool TryScheduling(AppointmentType type, string doctorType, Patient patient)
         {
-            return UrgentAppointmentService.TryScheduling(type, doctorType, patient);
+            return _urgentAppointmentService.TryScheduling(type, doctorType, patient);
         }
 
         public List<string> GetTypesOfDoctors()

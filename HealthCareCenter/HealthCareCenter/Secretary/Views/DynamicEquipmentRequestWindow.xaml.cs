@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using HealthCareCenter.Secretary.Controllers;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Secretary
 {
@@ -20,11 +21,11 @@ namespace HealthCareCenter.Secretary
             InitializeComponent();
         }
 
-        public DynamicEquipmentRequestWindow(Model.Secretary secretary)
+        public DynamicEquipmentRequestWindow(Model.Secretary secretary, IDynamicEquipmentService service)
         {
             _secretary = secretary;
             _request = new List<string>();
-            _controller = new DynamicEquipmentRequestController();
+            _controller = new DynamicEquipmentRequestController(service);
 
             InitializeComponent();
 

@@ -8,6 +8,7 @@ namespace HealthCareCenter.Service
 {
     public static class AppointmentService
     {
+
         public static Appointment Get(AppointmentDisplay appointmentDisplay)
         {
             if (AppointmentRepository.Appointments == null)

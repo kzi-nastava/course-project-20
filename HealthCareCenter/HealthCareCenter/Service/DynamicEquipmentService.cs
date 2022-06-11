@@ -5,12 +5,19 @@ using System.Text;
 
 namespace HealthCareCenter.Service
 {
-    public class DynamicEquipmentService
+    public class DynamicEquipmentService : IDynamicEquipmentService
     {
-        public static void FulfillRequestsIfNeeded()
+        private BaseDynamicEquipmentRequestRepository _requestRepository;
+
+        public DynamicEquipmentService(BaseDynamicEquipmentRequestRepository requestRepository)
+        {
+            _requestRepository = requestRepository;
+        }
+
+        public void FulfillRequestsIfNeeded()
         {
             Room storage = StorageRepository.Load();
-            foreach (DynamicEquipmentRequest request in DynamicEquipmentRequestRepository.Requests)
+            foreach (DynamicEquipmentRequest request in _requestRepository.Requests)
             {
                 if (request.Fulfilled || request.Created.AddDays(1).CompareTo(DateTime.Now) > 0)
                 {
@@ -18,11 +25,11 @@ namespace HealthCareCenter.Service
                 }
                 FulfillRequest(storage, request);
             }
-            DynamicEquipmentRequestRepository.Save();
+            _requestRepository.Save();
             StorageRepository.Save(storage);
         }
 
-        private static void FulfillRequest(Room storage, DynamicEquipmentRequest request)
+        private void FulfillRequest(Room storage, DynamicEquipmentRequest request)
         {
             foreach (string equipment in request.AmountOfEquipment.Keys)
             {
@@ -38,7 +45,7 @@ namespace HealthCareCenter.Service
             request.Fulfilled = true;
         }
 
-        public static bool IsAlreadyAdded(string selectedEquipment, List<string> request)
+        public bool IsAlreadyAdded(string selectedEquipment, List<string> request)
         {
             foreach (string equipmentWithQuantity in request)
             {
@@ -51,20 +58,20 @@ namespace HealthCareCenter.Service
             return false;
         }
 
-        public static void SendRequest(List<string> request, Model.Secretary secretary)
+        public void SendRequest(List<string> request, Model.Secretary secretary)
         {
             Dictionary<string, int> amountOfEquipment = GetAmountOfEquipment(request);
             SendRequest(amountOfEquipment, secretary);
         }
 
-        private static void SendRequest(Dictionary<string, int> amountOfEquipment, Model.Secretary secretary)
+        private void SendRequest(Dictionary<string, int> amountOfEquipment, Model.Secretary secretary)
         {
-            DynamicEquipmentRequest request = new DynamicEquipmentRequest(++DynamicEquipmentRequestRepository.maxID, false, secretary.ID, DateTime.Now, amountOfEquipment);
-            DynamicEquipmentRequestRepository.Requests.Add(request);
-            DynamicEquipmentRequestRepository.Save();
+            DynamicEquipmentRequest request = new DynamicEquipmentRequest(++_requestRepository.maxID, false, secretary.ID, DateTime.Now, amountOfEquipment);
+            _requestRepository.Requests.Add(request);
+            _requestRepository.Save();
         }
 
-        private static Dictionary<string, int> GetAmountOfEquipment(List<string> request)
+        private Dictionary<string, int> GetAmountOfEquipment(List<string> request)
         {
             Dictionary<string, int> amountOfEquipment = new Dictionary<string, int>();
 
@@ -79,7 +86,7 @@ namespace HealthCareCenter.Service
             return amountOfEquipment;
         }
 
-        public static List<string> GetMissingEquipment()
+        public List<string> GetMissingEquipment()
         {
             Room storage = StorageRepository.Load();
             List<string> missingEquipment = new List<string>(Constants.DynamicEquipment);
@@ -93,7 +100,7 @@ namespace HealthCareCenter.Service
             return missingEquipment;
         }
 
-        public static void Transfer(int quantity, string equipment, Room transferFrom, Room transferTo, Room storage)
+        public void Transfer(int quantity, string equipment, Room transferFrom, Room transferTo, Room storage)
         {
             transferFrom.EquipmentAmounts[equipment] -= quantity;
 

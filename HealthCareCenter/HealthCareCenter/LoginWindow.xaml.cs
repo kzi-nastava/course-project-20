@@ -1,22 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using HealthCareCenter.Model;
 using HealthCareCenter.DoctorServices;
-using HealthCareCenter.DoctorGUI;
 using HealthCareCenter.Service;
 using HealthCareCenter.Secretary;
 
@@ -25,6 +14,7 @@ namespace HealthCareCenter
     public partial class LoginWindow : Window
     {
         private static BackgroundWorker _backgroundWorker = null;
+        private static IDynamicEquipmentService _dynamicEquipmentService;
 
         private void DoEquipmentRearrangements()
         {
@@ -44,6 +34,11 @@ namespace HealthCareCenter
             }
         }
 
+        public LoginWindow(IDynamicEquipmentService dynamicEquipmentService) : this()
+        {
+            _dynamicEquipmentService = dynamicEquipmentService;
+        }
+
         public LoginWindow()
         {
             InitializeComponent();
@@ -59,8 +54,6 @@ namespace HealthCareCenter
                 MessageBox.Show(ex.Message);
             }
 
-            NotificationRepository.Load();
-            DynamicEquipmentRequestRepository.Load();
             StartBackgroundWorkerIfNeeded();
         }
 
@@ -84,7 +77,7 @@ namespace HealthCareCenter
         {
             while (true)
             {
-                DynamicEquipmentService.FulfillRequestsIfNeeded();
+                _dynamicEquipmentService.FulfillRequestsIfNeeded();
                 Thread.Sleep(timeBetweenWork);
             }
         }
@@ -100,7 +93,7 @@ namespace HealthCareCenter
         {
             if (user.GetType() == typeof(Doctor))
             {
-                DoctorWindowService doctorWindowService = new DoctorWindowService((Doctor)user);
+                DoctorWindowService doctorWindowService = new DoctorWindowService((Doctor)user, new ReferralsService(new ReferralRepository()), new ReferralRepository());
                 Close();
             }
             else if (user.GetType() == typeof(Manager))
@@ -122,13 +115,13 @@ namespace HealthCareCenter
                 navStore.CurrentViewModel = new PatientGUI.ViewModels.MyAppointmentsViewModel(navStore, patient);
                 PatientGUI.MainWindow win = new PatientGUI.MainWindow()
                 {
-                    DataContext = new PatientGUI.ViewModels.MainViewModel(navStore, patient)
+                    DataContext = new PatientGUI.ViewModels.MainViewModel(navStore, patient, new NotificationService(new NotificationRepository()))
                 };
                 ShowWindow(win);
             }
             else if (user.GetType() == typeof(Model.Secretary))
             {
-                ShowWindow(new SecretaryWindow(user));
+                ShowWindow(new SecretaryWindow(user, new NotificationService(new NotificationRepository()), _dynamicEquipmentService));
             }
             return true;
         }

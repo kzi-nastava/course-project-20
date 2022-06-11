@@ -1,13 +1,14 @@
-﻿using System;
+﻿using HealthCareCenter.Service;
+using System;
 using System.Collections.Generic;
 
 namespace HealthCareCenter.Model
 {
-    public static class TermsService
+    public class TermsService : ITermsService
     {
         // returns all terms from 8:00 to 21:00 knowing that an appointment lasts 15 minutes
         // example { "8:00", "8:15", "8:30" ... "20:30", "20:45" }
-        public static List<string> GetPossibleDailyTerms()
+        public List<string> GetPossibleDailyTerms()
         {
             int hours = 8;
             int minutes = 0;
@@ -31,7 +32,7 @@ namespace HealthCareCenter.Model
             return possibleTerms;
         }
 
-        public static List<string> GetTermsWithinTwoHours()
+        public List<string> GetTermsWithinTwoHours()
         {
             List<string> possibleTerms = GetPossibleDailyTerms();
             List<string> termsWithinTwoHours = new List<string>();
@@ -52,7 +53,7 @@ namespace HealthCareCenter.Model
             return termsWithinTwoHours;
         }
 
-        public static List<string> GetTermsAfterTwoHours(List<string> allPossibleTerms)
+        public List<string> GetTermsAfterTwoHours(List<string> allPossibleTerms)
         {
             List<string> terms = new List<string>();
             foreach (string term in allPossibleTerms)
@@ -67,7 +68,7 @@ namespace HealthCareCenter.Model
             return terms;
         }
 
-        public static DateTime CreateTime(string term)
+        public DateTime CreateTime(string term)
         {
             int termHour = int.Parse(term.Split(":")[0]);
             int termMinute = int.Parse(term.Split(":")[1]);
@@ -75,7 +76,7 @@ namespace HealthCareCenter.Model
             return time;
         }
 
-        public static List<string> GetAvailableTerms(int doctorID, DateTime when)
+        public List<string> GetAvailableTerms(int doctorID, DateTime when)
         {
             List<string> terms = GetPossibleDailyTerms();
             foreach (Appointment appointment in AppointmentRepository.Appointments)
