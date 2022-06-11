@@ -13,9 +13,9 @@ namespace HealthCareCenter.Model
         public int UserID { get; set; }
 
         public Notification() { }
-        public Notification(string message, int userID)
+        public Notification(int id, string message, int userID)
         {
-            ID = ++NotificationRepository.maxID;
+            ID = id;
             Message = message;
             Opened = false;
             UserID = userID;

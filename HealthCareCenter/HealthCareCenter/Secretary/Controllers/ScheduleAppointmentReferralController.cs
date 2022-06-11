@@ -7,18 +7,30 @@ namespace HealthCareCenter.Secretary.Controllers
 {
     public class ScheduleAppointmentReferralController
     {
+        private IVacationRequestService _vacationRequestService;
+        private ITermsService _termsService;
+        private IReferralsService _referralsService;
+
         public ScheduleAppointmentReferralController()
         {
             AppointmentRepository.Load();
         }
 
+        public ScheduleAppointmentReferralController(IVacationRequestService vacationRequestService, ITermsService termsService, IReferralsService referralsService)
+        {
+            _vacationRequestService = vacationRequestService;
+            _termsService = termsService;
+            _referralsService = referralsService;
+            AppointmentRepository.Load();
+        }
+
         public List<string> GetAvailableTerms(int doctorID, DateTime when)
         {
-            if (VacationRequestService.OnVacation(doctorID, when))
+            if (_vacationRequestService.OnVacation(doctorID, when))
             {
                 throw new Exception("The doctor is on vacation at this time.");
             }
-            return TermsService.GetAvailableTerms(doctorID, when);
+            return _termsService.GetAvailableTerms(doctorID, when);
         }
 
         public List<HospitalRoomDisplay> GetRooms(bool checkup)
@@ -39,7 +51,7 @@ namespace HealthCareCenter.Secretary.Controllers
                 throw new Exception("You must select a different room that is not occupied at the term date and time.");
             }
 
-            ReferralsService.Schedule(referral, appointment);
+            _referralsService.Schedule(referral, appointment);
         }
     }
 }

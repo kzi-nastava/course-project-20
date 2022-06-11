@@ -6,11 +6,20 @@ using System.Collections.ObjectModel;
 
 namespace HealthCareCenter.Service
 {
-    public static class VacationRequestService
+    public class VacationRequestService : IVacationRequestService
     {
-        public static bool OnVacation(int doctorID, DateTime when)
+        INotificationService _notificationService;
+        BaseVacationRequestRepository _vacationRequestRepository;
+
+        public VacationRequestService(INotificationService notificationService, BaseVacationRequestRepository vacationRequestRepository)
         {
-            foreach (VacationRequest request in VacationRequestRepository.Requests)
+            _notificationService = notificationService;
+            _vacationRequestRepository = vacationRequestRepository;
+        }
+
+        public bool OnVacation(int doctorID, DateTime when)
+        {
+            foreach (VacationRequest request in _vacationRequestRepository.Requests)
             {
                 if (request.DoctorID == doctorID && request.State == RequestState.Approved 
                     && request.StartDate.CompareTo(when) <= 0 && request.EndDate.CompareTo(when) >= 0)
@@ -21,11 +30,11 @@ namespace HealthCareCenter.Service
             return false;
         }
 
-        public static ObservableCollection<VacationRequestDisplay> Get()
+        public ObservableCollection<VacationRequestDisplay> Get()
         {
             ObservableCollection<VacationRequestDisplay> vacationRequests = new ObservableCollection<VacationRequestDisplay>();
 
-            foreach (VacationRequest request in VacationRequestRepository.Requests)
+            foreach (VacationRequest request in _vacationRequestRepository.Requests)
             {
                 if (request.State != RequestState.Waiting || request.StartDate.CompareTo(DateTime.Now) <= 0)
                     continue;
@@ -43,7 +52,7 @@ namespace HealthCareCenter.Service
             return vacationRequests;
         }
 
-        private static void LinkDoctor(VacationRequest request, VacationRequestDisplay requestDisplay)
+        private void LinkDoctor(VacationRequest request, VacationRequestDisplay requestDisplay)
         {
             foreach (Doctor doctor in UserRepository.Doctors)
             {
@@ -55,16 +64,16 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static ObservableCollection<VacationRequestDisplay> Accept(int id)
+        public ObservableCollection<VacationRequestDisplay> Accept(int id)
         {
             PerformAccept(id);
             return Get();
         }
 
-        private static void PerformAccept(int id)
+        private void PerformAccept(int id)
         {
             VacationRequest acceptedRequest = null;
-            foreach (VacationRequest request in VacationRequestRepository.Requests)
+            foreach (VacationRequest request in _vacationRequestRepository.Requests)
             {
                 if (request.ID == id)
                 {
@@ -73,20 +82,20 @@ namespace HealthCareCenter.Service
                     break;
                 }
             }
-            VacationRequestRepository.Save();
-            NotificationService.Send(acceptedRequest.DoctorID, $"The vacation you had requested is accepted, and starts on {acceptedRequest.StartDate.ToShortDateString()}, lasting until {acceptedRequest.EndDate.ToShortDateString()}.");
+            _vacationRequestRepository.Save();
+            _notificationService.Send(acceptedRequest.DoctorID, $"The vacation you had requested is accepted, and starts on {acceptedRequest.StartDate.ToShortDateString()}, lasting until {acceptedRequest.EndDate.ToShortDateString()}.");
         }
 
-        public static ObservableCollection<VacationRequestDisplay> Deny(int id, string reason)
+        public ObservableCollection<VacationRequestDisplay> Deny(int id, string reason)
         {
             PerformDeny(id, reason);
             return Get();
         }
 
-        private static void PerformDeny(int id, string reason)
+        private void PerformDeny(int id, string reason)
         {
             VacationRequest deniedRequest = null;
-            foreach (VacationRequest request in VacationRequestRepository.Requests)
+            foreach (VacationRequest request in _vacationRequestRepository.Requests)
             {
                 if (request.ID == id)
                 {
@@ -96,8 +105,8 @@ namespace HealthCareCenter.Service
                     break;
                 }
             }
-            VacationRequestRepository.Save();
-            NotificationService.Send(deniedRequest.DoctorID, $"The vacation you had requested, which would have started on {deniedRequest.StartDate.ToShortDateString()} is denied. Reasoning: {deniedRequest.DenialReason}");
+            _vacationRequestRepository.Save();
+            _notificationService.Send(deniedRequest.DoctorID, $"The vacation you had requested, which would have started on {deniedRequest.StartDate.ToShortDateString()} is denied. Reasoning: {deniedRequest.DenialReason}");
         }
     }
 }

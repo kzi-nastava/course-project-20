@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HealthCareCenter.Secretary.DTOs
+namespace HealthCareCenter.Secretary.DTO
 {
     public class HealthRecordDTO
     {

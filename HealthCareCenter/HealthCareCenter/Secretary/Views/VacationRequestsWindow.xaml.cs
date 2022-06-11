@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
+using HealthCareCenter.Model;
 using HealthCareCenter.Secretary.Controllers;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Secretary
 {
@@ -11,9 +13,9 @@ namespace HealthCareCenter.Secretary
     {
         private readonly VacationRequestsController _controller;
 
-        public VacationRequestsWindow()
+        public VacationRequestsWindow(INotificationService notificationService)
         {
-            _controller = new VacationRequestsController();
+            _controller = new VacationRequestsController(new VacationRequestService(notificationService, new VacationRequestRepository()));
 
             InitializeComponent();
 

@@ -1,39 +1,43 @@
 ﻿using HealthCareCenter.Model;
+using HealthCareCenter.Service;
 using System.Collections.Generic;
 
 namespace HealthCareCenter.Secretary.Controllers
 {
     public class ViewChangeRequestsController
     {
-        public ViewChangeRequestsController()
+        private IAppointmentChangeRequestService _service;
+
+        public ViewChangeRequestsController(IAppointmentChangeRequestService service)
         {
+            _service = service;
             AppointmentChangeRequestRepository.Load();
             AppointmentRepository.Load();
         }
 
         public void Refresh(List<DeleteRequest> deleteRequests, List<EditRequest> editRequests, Patient patient)
         {
-            AppointmentChangeRequestService.Refresh(deleteRequests, editRequests, patient);
+            _service.Refresh(deleteRequests, editRequests, patient);
         }
 
         public void RejectEditRequest(int requestID)
         {
-            AppointmentChangeRequestService.RejectEditRequest(requestID);
+            _service.RejectEditRequest(requestID);
         }
 
         public void AcceptEditRequest(int requestID)
         {
-            AppointmentChangeRequestService.AcceptEditRequest(requestID);
+            _service.AcceptEditRequest(requestID);
         }
 
         public void RejectDeleteRequest(int requestID)
         {
-            AppointmentChangeRequestService.RejectDeleteRequest(requestID);
+            _service.RejectDeleteRequest(requestID);
         }
 
         public void AcceptDeleteRequest(int requestID)
         {
-            AppointmentChangeRequestService.AcceptDeleteRequest(requestID);
+            _service.AcceptDeleteRequest(requestID);
         }
     }
 }

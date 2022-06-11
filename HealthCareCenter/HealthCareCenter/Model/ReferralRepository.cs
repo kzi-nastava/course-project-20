@@ -6,12 +6,14 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    public static class ReferralRepository
+    public class ReferralRepository : BaseReferralRepository
     {
-        public static List<Referral> Referrals { get; set; }
-        public static int LargestID { get; set; }
+        public ReferralRepository()
+        {
+            Load();
+        }
 
-        public static List<Referral> Load()
+        public override List<Referral> Load()
         {
             string JSONTextReferrals = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\referrals.json");
             Referrals = (List<Referral>)JsonConvert.DeserializeObject<IEnumerable<Referral>>(JSONTextReferrals);
@@ -19,7 +21,7 @@ namespace HealthCareCenter.Model
             return Referrals;
         }
 
-        public static void Save()
+        public override void Save()
         {
             try
             {

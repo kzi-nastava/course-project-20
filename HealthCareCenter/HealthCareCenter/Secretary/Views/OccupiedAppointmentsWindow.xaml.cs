@@ -1,6 +1,7 @@
 ﻿using HealthCareCenter.Enums;
 using HealthCareCenter.Model;
 using HealthCareCenter.Secretary.Controllers;
+using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -29,7 +30,8 @@ namespace HealthCareCenter.Secretary
             _patient = patient;
             _type = type;
             _info = new OccupiedAppointmentInfo(info);
-            _controller = new OccupiedAppointmentsController(_info);
+            BaseUrgentAppointmentService service = new UrgentAppointmentService(new TermsService(), new NotificationService(new NotificationRepository())) { OccupiedInfo = _info };
+            _controller = new OccupiedAppointmentsController(service);
 
             InitializeComponent();
             try

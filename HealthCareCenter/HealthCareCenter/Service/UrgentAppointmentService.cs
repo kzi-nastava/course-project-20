@@ -8,12 +8,18 @@ using System.Text;
 
 namespace HealthCareCenter.Service
 {
-    public static class UrgentAppointmentService
+    public class UrgentAppointmentService : BaseUrgentAppointmentService
     {
-        public static UrgentAppointmentInfo UrgentInfo { get; set; }
-        public static OccupiedAppointmentInfo OccupiedInfo { get; set; }
+        private ITermsService _termsService;
+        private INotificationService _notificationService;
 
-        public static bool CheckTermAndRemoveUnavailables(DateTime potentialTime, List<Doctor> availableDoctors, List<HospitalRoom> availableRooms, List<Appointment> appointments, Patient patient)
+        public UrgentAppointmentService(ITermsService service, INotificationService notificationService)
+        {
+            _termsService = service;
+            _notificationService = notificationService;
+        }
+
+        public override bool CheckTermAndRemoveUnavailables(DateTime potentialTime, List<Doctor> availableDoctors, List<HospitalRoom> availableRooms, List<Appointment> appointments, Patient patient)
         {
             foreach (Appointment appointment in appointments)
             {
@@ -31,7 +37,7 @@ namespace HealthCareCenter.Service
             return true;
         }
 
-        public static void PrepareForPotentialPostponing(List<Doctor> doctors, List<HospitalRoom> rooms, DateTime potentialTime, Patient patient)
+        public override void PrepareForPotentialPostponing(List<Doctor> doctors, List<HospitalRoom> rooms, DateTime potentialTime, Patient patient)
         {
             List<Appointment> appointments = new List<Appointment>(AppointmentRepository.Appointments);
             for (int i = 0; i < AppointmentRepository.Appointments.Count; i++)
@@ -54,19 +60,19 @@ namespace HealthCareCenter.Service
             }
         }
 
-        private static void AddPostponingInfo(List<Doctor> availableDoctors, List<HospitalRoom> availableRooms, int index)
+        private void AddPostponingInfo(List<Doctor> availableDoctors, List<HospitalRoom> availableRooms, int index)
         {
             UrgentInfo.OccupiedAppointments.Add(AppointmentRepository.Appointments[index]);
             UrgentInfo.NewAppointmentsInfo.Add(AppointmentRepository.Appointments[index].ID,
                 new Appointment { DoctorID = availableDoctors[0].ID, HospitalRoomID = availableRooms[0].ID });
         }
 
-        public static bool GetTermsAndSchedule(List<Doctor> doctors, AppointmentType type, Patient patient)
+        public override bool GetTermsAndSchedule(List<Doctor> doctors, AppointmentType type, Patient patient)
         {
             List<HospitalRoom> rooms = HospitalRoomService.GetRoomsOfType(type);
-            foreach (string term in TermsService.GetTermsWithinTwoHours())
+            foreach (string term in _termsService.GetTermsWithinTwoHours())
             {
-                DateTime potentialTime = TermsService.CreateTime(term);
+                DateTime potentialTime = _termsService.CreateTime(term);
 
                 List<Doctor> availableDoctors = new List<Doctor>(doctors);
                 List<HospitalRoom> availableRooms = new List<HospitalRoom>(rooms);
@@ -86,7 +92,7 @@ namespace HealthCareCenter.Service
             return false;
         }
 
-        public static bool TryScheduling(AppointmentType type, string doctorType, Patient patient)
+        public override bool TryScheduling(AppointmentType type, string doctorType, Patient patient)
         {
             List<Doctor> doctors = DoctorService.GetDoctorsOfType(doctorType);
 
@@ -100,7 +106,7 @@ namespace HealthCareCenter.Service
             return true;
         }
 
-        public static Appointment Postpone(ref string notification, Patient patient, AppointmentType type, AppointmentDisplay selectedAppointment)
+        public override Appointment Postpone(ref string notification, Patient patient, AppointmentType type, AppointmentDisplay selectedAppointment)
         {
             Appointment postponedAppointment = AppointmentService.Get(selectedAppointment);
 
@@ -112,11 +118,11 @@ namespace HealthCareCenter.Service
             HospitalRoomService.Update(newAppointment.HospitalRoomID, newAppointment);
             HospitalRoomRepository.Save();
 
-            notification = NotificationService.Send(postponedAppointment, newAppointment, patient);
+            notification = _notificationService.Send(postponedAppointment, newAppointment, patient);
             return postponedAppointment;
         }
 
-        public static List<AppointmentDisplay> GetAppointmentsForDisplay()
+        public override List<AppointmentDisplay> GetAppointmentsForDisplay()
         {
             List<AppointmentDisplay> appointments = new List<AppointmentDisplay>();
             foreach (Appointment appointment in OccupiedInfo.OccupiedAppointments)
@@ -129,7 +135,7 @@ namespace HealthCareCenter.Service
             return appointments;
         }
 
-        private static void LinkPatient(Appointment appointment, AppointmentDisplay appointmentDisplay)
+        private void LinkPatient(Appointment appointment, AppointmentDisplay appointmentDisplay)
         {
             foreach (Patient patient in UserRepository.Patients)
             {
@@ -141,7 +147,7 @@ namespace HealthCareCenter.Service
             }
         }
 
-        private static void LinkDoctor(Appointment appointment, AppointmentDisplay appointmentDisplay)
+        private void LinkDoctor(Appointment appointment, AppointmentDisplay appointmentDisplay)
         {
             foreach (Doctor doctor in UserRepository.Doctors)
             {
@@ -153,7 +159,7 @@ namespace HealthCareCenter.Service
             }
         }
 
-        public static bool IsPostponableTo(DateTime newTime, Appointment occupiedAppointment)
+        public override bool IsPostponableTo(DateTime newTime, Appointment occupiedAppointment)
         {
             foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
@@ -170,10 +176,10 @@ namespace HealthCareCenter.Service
             return true;
         }
       
-        public static void SortPostponableAppointments()
+        public override void SortPostponableAppointments()
         {
-            List<string> allPossibleTerms = TermsService.GetPossibleDailyTerms();
-            List<string> terms = TermsService.GetTermsAfterTwoHours(allPossibleTerms);
+            List<string> allPossibleTerms = _termsService.GetPossibleDailyTerms();
+            List<string> terms = _termsService.GetTermsAfterTwoHours(allPossibleTerms);
             List<Appointment> sortedAppointments = new List<Appointment>();
             Dictionary<int, DateTime> newDateOf = new Dictionary<int, DateTime>();
             bool foundAll = false;

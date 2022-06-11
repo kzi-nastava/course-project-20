@@ -11,7 +11,6 @@ namespace HealthCareCenter.Secretary.Controllers
         public PatientManipulationController()
         {
             HealthRecordRepository.Load();
-            VacationRequestRepository.Load();
         }
 
         public List<Patient> GetBlockedPatients()

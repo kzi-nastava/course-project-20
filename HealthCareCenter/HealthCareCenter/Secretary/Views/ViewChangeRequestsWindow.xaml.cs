@@ -27,7 +27,7 @@ namespace HealthCareCenter.Secretary
         {
             _patient = patient;
 
-            _controller = new ViewChangeRequestsController();
+            _controller = new ViewChangeRequestsController(new AppointmentChangeRequestService());
 
             InitializeComponent();
 

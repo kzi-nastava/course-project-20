@@ -15,6 +15,8 @@ namespace HealthCareCenter.PatientGUI.ViewModels
     {
         private readonly NavigationStore _navigationStore;
         private readonly Patient _patient;
+        private INotificationService _notificationService;
+
 
         private readonly Dictionary<int, Dictionary<int, int>> _notificationsFromPrescriptionsToSend;
 
@@ -30,14 +32,15 @@ namespace HealthCareCenter.PatientGUI.ViewModels
 
         public string CurrentViewLabel { get; set; }
 
-        public MainViewModel(NavigationStore navigationStore, Patient patient)
+        public MainViewModel(NavigationStore navigationStore, Patient patient, INotificationService notificationService)
         {
+            _notificationService = notificationService;
             _navigationStore = navigationStore;
             _navigationStore.CurrentViewModelChanged += OnCurrentViewModelChanged;
 
             _patient = patient;
 
-            _notificationsFromPrescriptionsToSend = NotificationService.GetNotificationsSentDict(
+            _notificationsFromPrescriptionsToSend = _notificationService.GetNotificationsSentDict(
                 PrescriptionService.GetPatientPrescriptions(_patient.HealthRecordID));
             ShowNotifications();  // show notifications on startup
 
@@ -58,7 +61,7 @@ namespace HealthCareCenter.PatientGUI.ViewModels
 
         private void DisplayNotifications()
         {
-            List<Notification> notifications = NotificationService.GetUnopened(_patient);
+            List<Notification> notifications = _notificationService.GetUnopened(_patient);
             if (notifications.Count == 0)
             {
                 return;
@@ -92,7 +95,7 @@ namespace HealthCareCenter.PatientGUI.ViewModels
 
         private void ShowNotifications()
         {
-            List<string> notificationsToSend = NotificationService.GetNotifications(
+            List<string> notificationsToSend = _notificationService.GetNotifications(
                 _notificationsFromPrescriptionsToSend, _patient);
 
             foreach (string notificationInfo in notificationsToSend)

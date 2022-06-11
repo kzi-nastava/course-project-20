@@ -295,7 +295,7 @@ namespace HealthCareCenter
 
         private void CrudHospitalRoomMenuItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new CrudHospitalRoomWindow(_signedManager));
+            ShowWindow(new CrudHospitalRoomWindow(_signedManager, new NotificationService(new NotificationRepository())));
         }
 
         private void EquipmentReviewMenuItemClick(object sender, RoutedEventArgs e)

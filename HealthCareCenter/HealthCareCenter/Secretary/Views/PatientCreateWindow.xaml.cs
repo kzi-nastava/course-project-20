@@ -1,6 +1,6 @@
 ﻿using HealthCareCenter.Model;
 using HealthCareCenter.Secretary.Controllers;
-using HealthCareCenter.Secretary.DTOs;
+using HealthCareCenter.Secretary.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;

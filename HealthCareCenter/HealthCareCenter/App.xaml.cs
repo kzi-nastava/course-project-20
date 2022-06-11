@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using HealthCareCenter.Model;
+using HealthCareCenter.Service;
 using System.Windows;
 
 namespace HealthCareCenter
@@ -15,7 +11,7 @@ namespace HealthCareCenter
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            LoginWindow win = new LoginWindow();
+            LoginWindow win = new LoginWindow(new DynamicEquipmentService(new DynamicEquipmentRequestRepository()));
             win.Show();
             base.OnStartup(e);
         }

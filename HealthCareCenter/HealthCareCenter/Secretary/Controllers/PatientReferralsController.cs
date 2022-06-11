@@ -8,19 +8,21 @@ namespace HealthCareCenter.Secretary.Controllers
 {
     public class PatientReferralsController
     {
-        public PatientReferralsController()
+        private IReferralsService _referralsService;
+
+        public PatientReferralsController(IReferralsService service)
         {
-            ReferralRepository.Load();
+            _referralsService = service;
         }
 
         public List<PatientReferralForDisplay> Get(Patient patient)
         {
-            return ReferralsService.Get(patient);
+            return _referralsService.Get(patient);
         }
 
         public Referral Get(int referralID)
         {
-            return ReferralsService.Get(referralID);
+            return _referralsService.Get(referralID);
         }
     }
 }

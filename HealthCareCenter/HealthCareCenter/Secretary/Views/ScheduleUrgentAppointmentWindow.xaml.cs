@@ -3,6 +3,7 @@ using System;
 using System.Windows;
 using HealthCareCenter.Enums;
 using HealthCareCenter.Secretary.Controllers;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Secretary
 {
@@ -25,7 +26,8 @@ namespace HealthCareCenter.Secretary
         {
             _patient = patient;
             _info = new UrgentAppointmentInfo();
-            _controller = new ScheduleUrgentAppointmentController(_info);
+            BaseUrgentAppointmentService service = new UrgentAppointmentService(new TermsService(), new NotificationService(new NotificationRepository())) { UrgentInfo = _info };
+            _controller = new ScheduleUrgentAppointmentController(service);
 
             InitializeComponent();
 

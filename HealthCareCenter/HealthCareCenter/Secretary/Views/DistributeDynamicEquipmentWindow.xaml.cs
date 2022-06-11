@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using HealthCareCenter.Model;
 using HealthCareCenter.Secretary.Controllers;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter.Secretary
 {
@@ -15,10 +16,10 @@ namespace HealthCareCenter.Secretary
         private readonly Room _storage;
         private readonly DistributeDynamicEquipmentController _controller;
 
-        public DistributeDynamicEquipmentWindow()
+        public DistributeDynamicEquipmentWindow(IDynamicEquipmentService dynamicEquipmentService)
         {
             _storage = StorageRepository.Load();
-            _controller = new DistributeDynamicEquipmentController();
+            _controller = new DistributeDynamicEquipmentController(dynamicEquipmentService);
 
             InitializeComponent();
 

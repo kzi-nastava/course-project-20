@@ -20,11 +20,21 @@ namespace HealthCareCenter.DoctorServices
         private DoctorWindow window;
         private Referral referral;
         private Medicine chosenMedicine;
-        public DoctorWindowService(User signedUser) {
-            
+        private IReferralsService _referralsService;
+        private BaseReferralRepository _referralRepository;
+
+        public DoctorWindowService(User signedUser, IReferralsService referralsService, BaseReferralRepository referralRepository)
+        {
+            _referralsService = referralsService;
             _signedUser = signedUser;
-            window = new DoctorWindow(signedUser, this);
+            _referralRepository = referralRepository;
+            window = new DoctorWindow(signedUser, this, new NotificationService(new NotificationRepository()));
             window.Show();
+        }
+
+        ~DoctorWindowService()
+        {
+            _referralRepository.Save();
         }
 
         public void FillEquipmentTable()
@@ -50,7 +60,7 @@ namespace HealthCareCenter.DoctorServices
         public void CreateAReferral()
         {
             referral = new Referral();
-            referral.ID = ++ReferralRepository.LargestID;
+            referral.ID = ++_referralRepository.LargestID;
         }
 
         public void FillDoctorsTable(List<Doctor> doctors)
@@ -158,8 +168,8 @@ namespace HealthCareCenter.DoctorServices
             int doctorID = TableService.GetRowItemID(window.doctorsDataGrid, "Id");
             if (doctorID == -1) 
                 return false;
-            ReferralsService.Fill(doctorID, selectedPatientID, referral);
-            ReferralRepository.Referrals.Add(referral);
+            _referralsService.Fill(doctorID, selectedPatientID, referral);
+            _referralRepository.Referrals.Add(referral);
             return true;
         }
 
@@ -168,8 +178,8 @@ namespace HealthCareCenter.DoctorServices
             int doctorID = TableService.GetRowItemID(window.doctorsDataGrid, "Id");
             if (doctorID == -1) 
                 return false;
-            ReferralsService.Fill(doctorID,selectedPatientID,referral);
-            ReferralRepository.Referrals.Add(referral);
+            _referralsService.Fill(doctorID,selectedPatientID,referral);
+            _referralRepository.Referrals.Add(referral);
             return true;
         }
 
