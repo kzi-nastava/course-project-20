@@ -37,7 +37,7 @@ namespace HealthCareCenter.Core.Equipment.Repositories
                     DateFormatString = Constants.DateTimeFormat
                 };
 
-                string JSONTextRequests = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\dynamicEquipmentRequests.json");
+                string JSONTextRequests = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\dynamicEquipmentRequests.json");
                 Requests = (List<DynamicEquipmentRequest>)JsonConvert.DeserializeObject<IEnumerable<DynamicEquipmentRequest>>(JSONTextRequests, settings);
             }
             catch (Exception ex)
@@ -56,7 +56,7 @@ namespace HealthCareCenter.Core.Equipment.Repositories
                     DateFormatString = Constants.DateTimeFormat
                 };
 
-                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\dynamicEquipmentRequests.json"))
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\dynamicEquipmentRequests.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, Requests);

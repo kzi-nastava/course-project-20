@@ -24,7 +24,7 @@ namespace HealthCareCenter.Core.VacationRequests.Repositories
                     DateFormatString = Constants.DateFormat
                 };
 
-                string JSONTextRequests = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\vacationRequests.json");
+                string JSONTextRequests = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\vacationRequests.json");
                 Requests = (List<VacationRequest>)JsonConvert.DeserializeObject<IEnumerable<VacationRequest>>(JSONTextRequests, settings);
             }
             catch (Exception ex)
@@ -43,7 +43,7 @@ namespace HealthCareCenter.Core.VacationRequests.Repositories
                     DateFormatString = Constants.DateFormat
                 };
 
-                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\vacationRequests.json"))
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\vacationRequests.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, Requests);

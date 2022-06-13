@@ -30,7 +30,7 @@ namespace HealthCareCenter.Core.Notifications.Repositories
         {
             try
             {
-                string JSONTextNotifications = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\notifications.json");
+                string JSONTextNotifications = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\notifications.json");
                 Notifications = (List<Notification>)JsonConvert.DeserializeObject<IEnumerable<Notification>>(JSONTextNotifications);
             }
             catch (Exception ex)
@@ -48,7 +48,7 @@ namespace HealthCareCenter.Core.Notifications.Repositories
                     Formatting = Formatting.Indented
                 };
 
-                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\notifications.json"))
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\notifications.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, Notifications);

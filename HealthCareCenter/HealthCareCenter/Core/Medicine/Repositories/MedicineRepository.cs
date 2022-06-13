@@ -29,7 +29,7 @@ namespace HealthCareCenter.Core.Medicine.Repositories
                 DateFormatString = Constants.DateFormat
             };
 
-            string JSONTextMedicines = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\medicines.json");
+            string JSONTextMedicines = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\medicines.json");
             _medicines = (List<Models.Medicine>)JsonConvert.DeserializeObject<IEnumerable<Models.Medicine>>(JSONTextMedicines, settings);
             return _medicines;
         }
@@ -42,7 +42,7 @@ namespace HealthCareCenter.Core.Medicine.Repositories
                     Formatting = Formatting.Indented,
                     DateFormatString = Constants.DateFormat
                 };
-                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\medicines.json"))
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\medicines.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, Medicines);

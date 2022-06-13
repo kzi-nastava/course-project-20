@@ -40,13 +40,13 @@ namespace HealthCareCenter.Core.Users
                     DateFormatString = Constants.DateFormat
                 };
 
-                string JSONTextDoctors = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\doctors.json");
+                string JSONTextDoctors = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\doctors.json");
                 Doctors = (List<Doctor>)JsonConvert.DeserializeObject<IEnumerable<Doctor>>(JSONTextDoctors, settings);
-                string JSONTextManagers = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\managers.json");
+                string JSONTextManagers = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\managers.json");
                 Managers = (List<Manager>)JsonConvert.DeserializeObject<IEnumerable<Manager>>(JSONTextManagers, settings);
-                string JSONTextPatients = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\patients.json");
+                string JSONTextPatients = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\patients.json");
                 Patients = (List<Patient>)JsonConvert.DeserializeObject<IEnumerable<Patient>>(JSONTextPatients, settings);
-                string JSONTextSecretaries = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\secretaries.json");
+                string JSONTextSecretaries = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\secretaries.json");
                 Secretaries = (List<Models.Secretary>)JsonConvert.DeserializeObject<IEnumerable<Models.Secretary>>(JSONTextSecretaries, settings);
 
                 Users = new List<User>();
@@ -70,7 +70,7 @@ namespace HealthCareCenter.Core.Users
                     Formatting = Formatting.Indented,
                     DateFormatString = Constants.DateFormat
                 };
-                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\patients.json"))
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\patients.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, Patients);
@@ -91,7 +91,7 @@ namespace HealthCareCenter.Core.Users
                     Formatting = Formatting.Indented,
                     DateFormatString = Constants.DateFormat
                 };
-                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\doctors.json"))
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\doctors.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, Doctors);

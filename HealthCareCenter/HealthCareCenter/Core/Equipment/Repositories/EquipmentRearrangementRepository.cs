@@ -46,7 +46,7 @@ namespace HealthCareCenter.Core.Equipment.Repositories
                     DateFormatString = Constants.DateFormat
                 };
 
-                string JSONTextEquipmentRearrangments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\" + _fileName);
+                string JSONTextEquipmentRearrangments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\" + _fileName);
                 rearrangments = (List<EquipmentRearrangement>)JsonConvert.DeserializeObject<IEnumerable<EquipmentRearrangement>>(JSONTextEquipmentRearrangments, settings);
                 return rearrangments;
             }
@@ -67,7 +67,7 @@ namespace HealthCareCenter.Core.Equipment.Repositories
             {
                 JsonSerializer serializer = new JsonSerializer();
 
-                using (StreamWriter sw = new StreamWriter(@"..\..\..\Data\" + _fileName))
+                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + _fileName))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, Rearrangements);

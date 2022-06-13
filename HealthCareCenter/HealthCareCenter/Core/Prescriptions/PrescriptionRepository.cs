@@ -32,7 +32,7 @@ namespace HealthCareCenter.Core.Prescriptions
                 DateFormatString = Constants.TimeFormat
             };
 
-            string JSONTextPrescriptions = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\prescriptions.json");
+            string JSONTextPrescriptions = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\prescriptions.json");
             _prescriptions = (List<Prescription>)JsonConvert.DeserializeObject<IEnumerable<Prescription>>(JSONTextPrescriptions, settings);
             LargestID = _prescriptions.Count == 0 ? 0 : Prescriptions[^1].ID;
             return _prescriptions;
@@ -46,7 +46,7 @@ namespace HealthCareCenter.Core.Prescriptions
                     Formatting = Formatting.Indented,
                     DateFormatString = Constants.TimeFormat
                 };
-                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\prescriptions.json"))
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\prescriptions.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, Prescriptions);

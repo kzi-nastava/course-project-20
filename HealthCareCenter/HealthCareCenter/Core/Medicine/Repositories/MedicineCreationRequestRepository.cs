@@ -38,7 +38,7 @@ namespace HealthCareCenter.Core.Medicine.Repositories
                 DateFormatString = Constants.DateTimeFormat
             };
 
-            string JSONTextAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\medicineCreationRequests.json");
+            string JSONTextAppointments = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\medicineCreationRequests.json");
             Requests = (List<MedicineCreationRequest>)JsonConvert.DeserializeObject<IEnumerable<MedicineCreationRequest>>(JSONTextAppointments, settings);
             LargestID = Requests.Count == 0 ? 0 : Requests[^1].ID;
             return Requests;
@@ -53,7 +53,7 @@ namespace HealthCareCenter.Core.Medicine.Repositories
                     Formatting = Formatting.Indented,
                     DateFormatString = Constants.DateTimeFormat
                 };
-                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\medicineCreationRequests.json"))
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\medicineCreationRequests.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, Requests);

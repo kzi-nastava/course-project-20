@@ -41,7 +41,7 @@ namespace HealthCareCenter.Core.Rooms.Repositories
                     DateFormatString = Constants.DateFormat
                 };
 
-                string JSONTextRenovations = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\" + _fileName);
+                string JSONTextRenovations = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\" + _fileName);
                 rooms = (List<RenovationSchedule>)JsonConvert.DeserializeObject<IEnumerable<RenovationSchedule>>(JSONTextRenovations, settings);
                 return rooms;
             }
@@ -57,7 +57,7 @@ namespace HealthCareCenter.Core.Rooms.Repositories
             {
                 JsonSerializer serializer = new JsonSerializer();
 
-                using (StreamWriter sw = new StreamWriter(@"..\..\..\Data\" + _fileName))
+                using (StreamWriter sw = new StreamWriter(@"..\..\..\data\" + _fileName))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, Renovations);

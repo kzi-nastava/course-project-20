@@ -1,10 +1,8 @@
-﻿using HealthCareCenter.Core;
-using HealthCareCenter.Core.Surveys.Models;
+﻿using HealthCareCenter.Core.Surveys.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace HealthCareCenter.Core.Surveys.Repositories
 {
@@ -33,7 +31,7 @@ namespace HealthCareCenter.Core.Surveys.Repositories
                     DateFormatString = Constants.DateTimeFormat
                 };
 
-                string JSONTextRequests = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\doctorSurveyRatings.json");
+                string JSONTextRequests = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\doctorSurveyRatings.json");
                 _ratings = (List<DoctorSurveyRating>)JsonConvert.DeserializeObject<IEnumerable<DoctorSurveyRating>>(JSONTextRequests, settings);
             }
             catch (Exception ex)
@@ -51,7 +49,7 @@ namespace HealthCareCenter.Core.Surveys.Repositories
                     Formatting = Formatting.Indented,
                     DateFormatString = Constants.DateTimeFormat
                 };
-                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\Data\doctorSurveyRatings.json"))
+                using (StreamWriter sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\doctorSurveyRatings.json"))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
                     serializer.Serialize(writer, Ratings);
