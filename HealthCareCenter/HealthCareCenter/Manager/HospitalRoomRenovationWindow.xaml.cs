@@ -107,6 +107,16 @@ namespace HealthCareCenter
             ShowWindow(new ChangedMedicineCreationRequestWindow(_signedManager));
         }
 
+        private void HealthcareSurveysClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new HealthcareSurveysOverviewWindow(_signedManager));
+        }
+
+        private void DoctorSurveysClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new DoctorSurveysOverviewWindow(_signedManager));
+        }
+
         private void LogOffItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new LoginWindow());

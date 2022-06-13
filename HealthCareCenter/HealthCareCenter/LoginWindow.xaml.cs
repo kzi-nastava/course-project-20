@@ -88,7 +88,6 @@ namespace HealthCareCenter
             Close();
         }
 
-
         private bool Login(User user)
         {
             if (user.GetType() == typeof(Doctor))
@@ -98,7 +97,7 @@ namespace HealthCareCenter
             }
             else if (user.GetType() == typeof(Manager))
             {
-                ShowWindow(new ChangedMedicineCreationRequestWindow((Manager)user));
+                ShowWindow(new CrudHospitalRoomWindow((Manager)user, new NotificationService(new NotificationRepository())));
             }
             else if (user.GetType() == typeof(Patient))
             {
@@ -152,6 +151,7 @@ namespace HealthCareCenter
                 MessageBox.Show("Invalid username.");
             }
         }
+
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             TryLogin();

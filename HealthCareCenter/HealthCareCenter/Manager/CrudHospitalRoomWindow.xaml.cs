@@ -11,7 +11,7 @@ namespace HealthCareCenter
     public partial class CrudHospitalRoomWindow : Window
     {
         private Manager _signedManager;
-        private CRUDHospitalRoomController _CRUDcontroler = new CRUDHospitalRoomController();
+        private CRUDHospitalRoomController _controler = new CRUDHospitalRoomController();
         private INotificationService _notificationService;
 
         public CrudHospitalRoomWindow(Manager manager, INotificationService notificationService)
@@ -42,7 +42,7 @@ namespace HealthCareCenter
         private void FillDataGridHospitalRooms()
         {
             DataGridHospitalRooms.Items.Clear();
-            List<HospitalRoom> roomsForDisplay = _CRUDcontroler.GetRoomsToDisplay();
+            List<HospitalRoom> roomsForDisplay = _controler.GetRoomsToDisplay();
             foreach (HospitalRoom room in roomsForDisplay)
             {
                 DataGridHospitalRooms.Items.Add(room);
@@ -74,7 +74,7 @@ namespace HealthCareCenter
                 Enums.RoomType type = (Enums.RoomType)Enum.Parse(typeof(Enums.RoomType), RoomTypeComboBox.Text);
                 string roomName = HospitalRoomNameTextBox.Text;
 
-                _CRUDcontroler.Create(type, roomName);
+                _controler.Create(type, roomName);
                 HospitalRoom room = new HospitalRoom(type, roomName);
                 UpdateInterfaceAfterAddingHospitalRoom(room);
             }
@@ -90,7 +90,7 @@ namespace HealthCareCenter
             try
             {
                 string roomId = HospitalRoomIdTextBox.Text;
-                _CRUDcontroler.Delete(roomId);
+                _controler.Delete(roomId);
                 UpdateInterfaceAfterDeleteOfHospitalRoom();
             }
             catch (Exception ex)
@@ -107,7 +107,7 @@ namespace HealthCareCenter
                 string newRoomName = HospitalRoomNameTextBox.Text;
                 string roomId = HospitalRoomIdTextBox.Text;
 
-                _CRUDcontroler.Update(newRoomName, newType, roomId);
+                _controler.Update(newRoomName, newType, roomId);
                 UpdateInterfaceAfterUpdateOfHospitalRoom();
             }
             catch (Exception ex)
@@ -160,6 +160,16 @@ namespace HealthCareCenter
         private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new ChangedMedicineCreationRequestWindow(_signedManager));
+        }
+
+        private void HealthcareSurveysClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new HealthcareSurveysOverviewWindow(_signedManager));
+        }
+
+        private void DoctorSurveysClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new DoctorSurveysOverviewWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

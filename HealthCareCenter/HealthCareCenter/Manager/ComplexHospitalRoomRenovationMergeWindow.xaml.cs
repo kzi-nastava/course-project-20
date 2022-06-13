@@ -1,4 +1,5 @@
-﻿using HealthCareCenter.Model;
+﻿using HealthCareCenter.Controller;
+using HealthCareCenter.Model;
 using HealthCareCenter.Service;
 using System;
 using System.Collections.Generic;
@@ -20,45 +21,23 @@ namespace HealthCareCenter
     /// </summary>
     public partial class ComplexHospitalRoomRenovationMergeWindow : Window
     {
-        private Manager _signedManager;
-
-        private string[] header = {
+        private string[] _header = {
             "Room1 ID", "Room1 Name", "Room1 Type",
             "Room2 ID", "Room2 Name", "Room2 Type",
             "New Room ID", "New Room Name", "New Room Type"
         };
 
-        private bool IsRoomIdInputValide(string roomId)
-        {
-            return Int32.TryParse(roomId, out int _);
-        }
+        private Manager _signedManager;
+        private ComplexHospitalRoomRenovationMergeController _controller = new ComplexHospitalRoomRenovationMergeController();
 
-        private bool IsHospitalRoomFound(HospitalRoom room)
+        public ComplexHospitalRoomRenovationMergeWindow(Manager manager)
         {
-            return room != null;
-        }
-
-        private bool IsHospitalRoomNameInputValide(string roomName)
-        {
-            return roomName != "";
-        }
-
-        private bool IsDateInputValide(string date)
-        {
-            return DateTime.TryParse(date, out DateTime _);
-        }
-
-        private bool IsDateBeforeCurrentDate(DateTime date)
-        {
-            DateTime now = DateTime.Now;
-            int value = DateTime.Compare(date, now);
-            return value < 0;
-        }
-
-        private bool IsFinishDateBeforeStartDate(DateTime startDate, DateTime finishDate)
-        {
-            int value = DateTime.Compare(finishDate, startDate);
-            return value < 0;
+            _signedManager = manager;
+            InitializeComponent();
+            FillDataGridHospitalRooms();
+            AddDataGridHeader(DataGridHospitalRoomsRenovationMerge, _header);
+            FillDataGridHospitalRoomsRenovationMerge();
+            FillNewRoomTypeComboBox();
         }
 
         private void FillNewRoomTypeComboBox()
@@ -73,8 +52,8 @@ namespace HealthCareCenter
         private void FillDataGridHospitalRooms()
         {
             DataGridHospitalRooms.Items.Clear();
-            List<HospitalRoom> rooms = HospitalRoomService.GetRooms();
-            foreach (HospitalRoom room in rooms)
+
+            foreach (HospitalRoom room in _controller.GetRoomsForDisplay())
             {
                 DataGridHospitalRooms.Items.Add(room);
             }
@@ -107,184 +86,33 @@ namespace HealthCareCenter
         private void FillDataGridHospitalRoomsRenovationMerge()
         {
             DataGridHospitalRoomsRenovationMerge.Items.Clear();
-            List<RenovationSchedule> renovations = RenovationScheduleService.GetRenovations();
-            foreach (RenovationSchedule renovation in renovations)
+
+            foreach (List<string> renovation in _controller.GetAllMergeRenovations())
             {
-                if (renovation.RenovationType == Enums.RenovationType.Merge)
-                {
-                    HospitalRoom room1 = HospitalRoomForRenovationService.Get(renovation.Room1ID);
-                    HospitalRoom room2 = HospitalRoomForRenovationService.Get(renovation.Room2ID);
-                    HospitalRoom newRoom = HospitalRoomUnderConstructionService.Get(renovation.MainRoomID);
-
-                    List<string> row = new List<string> {
-                    room1.ID.ToString(),room1.Name,room1.Type.ToString(),
-                    room2.ID.ToString(),room2.Name,room2.Type.ToString(),
-                    renovation.StartDate.ToString(),renovation.FinishDate.ToString(),
-                    newRoom.ID.ToString(),newRoom.Name,newRoom.Type.ToString()
-                };
-
-                    AddDataGridRow(DataGridHospitalRoomsRenovationMerge, header, row);
-                }
+                AddDataGridRow(DataGridHospitalRoomsRenovationMerge, _header, renovation);
             }
-        }
-
-        private bool IsHospitalRoomValide(string roomId)
-        {
-            if (!IsRoomIdInputValide(roomId))
-            {
-                MessageBox.Show($"Error, bad input for roomId={roomId}");
-                return false;
-            }
-            int parsedHospitalRoomId = Convert.ToInt32(roomId);
-
-            HospitalRoom room = HospitalRoomService.Get(parsedHospitalRoomId);
-
-            if (!IsHospitalRoomFound(room))
-            {
-                MessageBox.Show($"Error, room with id={parsedHospitalRoomId} not found");
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool IsPossibleRoomRenovation(HospitalRoom room)
-        {
-            if (HospitalRoomService.ContainsAnyAppointment(room))
-            {
-                MessageBox.Show($"Error, room with id={room.ID} contains appointmnt!");
-                return false;
-            }
-
-            if (RoomService.ContainAnyEquipment(room))
-            {
-                MessageBox.Show($"Error, room with id={room.ID} contains rearrangements!");
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool IsDateValide(string date)
-        {
-            if (!IsDateInputValide(date))
-            {
-                MessageBox.Show($"Error, bad input for date={date}");
-                return false;
-            }
-            DateTime parsedDate = Convert.ToDateTime(date);
-
-            if (IsDateBeforeCurrentDate(parsedDate))
-            {
-                MessageBox.Show($"Error, date={parsedDate} is before current date!");
-                return false;
-            }
-
-            return true;
-        }
-
-        public ComplexHospitalRoomRenovationMergeWindow(Manager manager)
-        {
-            _signedManager = manager;
-            InitializeComponent();
-            FillDataGridHospitalRooms();
-            AddDataGridHeader(DataGridHospitalRoomsRenovationMerge, header);
-            FillDataGridHospitalRoomsRenovationMerge();
-            FillNewRoomTypeComboBox();
-        }
-
-        private bool WhetherRoomsAreSame(string room1Id, string room2Id)
-        {
-            if (room1Id == room2Id)
-            {
-                MessageBox.Show("Error, rooms have same id!");
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool ValidateRooms(string room1Id, string room2Id, string newRoomName)
-        {
-            if (!IsHospitalRoomValide(room1Id)) { return false; }
-            if (!IsHospitalRoomValide(room2Id)) { return false; }
-            if (WhetherRoomsAreSame(room1Id, room2Id)) { return false; }
-            if (!IsHospitalRoomNameInputValide(newRoomName))
-            {
-                MessageBox.Show("Error, bad input for name of new hospital room!");
-                return false;
-            }
-            return true;
-        }
-
-        private bool IsPossibleRenovation(string room1Id, string room2Id)
-        {
-            int parsedRoom1Id = Convert.ToInt32(room1Id);
-            int parsedRoom2Id = Convert.ToInt32(room2Id);
-            HospitalRoom room1 = HospitalRoomService.Get(parsedRoom1Id);
-            HospitalRoom room2 = HospitalRoomService.Get(parsedRoom2Id);
-
-            if (!IsPossibleRoomRenovation(room1)) { return false; }
-            if (!IsPossibleRoomRenovation(room2)) { return false; }
-            return true;
-        }
-
-        private bool DateValidation(string renovationStartDate, string renovationFinishDate)
-        {
-            if (!IsDateValide(renovationStartDate)) { return false; }
-            if (!IsDateValide(renovationFinishDate)) { return false; }
-
-            DateTime parsedRenovationStartDate = Convert.ToDateTime(renovationStartDate);
-            DateTime parsedRenovationFinishDate = Convert.ToDateTime(renovationFinishDate);
-            if (IsFinishDateBeforeStartDate(parsedRenovationStartDate, parsedRenovationFinishDate))
-            {
-                MessageBox.Show("Error, finish date is before start date");
-                return false;
-            }
-            return true;
-        }
-
-        private bool IsPossibleMerge(string room1Id, string room2Id, string renovationStartDate, string renovationFinishDate, string newRoomName, string newRoomType)
-        {
-            if (!ValidateRooms(room1Id, room2Id, newRoomName)) { return false; }
-            if (!IsPossibleRenovation(room1Id, room2Id)) { return false; }
-            if (!DateValidation(renovationStartDate, renovationFinishDate)) { return false; }
-            return true;
         }
 
         private void MergeButton_Click(object sender, RoutedEventArgs e)
         {
-            string room1Id = Room1IDTextBox.Text;
-            string room2Id = Room2IDTextBox.Text;
-            string renovationStartDate = StartDatePicker.Text;
-            string renovationFinishDate = FinishDatePicker.Text;
-            string newRoomName = NewRoomNameTextBox.Text;
-            string newRoomType = NewRoomTypeComboBox.Text;
+            try
+            {
+                string room1Id = Room1IDTextBox.Text;
+                string room2Id = Room2IDTextBox.Text;
+                string renovationStartDate = StartDatePicker.Text;
+                string renovationFinishDate = FinishDatePicker.Text;
+                string newRoomName = NewRoomNameTextBox.Text;
+                string newRoomType = NewRoomTypeComboBox.Text;
 
-            if (!IsPossibleMerge(room1Id, room2Id, renovationStartDate, renovationFinishDate, newRoomName, newRoomType)) { return; }
+                _controller.Merge(room1Id, room2Id, renovationStartDate, renovationFinishDate, newRoomName, newRoomType);
 
-            int parsedRoom1Id = Convert.ToInt32(room1Id);
-            int parsedRoom2Id = Convert.ToInt32(room2Id);
-            HospitalRoom room1 = HospitalRoomService.Get(parsedRoom1Id);
-            HospitalRoom room2 = HospitalRoomService.Get(parsedRoom2Id);
-
-            DateTime parsedRenovationStartDate = Convert.ToDateTime(renovationStartDate);
-            DateTime parsedRenovationFinishDate = Convert.ToDateTime(renovationFinishDate);
-
-            Enum.TryParse(newRoomType, out Enums.RoomType parsedNewRoomType);
-            HospitalRoom newRoom = new HospitalRoom(parsedNewRoomType, newRoomName);
-
-            // SetMergeRenovation
-            // -----------------------------------------
-            RenovationSchedule mergeRenovation = new RenovationSchedule(
-                parsedRenovationStartDate, parsedRenovationFinishDate,
-                room1, room2, newRoom, Enums.RenovationType.Merge
-                );
-            RenovationScheduleService.ScheduleMergeRenovation(mergeRenovation, room1, room2, newRoom);
-            // -----------------------------------------
-
-            FillDataGridHospitalRooms();
-            FillDataGridHospitalRoomsRenovationMerge();
+                FillDataGridHospitalRooms();
+                FillDataGridHospitalRoomsRenovationMerge();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void ShowWindow(Window window)
@@ -331,6 +159,16 @@ namespace HealthCareCenter
         private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new ChangedMedicineCreationRequestWindow(_signedManager));
+        }
+
+        private void HealthcareSurveysClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new HealthcareSurveysOverviewWindow(_signedManager));
+        }
+
+        private void DoctorSurveysClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new DoctorSurveysOverviewWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

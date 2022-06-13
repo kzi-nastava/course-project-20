@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    class DoctorSurveyRating : SurveyRating
+    internal class DoctorSurveyRating : SurveyRating
     {
         public int DoctorID { get; set; }
 
@@ -12,6 +12,11 @@ namespace HealthCareCenter.Model
             base(patientID, comment, rating)
         {
             DoctorID = doctorID;
+        }
+
+        public List<string> ToList()
+        {
+            return new List<string>() { DoctorID.ToString(), PatientID.ToString(), Comment, Rating.ToString() };
         }
     }
 }

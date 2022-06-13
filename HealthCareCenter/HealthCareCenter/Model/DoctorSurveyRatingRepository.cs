@@ -6,9 +6,10 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    class DoctorSurveyRatingRepository
+    internal class DoctorSurveyRatingRepository
     {
         private static List<DoctorSurveyRating> _ratings;
+
         public static List<DoctorSurveyRating> Ratings
         {
             get

@@ -18,9 +18,7 @@ namespace HealthCareCenter.Controller
               DisplayedRequest.ID, medicineName,
               DisplayedRequest.Ingredients, manufacturer,
               Enums.RequestState.Waiting);
-
-            MedicineCreationRequestService.Delete(request);
-            MedicineCreationRequestService.Add(request);
+            SendRequest(request);
 
             AddedIngrediens.Clear();
             DisplayedRequest = null;
@@ -32,6 +30,29 @@ namespace HealthCareCenter.Controller
             int parsedChangeRequestId = Convert.ToInt32(requestId);
             DisplayedRequest = MedicineCreationRequestService.Get(parsedChangeRequestId);
             AddedIngrediens = DisplayedRequest.Ingredients;
+        }
+
+        public List<List<string>> GetRequestsForDisplay()
+        {
+            List<List<string>> requestsAttributesForDisplay = new List<List<string>>();
+            foreach (MedicineCreationRequest request in MedicineCreationRequestRepository.Requests)
+            {
+                if (request.State == Enums.RequestState.Denied)
+                {
+                    List<string> attributes = new List<string>();
+                    attributes.Add(request.ID.ToString());
+                    attributes.Add(request.Name);
+                    requestsAttributesForDisplay.Add(attributes);
+                }
+            }
+
+            return requestsAttributesForDisplay;
+        }
+
+        private void SendRequest(MedicineCreationRequest request)
+        {
+            MedicineCreationRequestService.Delete(request);
+            MedicineCreationRequestService.Add(request);
         }
 
         private bool IsRequestIdValide(string id)

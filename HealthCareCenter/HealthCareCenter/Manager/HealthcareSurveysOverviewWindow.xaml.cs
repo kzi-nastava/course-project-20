@@ -17,28 +17,19 @@ using System.Windows.Shapes;
 namespace HealthCareCenter
 {
     /// <summary>
-    /// Interaction logic for MedicineCreationWindow.xaml
+    /// Interaction logic for HealthcareSurveysOverviewWindow.xaml
     /// </summary>
-    public partial class MedicineCreationRequestWindow : Window
+    public partial class HealthcareSurveysOverviewWindow : Window
     {
-        private string[] _headerOfIngredientsDataGrid = { "Ingredient Name" };
-        private MedicineCreationRequestController _controller = new MedicineCreationRequestController();
         private Manager _signedManager;
+        private string[] _healthcareSurveysHeader = { "PatientID", "Comment", "Rating" };
+        private HealthcareSurveysOverviewController _contoller = new HealthcareSurveysOverviewController();
 
-        public MedicineCreationRequestWindow(Manager manager)
+        public HealthcareSurveysOverviewWindow(Manager manager)
         {
             _signedManager = manager;
             InitializeComponent();
-            AddDataGridHeader(DataGridIngredients, _headerOfIngredientsDataGrid);
-        }
-
-        private void ClearAllElements()
-        {
-            MedicineNameTextBox.Text = "";
-            MedicineNameTextBox.Text = "";
-            IngredientTextBox.Text = "";
-            ManufacturerTextBox.Text = "";
-            DataGridIngredients.Items.Clear();
+            FillDataGridSurveys();
         }
 
         private void AddDataGridHeader(DataGrid dataGrid, string[] header)
@@ -48,7 +39,6 @@ namespace HealthCareCenter
                 DataGridTextColumn column = new DataGridTextColumn();
                 column.Header = label;
                 column.Binding = new Binding(label.Replace(' ', '_'));
-                column.Width = 110;
                 dataGrid.Columns.Add(column);
             }
         }
@@ -65,67 +55,12 @@ namespace HealthCareCenter
             dataGrid.Items.Add(row);
         }
 
-        private List<string> CreateRow(string ingredient)
+        private void FillDataGridSurveys()
         {
-            List<string> row = new List<string>();
-            row.Add(ingredient);
-            return row;
-        }
-
-        private void FillDataGridIngredient()
-        {
-            DataGridIngredients.Items.Clear();
-            foreach (string ingredient in _controller.AddedIngrediens)
+            AddDataGridHeader(DataGridSurveys, _healthcareSurveysHeader);
+            foreach (SurveyRating survey in _contoller.GetSurveys())
             {
-                List<string> row = CreateRow(ingredient);
-                AddDataGridRow(DataGridIngredients, _headerOfIngredientsDataGrid, row);
-            }
-        }
-
-        private void AddIngredientButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                string ingredient = IngredientTextBox.Text;
-                _controller.AddIngredient(ingredient);
-
-                List<string> row = CreateRow(ingredient);
-                AddDataGridRow(DataGridIngredients, _headerOfIngredientsDataGrid, row);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void RemoveIngredientButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                string ingredient = IngredientTextBox.Text;
-                _controller.RemoveIngredient(ingredient);
-                FillDataGridIngredient();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void CreateRequestButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                string medicineName = MedicineNameTextBox.Text;
-                string medicineManufacturer = ManufacturerTextBox.Text;
-
-                _controller.Send(medicineName, medicineManufacturer);
-                ClearAllElements();
-                MessageBox.Show("You have successfully created a medicine creation request!");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
+                AddDataGridRow(DataGridSurveys, _healthcareSurveysHeader, survey.ToList());
             }
         }
 

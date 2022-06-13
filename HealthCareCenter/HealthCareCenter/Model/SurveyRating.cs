@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HealthCareCenter.Model
 {
-    class SurveyRating
+    internal class SurveyRating
     {
         public int PatientID { get; set; }
         public string Comment { get; set; }
@@ -15,6 +15,11 @@ namespace HealthCareCenter.Model
             PatientID = patientID;
             Comment = comment;
             Rating = rating;
+        }
+
+        public virtual List<string> ToList()
+        {
+            return new List<string>() { PatientID.ToString(), Comment, Rating.ToString() };
         }
     }
 }

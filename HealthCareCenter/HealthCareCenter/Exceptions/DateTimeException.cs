@@ -11,9 +11,9 @@ namespace HealthCareCenter.Exceptions
         }
     }
 
-    public class DateIsBeforeTodaException : Exception
+    public class DateIsBeforeTodayException : Exception
     {
-        public DateIsBeforeTodaException(string dateTime) : base($"Date={dateTime} is before today!")
+        public DateIsBeforeTodayException(string dateTime) : base($"Date={dateTime} is before today!")
         {
         }
     }

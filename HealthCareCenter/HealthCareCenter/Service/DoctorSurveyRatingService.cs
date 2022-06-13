@@ -1,8 +1,10 @@
 ﻿using HealthCareCenter.Model;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace HealthCareCenter.Service
 {
-    class DoctorSurveyRatingService
+    internal class DoctorSurveyRatingService
     {
         public static double GetAverageRating(int doctorID)
         {
@@ -18,6 +20,21 @@ namespace HealthCareCenter.Service
             }
 
             return count == 0.0 ? 0.0 : average / count;
+        }
+
+        public static Dictionary<int, double> GetAllRatings()
+        {
+            Dictionary<int, double> doctorsRatings = new Dictionary<int, double>();
+            foreach (Doctor doctor in UserRepository.Doctors)
+            {
+                double rating = GetAverageRating(doctor.ID);
+                if (rating > 0)
+                {
+                    doctorsRatings.Add(doctor.ID, GetAverageRating(doctor.ID));
+                }
+            }
+            var orderedDoctorsRatings = doctorsRatings.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+            return orderedDoctorsRatings;
         }
 
         public static bool HasPatientAlreadyReviewed(int patientID, int doctorID)

@@ -26,6 +26,24 @@ namespace HealthCareCenter
         private string[] _headerOfIngredientsDataGrid = { "Ingredient Name" };
         private ChangedMedicineCreationRequestController _controller = new ChangedMedicineCreationRequestController();
 
+        public ChangedMedicineCreationRequestWindow(Manager manager)
+        {
+            _signedManager = manager;
+            InitializeComponent();
+            FillDataGridChangedRequests();
+
+            AddDataGridHeader(DataGridChangedRequests, _headerOfChangedRequestsDataGrid);
+            AddDataGridHeader(DataGridIngredients, _headerOfIngredientsDataGrid);
+
+            CommentTextBlock.IsEnabled = false;
+            IngredientTextBox.IsEnabled = false;
+            AddIngredientButton.IsEnabled = false;
+            RemoveIngredientButton.IsEnabled = false;
+            SendButton.IsEnabled = false;
+            MedicineNameTextBox.IsEnabled = false;
+            ManufacturerTextBox.IsEnabled = false;
+        }
+
         private List<string> CreateRowForDataGridIngredients(string ingredient)
         {
             List<string> row = new List<string>();
@@ -60,15 +78,9 @@ namespace HealthCareCenter
         private void FillDataGridChangedRequests()
         {
             DataGridChangedRequests.Items.Clear();
-            foreach (MedicineCreationRequest request in MedicineCreationRequestRepository.Requests)
+            foreach (List<string> requestAttributeForDisplay in _controller.GetRequestsForDisplay())
             {
-                if (request.State == Enums.RequestState.Denied)
-                {
-                    List<string> row = new List<string>();
-                    row.Add(request.ID.ToString());
-                    row.Add(request.Name);
-                    AddDataGridRow(DataGridChangedRequests, _headerOfChangedRequestsDataGrid, row);
-                }
+                AddDataGridRow(DataGridChangedRequests, _headerOfChangedRequestsDataGrid, requestAttributeForDisplay);
             }
         }
 
@@ -119,24 +131,6 @@ namespace HealthCareCenter
             ManufacturerTextBox.Text = "";
             CommentTextBlock.Text = "";
             DataGridIngredients.Items.Clear();
-        }
-
-        public ChangedMedicineCreationRequestWindow(Manager manager)
-        {
-            _signedManager = manager;
-            InitializeComponent();
-            FillDataGridChangedRequests();
-
-            AddDataGridHeader(DataGridChangedRequests, _headerOfChangedRequestsDataGrid);
-            AddDataGridHeader(DataGridIngredients, _headerOfIngredientsDataGrid);
-
-            CommentTextBlock.IsEnabled = false;
-            IngredientTextBox.IsEnabled = false;
-            AddIngredientButton.IsEnabled = false;
-            RemoveIngredientButton.IsEnabled = false;
-            SendButton.IsEnabled = false;
-            MedicineNameTextBox.IsEnabled = false;
-            ManufacturerTextBox.IsEnabled = false;
         }
 
         private void DisplayButton_Click(object sender, RoutedEventArgs e)
@@ -248,6 +242,16 @@ namespace HealthCareCenter
         private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new ChangedMedicineCreationRequestWindow(_signedManager));
+        }
+
+        private void HealthcareSurveysClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new HealthcareSurveysOverviewWindow(_signedManager));
+        }
+
+        private void DoctorSurveysClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new DoctorSurveysOverviewWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)
