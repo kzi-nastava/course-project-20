@@ -4,10 +4,22 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using HealthCareCenter.Model;
-using HealthCareCenter.DoctorServices;
-using HealthCareCenter.Service;
 using HealthCareCenter.Secretary;
+using HealthCareCenter.GUI.Doctor.ViewModels;
+using HealthCareCenter.GUI.Patient.SharedViewModels;
+using HealthCareCenter.Core.Equipment.Models;
+using HealthCareCenter.Core.Equipment.Services;
+using HealthCareCenter.Core.Rooms.Services;
+using HealthCareCenter.Core.Users.Models;
+using HealthCareCenter.Core.Patients.Models;
+using HealthCareCenter.Core.Rooms.Models;
+using HealthCareCenter.Core;
+using HealthCareCenter.Core.Users;
+using HealthCareCenter.Core.Notifications.Services;
+using HealthCareCenter.Core.Notifications.Repositories;
+using HealthCareCenter.Core.Referrals.Services;
+using HealthCareCenter.Core.Referrals.Repositories;
+using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 
 namespace HealthCareCenter
 {
@@ -88,17 +100,16 @@ namespace HealthCareCenter
             Close();
         }
 
-
         private bool Login(User user)
         {
             if (user.GetType() == typeof(Doctor))
             {
-                DoctorWindowService doctorWindowService = new DoctorWindowService((Doctor)user, new ReferralsService(new ReferralRepository()), new ReferralRepository());
+                DoctorWindowViewModel doctorWindowService = new DoctorWindowViewModel((Doctor)user, new ReferralsService(new ReferralRepository()), new ReferralRepository());
                 Close();
             }
             else if (user.GetType() == typeof(Manager))
             {
-                ShowWindow(new ChangedMedicineCreationRequestWindow((Manager)user));
+                ShowWindow(new CrudHospitalRoomWindow((Manager)user, new NotificationService(new NotificationRepository())));
             }
             else if (user.GetType() == typeof(Patient))
             {
@@ -111,15 +122,15 @@ namespace HealthCareCenter
                     return false;
                 }
 
-                PatientGUI.Stores.NavigationStore navStore = PatientGUI.Stores.NavigationStore.GetInstance();
-                navStore.CurrentViewModel = new PatientGUI.ViewModels.MyAppointmentsViewModel(navStore, patient);
+                NavigationStore navStore = NavigationStore.GetInstance();
+                navStore.CurrentViewModel = new MyAppointmentsViewModel(navStore, patient);
                 PatientGUI.MainWindow win = new PatientGUI.MainWindow()
                 {
-                    DataContext = new PatientGUI.ViewModels.MainViewModel(navStore, patient, new NotificationService(new NotificationRepository()))
+                    DataContext = new MainViewModel(navStore, patient, new NotificationService(new NotificationRepository()))
                 };
                 ShowWindow(win);
             }
-            else if (user.GetType() == typeof(Model.Secretary))
+            else if (user.GetType() == typeof(Core.Users.Models.Secretary))
             {
                 ShowWindow(new SecretaryWindow(user, new NotificationService(new NotificationRepository()), _dynamicEquipmentService));
             }
@@ -152,6 +163,7 @@ namespace HealthCareCenter
                 MessageBox.Show("Invalid username.");
             }
         }
+
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             TryLogin();

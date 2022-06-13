@@ -1,5 +1,5 @@
-﻿using HealthCareCenter.Model;
-using HealthCareCenter.Service;
+﻿using HealthCareCenter.Core.Equipment.Repositories;
+using HealthCareCenter.Core.Equipment.Services;
 using System.Windows;
 
 namespace HealthCareCenter

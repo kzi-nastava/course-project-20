@@ -1,0 +1,71 @@
+﻿<Window x:Class="HealthCareCenter.CrudHospitalRoomWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HealthCareCenter"
+        mc:Ignorable="d"
+        Title="CrudHospitalRoomWindow" Height="400" Width="500"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <DataGrid x:Name="DataGridHospitalRooms" Margin="10,26,10,214" IsReadOnly="True">
+
+            <!-- Font Color / Style of Column Headings-->
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="FontWeight" Value="SemiBold"></Setter>
+                    <Setter Property="BorderThickness" Value="0,0,1,2"></Setter>
+                    <Setter Property="BorderBrush" Value="Black"></Setter>
+                </Style>
+            </DataGrid.Resources>
+
+            <!-- Column Header Text & Bindings-->
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Room ID" Binding="{Binding ID}"  Width="130"></DataGridTextColumn>
+                <DataGridTextColumn Header="Room Name" Binding="{Binding Name}"  Width="130"></DataGridTextColumn>
+                <DataGridTextColumn Header="Room Type" Binding="{Binding Type}"  Width="*"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <ComboBox x:Name="RoomTypeComboBox"  HorizontalAlignment="Left" Margin="370,192,0,0" VerticalAlignment="Top" Width="120" Height="27"></ComboBox>
+
+        <Button x:Name="AddHospitalRoomButton"   Content="Add new hospital room" FontWeight="SemiBold" HorizontalAlignment="Left" Margin="10,192,0,0" VerticalAlignment="Top" Height="27" Click="AddHospitalRoomButton_Click" />
+        <Button x:Name="DeleteHospitalRoomButton" Content="Delete hospital room" FontWeight="SemiBold" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top" Width="132" Height="25" Click="DeleteHospitalRoomButton_Click" />
+        <Button x:Name="UpdateHospitalRoomButton" Content="Update hospital room" FontWeight="SemiBold" HorizontalAlignment="Left" Margin="10,287,0,0" VerticalAlignment="Top" Width="132" Height="25" Click="UpdateHospitalRoomButton_Click" />
+
+        <Label Content="Room ID" HorizontalAlignment="Left" Margin="334,237,0,0" VerticalAlignment="Top" RenderTransformOrigin="0,0.618" Height="25" />
+        <TextBox x:Name="HospitalRoomIdTextBox" HorizontalAlignment="Left" Margin="415,237,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="75" Height="25" RenderTransformOrigin="0.827,0.482" />
+
+        <TextBox x:Name="HospitalRoomNameTextBox"  HorizontalAlignment="Left" Margin="415,287,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="75" Height="25" />
+        <Label Content="Room Name" HorizontalAlignment="Left" Margin="334,287,0,0" VerticalAlignment="Top" Height="25" />
+
+        <StackPanel>
+            <Menu IsMainMenu="True">
+                <MenuItem Header="Hospital premises">
+                    <MenuItem Header="CRUD hospital rooms" Click="CrudHospitalRoomMenuItemClick"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="Hospital equipment">
+                    <MenuItem Header="Equipment review" Click="EquipmentReviewMenuItemClick"></MenuItem>
+                    <MenuItem Header="Arranging equipment" Click="ArrangingEquipmentItemClick"></MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="Renovation">
+                    <MenuItem Header="Simple renovation" Click="SimpleRenovationItemClick"></MenuItem>
+                    <MenuItem Header="Complex renovation - merge" Click="ComplexRenovationMergeItemClick"></MenuItem>
+                    <MenuItem Header="Complex renovation - split" Click="ComplexRenovationSplitItemClick"></MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="Medicine">
+                    <MenuItem Header="Create medicine" Click="CreateMedicineClick"></MenuItem>
+                    <MenuItem Header="Change reffused medicine - merge" Click="ReffusedMedicineClick"></MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="Surveys">
+                    <MenuItem Header="Healthcare surveys" Click="HealthcareSurveysClick"></MenuItem>
+                    <MenuItem Header="Doctor surveys" Click="DoctorSurveysClick"></MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="Log off" Click="LogOffItemClick"></MenuItem>
+            </Menu>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,51 @@
+﻿<Window x:Class="HealthCareCenter.DoctorSurveysOverviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HealthCareCenter"
+        mc:Ignorable="d"
+        Title="DoctorSurveysOverviewWindow" Height="700" Width="900">
+    <Grid>
+        <DataGrid x:Name="DataGridSurveys" IsEnabled="False" Margin="10,47,10,265" />
+
+        <Label Content="Best 3 doctors" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Left" Margin="10,474,0,0" VerticalAlignment="Top" />
+        <DataGrid x:Name="DataGridBest3Doctors" IsEnabled="False" Margin="10,505,595,10" />
+
+        <Label Content="Worst 3 doctors" FontSize="14"  FontWeight="SemiBold" HorizontalAlignment="Left" Margin="595,471,0,0" VerticalAlignment="Top" />
+        <DataGrid x:Name="DataGridWorst3Doctors" Margin="595,505,10,10" IsEnabled="False" AutoGenerateColumns="True" Grid.Column="0" Grid.Row="0"
+      ScrollViewer.CanContentScroll="True"
+      ScrollViewer.VerticalScrollBarVisibility="Auto"
+      ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+
+        <StackPanel>
+            <Menu IsMainMenu="True">
+                <MenuItem Header="Hospital premises">
+                    <MenuItem Header="CRUD hospital rooms" Click="CrudHospitalRoomMenuItemClick"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="Hospital equipment">
+                    <MenuItem Header="Equipment review" Click="EquipmentReviewMenuItemClick"></MenuItem>
+                    <MenuItem Header="Arranging equipment" Click="ArrangingEquipmentItemClick"></MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="Renovation">
+                    <MenuItem Header="Simple renovation" Click="SimpleRenovationItemClick"></MenuItem>
+                    <MenuItem Header="Complex renovation - merge" Click="ComplexRenovationMergeItemClick"></MenuItem>
+                    <MenuItem Header="Complex renovation - split" Click="ComplexRenovationSplitItemClick"></MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="Medicine">
+                    <MenuItem Header="Create medicine" Click="CreateMedicineClick"></MenuItem>
+                    <MenuItem Header="Change reffused medicine - merge" Click="ReffusedMedicineClick"></MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="Surveys">
+                    <MenuItem Header="Healthcare surveys" Click="HealthcareSurveysClick"></MenuItem>
+                    <MenuItem Header="Doctor surveys" Click="DoctorSurveysClick"></MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="Log off" Click="LogOffItemClick"></MenuItem>
+            </Menu>
+        </StackPanel>
+    </Grid>
+</Window>

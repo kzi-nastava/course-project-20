@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="PatientGUI\Themes\bg.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Page Include="App.xaml" />
   </ItemGroup>
 
@@ -27,14 +23,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="PatientGUI\Images\bg.png" />
+    <Resource Include="GUI\Patient\Design\bg.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="DoctorServices\AddDeleteAppointmentService.cs">
+    <Compile Update="GUI\Doctor\ViewModels\AddDeleteAppointmentViewModel.cs">
       <Generator>MSBuild:Compile</Generator>
     </Compile>
-    <Compile Update="DoctorServices\HealthRecordWindowService.cs">
+    <Compile Update="GUI\Doctor\ViewModels\HealthRecordWindowViewModel.cs">
       <Generator>MSBuild:Compile</Generator>
     </Compile>
   </ItemGroup>
