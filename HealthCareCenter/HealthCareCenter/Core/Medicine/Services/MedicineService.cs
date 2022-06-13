@@ -14,7 +14,7 @@ namespace HealthCareCenter.Core.Medicine.Services
                 return null;
             }
 
-            foreach (Medicine medicine in MedicineRepository.Medicines)
+            foreach (Models.Medicine medicine in MedicineRepository.Medicines)
             {
                 if (medicine.ID == ID)
                 {

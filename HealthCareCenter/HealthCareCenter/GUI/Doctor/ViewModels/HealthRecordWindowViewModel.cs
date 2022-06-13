@@ -177,7 +177,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             appointmentIndex = GetSelectedIndex(window.scheduleDataGrid);
             if (id == -1 || appointmentIndex == -1)
                 return false;
-            Patient patient = PatientService.Get(id);
+            Core.Patients.Models.Patient patient = PatientService.Get(id);
             HealthRecord healthRecord = HealthRecordService.Get(patient);
             if (patient == null || healthRecord == null)
                 return false;

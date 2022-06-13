@@ -124,7 +124,7 @@ namespace HealthCareCenter
 
                 NavigationStore navStore = NavigationStore.GetInstance();
                 navStore.CurrentViewModel = new MyAppointmentsViewModel(navStore, patient);
-                PatientGUI.MainWindow win = new PatientGUI.MainWindow()
+                GUI.Patient.MainWindow win = new GUI.Patient.MainWindow()
                 {
                     DataContext = new MainViewModel(navStore, patient, new NotificationService(new NotificationRepository()))
                 };

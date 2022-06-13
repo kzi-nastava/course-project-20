@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.GUI.Patient.SharedViewModels;
+using HealthCareCenter.GUI.Patient.Survey.Commands;
 using System.Windows.Input;
 
 namespace HealthCareCenter.GUI.Patient.Survey.ViewModels

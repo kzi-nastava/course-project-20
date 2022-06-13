@@ -13,9 +13,9 @@ namespace HealthCareCenter.Core.Rooms.Controllers
     {
         public List<List<string>> GetFilteredEquipmentSearchResult(string searchContent, string amount, string equipmentType, string roomType)
         {
-            List<Equipment> equipments = EquipmentService.GetEquipments();
+            List <Equipment.Models.Equipment> equipments = EquipmentService.GetEquipments();
             List<List<string>> equipmentsForDisplay = new List<List<string>>();
-            foreach (Equipment equipment in equipments)
+            foreach (Equipment.Models.Equipment equipment in equipments)
             {
                 if (!EquipmentService.HasScheduledRearrangement(equipment))
                 {
@@ -38,9 +38,9 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 
         public List<List<string>> GetAllEquipmentsForDisplay()
         {
-            List<Equipment> equipments = EquipmentService.GetEquipments();
+            List<Equipment.Models.Equipment> equipments = EquipmentService.GetEquipments();
             List<List<string>> equipmentForDisplay = new List<List<string>>();
-            foreach (Equipment equipment in equipments)
+            foreach (Equipment.Models.Equipment equipment in equipments)
             {
                 if (!EquipmentService.HasScheduledRearrangement(equipment))
                 {

@@ -1,4 +1,5 @@
-﻿using HealthCareCenter.GUI.Patient.SharedCommands;
+﻿using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
+using HealthCareCenter.GUI.Patient.SharedCommands;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
 using System.Windows;
 

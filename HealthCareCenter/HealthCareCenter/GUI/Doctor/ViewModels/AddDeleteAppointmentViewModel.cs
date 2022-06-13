@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Data;
 using System.Globalization;
-using System.ComponentModel;
 using HealthCareCenter.DoctorGUI;
 using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Repository;
@@ -79,7 +78,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             sucessfull = TimeIsAvailable(appointment, displayedDate);
             if (!sucessfull) return false;
 
-            Patient patient = PatientService.Get(id);
+            Core.Patients.Models.Patient patient = PatientService.Get(id);
             if (patient == null) return false;
 
             currentDate = DateTime.Today;
@@ -209,7 +208,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         public void FillPatientsTable()
         {
             window.patientsDataTable.Rows.Clear();
-            foreach (Patient patient in UserRepository.Patients)
+            foreach (Core.Patients.Models.Patient patient in UserRepository.Patients)
             {
                 window.AddPatientToPatientsTable(patient);
             }

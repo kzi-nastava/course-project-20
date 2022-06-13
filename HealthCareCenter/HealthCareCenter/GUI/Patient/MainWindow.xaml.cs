@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace HealthCareCenter.PatientGUI
+namespace HealthCareCenter.GUI.Patient
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HealthCareCenter.Core.Equipment.Exceptions;
 using HealthCareCenter.Core.Equipment.Models;
 using HealthCareCenter.Core.Equipment.Services;
 using HealthCareCenter.Core.Rooms.Models;

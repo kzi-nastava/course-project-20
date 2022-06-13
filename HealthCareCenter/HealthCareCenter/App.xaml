@@ -11,13 +11,13 @@
             <SolidColorBrush x:Key="ItemBorderBrush" Color="White" />
             <SolidColorBrush x:Key="C62D2C" Color="#C62D2C" />
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="./PatientGUI/Themes/DatePickerTheme.xaml" />
-                <ResourceDictionary Source="./PatientGUI/Themes/MenuItemTheme.xaml" />
-                <ResourceDictionary Source="./PatientGUI/Themes/ComboBoxTheme.xaml" />
-                <ResourceDictionary Source="./PatientGUI/Themes/TextBoxTheme.xaml" />
-                <ResourceDictionary Source="./PatientGUI/Themes/ButtonTheme.xaml" />
-                <ResourceDictionary Source="./PatientGUI/Themes/TableTheme.xaml" />
-                <ResourceDictionary Source="./PatientGUI/Themes/LabelTheme.xaml" />
+                <ResourceDictionary Source="./GUI/Patient/Design/DatePickerTheme.xaml" />
+                <ResourceDictionary Source="./GUI/Patient/Design/MenuItemTheme.xaml" />
+                <ResourceDictionary Source="./GUI/Patient/Design/ComboBoxTheme.xaml" />
+                <ResourceDictionary Source="./GUI/Patient/Design/TextBoxTheme.xaml" />
+                <ResourceDictionary Source="./GUI/Patient/Design/ButtonTheme.xaml" />
+                <ResourceDictionary Source="./GUI/Patient/Design/TableTheme.xaml" />
+                <ResourceDictionary Source="./GUI/Patient/Design/LabelTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
         

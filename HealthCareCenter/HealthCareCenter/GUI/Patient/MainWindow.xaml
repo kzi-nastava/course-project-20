@@ -1,10 +1,19 @@
-﻿<Window x:Class="HealthCareCenter.PatientGUI.MainWindow"
+﻿<Window x:Class="HealthCareCenter.GUI.Patient.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:views="clr-namespace:HealthCareCenter.PatientGUI.View"
-        xmlns:vms="clr-namespace:HealthCareCenter.PatientGUI.ViewModels"
+        
+        xmlns:appointmentcrudview="clr-namespace:HealthCareCenter.GUI.Patient.AppointmentCRUD.Views"
+        xmlns:doctorsearchview="clr-namespace:HealthCareCenter.GUI.Patient.DoctorSearch"
+        xmlns:surveyview="clr-namespace:HealthCareCenter.GUI.Patient.Survey.Views"
+        xmlns:profileview="clr-namespace:HealthCareCenter.GUI.Patient.Profile.Views"
+        
+        xmlns:appointmentcrudviewmodel="clr-namespace:HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels"
+        xmlns:doctorsearchviewmodel="clr-namespace:HealthCareCenter.GUI.Patient.DoctorSearch"
+        xmlns:surveyviewmodel="clr-namespace:HealthCareCenter.GUI.Patient.Survey.ViewModels"
+        xmlns:profileviewmodel="clr-namespace:HealthCareCenter.GUI.Patient.Profile.ViewModels"
+        
         mc:Ignorable="d"
         Height="600" Width="1200"
         WindowStartupLocation="CenterScreen"
@@ -14,33 +23,33 @@
         AllowsTransparency="True">
     <Border CornerRadius="20">
         <Border.Background>
-            <ImageBrush ImageSource="./Images/bg.png" />
+            <ImageBrush ImageSource="./Design/bg.png" />
         </Border.Background>
         <Grid>
             <Grid.Resources>
-                <DataTemplate DataType="{x:Type vms:MyAppointmentsViewModel}">
-                    <views:MyAppointmentsView />
+                <DataTemplate DataType="{x:Type appointmentcrudviewmodel:MyAppointmentsViewModel}">
+                    <appointmentcrudview:MyAppointmentsView />
                 </DataTemplate>
-                <DataTemplate DataType="{x:Type vms:PrioritySchedulingViewModel}">
-                    <views:PrioritySchedulingView />
+                <DataTemplate DataType="{x:Type appointmentcrudviewmodel:PrioritySchedulingViewModel}">
+                    <appointmentcrudview:PrioritySchedulingView />
                 </DataTemplate>
-                <DataTemplate DataType="{x:Type vms:MyHealthRecordViewModel}">
-                    <views:MyHealthRecordView />
+                <DataTemplate DataType="{x:Type profileviewmodel:MyHealthRecordViewModel}">
+                    <profileview:MyHealthRecordView />
                 </DataTemplate>
-                <DataTemplate DataType="{x:Type vms:MyPrescriptionsViewModel}">
-                    <views:MyPrescriptionsView />
+                <DataTemplate DataType="{x:Type profileviewmodel:MyPrescriptionsViewModel}">
+                    <profileview:MyPrescriptionsView />
                 </DataTemplate>
-                <DataTemplate DataType="{x:Type vms:SearchDoctorsViewModel}">
-                    <views:SearchDoctorsView />
+                <DataTemplate DataType="{x:Type doctorsearchviewmodel:SearchDoctorsViewModel}">
+                    <doctorsearchview:SearchDoctorsView />
                 </DataTemplate>
-                <DataTemplate DataType="{x:Type vms:AppointmentFormViewModel}">
-                    <views:AppointmentFormView />
+                <DataTemplate DataType="{x:Type appointmentcrudviewmodel:AppointmentFormViewModel}">
+                    <appointmentcrudview:AppointmentFormView />
                 </DataTemplate>
-                <DataTemplate DataType="{x:Type vms:HealthCenterSurveyViewModel}">
-                    <views:HealthCenterSurveyView />
+                <DataTemplate DataType="{x:Type surveyviewmodel:HealthCenterSurveyViewModel}">
+                    <surveyview:HealthCenterSurveyView />
                 </DataTemplate>
-                <DataTemplate DataType="{x:Type vms:DoctorSurveyViewModel}">
-                    <views:DoctorSurveyView />
+                <DataTemplate DataType="{x:Type surveyviewmodel:DoctorSurveyViewModel}">
+                    <surveyview:DoctorSurveyView />
                 </DataTemplate>
             </Grid.Resources>
 

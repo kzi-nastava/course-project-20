@@ -1,5 +1,6 @@
 ﻿using HealthCareCenter.Core.Appointments.Controllers;
 using HealthCareCenter.Core.Appointments.Models;
+using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.Patients.Models;
 using System;
 using System.Collections.Generic;
