@@ -6,7 +6,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
 {
     class HealthCenterSurveyViewModel : ViewModelBase
     {
-        public Core.Patients.Models.Patient Patient { get; }
+        public Core.Patients.Patient Patient { get; }
 
         public bool ServiceQualityTicked1 { get; set; }
         public bool ServiceQualityTicked2 { get; set; }
@@ -45,7 +45,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
 
         public ICommand SubmitReview { get; }
 
-        public HealthCenterSurveyViewModel(Core.Patients.Models.Patient patient)
+        public HealthCenterSurveyViewModel(Core.Patients.Patient patient)
         {
             Patient = patient;
 

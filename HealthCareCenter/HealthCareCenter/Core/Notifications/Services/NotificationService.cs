@@ -3,7 +3,7 @@ using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Medicine.Models;
 using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Notifications.Repositories;
-using HealthCareCenter.Core.Patients.Models;
+using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Prescriptions;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.Core.Users.Models;
@@ -14,7 +14,7 @@ namespace HealthCareCenter.Core.Notifications.Services
 {
     public class NotificationService : INotificationService
     {
-        BaseNotificationRepository _repository;
+        private readonly BaseNotificationRepository _repository;
 
         public NotificationService(BaseNotificationRepository repository)
         {

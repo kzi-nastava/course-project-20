@@ -236,15 +236,15 @@ namespace HealthCareCenter.Core.Rooms.Services
         {
             return room.AppointmentIDs.Count != 0;
         }
-        public static List<HospitalRoomDisplay> GetRooms(bool checkup)
+        public static List<HospitalRoomForDisplay> GetRooms(bool checkup)
         {
-            List<HospitalRoomDisplay> rooms = new List<HospitalRoomDisplay>();
+            List<HospitalRoomForDisplay> rooms = new List<HospitalRoomForDisplay>();
             foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
             {
                 bool correctRoom = room.Type == RoomType.Checkup && checkup || room.Type == RoomType.Operation && !checkup;
                 if (correctRoom)
                 {
-                    rooms.Add(new HospitalRoomDisplay() { ID = room.ID, Name = room.Name });
+                    rooms.Add(new HospitalRoomForDisplay() { ID = room.ID, Name = room.Name });
                 }
             }
             return rooms;

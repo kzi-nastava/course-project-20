@@ -14,7 +14,7 @@ namespace HealthCareCenter.GUI.Patient.SharedViewModels
     internal class MainViewModel : ViewModelBase
     {
         private readonly NavigationStore _navigationStore;
-        private readonly Core.Patients.Models.Patient _patient;
+        private readonly Core.Patients.Patient _patient;
         private INotificationService _notificationService;
 
 
@@ -32,7 +32,7 @@ namespace HealthCareCenter.GUI.Patient.SharedViewModels
 
         public string CurrentViewLabel { get; set; }
 
-        public MainViewModel(NavigationStore navigationStore, Core.Patients.Models.Patient patient, INotificationService notificationService)
+        public MainViewModel(NavigationStore navigationStore, Core.Patients.Patient patient, INotificationService notificationService)
         {
             _notificationService = notificationService;
             _navigationStore = navigationStore;

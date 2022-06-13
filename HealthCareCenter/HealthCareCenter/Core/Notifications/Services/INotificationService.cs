@@ -1,5 +1,5 @@
 ﻿using HealthCareCenter.Core.Appointments.Models;
-using HealthCareCenter.Core.Patients.Models;
+using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Prescriptions;
 using HealthCareCenter.Core.Users.Models;
 using System;

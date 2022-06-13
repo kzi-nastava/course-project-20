@@ -1,5 +1,5 @@
 ﻿using HealthCareCenter.Core;
-using HealthCareCenter.Core.Patients.Models;
+using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Users.Models;
 using Newtonsoft.Json;
 using System;

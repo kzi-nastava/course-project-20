@@ -7,7 +7,7 @@ namespace HealthCareCenter.Core.Appointments.Models
     /// <summary>
     /// Class used only for displaying edit appointment requests of a specific patient in ViewChangeRequestsWindow
     /// </summary>
-    public class EditRequest
+    public class EditRequestForDisplay
     {
         public int ID { get; set; }
         public DateTime TimeSent { get; set; }
@@ -18,9 +18,9 @@ namespace HealthCareCenter.Core.Appointments.Models
         public AppointmentType OriginalType { get; set; }
         public AppointmentType NewType { get; set; }
 
-        public EditRequest() { }
+        public EditRequestForDisplay() { }
 
-        public EditRequest(int id, DateTime timeSent)
+        public EditRequestForDisplay(int id, DateTime timeSent)
         {
             ID = id;
             TimeSent = timeSent;

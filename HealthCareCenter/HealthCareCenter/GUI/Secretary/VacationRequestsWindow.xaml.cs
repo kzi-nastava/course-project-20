@@ -39,7 +39,7 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            int id = ((VacationRequestDisplay)vacationRequestsDataGrid.SelectedItem).ID;
+            int id = ((VacationRequestForDisplay)vacationRequestsDataGrid.SelectedItem).ID;
 
             try
             {
@@ -61,7 +61,7 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            int id = ((VacationRequestDisplay)vacationRequestsDataGrid.SelectedItem).ID;
+            int id = ((VacationRequestForDisplay)vacationRequestsDataGrid.SelectedItem).ID;
             try
             {
                 vacationRequestsDataGrid.ItemsSource = _controller.Deny(id, denialReasonTextBox.Text);

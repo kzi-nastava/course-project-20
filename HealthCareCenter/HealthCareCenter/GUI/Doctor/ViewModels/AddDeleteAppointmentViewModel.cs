@@ -7,10 +7,10 @@ using System.Globalization;
 using HealthCareCenter.DoctorGUI;
 using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Repository;
-using HealthCareCenter.Core.Users.Services;
 using HealthCareCenter.Core.Users.Models;
 using HealthCareCenter.Core;
 using HealthCareCenter.Core.Users;
+using HealthCareCenter.Core.Patients;
 
 namespace HealthCareCenter.GUI.Doctor.ViewModels
 {
@@ -78,7 +78,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             sucessfull = TimeIsAvailable(appointment, displayedDate);
             if (!sucessfull) return false;
 
-            Core.Patients.Models.Patient patient = PatientService.Get(id);
+            Core.Patients.Patient patient = PatientService.Get(id);
             if (patient == null) return false;
 
             currentDate = DateTime.Today;
@@ -208,7 +208,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         public void FillPatientsTable()
         {
             window.patientsDataTable.Rows.Clear();
-            foreach (Core.Patients.Models.Patient patient in UserRepository.Patients)
+            foreach (Core.Patients.Patient patient in UserRepository.Patients)
             {
                 window.AddPatientToPatientsTable(patient);
             }

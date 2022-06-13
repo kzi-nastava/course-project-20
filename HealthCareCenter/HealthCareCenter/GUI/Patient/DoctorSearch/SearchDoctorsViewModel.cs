@@ -6,7 +6,7 @@ namespace HealthCareCenter.GUI.Patient.DoctorSearch
 {
     internal class SearchDoctorsViewModel : ViewModelBase
     {
-        public Core.Patients.Models.Patient Patient { get; }
+        public Core.Patients.Patient Patient { get; }
 
         public List<string> SearchCriteria { get; }
 
@@ -72,7 +72,7 @@ namespace HealthCareCenter.GUI.Patient.DoctorSearch
         public ICommand SortDoctors { get; }
         public ICommand SelectDoctor { get; }
 
-        public SearchDoctorsViewModel(NavigationStore navigationStore, Core.Patients.Models.Patient patient)
+        public SearchDoctorsViewModel(NavigationStore navigationStore, Core.Patients.Patient patient)
         {
             Patient = patient;
 

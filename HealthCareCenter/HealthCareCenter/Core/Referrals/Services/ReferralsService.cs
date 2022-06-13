@@ -1,6 +1,6 @@
 ﻿using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Repository;
-using HealthCareCenter.Core.Patients.Models;
+using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Referrals.Models;
 using HealthCareCenter.Core.Referrals.Repositories;
 using HealthCareCenter.Core.Rooms.Repositories;
@@ -13,7 +13,7 @@ namespace HealthCareCenter.Core.Referrals.Services
 {
     public class ReferralsService : IReferralsService
     {
-        private BaseReferralRepository _referralsRepository;
+        private readonly BaseReferralRepository _referralsRepository;
 
         public ReferralsService(BaseReferralRepository repository)
         {

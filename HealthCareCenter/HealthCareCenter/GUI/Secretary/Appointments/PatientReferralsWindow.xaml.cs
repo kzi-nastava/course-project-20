@@ -1,5 +1,5 @@
-﻿using HealthCareCenter.Core.Patients.Models;
-using HealthCareCenter.Core.Referrals;
+﻿using HealthCareCenter.Core.Patients;
+using HealthCareCenter.Core.Referrals.Controllers;
 using HealthCareCenter.Core.Referrals.Models;
 using HealthCareCenter.Core.Referrals.Services;
 using System;

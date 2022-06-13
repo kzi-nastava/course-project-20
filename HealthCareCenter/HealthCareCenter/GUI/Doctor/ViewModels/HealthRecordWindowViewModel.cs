@@ -7,13 +7,13 @@ using System.Globalization;
 using System.ComponentModel;
 using HealthCareCenter.DoctorGUI;
 using HealthCareCenter.Core.Appointments.Repository;
-using HealthCareCenter.Core.Users.Services;
 using HealthCareCenter.Core.Prescriptions;
 using HealthCareCenter.Core;
 using HealthCareCenter.Core.Users.Models;
 using HealthCareCenter.Core.Medicine.Models;
 using HealthCareCenter.Core.Medicine.Repositories;
 using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Patients;
 
 namespace HealthCareCenter.GUI.Doctor.ViewModels
 {
@@ -177,7 +177,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             appointmentIndex = GetSelectedIndex(window.scheduleDataGrid);
             if (id == -1 || appointmentIndex == -1)
                 return false;
-            Core.Patients.Models.Patient patient = PatientService.Get(id);
+            Core.Patients.Patient patient = PatientService.Get(id);
             HealthRecord healthRecord = HealthRecordService.Get(patient);
             if (patient == null || healthRecord == null)
                 return false;

@@ -1,6 +1,4 @@
 ﻿using HealthCareCenter.Core.HealthRecords;
-using HealthCareCenter.Core.Patients.Models;
-using HealthCareCenter.Core.Users.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HealthCareCenter.Core.Appointments.Models
+namespace HealthCareCenter.Core.Appointments.Urgent
 {
     /// <summary>
     /// Class used only for displaying occupied appointments in OccupiedAppointmentsWindow
     /// </summary>
-    public class AppointmentDisplay
+    public class OccupiedAppointment
     {
         public int ID { get; set; }
         public AppointmentType Type { get; set; }
@@ -17,9 +17,9 @@ namespace HealthCareCenter.Core.Appointments.Models
         public string PatientName { get; set; }
         public DateTime PostponedTime { get; set; }
 
-        public AppointmentDisplay() { }
+        public OccupiedAppointment() { }
 
-        public AppointmentDisplay(int id, AppointmentType type, DateTime scheduledDate, bool emergency, DateTime postponedTime)
+        public OccupiedAppointment(int id, AppointmentType type, DateTime scheduledDate, bool emergency, DateTime postponedTime)
         {
             ID = id;
             Type = type;

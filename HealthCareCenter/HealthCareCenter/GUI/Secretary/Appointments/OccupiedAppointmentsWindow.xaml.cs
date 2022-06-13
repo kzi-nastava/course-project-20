@@ -1,10 +1,13 @@
 ﻿using HealthCareCenter.Core;
-using HealthCareCenter.Core.Appointments.Controllers;
 using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.Appointments.Urgent;
+using HealthCareCenter.Core.Appointments.Urgent.Controllers;
+using HealthCareCenter.Core.Appointments.Urgent.DTO;
+using HealthCareCenter.Core.Appointments.Urgent.Services;
 using HealthCareCenter.Core.Notifications.Repositories;
 using HealthCareCenter.Core.Notifications.Services;
-using HealthCareCenter.Core.Patients.Models;
+using HealthCareCenter.Core.Patients;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -18,8 +21,8 @@ namespace HealthCareCenter.Secretary
     {
         private readonly Patient _patient;
         private readonly AppointmentType _type;
-        private List<AppointmentDisplay> _appointmentsForDisplay;
-        private OccupiedAppointmentInfo _info;
+        private List<OccupiedAppointment> _appointmentsForDisplay;
+        private PostponableAppointmentsDTO _info;
 
         private readonly OccupiedAppointmentsController _controller;
 
@@ -28,11 +31,11 @@ namespace HealthCareCenter.Secretary
             InitializeComponent();
         }
 
-        public OccupiedAppointmentsWindow(Patient patient, AppointmentType type, UrgentAppointmentInfo info)
+        public OccupiedAppointmentsWindow(Patient patient, AppointmentType type, OccupiedAppointmentsDTO info)
         {
             _patient = patient;
             _type = type;
-            _info = new OccupiedAppointmentInfo(info);
+            _info = new PostponableAppointmentsDTO(info);
             BaseUrgentAppointmentService service = new UrgentAppointmentService(new TermsService(), new NotificationService(new NotificationRepository())) { OccupiedInfo = _info };
             _controller = new OccupiedAppointmentsController(service);
 
@@ -69,7 +72,7 @@ namespace HealthCareCenter.Secretary
             Appointment postponedAppointment;
             try
             {
-                postponedAppointment = _controller.Postpone(ref notification, _patient, _type, (AppointmentDisplay)occupiedAppointmentsDataGrid.SelectedItem);
+                postponedAppointment = _controller.Postpone(ref notification, _patient, _type, (OccupiedAppointment)occupiedAppointmentsDataGrid.SelectedItem);
             }
             catch (Exception ex)
             {

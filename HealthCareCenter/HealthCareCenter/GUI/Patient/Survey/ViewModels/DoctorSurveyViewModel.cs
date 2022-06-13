@@ -9,7 +9,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
 {
     class DoctorSurveyViewModel : ViewModelBase
     {
-        public Core.Patients.Models.Patient Patient { get; }
+        public Core.Patients.Patient Patient { get; }
 
         private List<AppointmentViewModel> _appointments;
         public List<AppointmentViewModel> Appointments
@@ -70,7 +70,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
         public ICommand ChooseDoctorFromAppointment { get; }
         public ICommand SubmitReview { get; }
 
-        public DoctorSurveyViewModel(Core.Patients.Models.Patient patient)
+        public DoctorSurveyViewModel(Core.Patients.Patient patient)
         {
             Patient = patient;
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace HealthCareCenter.Core.Referrals.Models
+﻿namespace HealthCareCenter.Core.Referrals.Models
 {
     /// <summary>
     /// Class used only for displaying referrals of a specific patient in PatientReferralsWindow

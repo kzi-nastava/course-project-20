@@ -1,7 +1,8 @@
 ﻿using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Repository;
+using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.Notifications.Services;
-using HealthCareCenter.Core.Patients.Models;
+using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Rooms.Models;
 using HealthCareCenter.Core.Rooms.Repositories;
 using HealthCareCenter.Core.Rooms.Services;
@@ -13,12 +14,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace HealthCareCenter.Core.Appointments.Services
+namespace HealthCareCenter.Core.Appointments.Urgent.Services
 {
     public class UrgentAppointmentService : BaseUrgentAppointmentService
     {
-        private ITermsService _termsService;
-        private INotificationService _notificationService;
+        private readonly ITermsService _termsService;
+        private readonly INotificationService _notificationService;
 
         public UrgentAppointmentService(ITermsService service, INotificationService notificationService)
         {
@@ -70,7 +71,7 @@ namespace HealthCareCenter.Core.Appointments.Services
         private void AddPostponingInfo(List<Doctor> availableDoctors, List<HospitalRoom> availableRooms, int index)
         {
             UrgentInfo.OccupiedAppointments.Add(AppointmentRepository.Appointments[index]);
-            UrgentInfo.NewAppointmentsInfo.Add(AppointmentRepository.Appointments[index].ID,
+            UrgentInfo.NewAppointments.Add(AppointmentRepository.Appointments[index].ID,
                 new Appointment { DoctorID = availableDoctors[0].ID, HospitalRoomID = availableRooms[0].ID });
         }
 
@@ -104,7 +105,7 @@ namespace HealthCareCenter.Core.Appointments.Services
             List<Doctor> doctors = DoctorService.GetDoctorsOfType(doctorType);
 
             UrgentInfo.OccupiedAppointments = new List<Appointment>();
-            UrgentInfo.NewAppointmentsInfo = new Dictionary<int, Appointment>();
+            UrgentInfo.NewAppointments = new Dictionary<int, Appointment>();
 
             if (!GetTermsAndSchedule(doctors, type, patient))
             {
@@ -113,11 +114,11 @@ namespace HealthCareCenter.Core.Appointments.Services
             return true;
         }
 
-        public override Appointment Postpone(ref string notification, Patient patient, AppointmentType type, AppointmentDisplay selectedAppointment)
+        public override Appointment Postpone(ref string notification, Patient patient, AppointmentType type, OccupiedAppointment selectedAppointment)
         {
             Appointment postponedAppointment = AppointmentService.Get(selectedAppointment);
 
-            Appointment newAppointment = new Appointment(selectedAppointment.ScheduledDate, OccupiedInfo.NewAppointmentsInfo[postponedAppointment.ID].HospitalRoomID, OccupiedInfo.NewAppointmentsInfo[postponedAppointment.ID].DoctorID, patient.HealthRecordID, type, true);
+            Appointment newAppointment = new Appointment(selectedAppointment.ScheduledDate, OccupiedInfo.NewAppointments[postponedAppointment.ID].HospitalRoomID, OccupiedInfo.NewAppointments[postponedAppointment.ID].DoctorID, patient.HealthRecordID, type, true);
             AppointmentRepository.Appointments.Add(newAppointment);
             postponedAppointment.ScheduledDate = selectedAppointment.PostponedTime;
             AppointmentRepository.Save();
@@ -129,12 +130,12 @@ namespace HealthCareCenter.Core.Appointments.Services
             return postponedAppointment;
         }
 
-        public override List<AppointmentDisplay> GetAppointmentsForDisplay()
+        public override List<OccupiedAppointment> GetAppointmentsForDisplay()
         {
-            List<AppointmentDisplay> appointments = new List<AppointmentDisplay>();
+            List<OccupiedAppointment> appointments = new List<OccupiedAppointment>();
             foreach (Appointment appointment in OccupiedInfo.OccupiedAppointments)
             {
-                AppointmentDisplay appointmentDisplay = new AppointmentDisplay(appointment.ID, appointment.Type, appointment.ScheduledDate, appointment.Emergency, OccupiedInfo.NewDateOf[appointment.ID]);
+                OccupiedAppointment appointmentDisplay = new OccupiedAppointment(appointment.ID, appointment.Type, appointment.ScheduledDate, appointment.Emergency, OccupiedInfo.AppointmentPostponableTo[appointment.ID]);
                 LinkDoctor(appointment, appointmentDisplay);
                 LinkPatient(appointment, appointmentDisplay);
                 appointments.Add(appointmentDisplay);
@@ -142,7 +143,7 @@ namespace HealthCareCenter.Core.Appointments.Services
             return appointments;
         }
 
-        private void LinkPatient(Appointment appointment, AppointmentDisplay appointmentDisplay)
+        private void LinkPatient(Appointment appointment, OccupiedAppointment appointmentDisplay)
         {
             foreach (Patient patient in UserRepository.Patients)
             {
@@ -154,7 +155,7 @@ namespace HealthCareCenter.Core.Appointments.Services
             }
         }
 
-        private void LinkDoctor(Appointment appointment, AppointmentDisplay appointmentDisplay)
+        private void LinkDoctor(Appointment appointment, OccupiedAppointment appointmentDisplay)
         {
             foreach (Doctor doctor in UserRepository.Doctors)
             {
@@ -225,7 +226,7 @@ namespace HealthCareCenter.Core.Appointments.Services
                 terms = new List<string>(allPossibleTerms);
             }
             OccupiedInfo.OccupiedAppointments = new List<Appointment>(sortedAppointments);
-            OccupiedInfo.NewDateOf = new Dictionary<int, DateTime>(newDateOf);
+            OccupiedInfo.AppointmentPostponableTo = new Dictionary<int, DateTime>(newDateOf);
         }
     }
 }

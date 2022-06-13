@@ -11,7 +11,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
 {
     internal class MyAppointmentsViewModel : ViewModelBase
     {
-        public Core.Patients.Models.Patient Patient { get; }
+        public Core.Patients.Patient Patient { get; }
 
         private readonly List<AppointmentViewModel> _appointments;
         public List<AppointmentViewModel> Appointments => _appointments;
@@ -32,7 +32,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         public ICommand CancelAppointment { get; }
         public ICommand PriorityScheduling { get; }
 
-        public MyAppointmentsViewModel(NavigationStore navigationStore, Core.Patients.Models.Patient patient)
+        public MyAppointmentsViewModel(NavigationStore navigationStore, Core.Patients.Patient patient)
         {
             Patient = patient;
 

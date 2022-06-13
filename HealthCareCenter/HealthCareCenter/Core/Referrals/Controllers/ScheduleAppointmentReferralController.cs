@@ -9,13 +9,13 @@ using HealthCareCenter.Core.VacationRequests.Services;
 using System;
 using System.Collections.Generic;
 
-namespace HealthCareCenter.Core.Appointments.Controllers
+namespace HealthCareCenter.Core.Referrals.Controllers
 {
     public class ScheduleAppointmentReferralController
     {
-        private IVacationRequestService _vacationRequestService;
-        private ITermsService _termsService;
-        private IReferralsService _referralsService;
+        private readonly IVacationRequestService _vacationRequestService;
+        private readonly ITermsService _termsService;
+        private readonly IReferralsService _referralsService;
 
         public ScheduleAppointmentReferralController()
         {
@@ -39,7 +39,7 @@ namespace HealthCareCenter.Core.Appointments.Controllers
             return _termsService.GetAvailableTerms(doctorID, when);
         }
 
-        public List<HospitalRoomDisplay> GetRooms(bool checkup)
+        public List<HospitalRoomForDisplay> GetRooms(bool checkup)
         {
             return HospitalRoomService.GetRooms(checkup);
         }

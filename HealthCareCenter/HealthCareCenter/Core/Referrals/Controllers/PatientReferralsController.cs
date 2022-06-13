@@ -1,15 +1,15 @@
-﻿using HealthCareCenter.Core.Patients.Models;
+﻿using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Referrals.Models;
 using HealthCareCenter.Core.Referrals.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HealthCareCenter.Core.Referrals
+namespace HealthCareCenter.Core.Referrals.Controllers
 {
     public class PatientReferralsController
     {
-        private IReferralsService _referralsService;
+        private readonly IReferralsService _referralsService;
 
         public PatientReferralsController(IReferralsService service)
         {

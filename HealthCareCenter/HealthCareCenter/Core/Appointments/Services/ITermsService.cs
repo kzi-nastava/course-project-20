@@ -11,6 +11,5 @@ namespace HealthCareCenter.Core.Appointments.Services
         List<string> GetTermsAfterTwoHours(List<string> allPossibleTerms);
         DateTime CreateTime(string term);
         List<string> GetAvailableTerms(int doctorID, DateTime when);
-
     }
 }

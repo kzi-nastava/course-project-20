@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HealthCareCenter.Core.VacationRequests.Models
 {
-    public class VacationRequestDisplay
+    public class VacationRequestForDisplay
     {
         public int ID { get; set; }
         public DateTime StartDate { get; set; }

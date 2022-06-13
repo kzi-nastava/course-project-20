@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Windows;
 using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Patients.Controllers;
-using HealthCareCenter.Core.Patients.Models;
 using HealthCareCenter.Core.Users;
 
 namespace HealthCareCenter.Secretary

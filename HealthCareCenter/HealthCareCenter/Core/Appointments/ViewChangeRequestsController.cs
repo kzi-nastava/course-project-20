@@ -1,14 +1,14 @@
 ﻿using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
-using HealthCareCenter.Core.Patients.Models;
+using HealthCareCenter.Core.Patients;
 using System.Collections.Generic;
 
-namespace HealthCareCenter.Core.Appointments.Controllers
+namespace HealthCareCenter.Core.Appointments
 {
     public class ViewChangeRequestsController
     {
-        private IAppointmentChangeRequestService _service;
+        private readonly IAppointmentChangeRequestService _service;
 
         public ViewChangeRequestsController(IAppointmentChangeRequestService service)
         {
@@ -17,7 +17,7 @@ namespace HealthCareCenter.Core.Appointments.Controllers
             AppointmentRepository.Load();
         }
 
-        public void Refresh(List<DeleteRequest> deleteRequests, List<EditRequest> editRequests, Patient patient)
+        public void Refresh(List<DeleteRequestForDisplay> deleteRequests, List<EditRequestForDisplay> editRequests, Patient patient)
         {
             _service.Refresh(deleteRequests, editRequests, patient);
         }

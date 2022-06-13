@@ -1,6 +1,6 @@
 ﻿using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Repository;
-using HealthCareCenter.Core.Patients.Models;
+using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.Core.Users;
 using HealthCareCenter.Core.Users.Models;
@@ -47,7 +47,7 @@ namespace HealthCareCenter.Core.Appointments.Services
             }
         }
 
-        public void Refresh(List<DeleteRequest> deleteRequests, List<EditRequest> editRequests, Patient patient)
+        public void Refresh(List<DeleteRequestForDisplay> deleteRequests, List<EditRequestForDisplay> editRequests, Patient patient)
         {
             foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
             {
@@ -66,9 +66,9 @@ namespace HealthCareCenter.Core.Appointments.Services
             }
         }
 
-        private void AddEditRequest(AppointmentChangeRequest request, List<EditRequest> editRequests)
+        private void AddEditRequest(AppointmentChangeRequest request, List<EditRequestForDisplay> editRequests)
         {
-            EditRequest editRequest = new EditRequest(request.ID, request.DateSent);
+            EditRequestForDisplay editRequest = new EditRequestForDisplay(request.ID, request.DateSent);
 
             foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
@@ -88,7 +88,7 @@ namespace HealthCareCenter.Core.Appointments.Services
             editRequests.Add(editRequest);
         }
 
-        private void LinkDoctor(AppointmentChangeRequest request, EditRequest editRequest, Appointment appointment)
+        private void LinkDoctor(AppointmentChangeRequest request, EditRequestForDisplay editRequest, Appointment appointment)
         {
             bool foundOld = false;
             bool foundNew = false;
@@ -111,9 +111,9 @@ namespace HealthCareCenter.Core.Appointments.Services
             }
         }
 
-        private void AddDeleteRequest(AppointmentChangeRequest request, List<DeleteRequest> deleteRequests)
+        private void AddDeleteRequest(AppointmentChangeRequest request, List<DeleteRequestForDisplay> deleteRequests)
         {
-            DeleteRequest deleteRequest = new DeleteRequest(request.ID, request.DateSent);
+            DeleteRequestForDisplay deleteRequest = new DeleteRequestForDisplay(request.ID, request.DateSent);
 
             foreach (Appointment appointment in AppointmentRepository.Appointments)
             {
@@ -129,7 +129,7 @@ namespace HealthCareCenter.Core.Appointments.Services
             deleteRequests.Add(deleteRequest);
         }
 
-        private void LinkDoctor(DeleteRequest deleteRequest, Appointment appointment)
+        private void LinkDoctor(DeleteRequestForDisplay deleteRequest, Appointment appointment)
         {
             foreach (Doctor doctor in UserRepository.Doctors)
             {

@@ -12,7 +12,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
 {
     internal class AppointmentFormViewModel : ViewModelBase
     {
-        public Core.Patients.Models.Patient Patient { get; }
+        public Core.Patients.Patient Patient { get; }
 
         private List<DoctorViewModel> _doctors;
         public List<DoctorViewModel> Doctors
@@ -73,7 +73,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
 
         public ICommand SubmitAppointment { get; }
 
-        public AppointmentFormViewModel(NavigationStore navigationStore, Core.Patients.Models.Patient patient, AppointmentViewModel chosenAppointment, bool isModification, DoctorViewModel chosenDoctor)
+        public AppointmentFormViewModel(NavigationStore navigationStore, Core.Patients.Patient patient, AppointmentViewModel chosenAppointment, bool isModification, DoctorViewModel chosenDoctor)
         {
             Patient = patient;
 

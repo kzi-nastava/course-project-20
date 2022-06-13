@@ -4,10 +4,10 @@ using System.Text;
 using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.HealthRecords;
-using HealthCareCenter.Core.Patients.Models;
+using HealthCareCenter.Core.Users;
 
 
-namespace HealthCareCenter.Core.Users.Services
+namespace HealthCareCenter.Core.Patients
 {
     public static class PatientService
     {

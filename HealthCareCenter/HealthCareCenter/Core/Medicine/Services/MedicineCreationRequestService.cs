@@ -7,7 +7,7 @@ using HealthCareCenter.Core.Medicine.Repositories;
 
 namespace HealthCareCenter.Core.Medicine.Services
 {
-    internal class MedicineCreationRequestService
+    public class MedicineCreationRequestService
     {
         public static MedicineCreationRequest GetMedicineCreationRequest(int id)
         {

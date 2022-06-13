@@ -10,8 +10,8 @@ namespace HealthCareCenter.Core.VacationRequests.Services
 {
     public class VacationRequestService : IVacationRequestService
     {
-        INotificationService _notificationService;
-        BaseVacationRequestRepository _vacationRequestRepository;
+        private readonly INotificationService _notificationService;
+        private readonly BaseVacationRequestRepository _vacationRequestRepository;
 
         public VacationRequestService(INotificationService notificationService, BaseVacationRequestRepository vacationRequestRepository)
         {
@@ -32,15 +32,15 @@ namespace HealthCareCenter.Core.VacationRequests.Services
             return false;
         }
 
-        public ObservableCollection<VacationRequestDisplay> Get()
+        public ObservableCollection<VacationRequestForDisplay> Get()
         {
-            ObservableCollection<VacationRequestDisplay> vacationRequests = new ObservableCollection<VacationRequestDisplay>();
+            ObservableCollection<VacationRequestForDisplay> vacationRequests = new ObservableCollection<VacationRequestForDisplay>();
 
             foreach (VacationRequest request in _vacationRequestRepository.Requests)
             {
                 if (request.State != RequestState.Waiting || request.StartDate.CompareTo(DateTime.Now) <= 0)
                     continue;
-                VacationRequestDisplay requestDisplay = new VacationRequestDisplay()
+                VacationRequestForDisplay requestDisplay = new VacationRequestForDisplay()
                 {
                     ID = request.ID,
                     StartDate = request.StartDate,
@@ -54,7 +54,7 @@ namespace HealthCareCenter.Core.VacationRequests.Services
             return vacationRequests;
         }
 
-        private void LinkDoctor(VacationRequest request, VacationRequestDisplay requestDisplay)
+        private void LinkDoctor(VacationRequest request, VacationRequestForDisplay requestDisplay)
         {
             foreach (Doctor doctor in UserRepository.Doctors)
             {
@@ -66,7 +66,7 @@ namespace HealthCareCenter.Core.VacationRequests.Services
             }
         }
 
-        public ObservableCollection<VacationRequestDisplay> Accept(int id)
+        public ObservableCollection<VacationRequestForDisplay> Accept(int id)
         {
             PerformAccept(id);
             return Get();
@@ -88,7 +88,7 @@ namespace HealthCareCenter.Core.VacationRequests.Services
             _notificationService.Send(acceptedRequest.DoctorID, $"The vacation you had requested is accepted, and starts on {acceptedRequest.StartDate.ToShortDateString()}, lasting until {acceptedRequest.EndDate.ToShortDateString()}.");
         }
 
-        public ObservableCollection<VacationRequestDisplay> Deny(int id, string reason)
+        public ObservableCollection<VacationRequestForDisplay> Deny(int id, string reason)
         {
             PerformDeny(id, reason);
             return Get();

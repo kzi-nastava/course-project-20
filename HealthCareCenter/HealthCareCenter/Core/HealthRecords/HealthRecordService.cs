@@ -1,5 +1,5 @@
 ﻿using HealthCareCenter.Core.Appointments.Models;
-using HealthCareCenter.Core.Patients.Models;
+using HealthCareCenter.Core.Patients;
 
 namespace HealthCareCenter.Core.HealthRecords
 {

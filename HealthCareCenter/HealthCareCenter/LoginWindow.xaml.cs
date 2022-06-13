@@ -11,7 +11,6 @@ using HealthCareCenter.Core.Equipment.Models;
 using HealthCareCenter.Core.Equipment.Services;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.Core.Users.Models;
-using HealthCareCenter.Core.Patients.Models;
 using HealthCareCenter.Core.Rooms.Models;
 using HealthCareCenter.Core;
 using HealthCareCenter.Core.Users;
@@ -20,6 +19,7 @@ using HealthCareCenter.Core.Notifications.Repositories;
 using HealthCareCenter.Core.Referrals.Services;
 using HealthCareCenter.Core.Referrals.Repositories;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
+using HealthCareCenter.Core.Patients;
 
 namespace HealthCareCenter
 {

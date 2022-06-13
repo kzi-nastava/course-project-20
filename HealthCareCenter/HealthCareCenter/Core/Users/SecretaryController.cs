@@ -9,7 +9,7 @@ namespace HealthCareCenter.Core.Users
 {
     public class SecretaryController
     {
-        private INotificationService _notificationService;
+        private readonly INotificationService _notificationService;
 
         public SecretaryController(INotificationService notificationService)
         {

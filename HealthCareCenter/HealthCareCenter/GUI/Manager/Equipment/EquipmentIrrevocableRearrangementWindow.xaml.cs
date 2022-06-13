@@ -23,14 +23,14 @@ namespace HealthCareCenter
     public partial class EquipmentIrrevocableRearrangementWindow : Window
     {
         private Manager _signedManager;
-        private EquipmentIrrevocableRearrangementContoller _contoller;
+        private EquipmentIrrevocableRearrangementController _contoller;
 
         public EquipmentIrrevocableRearrangementWindow(Manager manager, DateTime finishDate, HospitalRoom splitRoom, HospitalRoom room1, HospitalRoom room2)
         {
             _signedManager = manager;
             List<Equipment> splitRoomEquipments = RoomService.GetAllEquipment(splitRoom);
 
-            _contoller = new EquipmentIrrevocableRearrangementContoller(splitRoomEquipments, splitRoom, room1, room2, finishDate);
+            _contoller = new EquipmentIrrevocableRearrangementController(splitRoomEquipments, splitRoom, room1, room2, finishDate);
 
             InitializeComponent();
             FillNewRoomComboBox();

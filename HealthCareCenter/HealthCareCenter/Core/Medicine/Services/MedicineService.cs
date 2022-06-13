@@ -5,7 +5,7 @@ using HealthCareCenter.Core.Medicine.Repositories;
 
 namespace HealthCareCenter.Core.Medicine.Services
 {
-    class MedicineService
+    public class MedicineService
     {
         public static string GetName(int ID)
         {

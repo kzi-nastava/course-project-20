@@ -9,7 +9,7 @@ namespace HealthCareCenter.GUI.Patient.Profile.ViewModels
 {
     internal class MyPrescriptionsViewModel : ViewModelBase
     {
-        public Core.Patients.Models.Patient Patient { get; }
+        public Core.Patients.Patient Patient { get; }
 
         public readonly List<Prescription> PatientPrescriptions;
 
@@ -72,7 +72,7 @@ namespace HealthCareCenter.GUI.Patient.Profile.ViewModels
         public ICommand SearchInstruction { get; }
         public ICommand ShowInstruction { get; }
 
-        public MyPrescriptionsViewModel(NavigationStore navigationStore, Core.Patients.Models.Patient patient)
+        public MyPrescriptionsViewModel(NavigationStore navigationStore, Core.Patients.Patient patient)
         {
             Patient = patient;
 

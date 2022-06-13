@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using HealthCareCenter.Core.Appointments.Models;
-using HealthCareCenter.Core.Appointments.Controllers;
 using HealthCareCenter.Core.Rooms.Models;
 using HealthCareCenter.Core.Referrals.Services;
-using HealthCareCenter.Core.Patients.Models;
 using HealthCareCenter.Core;
 using HealthCareCenter.Core.Referrals.Models;
 using HealthCareCenter.Core.VacationRequests.Services;
@@ -14,6 +12,8 @@ using HealthCareCenter.Core.Notifications.Services;
 using HealthCareCenter.Core.Notifications.Repositories;
 using HealthCareCenter.Core.VacationRequests.Repositories;
 using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.Referrals.Controllers;
+using HealthCareCenter.Core.Patients;
 
 namespace HealthCareCenter.Secretary
 {
@@ -102,7 +102,7 @@ namespace HealthCareCenter.Secretary
                 return;
 
             DateTime scheduledDate = GetScheduledDate();
-            int roomID = ((HospitalRoomDisplay)roomsDataGrid.SelectedItem).ID;
+            int roomID = ((HospitalRoomForDisplay)roomsDataGrid.SelectedItem).ID;
 
             Appointment appointment = new Appointment(scheduledDate, roomID, _referral.DoctorID, _patient.HealthRecordID, SelectedAppointmentType(), false);
 

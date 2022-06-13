@@ -10,7 +10,7 @@ namespace HealthCareCenter.Core.Equipment.Services
 {
     public class DynamicEquipmentService : IDynamicEquipmentService
     {
-        private BaseDynamicEquipmentRequestRepository _requestRepository;
+        private readonly BaseDynamicEquipmentRequestRepository _requestRepository;
 
         public DynamicEquipmentService(BaseDynamicEquipmentRequestRepository requestRepository)
         {

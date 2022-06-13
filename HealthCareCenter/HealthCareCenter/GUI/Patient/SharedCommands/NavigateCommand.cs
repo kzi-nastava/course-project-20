@@ -39,9 +39,9 @@ namespace HealthCareCenter.GUI.Patient.SharedCommands
 
         private readonly NavigationStore _navigationStore;
         private readonly ViewType _viewType;
-        private readonly Core.Patients.Models.Patient _patient;
+        private readonly Core.Patients.Patient _patient;
 
-        public NavigateCommand(NavigationStore navigationStore, ViewType viewType, Core.Patients.Models.Patient patient)
+        public NavigateCommand(NavigationStore navigationStore, ViewType viewType, Core.Patients.Patient patient)
         {
             _navigationStore = navigationStore;
             _viewType = viewType;

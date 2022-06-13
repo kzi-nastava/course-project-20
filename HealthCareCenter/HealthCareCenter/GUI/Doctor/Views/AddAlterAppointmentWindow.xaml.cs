@@ -7,7 +7,7 @@ using System.Globalization;
 using System.ComponentModel;
 using HealthCareCenter.GUI.Doctor.ViewModels;
 using HealthCareCenter.Core.Appointments.Repository;
-using HealthCareCenter.Core.Patients.Models;
+using HealthCareCenter.Core.Patients;
 
 namespace HealthCareCenter.DoctorGUI
 {

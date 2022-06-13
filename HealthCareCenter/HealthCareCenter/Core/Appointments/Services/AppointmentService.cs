@@ -1,8 +1,9 @@
 ﻿using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Repository;
+using HealthCareCenter.Core.Appointments.Urgent;
+using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Rooms.Repositories;
 using HealthCareCenter.Core.Rooms.Services;
-using HealthCareCenter.Core.Users.Services;
 using System;
 using System.Collections.Generic;
 
@@ -11,7 +12,7 @@ namespace HealthCareCenter.Core.Appointments.Services
     public static class AppointmentService
     {
 
-        public static Appointment Get(AppointmentDisplay appointmentDisplay)
+        public static Appointment Get(OccupiedAppointment appointmentDisplay)
         {
             if (AppointmentRepository.Appointments == null)
             {

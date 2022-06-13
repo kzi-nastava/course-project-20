@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Windows;
-using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Services;
-using HealthCareCenter.Core.Appointments.Controllers;
-using HealthCareCenter.Core.Patients.Models;
 using HealthCareCenter.Core;
 using HealthCareCenter.Core.Notifications.Services;
 using HealthCareCenter.Core.Notifications.Repositories;
+using HealthCareCenter.Core.Patients;
+using HealthCareCenter.Core.Appointments.Urgent.Services;
+using HealthCareCenter.Core.Appointments.Urgent.Controllers;
+using HealthCareCenter.Core.Appointments.Urgent.DTO;
 
 namespace HealthCareCenter.Secretary
 {
@@ -16,7 +17,7 @@ namespace HealthCareCenter.Secretary
     public partial class ScheduleUrgentAppointmentWindow : Window
     {
         private readonly Patient _patient;
-        private UrgentAppointmentInfo _info;
+        private OccupiedAppointmentsDTO _info;
 
         private readonly ScheduleUrgentAppointmentController _controller;
 
@@ -28,7 +29,7 @@ namespace HealthCareCenter.Secretary
         public ScheduleUrgentAppointmentWindow(Patient patient)
         {
             _patient = patient;
-            _info = new UrgentAppointmentInfo();
+            _info = new OccupiedAppointmentsDTO();
             BaseUrgentAppointmentService service = new UrgentAppointmentService(new TermsService(), new NotificationService(new NotificationRepository())) { UrgentInfo = _info };
             _controller = new ScheduleUrgentAppointmentController(service);
 

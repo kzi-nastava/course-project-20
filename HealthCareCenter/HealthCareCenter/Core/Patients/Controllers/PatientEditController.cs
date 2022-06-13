@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using HealthCareCenter.Core.HealthRecords;
-using HealthCareCenter.Core.Patients;
-using HealthCareCenter.Core.Patients.Models;
 using HealthCareCenter.Core.Users;
 using HealthCareCenter.Core.Users.Models;
-using HealthCareCenter.Core.Users.Services;
 
 namespace HealthCareCenter.Core.Patients.Controllers
 {

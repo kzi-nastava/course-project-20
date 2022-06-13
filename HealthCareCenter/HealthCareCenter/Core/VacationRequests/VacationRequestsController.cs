@@ -7,24 +7,24 @@ namespace HealthCareCenter.Core.VacationRequests
 {
     public class VacationRequestsController
     {
-        private IVacationRequestService _vacationRequestService;
+        private readonly IVacationRequestService _vacationRequestService;
 
         public VacationRequestsController(IVacationRequestService vacationRequestService)
         {
             _vacationRequestService = vacationRequestService;
         }
 
-        public ObservableCollection<VacationRequestDisplay> Get()
+        public ObservableCollection<VacationRequestForDisplay> Get()
         {
             return _vacationRequestService.Get();
         }
 
-        public ObservableCollection<VacationRequestDisplay> Accept(int id)
+        public ObservableCollection<VacationRequestForDisplay> Accept(int id)
         {
             return _vacationRequestService.Accept(id);
         }
 
-        public ObservableCollection<VacationRequestDisplay> Deny(int id, string reason)
+        public ObservableCollection<VacationRequestForDisplay> Deny(int id, string reason)
         {
             if (string.IsNullOrWhiteSpace(reason))
             {

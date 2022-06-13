@@ -1,7 +1,6 @@
 ﻿using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Patients.Controllers;
-using HealthCareCenter.Core.Patients.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;

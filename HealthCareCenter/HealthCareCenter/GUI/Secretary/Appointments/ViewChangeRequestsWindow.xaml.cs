@@ -1,7 +1,7 @@
-﻿using HealthCareCenter.Core.Appointments.Controllers;
+﻿using HealthCareCenter.Core.Appointments;
 using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Services;
-using HealthCareCenter.Core.Patients.Models;
+using HealthCareCenter.Core.Patients;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -15,8 +15,8 @@ namespace HealthCareCenter.Secretary
     {
         private readonly Patient _patient;
 
-        private List<DeleteRequest> _deleteRequests;
-        private List<EditRequest> _editRequests;
+        private List<DeleteRequestForDisplay> _deleteRequests;
+        private List<EditRequestForDisplay> _editRequests;
 
         private readonly ViewChangeRequestsController _controller;
 
@@ -38,8 +38,8 @@ namespace HealthCareCenter.Secretary
 
         private void Refresh()
         {
-            _deleteRequests = new List<DeleteRequest>();
-            _editRequests = new List<EditRequest>();
+            _deleteRequests = new List<DeleteRequestForDisplay>();
+            _editRequests = new List<EditRequestForDisplay>();
 
             try
             {
@@ -63,7 +63,7 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            int requestID = ((DeleteRequest)deleteRequestsDataGrid.SelectedItem).ID;
+            int requestID = ((DeleteRequestForDisplay)deleteRequestsDataGrid.SelectedItem).ID;
             try
             {
                 _controller.AcceptDeleteRequest(requestID);
@@ -85,7 +85,7 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            int requestID = ((DeleteRequest)deleteRequestsDataGrid.SelectedItem).ID;
+            int requestID = ((DeleteRequestForDisplay)deleteRequestsDataGrid.SelectedItem).ID;
             try
             {
                 _controller.RejectDeleteRequest(requestID);
@@ -107,7 +107,7 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            int requestID = ((EditRequest)editRequestsDataGrid.SelectedItem).ID;
+            int requestID = ((EditRequestForDisplay)editRequestsDataGrid.SelectedItem).ID;
             try
             {
                 _controller.AcceptEditRequest(requestID);
@@ -129,7 +129,7 @@ namespace HealthCareCenter.Secretary
                 return;
             }
 
-            int requestID = ((EditRequest)editRequestsDataGrid.SelectedItem).ID;
+            int requestID = ((EditRequestForDisplay)editRequestsDataGrid.SelectedItem).ID;
             try
             {
                 _controller.RejectEditRequest(requestID);

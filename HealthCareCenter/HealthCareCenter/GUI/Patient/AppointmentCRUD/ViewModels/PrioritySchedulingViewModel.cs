@@ -12,7 +12,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
 {
     internal class PrioritySchedulingViewModel : ViewModelBase
     {
-        public Core.Patients.Models.Patient Patient { get; }
+        public Core.Patients.Patient Patient { get; }
 
         public List<DoctorViewModel> Doctors { get; }
 
@@ -106,7 +106,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
 
         public ICommand PriorityScheduleAppointment { get; }
 
-        public PrioritySchedulingViewModel(NavigationStore navigationStore, Core.Patients.Models.Patient patient)
+        public PrioritySchedulingViewModel(NavigationStore navigationStore, Core.Patients.Patient patient)
         {
             Patient = patient;
 

@@ -7,7 +7,7 @@ namespace HealthCareCenter.Core.Rooms.Models
     /// <summary>
     /// Class used only for displaying available hospital rooms in ScheduleAppointmentReferralWindow
     /// </summary>
-    public class HospitalRoomDisplay
+    public class HospitalRoomForDisplay
     {
         public int ID { get; set; }
         public string Name { get; set; }

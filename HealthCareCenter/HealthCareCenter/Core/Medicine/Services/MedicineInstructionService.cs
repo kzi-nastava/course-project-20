@@ -6,7 +6,7 @@ using HealthCareCenter.Core.Medicine.Repositories;
 
 namespace HealthCareCenter.Core.Medicine.Services
 {
-    class MedicineInstructionService
+    public class MedicineInstructionService
     {
         public static MedicineInstruction GetSingle(int ID)
         {

@@ -10,7 +10,7 @@ namespace HealthCareCenter.GUI.Patient.Profile.ViewModels
 {
     internal class MyHealthRecordViewModel : ViewModelBase
     {
-        public Core.Patients.Models.Patient Patient;
+        public Core.Patients.Patient Patient;
         public HealthRecord HealthRecord;
 
         private List<AppointmentViewModel> _appointments;
@@ -119,7 +119,7 @@ namespace HealthCareCenter.GUI.Patient.Profile.ViewModels
         public ICommand SearchAppointments { get; }
         public ICommand ShowAnamnesis { get; }
 
-        public MyHealthRecordViewModel(Core.Patients.Models.Patient patient)
+        public MyHealthRecordViewModel(Core.Patients.Patient patient)
         {
             Patient = patient;
             HealthRecord = HealthRecordService.Get(patient);

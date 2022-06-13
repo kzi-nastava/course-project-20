@@ -1,12 +1,13 @@
 ﻿using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
-using HealthCareCenter.Core.Patients.Models;
+using HealthCareCenter.Core.Appointments.Urgent.Services;
+using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Users.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HealthCareCenter.Core.Appointments.Controllers
+namespace HealthCareCenter.Core.Appointments.Urgent.Controllers
 {
     public class ScheduleUrgentAppointmentController
     {

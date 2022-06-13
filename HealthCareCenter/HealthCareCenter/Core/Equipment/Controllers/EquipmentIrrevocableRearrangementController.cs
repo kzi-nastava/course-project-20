@@ -7,7 +7,7 @@ using HealthCareCenter.Core.Rooms.Models;
 
 namespace HealthCareCenter.Core.Equipment.Controllers
 {
-    internal class EquipmentIrrevocableRearrangementContoller
+    internal class EquipmentIrrevocableRearrangementController
     {
         public List<Models.Equipment> SplitRoomEquipments { get; set; }
         public HospitalRoom SplitRoom { get; set; }
@@ -15,7 +15,7 @@ namespace HealthCareCenter.Core.Equipment.Controllers
         public HospitalRoom Room2 { get; set; }
         public DateTime FinishDate { get; set; }
 
-        public EquipmentIrrevocableRearrangementContoller(List<Models.Equipment> splitRoomEquipments, HospitalRoom splitRoom, HospitalRoom room1, HospitalRoom room2, DateTime finishDate)
+        public EquipmentIrrevocableRearrangementController(List<Models.Equipment> splitRoomEquipments, HospitalRoom splitRoom, HospitalRoom room1, HospitalRoom room2, DateTime finishDate)
         {
             SplitRoomEquipments = splitRoomEquipments;
             SplitRoom = splitRoom;
