@@ -30,6 +30,15 @@ namespace HealthCareCenter
         private Manager _signedManager;
         private ArrangingEquipmentController _controller = new ArrangingEquipmentController();
 
+        public ArrangingEquipmentWindow(Manager manager)
+        {
+            _signedManager = manager;
+            InitializeComponent();
+            TimeComboBox.SelectedItem = TimeComboBox.Items[0];
+            AddDataGridHeader(DataGridEquipments, _headerDataGridEquipment);
+            FillDataGridEquipment();
+        }
+
         private void AddDataGridHeader(DataGrid dataGrid, string[] header)
         {
             foreach (string label in header)
@@ -42,11 +51,6 @@ namespace HealthCareCenter
             }
         }
 
-        /// <summary>
-        /// Adding row in DataGrid.
-        /// The row of the DataGrid is obtained by making a string array from object. For example if object is type of equipment and object has arrangement, then the date of arrangement and new room for equipment are added to array like strings, if equipment has no arragement then two empty strings are added to the string array which one represents the row.
-        /// </summary>
-        /// <param name="equipmentAttributesToDisplay">Content we want to display in DataGridEquipment (One row)</param>
         private void AddDataGridRow(DataGrid dataGrid, string[] header, List<string> equipmentAttributesToDisplay)
         {
             dynamic row = new ExpandoObject();
@@ -59,48 +63,14 @@ namespace HealthCareCenter
             dataGrid.Items.Add(row);
         }
 
-        /// <summary>
-        /// When equipment object don't have rearrangement we add 2 empty strings for "Move Time" and for "New Room Id"
-        /// </summary>
-        /// <param name="equipmentAttributesToDisplay">Content we want to display in DataGridEquipment</param>
-        private void AddEmptyFieldsForEquipmentDisplay(ref List<string> equipmentAttributesToDisplay)
-        {
-            equipmentAttributesToDisplay.Add("");
-            equipmentAttributesToDisplay.Add("");
-        }
-
-        /// <summary>
-        /// Filling DataGridEquipment with content
-        /// </summary>
         private void FillDataGridEquipment()
         {
-            List<Equipment> equipments = EquipmentService.GetEquipments();
-            foreach (Equipment equipment in equipments)
-            {
-                if (!EquipmentService.HasScheduledRearrangement(equipment))
-                {
-                    List<string> equipmentAttributesToDisplay = equipment.ToList();
-                    AddEmptyFieldsForEquipmentDisplay(ref equipmentAttributesToDisplay);
-                    AddDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
-                }
-                else
-                {
-                    List<string> equipmentAttributesToDisplay = equipment.ToList();
-                    EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipment.RearrangementID);
-                    equipmentAttributesToDisplay.Add(rearrangement.MoveTime.ToString(Constants.DateFormat));
-                    equipmentAttributesToDisplay.Add(rearrangement.NewRoomID.ToString());
-                    AddDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
-                }
-            }
-        }
+            List<List<string>> equipmentsForDisplay = _controller.GetEquipmentsForDisplay();
 
-        public ArrangingEquipmentWindow(Manager manager)
-        {
-            _signedManager = manager;
-            InitializeComponent();
-            TimeComboBox.SelectedItem = TimeComboBox.Items[0];
-            AddDataGridHeader(DataGridEquipments, _headerDataGridEquipment);
-            FillDataGridEquipment();
+            foreach (List<string> equipmentAttributesToDisplay in equipmentsForDisplay)
+            {
+                AddDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
+            }
         }
 
         private void TransferButton_Click(object sender, RoutedEventArgs e)
@@ -182,6 +152,16 @@ namespace HealthCareCenter
         private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new ChangedMedicineCreationRequestWindow(_signedManager));
+        }
+
+        private void HealthcareSurveysClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new HealthcareSurveysOverviewWindow(_signedManager));
+        }
+
+        private void DoctorSurveysClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new DoctorSurveysOverviewWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

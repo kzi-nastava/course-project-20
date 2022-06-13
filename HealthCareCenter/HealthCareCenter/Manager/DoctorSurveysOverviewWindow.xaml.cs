@@ -1,9 +1,7 @@
-﻿using HealthCareCenter.Controller;
-using HealthCareCenter.Model;
-using HealthCareCenter.Service;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,32 +11,30 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using HealthCareCenter.Controller;
+using HealthCareCenter.Model;
+using HealthCareCenter.Service;
 
 namespace HealthCareCenter
 {
     /// <summary>
-    /// Interaction logic for MedicineCreationWindow.xaml
+    /// Interaction logic for DoctorSurveysOverviewWindow.xaml
     /// </summary>
-    public partial class MedicineCreationRequestWindow : Window
+    public partial class DoctorSurveysOverviewWindow : Window
     {
-        private string[] _headerOfIngredientsDataGrid = { "Ingredient Name" };
-        private MedicineCreationRequestController _controller = new MedicineCreationRequestController();
         private Manager _signedManager;
+        private string[] _doctorSurveysHeader = { "DoctorID", "PatientID", "Comment", "Rating" };
+        private string[] _best3DoctorsHeader = { "DoctorID", "First Name", "Second Name", "Rating" };
+        private string[] _worst3DoctorsHeader = { "DoctorID", "First Name", "Second Name", "Rating" };
+        private DoctorSurveyOverviewController _controller = new DoctorSurveyOverviewController();
 
-        public MedicineCreationRequestWindow(Manager manager)
+        public DoctorSurveysOverviewWindow(Manager manager)
         {
             _signedManager = manager;
             InitializeComponent();
-            AddDataGridHeader(DataGridIngredients, _headerOfIngredientsDataGrid);
-        }
-
-        private void ClearAllElements()
-        {
-            MedicineNameTextBox.Text = "";
-            MedicineNameTextBox.Text = "";
-            IngredientTextBox.Text = "";
-            ManufacturerTextBox.Text = "";
-            DataGridIngredients.Items.Clear();
+            FillDataGridDoctorsSurveys();
+            FillDataGridBest3Dctors();
+            FillDataGridWorst3Doctors();
         }
 
         private void AddDataGridHeader(DataGrid dataGrid, string[] header)
@@ -48,7 +44,6 @@ namespace HealthCareCenter
                 DataGridTextColumn column = new DataGridTextColumn();
                 column.Header = label;
                 column.Binding = new Binding(label.Replace(' ', '_'));
-                column.Width = 110;
                 dataGrid.Columns.Add(column);
             }
         }
@@ -65,67 +60,32 @@ namespace HealthCareCenter
             dataGrid.Items.Add(row);
         }
 
-        private List<string> CreateRow(string ingredient)
+        private void FillDataGridDoctorsSurveys()
         {
-            List<string> row = new List<string>();
-            row.Add(ingredient);
-            return row;
-        }
-
-        private void FillDataGridIngredient()
-        {
-            DataGridIngredients.Items.Clear();
-            foreach (string ingredient in _controller.AddedIngrediens)
+            AddDataGridHeader(DataGridSurveys, _doctorSurveysHeader);
+            List<DoctorSurveyRating> doctorSurveys = _controller.GetDoctorSurveys();
+            foreach (DoctorSurveyRating survey in doctorSurveys)
             {
-                List<string> row = CreateRow(ingredient);
-                AddDataGridRow(DataGridIngredients, _headerOfIngredientsDataGrid, row);
+                AddDataGridRow(DataGridSurveys, _doctorSurveysHeader, survey.ToList());
             }
         }
 
-        private void AddIngredientButton_Click(object sender, RoutedEventArgs e)
+        private void FillDataGridBest3Dctors()
         {
-            try
-            {
-                string ingredient = IngredientTextBox.Text;
-                _controller.AddIngredient(ingredient);
+            AddDataGridHeader(DataGridBest3Doctors, _best3DoctorsHeader);
 
-                List<string> row = CreateRow(ingredient);
-                AddDataGridRow(DataGridIngredients, _headerOfIngredientsDataGrid, row);
-            }
-            catch (Exception ex)
+            foreach (List<string> doctor in _controller.GetBest3Doctors())
             {
-                MessageBox.Show(ex.Message);
+                AddDataGridRow(DataGridBest3Doctors, _best3DoctorsHeader, doctor);
             }
         }
 
-        private void RemoveIngredientButton_Click(object sender, RoutedEventArgs e)
+        private void FillDataGridWorst3Doctors()
         {
-            try
+            AddDataGridHeader(DataGridWorst3Doctors, _worst3DoctorsHeader);
+            foreach (List<string> doctor in _controller.GetWorst3Doctors())
             {
-                string ingredient = IngredientTextBox.Text;
-                _controller.RemoveIngredient(ingredient);
-                FillDataGridIngredient();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void CreateRequestButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                string medicineName = MedicineNameTextBox.Text;
-                string medicineManufacturer = ManufacturerTextBox.Text;
-
-                _controller.Send(medicineName, medicineManufacturer);
-                ClearAllElements();
-                MessageBox.Show("You have successfully created a medicine creation request!");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
+                AddDataGridRow(DataGridWorst3Doctors, _worst3DoctorsHeader, doctor);
             }
         }
 

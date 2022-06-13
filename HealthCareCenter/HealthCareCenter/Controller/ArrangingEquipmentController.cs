@@ -38,6 +38,53 @@ namespace HealthCareCenter.Controller
             EquipmentRearrangementService.Remove(equipmentForRearrangement);
         }
 
+        public List<List<string>> GetEquipmentsForDisplay()
+        {
+            List<List<string>> equipmentsForDisplay = new List<List<string>>();
+
+            List<Equipment> equipments = EquipmentService.GetEquipments();
+            foreach (Equipment equipment in equipments)
+            {
+                if (!EquipmentService.HasScheduledRearrangement(equipment))
+                {
+                    List<string> equipmentAttributesToDisplay = GetUnscheduledEquipmentAttributes(equipment);
+                    equipmentsForDisplay.Add(equipmentAttributesToDisplay);
+                }
+                else
+                {
+                    List<string> equipmentAttributesToDisplay = GetScheduledEquipmentAttributes(equipment);
+                    equipmentsForDisplay.Add(equipmentAttributesToDisplay);
+                }
+            }
+            return equipmentsForDisplay;
+        }
+
+        private List<string> GetUnscheduledEquipmentAttributes(Equipment equipment)
+        {
+            List<string> equipmentAttributesToDisplay = equipment.ToList();
+            AddEmptyFieldsForEquipmentDisplay(ref equipmentAttributesToDisplay);
+            return equipmentAttributesToDisplay;
+        }
+
+        private List<string> GetScheduledEquipmentAttributes(Equipment equipment)
+        {
+            List<string> equipmentAttributesToDisplay = equipment.ToList();
+            EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipment.RearrangementID);
+            equipmentAttributesToDisplay.Add(rearrangement.MoveTime.ToString(Constants.DateFormat));
+            equipmentAttributesToDisplay.Add(rearrangement.NewRoomID.ToString());
+            return equipmentAttributesToDisplay;
+        }
+
+        /// <summary>
+        /// When equipment object don't have rearrangement we add 2 empty strings for "Move Time" and for "New Room Id"
+        /// </summary>
+        /// <param name="equipmentAttributesToDisplay">Content we want to display in DataGridEquipment</param>
+        private void AddEmptyFieldsForEquipmentDisplay(ref List<string> equipmentAttributesToDisplay)
+        {
+            equipmentAttributesToDisplay.Add("");
+            equipmentAttributesToDisplay.Add("");
+        }
+
         private bool IsNewRoomIdInputValide(string newRoomId)
         {
             return Int32.TryParse(newRoomId, out _);
@@ -102,7 +149,7 @@ namespace HealthCareCenter.Controller
             else if (!IsNewRoomFound(newRoom)) { throw new HospitalRoomNotFoundException(newRoomId); }
         }
 
-        private void IsEquipmentFroRearrangementValide(string equipmentId)
+        private void IsEquipmentForRearrangementValide(string equipmentId)
         {
             if (!IsEquipmentForRearrangementIdInputValide(equipmentId)) { throw new InvalideEquipmentIdExcpetion(equipmentId); }
 
@@ -123,7 +170,7 @@ namespace HealthCareCenter.Controller
 
             DateTime rearrangementDateTime = Convert.ToDateTime(rearrangementDate + " " + rearrangementTime);
 
-            if (IsDateTimeBeforeCurrentDateTime(rearrangementDateTime)) { throw new DateIsBeforeTodaException(rearrangementDateTime.ToString()); }
+            if (IsDateTimeBeforeCurrentDateTime(rearrangementDateTime)) { throw new DateIsBeforeTodayException(rearrangementDateTime.ToString()); }
         }
 
         private void IsPossibleToSetRearrangement(EquipmentRearrangement rearrangement)
@@ -173,7 +220,7 @@ namespace HealthCareCenter.Controller
         private void IsPossibleToCreateRearrangement(string newRoomId, string equipmentForRearrangementId, string rearrangementDate, string rearrangementTime)
         {
             IsNewRoomValide(newRoomId);
-            IsEquipmentFroRearrangementValide(equipmentForRearrangementId);
+            IsEquipmentForRearrangementValide(equipmentForRearrangementId);
             IsDateTimeValide(rearrangementDate, rearrangementTime);
         }
     }

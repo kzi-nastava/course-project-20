@@ -69,9 +69,9 @@ namespace HealthCareCenter.Controller
             if (!IsDateInputValide(finishDate)) { throw new InvalideDateException(finishDate); }
             DateTime parsedFinishDate = Convert.ToDateTime(finishDate);
 
-            if (IsDateBeforeCurrentTime(parsedStartDate)) { throw new DateIsBeforeTodaException(parsedStartDate.ToString()); }
+            if (IsDateBeforeCurrentTime(parsedStartDate)) { throw new DateIsBeforeTodayException(parsedStartDate.ToString()); }
 
-            if (IsDateBeforeCurrentTime(parsedFinishDate)) { throw new DateIsBeforeTodaException(parsedFinishDate.ToString()); }
+            if (IsDateBeforeCurrentTime(parsedFinishDate)) { throw new DateIsBeforeTodayException(parsedFinishDate.ToString()); }
 
             if (IsFinishDateBeforeStartDate(parsedStartDate, parsedFinishDate)) { throw new Exception($"Finish date={parsedFinishDate} is before start date={parsedStartDate}!"); }
         }

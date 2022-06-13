@@ -111,16 +111,23 @@ namespace HealthCareCenter
 
         private void ShowSearchResultButton_Click(object sender, RoutedEventArgs e)
         {
-            DataGridEquipments.Items.Clear();
-            string searchContent = SearchEquipmentTextBox.Text;
-            string amount = EquipmentAmountComboBox.Text;
-            string equipmentType = EquipmentTypeComboBox.Text;
-            string roomType = RoomTypeComboBox.Text;
-
-            List<List<string>> roomsForDisplay = _contoller.GetFilteredEquipmentSearchResult(searchContent, amount, equipmentType, roomType);
-            foreach (List<string> equipmentAttributesToDisplay in roomsForDisplay)
+            try
             {
-                AddDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
+                DataGridEquipments.Items.Clear();
+                string searchContent = SearchEquipmentTextBox.Text;
+                string amount = EquipmentAmountComboBox.Text;
+                string equipmentType = EquipmentTypeComboBox.Text;
+                string roomType = RoomTypeComboBox.Text;
+
+                List<List<string>> roomsForDisplay = _contoller.GetFilteredEquipmentSearchResult(searchContent, amount, equipmentType, roomType);
+                foreach (List<string> equipmentAttributesToDisplay in roomsForDisplay)
+                {
+                    AddDataGridRow(DataGridEquipments, _headerDataGridEquipment, equipmentAttributesToDisplay);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -168,6 +175,16 @@ namespace HealthCareCenter
         private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new ChangedMedicineCreationRequestWindow(_signedManager));
+        }
+
+        private void HealthcareSurveysClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new HealthcareSurveysOverviewWindow(_signedManager));
+        }
+
+        private void DoctorSurveysClick(object sender, RoutedEventArgs e)
+        {
+            ShowWindow(new DoctorSurveysOverviewWindow(_signedManager));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)
