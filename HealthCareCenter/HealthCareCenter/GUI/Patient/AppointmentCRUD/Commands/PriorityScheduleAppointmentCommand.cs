@@ -1,6 +1,8 @@
 ﻿using HealthCareCenter.Core;
+using HealthCareCenter.Core.Appointments.Controllers;
 using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.Appointments.Services.Priority;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.GUI.Patient.SharedCommands;
@@ -18,7 +20,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
             _ = MessageBox.Show("Couldn't find appointments by priority, showing 3 closest to priority",
                     "My App", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            List<Appointment> similarToPriority = AppointmentPrioritySearchService.GetAppointmentsSimilarToPriorites(
+            List<Appointment> similarToPriority = _prioritySearchController.GetAppointmentsSimilarToPriorites(
                 _viewModel.IsDoctorPriority, _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.HealthRecordID,
                 _viewModel.ChosenDate, _viewModel.StartRange, _viewModel.EndRange);
 
@@ -58,12 +60,13 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
                 return;
             }
 
-            Appointment newAppointment = AppointmentPrioritySearchService.GetPriorityAppointment(
+            Appointment newAppointment = _prioritySearchController.GetPriorityAppointment(
                 _viewModel.IsDoctorPriority, Convert.ToInt32(_viewModel.ChosenDoctor.DoctorID), _viewModel.Patient.HealthRecordID,
                 _viewModel.ChosenDate, _viewModel.StartRange, _viewModel.EndRange);
 
             if (newAppointment == null)
             {
+                SetupPriorityNotFound();
                 return;
             }
 
@@ -144,11 +147,20 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
 
         private readonly PrioritySchedulingViewModel _viewModel;
         private readonly NavigationStore _navigationStore;
+        private readonly AppointmentPrioritySearchController _prioritySearchController;
 
-        public PriorityScheduleAppointmentCommand(PrioritySchedulingViewModel viewModel, NavigationStore navigationStore)
+        public PriorityScheduleAppointmentCommand(
+            PrioritySchedulingViewModel viewModel, 
+            NavigationStore navigationStore)
         {
             _viewModel = viewModel;
             _navigationStore = navigationStore;
+            _prioritySearchController = new AppointmentPrioritySearchController(
+                new AppointmentPrioritySearchService(
+                    new PriorityAppointmentFinder(new AppointmentTermService()),
+                    new SimilarToPriorityAppointmentsFinder(),
+                    new AppointmentTermService()));
+
         }
     }
 }

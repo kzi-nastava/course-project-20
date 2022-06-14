@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Core;
+using HealthCareCenter.Core.Appointments.Controllers;
 using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.Users;
@@ -12,6 +13,8 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
 {
     internal class AppointmentFormViewModel : ViewModelBase
     {
+        private readonly AppointmentTermController _termController;
+
         public Core.Patients.Patient Patient { get; }
 
         private List<DoctorViewModel> _doctors;
@@ -73,8 +76,15 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
 
         public ICommand SubmitAppointment { get; }
 
-        public AppointmentFormViewModel(NavigationStore navigationStore, Core.Patients.Patient patient, AppointmentViewModel chosenAppointment, bool isModification, DoctorViewModel chosenDoctor)
+        public AppointmentFormViewModel(
+            Core.Patients.Patient patient,
+            NavigationStore navigationStore,
+            AppointmentViewModel chosenAppointment,
+            bool isModification, 
+            DoctorViewModel chosenDoctor)
         {
+            _termController = new AppointmentTermController(new AppointmentTermService());
+
             Patient = patient;
 
             ChosenAppointment = isModification ? chosenAppointment : null;
@@ -114,7 +124,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         {
             _allTerms = new List<AppointmentTerm>();
 
-            List<AppointmentTerm> allPossibleTerms = AppointmentTermService.GetDailyTermsFromRange(
+            List<AppointmentTerm> allPossibleTerms = _termController.GetDailyTermsFromRange(
                 Constants.StartWorkTime, 0, Constants.EndWorkTime, 0);
             foreach (AppointmentTerm term in allPossibleTerms)
             {

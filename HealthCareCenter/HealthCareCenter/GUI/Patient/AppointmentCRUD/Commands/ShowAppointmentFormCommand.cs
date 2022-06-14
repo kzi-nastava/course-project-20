@@ -16,7 +16,10 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
             }
 
             _navigationStore.CurrentViewModel = new AppointmentFormViewModel(
-                _navigationStore, _viewModel.Patient, _viewModel.ChosenAppointment, _isModification, null);
+                _viewModel.Patient, 
+                _navigationStore, 
+                _viewModel.ChosenAppointment, 
+                _isModification, null);
         }
 
         private readonly MyAppointmentsViewModel _viewModel;

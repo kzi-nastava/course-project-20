@@ -5,9 +5,9 @@ using HealthCareCenter.Core.Appointments.Models;
 
 namespace HealthCareCenter.Core.Appointments.Services
 {
-    class AppointmentTermService
+    class AppointmentTermService : IAppointmentTermService
     {
-        public static List<AppointmentTerm> GetDailyTermsFromRange(int startHours, int startMinutes, int endHours, int endMinutes)
+        public List<AppointmentTerm> GetDailyTermsFromRange(int startHours, int startMinutes, int endHours, int endMinutes)
         {
             int hours = startHours;
             int minutes = startMinutes;
@@ -26,12 +26,12 @@ namespace HealthCareCenter.Core.Appointments.Services
             return possibleSchedules;
         }
 
-        public static List<AppointmentTerm> GetDailyTermsFromRange(AppointmentTerm startRange, AppointmentTerm endRange)
+        public List<AppointmentTerm> GetDailyTermsFromRange(AppointmentTerm startRange, AppointmentTerm endRange)
         {
             return GetDailyTermsFromRange(startRange.Hours, startRange.Minutes, endRange.Hours, endRange.Minutes);
         }
 
-        public static List<AppointmentTerm> GetDailyTermsOppositeOfRange(int startHours, int startMinutes, int endHours, int endMinutes)
+        public List<AppointmentTerm> GetDailyTermsOppositeOfRange(int startHours, int startMinutes, int endHours, int endMinutes)
         {
             List<AppointmentTerm> possibleSchedules;
 
@@ -57,7 +57,7 @@ namespace HealthCareCenter.Core.Appointments.Services
             return possibleSchedules;
         }
 
-        public static List<AppointmentTerm> GetDailyTermsOppositeOfRange(AppointmentTerm startRange, AppointmentTerm endRange)
+        public List<AppointmentTerm> GetDailyTermsOppositeOfRange(AppointmentTerm startRange, AppointmentTerm endRange)
         {
             return GetDailyTermsOppositeOfRange(startRange.Hours, startRange.Minutes, endRange.Hours, endRange.Minutes);
         }

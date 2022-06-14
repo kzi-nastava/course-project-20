@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Core;
+using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.GUI.Patient.DoctorSearch;
 using HealthCareCenter.GUI.Patient.Profile.ViewModels;
@@ -17,7 +18,7 @@ namespace HealthCareCenter.GUI.Patient.SharedCommands
                     _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _patient);
                     break;
                 case ViewType.PriorityScheduling:
-                    _navigationStore.CurrentViewModel = new PrioritySchedulingViewModel(_navigationStore, _patient);
+                    _navigationStore.CurrentViewModel = new PrioritySchedulingViewModel(_patient, _navigationStore);
                     break;
                 case ViewType.MyHealthRecord:
                     _navigationStore.CurrentViewModel = new MyHealthRecordViewModel(_patient);
