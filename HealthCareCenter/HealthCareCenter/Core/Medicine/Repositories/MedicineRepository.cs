@@ -7,22 +7,9 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Medicine.Repositories
 {
-    public static class MedicineRepository
+    public class MedicineRepository : BaseMedicineRepository
     {
-        private static List<Models.Medicine> _medicines;
-        public static List<Models.Medicine> Medicines
-        {
-            get
-            {
-                if (_medicines == null)
-                {
-                    Load();
-                }
-                return _medicines;
-            }
-            set => _medicines = value;
-        }
-        public static List<Models.Medicine> Load()
+        public override List<Models.Medicine> Load()
         {
             var settings = new JsonSerializerSettings
             {
@@ -33,7 +20,7 @@ namespace HealthCareCenter.Core.Medicine.Repositories
             _medicines = (List<Models.Medicine>)JsonConvert.DeserializeObject<IEnumerable<Models.Medicine>>(JSONTextMedicines, settings);
             return _medicines;
         }
-        public static void Save()
+        public override void Save()
         {
             try
             {

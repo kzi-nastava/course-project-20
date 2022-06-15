@@ -5,6 +5,7 @@ using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Patients.Controllers;
+using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.Core.Referrals.Repositories;
 using HealthCareCenter.Core.Referrals.Services;
 
@@ -31,7 +32,15 @@ namespace HealthCareCenter.Secretary
             _record = record;
             InitializeComponent();
 
-            _controller = new PatientViewController();
+            _controller = new PatientViewController(
+                new PatientService(
+                    new AppointmentRepository(),
+                    new AppointmentChangeRequestRepository(),
+                    new HealthRecordRepository(),
+                    new HealthRecordService(
+                        new HealthRecordRepository()),
+                    new PatientEditService(
+                        new HealthRecordRepository())));
         }
 
         private void InitializeWindow()
@@ -108,7 +117,7 @@ namespace HealthCareCenter.Secretary
         {
             PatientReferralsWindow window = new PatientReferralsWindow(
                 _patient, 
-                new ReferralsService(
+                new ReferralService(
                     new ReferralRepository(),
                     new AppointmentRepository()));
             window.ShowDialog();

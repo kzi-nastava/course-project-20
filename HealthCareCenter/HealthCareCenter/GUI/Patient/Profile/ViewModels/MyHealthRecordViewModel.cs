@@ -2,6 +2,7 @@
 using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.GUI.Patient.Profile.Commands;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
 using System.Collections.Generic;
@@ -122,12 +123,15 @@ namespace HealthCareCenter.GUI.Patient.Profile.ViewModels
 
         public MyHealthRecordViewModel(
             IAppointmentService appointmentService,
+            IHealthRecordService healthRecordService,
             Core.Patients.Patient patient)
         {
             Patient = patient;
-            HealthRecord = HealthRecordService.Get(patient);
+            HealthRecord = healthRecordService.Get(patient);
+
             _patientHeight = HealthRecord.Height.ToString() + "cm";
             _patientWeight = HealthRecord.Weight.ToString() + "kg";
+
             foreach (string allergen in HealthRecord.Allergens)
             {
                 _patientAllergens += "- " + allergen + "\n";
@@ -159,7 +163,15 @@ namespace HealthCareCenter.GUI.Patient.Profile.ViewModels
                     new AppointmentChangeRequestRepository(),
                     new AppointmentChangeRequestService(
                         new AppointmentRepository(),
-                        new AppointmentChangeRequestRepository())));
+                        new AppointmentChangeRequestRepository()),
+                    new PatientService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new HealthRecordRepository(),
+                        new HealthRecordService(
+                            new HealthRecordRepository()),
+                        new PatientEditService(
+                            new HealthRecordRepository()))));
             SearchAppointments = new SearchAppointmentsCommand(
                 this,
                 new AppointmentService(
@@ -167,7 +179,15 @@ namespace HealthCareCenter.GUI.Patient.Profile.ViewModels
                     new AppointmentChangeRequestRepository(),
                     new AppointmentChangeRequestService(
                         new AppointmentRepository(),
-                        new AppointmentChangeRequestRepository())));
+                        new AppointmentChangeRequestRepository()),
+                    new PatientService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new HealthRecordRepository(),
+                        new HealthRecordService(
+                            new HealthRecordRepository()),
+                        new PatientEditService(
+                            new HealthRecordRepository()))));
             ShowAnamnesis = new ShowAnamnesisCommand(
                 this,
                 new AppointmentService(
@@ -175,7 +195,15 @@ namespace HealthCareCenter.GUI.Patient.Profile.ViewModels
                     new AppointmentChangeRequestRepository(),
                     new AppointmentChangeRequestService(
                         new AppointmentRepository(),
-                        new AppointmentChangeRequestRepository())));
+                        new AppointmentChangeRequestRepository()),
+                    new PatientService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new HealthRecordRepository(),
+                        new HealthRecordService(
+                            new HealthRecordRepository()),
+                        new PatientEditService(
+                            new HealthRecordRepository()))));
         }
     }
 }

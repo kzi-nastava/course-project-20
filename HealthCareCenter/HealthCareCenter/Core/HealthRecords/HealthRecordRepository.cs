@@ -6,37 +6,22 @@ using System.Text;
 
 namespace HealthCareCenter.Core.HealthRecords
 {
-    public static class HealthRecordRepository
+    public class HealthRecordRepository : BaseHealthRecordRepository
     {
-        public static int maxID = -1;
-
-        public static void CalculateMaxID()
+        public override int CalculateMaxID()
         {
-            maxID = -1;
+            LargestID = -1;
             foreach (HealthRecord record in Records)
             {
-                if (record.ID > maxID)
+                if (record.ID > LargestID)
                 {
-                    maxID = record.ID;
+                    LargestID = record.ID;
                 }
             }
+            return LargestID;
         }
 
-        private static List<HealthRecord> _records;
-        public static List<HealthRecord> Records
-        {
-            get
-            {
-                if (_records == null)
-                {
-                    Load();
-                }
-                return _records;
-            }
-            set => _records = value;
-        }
-
-        public static void Load()
+        public override void Load()
         {
             try
             {
@@ -49,7 +34,7 @@ namespace HealthCareCenter.Core.HealthRecords
             }
         }
 
-        public static void Save()
+        public override void Save()
         {
             try
             {

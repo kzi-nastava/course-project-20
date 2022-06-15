@@ -11,12 +11,12 @@ using System.Collections.Generic;
 
 namespace HealthCareCenter.Core.Referrals.Services
 {
-    public class ReferralsService : IReferralsService
+    public class ReferralService : IReferralService
     {
         private readonly BaseReferralRepository _referralsRepository;
         private readonly BaseAppointmentRepository _appointmentRepository;
 
-        public ReferralsService(
+        public ReferralService(
             BaseReferralRepository referralsRepository,
             BaseAppointmentRepository appointmentRepository)
         {

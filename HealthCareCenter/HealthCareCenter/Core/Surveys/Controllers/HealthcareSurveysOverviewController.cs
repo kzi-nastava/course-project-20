@@ -8,9 +8,16 @@ namespace HealthCareCenter.Core.Surveys.Controllers
 {
     internal class HealthcareSurveysOverviewController
     {
+        private readonly BaseHealthcareSurveyRatingRepository _healthcareRatingRepository;
+
+        public HealthcareSurveysOverviewController(BaseHealthcareSurveyRatingRepository healthcareRatingRepository)
+        {
+            _healthcareRatingRepository = healthcareRatingRepository;
+        }
+
         public List<SurveyRating> GetSurveys()
         {
-            return HealthcareSurveyRatingRepository.Ratings;
+            return _healthcareRatingRepository.Ratings;
         }
     }
 }

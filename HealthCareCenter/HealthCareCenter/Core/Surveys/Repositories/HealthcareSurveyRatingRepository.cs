@@ -8,22 +8,9 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Surveys.Repositories
 {
-    class HealthcareSurveyRatingRepository
+    public class HealthcareSurveyRatingRepository : BaseHealthcareSurveyRatingRepository
     {
-        private static List<SurveyRating> _ratings;
-        public static List<SurveyRating> Ratings
-        {
-            get
-            {
-                if (_ratings == null)
-                {
-                    Load();
-                }
-                return _ratings;
-            }
-        }
-
-        public static void Load()
+        public override void Load()
         {
             try
             {
@@ -41,7 +28,7 @@ namespace HealthCareCenter.Core.Surveys.Repositories
             }
         }
 
-        public static void Save()
+        public override void Save()
         {
             try
             {

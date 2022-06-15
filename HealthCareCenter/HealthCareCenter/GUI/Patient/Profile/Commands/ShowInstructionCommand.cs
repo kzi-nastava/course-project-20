@@ -17,16 +17,20 @@ namespace HealthCareCenter.GUI.Patient.Profile.Commands
                 return;
             }
 
-            MedicineInstruction instruction = MedicineInstructionService.GetSingle(_viewModel.ChosenInstruction.InstructionID);
+            MedicineInstruction instruction = _medicineInstructionService.GetSingle(_viewModel.ChosenInstruction.InstructionID);
 
-            _viewModel.MedicineInstructionInfo = MedicineInstructionService.GetInfo(instruction);
+            _viewModel.MedicineInstructionInfo = _medicineInstructionService.GetInfo(instruction);
         }
 
         private readonly MyPrescriptionsViewModel _viewModel;
+        private readonly IMedicineInstructionService _medicineInstructionService;
 
-        public ShowInstructionCommand(MyPrescriptionsViewModel viewModel)
+        public ShowInstructionCommand(
+            MyPrescriptionsViewModel viewModel,
+            IMedicineInstructionService medicineInstructionService)
         {
             _viewModel = viewModel;
+            _medicineInstructionService = medicineInstructionService;
         }
     }
 }

@@ -9,6 +9,10 @@ using HealthCareCenter.Core.Appointments.Urgent.Services;
 using HealthCareCenter.Core.Appointments.Urgent.Controllers;
 using HealthCareCenter.Core.Appointments.Urgent.DTO;
 using HealthCareCenter.Core.Appointments.Repository;
+using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Medicine.Repositories;
+using HealthCareCenter.Core.Medicine.Services;
+using HealthCareCenter.Core.Patients.Services;
 
 namespace HealthCareCenter.Secretary
 {
@@ -35,14 +39,28 @@ namespace HealthCareCenter.Secretary
                 new TermsService(
                     new AppointmentRepository()),
                 new NotificationService(
-                    new NotificationRepository()),
+                    new NotificationRepository(),
+                    new HealthRecordService(
+                        new HealthRecordRepository()),
+                    new MedicineInstructionService(
+                        new MedicineInstructionRepository()),
+                    new MedicineService(
+                        new MedicineRepository())),
                 new AppointmentRepository(),
                 new AppointmentService(
                     new AppointmentRepository(),
                     new AppointmentChangeRequestRepository(),
                     new AppointmentChangeRequestService(
                         new AppointmentRepository(),
-                        new AppointmentChangeRequestRepository()))) { UrgentInfo = _info };
+                        new AppointmentChangeRequestRepository()),
+                    new PatientService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new HealthRecordRepository(),
+                        new HealthRecordService(
+                            new HealthRecordRepository()),
+                        new PatientEditService(
+                            new HealthRecordRepository())))) { UrgentInfo = _info };
             _controller = new ScheduleUrgentAppointmentController(service);
 
             InitializeComponent();

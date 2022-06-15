@@ -18,6 +18,9 @@ using HealthCareCenter.Core.Equipment.Services;
 using HealthCareCenter.Core.Rooms;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.Core.Surveys.Services;
+using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Medicine.Services;
+using HealthCareCenter.Core.Medicine.Repositories;
 
 namespace HealthCareCenter
 {
@@ -77,7 +80,14 @@ namespace HealthCareCenter
         private void CrudHospitalRoomMenuItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new CrudHospitalRoomWindow(_signedManager,
-                new NotificationService(new NotificationRepository()),
+                new NotificationService(
+                    new NotificationRepository(),
+                    new HealthRecordService(
+                        new HealthRecordRepository()),
+                    new MedicineInstructionService(
+                        new MedicineInstructionRepository()),
+                    new MedicineService(
+                        new MedicineRepository())),
                 new EquipmentRearrangementService(),
                 new RoomService(new EquipmentRearrangementService())));
         }

@@ -6,16 +6,18 @@ using HealthCareCenter.Core.Medicine.Repositories;
 
 namespace HealthCareCenter.Core.Medicine.Services
 {
-    public class MedicineInstructionService
+    public class MedicineInstructionService : IMedicineInstructionService
     {
-        public static MedicineInstruction GetSingle(int ID)
-        {
-            if (MedicineInstructionRepository.MedicineInstructions == null)
-            {
-                return null;
-            }
+        private readonly BaseMedicineInstructionRepository _medicineInstructionRepository;
 
-            foreach (MedicineInstruction instruction in MedicineInstructionRepository.MedicineInstructions)
+        public MedicineInstructionService(BaseMedicineInstructionRepository medicineInstructionRepository)
+        {
+            _medicineInstructionRepository = medicineInstructionRepository;
+        }
+
+        public MedicineInstruction GetSingle(int ID)
+        {
+            foreach (MedicineInstruction instruction in _medicineInstructionRepository.MedicineInstructions)
             {
                 if (instruction.ID == ID)
                 {
@@ -26,7 +28,7 @@ namespace HealthCareCenter.Core.Medicine.Services
             return null;
         }
 
-        public static string GetInfo(MedicineInstruction instruction)
+        public string GetInfo(MedicineInstruction instruction)
         {
             string medicineInstructionInfo = "";
             medicineInstructionInfo += "Comment:\n";

@@ -1,6 +1,8 @@
 ﻿using HealthCareCenter.Core;
 using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.GUI.Patient.SharedCommands;
@@ -90,13 +92,22 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
             {
                 bool passed = _appointmentService.Schedule(
                     scheduleDate, _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.HealthRecordID, hospitalRoomID);
+
                 _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(
                     new AppointmentService(
                         new AppointmentRepository(),
                         new AppointmentChangeRequestRepository(),
                         new AppointmentChangeRequestService(
                             new AppointmentRepository(),
-                            new AppointmentChangeRequestRepository())),
+                            new AppointmentChangeRequestRepository()),
+                        new PatientService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new HealthRecordRepository(),
+                            new HealthRecordService(
+                                new HealthRecordRepository()),
+                            new PatientEditService(
+                                new HealthRecordRepository()))),
                     _viewModel.Patient,
                     _navigationStore);
 
@@ -128,13 +139,22 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
                 bool passed = _appointmentService.Edit(
                     scheduleDate, _viewModel.ChosenAppointment.AppointmentDate, _viewModel.ChosenAppointment.AppointmentID,
                     _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.ID, hospitalRoomID);
+
                 _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(
                     new AppointmentService(
                         new AppointmentRepository(),
                         new AppointmentChangeRequestRepository(),
                         new AppointmentChangeRequestService(
                             new AppointmentRepository(),
-                            new AppointmentChangeRequestRepository())),
+                            new AppointmentChangeRequestRepository()),
+                        new PatientService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new HealthRecordRepository(),
+                            new HealthRecordService(
+                                new HealthRecordRepository()),
+                            new PatientEditService(
+                                new HealthRecordRepository()))),
                     _viewModel.Patient,
                     _navigationStore);
 

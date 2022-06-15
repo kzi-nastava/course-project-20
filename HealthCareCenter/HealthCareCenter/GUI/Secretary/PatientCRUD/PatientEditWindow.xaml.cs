@@ -1,6 +1,8 @@
-﻿using HealthCareCenter.Core.HealthRecords;
+﻿using HealthCareCenter.Core.Appointments.Repository;
+using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Patients.Controllers;
+using HealthCareCenter.Core.Patients.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -33,7 +35,15 @@ namespace HealthCareCenter.Secretary
             _record = record;
             InitializeComponent();
 
-            _controller = new PatientEditController();
+            _controller = new PatientEditController(
+                new PatientService(
+                    new AppointmentRepository(),
+                    new AppointmentChangeRequestRepository(),
+                    new HealthRecordRepository(),
+                    new HealthRecordService(
+                        new HealthRecordRepository()),
+                    new PatientEditService(
+                        new HealthRecordRepository())));
         }
 
         private void Reset()

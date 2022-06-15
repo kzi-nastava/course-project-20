@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Patients.Controllers;
+using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.Core.Users;
 
 namespace HealthCareCenter.Secretary
@@ -23,7 +25,17 @@ namespace HealthCareCenter.Secretary
 
         private void Window_Initialized(object sender, EventArgs e)
         {
-            _controller = new PatientManipulationController();
+            _controller = new PatientManipulationController(
+                new HealthRecordService(
+                    new HealthRecordRepository()),
+                new PatientService(
+                    new AppointmentRepository(),
+                    new AppointmentChangeRequestRepository(),
+                    new HealthRecordRepository(),
+                    new HealthRecordService(
+                        new HealthRecordRepository()),
+                    new PatientEditService(
+                        new HealthRecordRepository())));
 
             patientsDataGrid.ItemsSource = UserRepository.Patients;
             try
@@ -95,7 +107,7 @@ namespace HealthCareCenter.Secretary
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            PatientCreateWindow window = new PatientCreateWindow();
+            PatientCreateWindow window = new PatientCreateWindow(new HealthRecordRepository());
             window.ShowDialog();
             patientsDataGrid.Items.Refresh();
         }

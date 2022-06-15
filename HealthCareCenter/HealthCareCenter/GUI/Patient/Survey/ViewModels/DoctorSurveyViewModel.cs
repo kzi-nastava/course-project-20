@@ -1,6 +1,7 @@
 ﻿using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.Surveys.Services;
+using HealthCareCenter.Core.Users.Services;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
 using HealthCareCenter.GUI.Patient.Survey.Commands;
 using System.Collections.Generic;
@@ -33,6 +34,10 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
             {
                 _chosenAppointment = value;
                 OnPropertyChanged(nameof(ChosenAppointment));
+                if (_chosenAppointment != null)
+                {
+                    DoctorFullName = UserService.GetFullName(_chosenAppointment.DoctorID);
+                }
             }
         }
 
@@ -72,7 +77,6 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
         public bool WouldRecommendTicked4 { get; set; }
         public bool WouldRecommendTicked5 { get; set; }
 
-        public ICommand ChooseDoctorFromAppointment { get; }
         public ICommand SubmitReview { get; }
 
         public DoctorSurveyViewModel(
@@ -93,7 +97,6 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
             ServiceQualityTicked5 = true;
             WouldRecommendTicked5 = true;
 
-            ChooseDoctorFromAppointment = new ChooseDoctorFromAppointmentCommand(this);
             SubmitReview = new SubmitDoctorReviewCommand(this, new DoctorSurveyRatingService());
         }
     }

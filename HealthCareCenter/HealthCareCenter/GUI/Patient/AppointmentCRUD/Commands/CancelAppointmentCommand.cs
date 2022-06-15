@@ -1,6 +1,8 @@
 ﻿using HealthCareCenter.Core;
 using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.GUI.Patient.SharedCommands;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
@@ -49,7 +51,15 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
                         new AppointmentChangeRequestRepository(),
                         new AppointmentChangeRequestService(
                             new AppointmentRepository(),
-                            new AppointmentChangeRequestRepository())),
+                            new AppointmentChangeRequestRepository()),
+                        new PatientService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new HealthRecordRepository(),
+                            new HealthRecordService(
+                                new HealthRecordRepository()),
+                            new PatientEditService(
+                                new HealthRecordRepository()))),
                     _viewModel.Patient,
                     _navigationStore);
             }
