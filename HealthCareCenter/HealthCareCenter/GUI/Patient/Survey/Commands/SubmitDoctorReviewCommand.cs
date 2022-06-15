@@ -9,13 +9,6 @@ namespace HealthCareCenter.GUI.Patient.Survey.Commands
 {
     internal class SubmitDoctorReviewCommand : CommandBase
     {
-        private IDoctorSurveyRatingService _doctorSurveyRatingService;
-
-        public SubmitDoctorReviewCommand(IDoctorSurveyRatingService doctorSurveyRatingService)
-        {
-            _doctorSurveyRatingService = doctorSurveyRatingService;
-        }
-
         public override void Execute(object parameter)
         {
             if (_viewModel.ChosenAppointment == null)
@@ -61,10 +54,12 @@ namespace HealthCareCenter.GUI.Patient.Survey.Commands
         }
 
         private readonly DoctorSurveyViewModel _viewModel;
+        private readonly IDoctorSurveyRatingService _doctorSurveyRatingService;
 
-        public SubmitDoctorReviewCommand(DoctorSurveyViewModel viewModel)
+        public SubmitDoctorReviewCommand(DoctorSurveyViewModel viewModel, IDoctorSurveyRatingService doctorSurveyRatingService)
         {
             _viewModel = viewModel;
+            _doctorSurveyRatingService = doctorSurveyRatingService;
         }
 
         private double GetTickedGradeServiceQuality()

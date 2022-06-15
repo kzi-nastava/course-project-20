@@ -1,5 +1,6 @@
 ﻿using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
 using HealthCareCenter.GUI.Patient.Survey.Commands;
 using System.Collections.Generic;
@@ -7,11 +8,12 @@ using System.Windows.Input;
 
 namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
 {
-    class DoctorSurveyViewModel : ViewModelBase
+    internal class DoctorSurveyViewModel : ViewModelBase
     {
         public Core.Patients.Patient Patient { get; }
 
         private List<AppointmentViewModel> _appointments;
+
         public List<AppointmentViewModel> Appointments
         {
             get => _appointments;
@@ -23,6 +25,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
         }
 
         private AppointmentViewModel _chosenAppointment;
+
         public AppointmentViewModel ChosenAppointment
         {
             get => _chosenAppointment;
@@ -34,6 +37,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
         }
 
         private string _doctorFullName;
+
         public string DoctorFullName
         {
             get => _doctorFullName;
@@ -45,6 +49,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
         }
 
         private string _commentOnDoctor;
+
         public string CommentOnDoctor
         {
             get => _commentOnDoctor;
@@ -87,8 +92,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
             WouldRecommendTicked5 = true;
 
             ChooseDoctorFromAppointment = new ChooseDoctorFromAppointmentCommand(this);
-            SubmitReview = new SubmitDoctorReviewCommand(this);
+            SubmitReview = new SubmitDoctorReviewCommand(this, new DoctorSurveyRatingService());
         }
-
     }
 }
