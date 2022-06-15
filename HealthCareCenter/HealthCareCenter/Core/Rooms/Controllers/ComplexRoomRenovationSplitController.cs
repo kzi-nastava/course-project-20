@@ -9,6 +9,13 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 {
     public class ComplexRoomRenovationSplitController
     {
+        private IRoomService _roomService;
+
+        public ComplexRoomRenovationSplitController(IRoomService roomService)
+        {
+            _roomService = roomService;
+        }
+
         public HospitalRoom GenerateNewRoom1(string room1Type, string room1Name)
         {
             Enum.TryParse(room1Type, out RoomType parsedRoom1Type);
@@ -176,7 +183,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
                 throw new HospitalRoomContainAppointmentException(splitRoom.ID.ToString());
             }
 
-            if (RoomService.ContainsAnyRearrangement(splitRoom))
+            if (_roomService.ContainsAnyRearrangement(splitRoom))
             {
                 throw new HospitalRoomContainEquipmentRearrangementException(splitRoom.ID.ToString());
             }

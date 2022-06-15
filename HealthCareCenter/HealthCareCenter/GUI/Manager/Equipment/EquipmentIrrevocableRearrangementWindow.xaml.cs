@@ -1,5 +1,7 @@
 ﻿using HealthCareCenter.Core.Equipment.Controllers;
 using HealthCareCenter.Core.Equipment.Models;
+using HealthCareCenter.Core.Equipment.Services;
+using HealthCareCenter.Core.Rooms;
 using HealthCareCenter.Core.Rooms.Models;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.Core.Users.Models;
@@ -25,11 +27,10 @@ namespace HealthCareCenter
         private Manager _signedManager;
         private EquipmentIrrevocableRearrangementController _contoller;
 
-        public EquipmentIrrevocableRearrangementWindow(Manager manager, DateTime finishDate, HospitalRoom splitRoom, HospitalRoom room1, HospitalRoom room2)
+        public EquipmentIrrevocableRearrangementWindow(Manager manager, DateTime finishDate, HospitalRoom splitRoom, HospitalRoom room1, HospitalRoom room2, IRoomService roomService)
         {
             _signedManager = manager;
-            List<Equipment> splitRoomEquipments = RoomService.GetAllEquipment(splitRoom);
-
+            List<Equipment> splitRoomEquipments = roomService.GetAllEquipment(splitRoom);
             _contoller = new EquipmentIrrevocableRearrangementController(splitRoomEquipments, splitRoom, room1, room2, finishDate);
 
             InitializeComponent();
@@ -73,7 +74,8 @@ namespace HealthCareCenter
                 if (_contoller.IsSplitRoomContainsEquipment())
                 {
                     MessageBox.Show("Rearrangement is done!");
-                    ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager));
+                    ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager,
+                        new RoomService(new EquipmentRearrangementService())));
                 }
 
                 FillDataGridEquipment();

@@ -21,6 +21,7 @@ using HealthCareCenter.Core.Referrals.Repositories;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Notifications.Services;
 using HealthCareCenter.Core.Notifications.Repositories;
+using HealthCareCenter.Core.Rooms;
 
 namespace HealthCareCenter.GUI.Doctor.ViewModels
 {
@@ -33,6 +34,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private Referral referral;
         private Medicine chosenMedicine;
         private IReferralsService _referralsService;
+        private IRoomService _roomService;
         private BaseReferralRepository _referralRepository;
         private readonly BaseAppointmentRepository _appointmentRepository;
         private readonly IAppointmentService _appointmentService;
@@ -42,7 +44,8 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             IReferralsService referralsService,
             BaseReferralRepository referralRepository,
             BaseAppointmentRepository appointmentRepository,
-            IAppointmentService appointmentService)
+            IAppointmentService appointmentService,
+            IRoomService roomService)
         {
             _referralsService = referralsService;
             _signedUser = signedUser;
@@ -54,6 +57,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 this, 
                 new NotificationService(new NotificationRepository()),
                 new AppointmentRepository());
+            _roomService = roomService;
             window.Show();
         }
 
@@ -67,7 +71,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             Room room;
             try
             {
-                room = RoomService.Get(selectedRoomID);
+                room = _roomService.Get(selectedRoomID);
             }
             catch (Exception ex)
             {
@@ -232,8 +236,8 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             string equipmentName = TableService.GetRowItem(window.equipmentDataGrid, "Name");
             if (equipmentName == "")
                 return;
-            Room room = RoomService.Get(selectedRoomID);
-            int amount = RoomService.GetEquipmentAmount(room, equipmentName);
+            Room room = _roomService.Get(selectedRoomID);
+            int amount = _roomService.GetEquipmentAmount(room, equipmentName);
             window.equipmentTextBlock.Text = amount.ToString();
         }
 
@@ -245,7 +249,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             unparsedAmount = window.equipmentTextBox.Text;
             usedAmount = CheckTheAmount(unparsedAmount, equipmentName, selectedRoomID);
             if (usedAmount == -1) return;
-            Room room = RoomService.Get(selectedRoomID);
+            Room room = _roomService.Get(selectedRoomID);
             room.EquipmentAmounts[equipmentName] -= usedAmount;
             MessageBox.Show(equipmentName + " sucessfully updated");
             window.equipmentTextBox.Text = "";
@@ -264,15 +268,14 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 MessageBox.Show("Invalid number");
                 return -1;
             }
-            room = RoomService.Get(selectedRoomID);
-            oldAmount = RoomService.GetEquipmentAmount(room, equipmentName);
+            room = _roomService.Get(selectedRoomID);
+            oldAmount = _roomService.GetEquipmentAmount(room, equipmentName);
             if (oldAmount < usedAmount)
             {
                 MessageBox.Show("The number is too big");
                 return -1;
             }
             return usedAmount;
-
         }
 
         public List<Core.Users.Models.Doctor> GetDoctorsByType()

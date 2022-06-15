@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace HealthCareCenter.GUI.Patient.Survey.Commands
 {
-    class SubmitDoctorReviewCommand : CommandBase
+    internal class SubmitDoctorReviewCommand : CommandBase
     {
         public override void Execute(object parameter)
         {
@@ -27,7 +27,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.Commands
 
             string confirmationMessage = "Submit review?";
             bool isOverwrite = false;
-            if (DoctorSurveyRatingService.HasPatientAlreadyReviewed(_viewModel.Patient.ID, _viewModel.ChosenAppointment.DoctorID))
+            if (_doctorSurveyRatingService.HasPatientAlreadyReviewed(_viewModel.Patient.ID, _viewModel.ChosenAppointment.DoctorID))
             {
                 _ = MessageBox.Show("You already reviewed this doctor", "My App", MessageBoxButton.OK, MessageBoxImage.Information);
                 confirmationMessage = "Do you want to overwrite your previous review?";
@@ -39,7 +39,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.Commands
             {
                 if (isOverwrite)
                 {
-                    _ = DoctorSurveyRatingService.OverwriteExistingReview(surveyRating);
+                    _ = _doctorSurveyRatingService.OverwriteExistingReview(surveyRating);
                 }
                 else
                 {
@@ -54,10 +54,12 @@ namespace HealthCareCenter.GUI.Patient.Survey.Commands
         }
 
         private readonly DoctorSurveyViewModel _viewModel;
+        private readonly IDoctorSurveyRatingService _doctorSurveyRatingService;
 
-        public SubmitDoctorReviewCommand(DoctorSurveyViewModel viewModel)
+        public SubmitDoctorReviewCommand(DoctorSurveyViewModel viewModel, IDoctorSurveyRatingService doctorSurveyRatingService)
         {
             _viewModel = viewModel;
+            _doctorSurveyRatingService = doctorSurveyRatingService;
         }
 
         private double GetTickedGradeServiceQuality()

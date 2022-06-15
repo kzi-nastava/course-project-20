@@ -8,7 +8,7 @@ using System.Text;
 
 namespace HealthCareCenter.Core
 {
-    class AppointmentDateCompare : IComparer<Appointment>
+    internal class AppointmentDateCompare : IComparer<Appointment>
     {
         public int Compare(Appointment a1, Appointment a2)
         {
@@ -16,7 +16,7 @@ namespace HealthCareCenter.Core
         }
     }
 
-    class AppointmentDoctorCompare : IComparer<Appointment>
+    internal class AppointmentDoctorCompare : IComparer<Appointment>
     {
         public int Compare(Appointment a1, Appointment a2)
         {
@@ -43,7 +43,7 @@ namespace HealthCareCenter.Core
         }
     }
 
-    class AppointmentProfessionalAreaCompare : IComparer<Appointment>
+    internal class AppointmentProfessionalAreaCompare : IComparer<Appointment>
     {
         public int Compare(Appointment a1, Appointment a2)
         {
@@ -70,7 +70,7 @@ namespace HealthCareCenter.Core
         }
     }
 
-    class DoctorFirstNameCompare : IComparer<Doctor>
+    internal class DoctorFirstNameCompare : IComparer<Doctor>
     {
         public int Compare(Doctor d1, Doctor d2)
         {
@@ -78,7 +78,7 @@ namespace HealthCareCenter.Core
         }
     }
 
-    class DoctorLastNameCompare : IComparer<Doctor>
+    internal class DoctorLastNameCompare : IComparer<Doctor>
     {
         public int Compare(Doctor d1, Doctor d2)
         {
@@ -86,7 +86,7 @@ namespace HealthCareCenter.Core
         }
     }
 
-    class DoctorProfessionalAreaCompare : IComparer<Doctor>
+    internal class DoctorProfessionalAreaCompare : IComparer<Doctor>
     {
         public int Compare(Doctor d1, Doctor d2)
         {
@@ -94,11 +94,18 @@ namespace HealthCareCenter.Core
         }
     }
 
-    class DoctorRatingCompare : IComparer<Doctor>
+    internal class DoctorRatingCompare : IComparer<Doctor>
     {
+        private IDoctorSurveyRatingService _doctorSurveyRatingService;
+
+        public DoctorRatingCompare(IDoctorSurveyRatingService doctorSurveyRatingService)
+        {
+            _doctorSurveyRatingService = doctorSurveyRatingService;
+        }
+
         public int Compare(Doctor d1, Doctor d2)
         {
-            return DoctorSurveyRatingService.GetAverageRating(d1.ID).CompareTo(DoctorSurveyRatingService.GetAverageRating(d2.ID));
+            return _doctorSurveyRatingService.GetAverageRating(d1.ID).CompareTo(_doctorSurveyRatingService.GetAverageRating(d2.ID));
         }
     }
 }

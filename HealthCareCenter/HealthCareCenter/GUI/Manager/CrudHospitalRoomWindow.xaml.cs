@@ -1,8 +1,12 @@
 ﻿using HealthCareCenter.Core;
+using HealthCareCenter.Core.Equipment.Services;
 using HealthCareCenter.Core.Notifications;
 using HealthCareCenter.Core.Notifications.Services;
+using HealthCareCenter.Core.Rooms;
 using HealthCareCenter.Core.Rooms.Controllers;
 using HealthCareCenter.Core.Rooms.Models;
+using HealthCareCenter.Core.Rooms.Services;
+using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users.Models;
 using System;
 using System.Collections.Generic;
@@ -14,13 +18,17 @@ namespace HealthCareCenter
     public partial class CrudHospitalRoomWindow : Window
     {
         private Manager _signedManager;
-        private CRUDHospitalRoomController _controler = new CRUDHospitalRoomController();
+        private CRUDHospitalRoomController _controler;
         private INotificationService _notificationService;
+        private IRoomService _roomService;
 
-        public CrudHospitalRoomWindow(Manager manager, INotificationService notificationService)
+        public CrudHospitalRoomWindow(Manager manager, INotificationService notificationService,
+            IEquipmentRearrangementService equipmentRearrangementService, IRoomService roomService)
         {
             _signedManager = manager;
             _notificationService = notificationService;
+            _roomService = roomService;
+            _controler = new CRUDHospitalRoomController(_roomService);
             InitializeComponent();
             FillRoomTypeComboBox();
             FillDataGridHospitalRooms();
@@ -60,6 +68,7 @@ namespace HealthCareCenter
 
         private void UpdateInterfaceAfterAddingHospitalRoom(HospitalRoom room)
         {
+            room.ID--;
             DataGridHospitalRooms.Items.Add(room);
             SetAllTextBoxesToBeBlank();
         }
@@ -127,32 +136,40 @@ namespace HealthCareCenter
 
         private void CrudHospitalRoomMenuItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new CrudHospitalRoomWindow(_signedManager, _notificationService));
+            ShowWindow(new CrudHospitalRoomWindow(_signedManager, _notificationService,
+                new EquipmentRearrangementService(),
+                new RoomService(new EquipmentRearrangementService())));
         }
 
         private void EquipmentReviewMenuItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new HospitalEquipmentReviewWindow(_signedManager));
+            ShowWindow(new HospitalEquipmentReviewWindow(_signedManager,
+                new EquipmentRearrangementService(),
+                new RoomService(new EquipmentRearrangementService())));
         }
 
         private void ArrangingEquipmentItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ArrangingEquipmentWindow(_signedManager));
+            ShowWindow(new ArrangingEquipmentWindow(_signedManager,
+                new EquipmentRearrangementService(),
+                new RoomService(new EquipmentRearrangementService())));
         }
 
         private void SimpleRenovationItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new HospitalRoomRenovationWindow(_signedManager));
+            ShowWindow(new HospitalRoomRenovationWindow(_signedManager,
+                new RoomService(new EquipmentRearrangementService())));
         }
 
         private void ComplexRenovationMergeItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ComplexHospitalRoomRenovationMergeWindow(_signedManager));
+            ShowWindow(new ComplexHospitalRoomRenovationMergeWindow(_signedManager,
+                new RoomService(new EquipmentRearrangementService())));
         }
 
         private void ComplexRenovationSplitItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager));
+            ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager, new RoomService(new EquipmentRearrangementService())));
         }
 
         private void CreateMedicineClick(object sender, RoutedEventArgs e)
@@ -172,7 +189,7 @@ namespace HealthCareCenter
 
         private void DoctorSurveysClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new DoctorSurveysOverviewWindow(_signedManager));
+            ShowWindow(new DoctorSurveysOverviewWindow(_signedManager, new DoctorSurveyRatingService()));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

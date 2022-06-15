@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -30,24 +30,6 @@ namespace HealthCareCenter
         private static BackgroundWorker _backgroundWorker = null;
         private static IDynamicEquipmentService _dynamicEquipmentService;
 
-        private void DoEquipmentRearrangements()
-        {
-            List<Equipment> equipments = EquipmentService.GetEquipments();
-            for (int i = 0; i < equipments.Count; i++)
-            {
-                EquipmentRearrangementService.DoPossibleRearrangement(equipments[i]);
-            }
-        }
-
-        private void FinshPossibleRenovation()
-        {
-            List<RenovationSchedule> renovations = RenovationScheduleService.GetRenovations();
-            for (int i = 0; i < renovations.Count; i++)
-            {
-                RenovationScheduleService.FinishRenovation(renovations[i]);
-            }
-        }
-
         public LoginWindow(IDynamicEquipmentService dynamicEquipmentService) : this()
         {
             _dynamicEquipmentService = dynamicEquipmentService;
@@ -55,8 +37,9 @@ namespace HealthCareCenter
 
         public LoginWindow()
         {
+            IEquipmentRearrangementService equipmentRearrangementService = new EquipmentRearrangementService();
             InitializeComponent();
-            DoEquipmentRearrangements();
+            DoEquipmentRearrangements(equipmentRearrangementService);
             FinshPossibleRenovation();
 
             try
@@ -69,6 +52,24 @@ namespace HealthCareCenter
             }
 
             StartBackgroundWorkerIfNeeded();
+        }
+
+        private void DoEquipmentRearrangements(IEquipmentRearrangementService equipmentRearrangementService)
+        {
+            List<Equipment> equipments = EquipmentService.GetEquipments();
+            for (int i = 0; i < equipments.Count; i++)
+            {
+                equipmentRearrangementService.DoPossibleRearrangement(equipments[i]);
+            }
+        }
+
+        private void FinshPossibleRenovation()
+        {
+            List<RenovationSchedule> renovations = RenovationScheduleService.GetRenovations();
+            for (int i = 0; i < renovations.Count; i++)
+            {
+                RenovationScheduleService.FinishRenovation(renovations[i]);
+            }
         }
 
         private void StartBackgroundWorkerIfNeeded()
@@ -118,12 +119,16 @@ namespace HealthCareCenter
                         new AppointmentChangeRequestRepository(),
                         new AppointmentChangeRequestService(
                             new AppointmentRepository(),
-                            new AppointmentChangeRequestRepository())));
+                            new AppointmentChangeRequestRepository())),
+                    new RoomService(new EquipmentRearrangementService()));
                 Close();
             }
             else if (user.GetType() == typeof(Manager))
             {
-                ShowWindow(new CrudHospitalRoomWindow((Manager)user, new NotificationService(new NotificationRepository())));
+                ShowWindow(new CrudHospitalRoomWindow((Manager)user,
+                    new NotificationService(new NotificationRepository()),
+                    new EquipmentRearrangementService(),
+                    new RoomService(new EquipmentRearrangementService())));
             }
             else if (user.GetType() == typeof(Patient))
             {
