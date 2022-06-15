@@ -17,7 +17,7 @@ namespace HealthCareCenter.GUI.Patient.Profile.Commands
                 return;
             }
 
-            Appointment appointment = AppointmentService.Get(_viewModel.ChosenAppointment.AppointmentID);
+            Appointment appointment = _appointmentService.Get(_viewModel.ChosenAppointment.AppointmentID);
             if (appointment.PatientAnamnesis != null)
             {
                 _viewModel.AnamnesisInfo = appointment.PatientAnamnesis.Comment;
@@ -25,10 +25,14 @@ namespace HealthCareCenter.GUI.Patient.Profile.Commands
         }
 
         private readonly MyHealthRecordViewModel _viewModel;
+        private readonly IAppointmentService _appointmentService;
 
-        public ShowAnamnesisCommand(MyHealthRecordViewModel viewModel)
+        public ShowAnamnesisCommand(
+            MyHealthRecordViewModel viewModel,
+            IAppointmentService appointmentService)
         {
             _viewModel = viewModel;
+            _appointmentService = appointmentService;
         }
     }
 }

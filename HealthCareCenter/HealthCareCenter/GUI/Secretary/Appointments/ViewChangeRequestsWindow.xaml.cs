@@ -1,5 +1,6 @@
 ﻿using HealthCareCenter.Core.Appointments;
 using HealthCareCenter.Core.Appointments.Models;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.Patients;
 using System;
@@ -29,7 +30,10 @@ namespace HealthCareCenter.Secretary
         {
             _patient = patient;
 
-            _controller = new ViewChangeRequestsController(new AppointmentChangeRequestService());
+            _controller = new ViewChangeRequestsController(
+                new AppointmentChangeRequestService(
+                    new AppointmentRepository(),
+                    new AppointmentChangeRequestRepository()));
 
             InitializeComponent();
 

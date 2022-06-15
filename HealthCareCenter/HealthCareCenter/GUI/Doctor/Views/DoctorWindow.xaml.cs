@@ -26,6 +26,7 @@ namespace HealthCareCenter.DoctorGUI
         private MedicineCreationRequestWindowViewModel medicineCreationWindowService;
         private HealthRecordWindowViewModel healthRecordWindowService;
         private NotificationService _notificationService;
+        private readonly BaseAppointmentRepository _appointmentRepository;
 
         private Doctor signedUser;
 
@@ -38,10 +39,15 @@ namespace HealthCareCenter.DoctorGUI
         public DataTable equipmentDataTable;
 
         DataRow dr;
-        public DoctorWindow(User user,DoctorWindowViewModel windowService, NotificationService notificationService)
+        public DoctorWindow(
+            User user,
+            DoctorWindowViewModel windowService, 
+            NotificationService notificationService,
+            BaseAppointmentRepository appointmentRepository)
         {
             _notificationService = notificationService;
-            healthRecordWindowService = new HealthRecordWindowViewModel(windowService, user, this);
+            _appointmentRepository = appointmentRepository;
+            healthRecordWindowService = new HealthRecordWindowViewModel(windowService, user, this, new AppointmentRepository());
             this.scheduleWindowService = windowService;
             signedUser = (Doctor)user;
             PrescriptionService.Initialise(signedUser.ID);
@@ -52,7 +58,6 @@ namespace HealthCareCenter.DoctorGUI
             CreateMedicineCreationRequestTable();
             CreateEquipmentTable();
             HealthRecordRepository.Load();
-            AppointmentRepository.Load();
             MedicineRepository.Load();
             PrescriptionRepository.Load();
             MedicineInstructionRepository.Load();
@@ -235,7 +240,7 @@ namespace HealthCareCenter.DoctorGUI
         {
             startingGrid.Visibility = Visibility.Collapsed;
             scheduleGrid.Visibility = Visibility.Visible;
-            scheduleWindowService.FillAppointmentsTable(AppointmentRepository.Appointments);
+            scheduleWindowService.FillAppointmentsTable(_appointmentRepository.Appointments);
         }
         private void DrugMenagmentButton_Click(object sender, RoutedEventArgs e)
         {
@@ -249,7 +254,12 @@ namespace HealthCareCenter.DoctorGUI
         //Buttons on schedule rewiew menu
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            AddDeleteAppointmentViewModel appointmentService = new AddDeleteAppointmentViewModel(signedUser,this,true,scheduleWindowService);
+            AddDeleteAppointmentViewModel appointmentService = new AddDeleteAppointmentViewModel(
+                signedUser,
+                this,
+                true,
+                scheduleWindowService,
+                new AppointmentRepository());
 
         }
         private void Alter_Click(object sender, RoutedEventArgs e)
@@ -257,15 +267,21 @@ namespace HealthCareCenter.DoctorGUI
 
             int rowIndex = TableService.GetSelectedIndex(scheduleDataGrid);
             if (rowIndex == -1) return;
-            AddDeleteAppointmentViewModel appointmentService = new AddDeleteAppointmentViewModel(signedUser, this, false, scheduleWindowService, rowIndex);
+            AddDeleteAppointmentViewModel appointmentService = new AddDeleteAppointmentViewModel(
+                signedUser, 
+                this, 
+                false, 
+                scheduleWindowService, 
+                new AppointmentRepository(),
+                rowIndex);
 
         }
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             int rowIndex = TableService.GetSelectedIndex(scheduleDataGrid);
             if(rowIndex == -1) return;
-            AppointmentRepository.Appointments.RemoveAt(rowIndex);
-            scheduleWindowService.FillAppointmentsTable(AppointmentRepository.Appointments);
+            _appointmentRepository.Appointments.RemoveAt(rowIndex);
+            scheduleWindowService.FillAppointmentsTable(_appointmentRepository.Appointments);
         }
         private void Search_Click(object sender, RoutedEventArgs e)
         {
@@ -435,7 +451,7 @@ namespace HealthCareCenter.DoctorGUI
         private void WindowClosing(object sender, CancelEventArgs e)
         {
             HealthRecordRepository.Save();
-            AppointmentRepository.Save();
+            _appointmentRepository.Save();
             PrescriptionRepository.Save();
             MedicineInstructionRepository.Save();
             MedicineCreationRequestRepository.Save();

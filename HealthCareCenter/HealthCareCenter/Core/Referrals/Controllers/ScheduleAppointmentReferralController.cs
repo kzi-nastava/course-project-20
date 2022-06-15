@@ -19,7 +19,6 @@ namespace HealthCareCenter.Core.Referrals.Controllers
 
         public ScheduleAppointmentReferralController()
         {
-            AppointmentRepository.Load();
         }
 
         public ScheduleAppointmentReferralController(IVacationRequestService vacationRequestService, ITermsService termsService, IReferralsService referralsService)
@@ -27,7 +26,6 @@ namespace HealthCareCenter.Core.Referrals.Controllers
             _vacationRequestService = vacationRequestService;
             _termsService = termsService;
             _referralsService = referralsService;
-            AppointmentRepository.Load();
         }
 
         public List<string> GetAvailableTerms(int doctorID, DateTime when)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -20,6 +20,8 @@ using HealthCareCenter.Core.Referrals.Services;
 using HealthCareCenter.Core.Referrals.Repositories;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.Core.Patients;
+using HealthCareCenter.Core.Appointments.Repository;
+using HealthCareCenter.Core.Appointments.Services;
 
 namespace HealthCareCenter
 {
@@ -105,9 +107,19 @@ namespace HealthCareCenter
         {
             if (user.GetType() == typeof(Doctor))
             {
-                DoctorWindowViewModel doctorWindowService = new DoctorWindowViewModel((Doctor)user,
-                    new ReferralsService(new ReferralRepository()),
+                DoctorWindowViewModel doctorWindowService = new DoctorWindowViewModel(
+                    (Doctor)user,
+                    new ReferralsService(
+                        new ReferralRepository(),
+                        new AppointmentRepository()), 
                     new ReferralRepository(),
+                    new AppointmentRepository(),
+                    new AppointmentService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new AppointmentChangeRequestService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository())),
                     new RoomService(new EquipmentRearrangementService()));
                 Close();
             }
@@ -130,7 +142,15 @@ namespace HealthCareCenter
                 }
 
                 NavigationStore navStore = NavigationStore.GetInstance();
-                navStore.CurrentViewModel = new MyAppointmentsViewModel(navStore, patient);
+                navStore.CurrentViewModel = new MyAppointmentsViewModel(
+                    new AppointmentService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new AppointmentChangeRequestService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository())),
+                    patient,
+                    navStore);
                 GUI.Patient.MainWindow win = new GUI.Patient.MainWindow()
                 {
                     DataContext = new MainViewModel(navStore, patient, new NotificationService(new NotificationRepository()))

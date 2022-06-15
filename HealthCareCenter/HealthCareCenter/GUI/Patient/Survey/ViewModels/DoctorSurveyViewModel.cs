@@ -75,12 +75,14 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
         public ICommand ChooseDoctorFromAppointment { get; }
         public ICommand SubmitReview { get; }
 
-        public DoctorSurveyViewModel(Core.Patients.Patient patient)
+        public DoctorSurveyViewModel(
+            IAppointmentService appointmentService,
+            Core.Patients.Patient patient)
         {
             Patient = patient;
 
             _appointments = new List<AppointmentViewModel>();
-            List<Appointment> finishedAppointment = AppointmentService.GetPatientFinishedAppointments(Patient.HealthRecordID);
+            List<Appointment> finishedAppointment = appointmentService.GetPatientFinishedAppointments(Patient.HealthRecordID);
             foreach (Appointment appointment in finishedAppointment)
             {
                 _appointments.Add(new AppointmentViewModel(appointment));

@@ -11,7 +11,7 @@ namespace HealthCareCenter.GUI.Patient.Profile.Commands
     {
         public override void Execute(object parameter)
         {
-            List<Appointment> appointmentsByKeyword = AppointmentService.GetByAnamnesisKeyword(
+            List<Appointment> appointmentsByKeyword = _appointmentService.GetByAnamnesisKeyword(
                 _viewModel.SearchKeyword, _viewModel.HealthRecord.ID);
 
             List<AppointmentViewModel> searchedAppointmentViewModels = new List<AppointmentViewModel>();
@@ -24,10 +24,14 @@ namespace HealthCareCenter.GUI.Patient.Profile.Commands
         }
 
         private readonly MyHealthRecordViewModel _viewModel;
+        private readonly IAppointmentService _appointmentService;
 
-        public SearchAppointmentsCommand(MyHealthRecordViewModel viewModel)
+        public SearchAppointmentsCommand(
+            MyHealthRecordViewModel viewModel,
+            IAppointmentService appointmentService)
         {
             _viewModel = viewModel;
+            _appointmentService = appointmentService;
         }
     }
 }

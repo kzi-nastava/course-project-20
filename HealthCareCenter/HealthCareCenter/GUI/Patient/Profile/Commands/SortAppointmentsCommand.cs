@@ -15,10 +15,10 @@ namespace HealthCareCenter.GUI.Patient.Profile.Commands
             List<Appointment> appointments = new List<Appointment>();
             foreach (AppointmentViewModel appointmentViewModel in _viewModel.Appointments)
             {
-                appointments.Add(AppointmentService.Get(appointmentViewModel.AppointmentID));
+                appointments.Add(_appointmentService.Get(appointmentViewModel.AppointmentID));
             }
 
-            appointments = AppointmentService.Sort(appointments, _viewModel.ChosenSortCriteria);
+            appointments = _appointmentService.Sort(appointments, _viewModel.ChosenSortCriteria);
 
             List<AppointmentViewModel> sortedAppointmentViewModels = new List<AppointmentViewModel>();
             foreach (Appointment appointment in appointments)
@@ -31,10 +31,14 @@ namespace HealthCareCenter.GUI.Patient.Profile.Commands
         }
 
         private readonly MyHealthRecordViewModel _viewModel;
+        private readonly IAppointmentService _appointmentService;
 
-        public SortAppointmentsCommand(MyHealthRecordViewModel viewModel)
+        public SortAppointmentsCommand(
+            MyHealthRecordViewModel viewModel,
+            IAppointmentService appointmentService)
         {
             _viewModel = viewModel;
+            _appointmentService = appointmentService;
         }
     }
 }

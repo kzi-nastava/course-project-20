@@ -36,14 +36,28 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private IReferralsService _referralsService;
         private IRoomService _roomService;
         private BaseReferralRepository _referralRepository;
+        private readonly BaseAppointmentRepository _appointmentRepository;
+        private readonly IAppointmentService _appointmentService;
 
-        public DoctorWindowViewModel(User signedUser, IReferralsService referralsService, BaseReferralRepository referralRepository, IRoomService roomService)
+        public DoctorWindowViewModel(
+            User signedUser, 
+            IReferralsService referralsService,
+            BaseReferralRepository referralRepository,
+            BaseAppointmentRepository appointmentRepository,
+            IAppointmentService appointmentService,
+            IRoomService roomService)
         {
             _referralsService = referralsService;
             _signedUser = signedUser;
             _referralRepository = referralRepository;
+            _appointmentRepository = appointmentRepository;
+            _appointmentService = appointmentService;
+            window = new DoctorWindow(
+                signedUser, 
+                this, 
+                new NotificationService(new NotificationRepository()),
+                new AppointmentRepository());
             _roomService = roomService;
-            window = new DoctorWindow(signedUser, this, new NotificationService(new NotificationRepository()));
             window.Show();
         }
 
@@ -118,9 +132,9 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         public void FillAppointmentsTable(List<Appointment> appointments)
         {
             window.appointmentsDataTable.Rows.Clear();
-            if (AppointmentRepository.Appointments == null)
+            if (_appointmentRepository.Appointments == null)
             {
-                appointments = AppointmentRepository.Load();
+                appointments = _appointmentRepository.Load();
             }
 
             foreach (Appointment appointment in appointments)
@@ -150,7 +164,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
 
             unparsedDate = day + "/" + month + "/" + year;
             DateTime date = DateTime.ParseExact(unparsedDate, Constants.DateFormat, CultureInfo.InvariantCulture);
-            List<Appointment> appointmentsResult = AppointmentService.GetAppointmentsInTheFollowingDays(date, 3);
+            List<Appointment> appointmentsResult = _appointmentService.GetAppointmentsInTheFollowingDays(date, 3);
             FillAppointmentsTable(appointmentsResult);
         }
 
@@ -174,7 +188,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             Anamnesis anamnesis = new Anamnesis();
             anamnesis.Comment = anamnesisComment;
             anamnesis.ID = selectedAppointmentIndex;
-            AppointmentRepository.Appointments[selectedAppointmentIndex].PatientAnamnesis = anamnesis;
+            _appointmentRepository.Appointments[selectedAppointmentIndex].PatientAnamnesis = anamnesis;
             window.anamnesisLabel.Content = anamnesisComment;
         }
 

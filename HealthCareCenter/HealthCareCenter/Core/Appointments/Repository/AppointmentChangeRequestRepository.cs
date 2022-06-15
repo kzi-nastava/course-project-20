@@ -6,23 +6,9 @@ using System.IO;
 
 namespace HealthCareCenter.Core.Appointments.Repository
 {
-    class AppointmentChangeRequestRepository
+    class AppointmentChangeRequestRepository : BaseAppointmentChangeRequestRepository
     {
-        private static List<AppointmentChangeRequest> _requests;
-        public static List<AppointmentChangeRequest> Requests
-        {
-            get
-            {
-                if (_requests == null)
-                {
-                    Load();
-                }
-                return _requests;
-            }
-        }
-        public static int LargestID { get; set; }
-
-        public static List<AppointmentChangeRequest> Load()
+        public override List<AppointmentChangeRequest> Load()
         {
             try
             {
@@ -42,7 +28,7 @@ namespace HealthCareCenter.Core.Appointments.Repository
             return _requests;
         }
 
-        public static void Save()
+        public override void Save()
         {
             try
             {
@@ -63,7 +49,7 @@ namespace HealthCareCenter.Core.Appointments.Repository
             }
         }
 
-        public static int GetLargestID()
+        public override int GetLargestID()
         {
             int largestID = -1;
             foreach (AppointmentChangeRequest request in Requests)
