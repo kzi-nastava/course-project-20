@@ -17,6 +17,7 @@ namespace HealthCareCenter.GUI.Patient.DoctorSearch
             }
 
             _navigationStore.CurrentViewModel = new AppointmentFormViewModel(
+                new AppointmentTermService(),
                 _viewModel.Patient, 
                 _navigationStore, 
                 null, 

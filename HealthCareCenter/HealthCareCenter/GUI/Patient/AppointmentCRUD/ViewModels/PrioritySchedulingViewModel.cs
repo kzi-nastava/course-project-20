@@ -1,6 +1,6 @@
 ﻿using HealthCareCenter.Core;
-using HealthCareCenter.Core.Appointments.Controllers;
 using HealthCareCenter.Core.Appointments.Models;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.Appointments.Services.Priority;
 using HealthCareCenter.Core.Users;
@@ -14,7 +14,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
 {
     internal class PrioritySchedulingViewModel : ViewModelBase
     {
-        private readonly AppointmentTermController _termController;
+        private readonly IAppointmentTermService _termService;
 
         public Core.Patients.Patient Patient { get; }
 
@@ -111,10 +111,11 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         public ICommand PriorityScheduleAppointment { get; }
 
         public PrioritySchedulingViewModel(
+            IAppointmentTermService termService,
             Core.Patients.Patient patient, 
             NavigationStore navigationStore)
         {
-            _termController = new AppointmentTermController(new AppointmentTermService());
+            _termService = termService;
 
             Patient = patient;
 
@@ -131,14 +132,27 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
 
             ChosenDate = DateTime.Now.Date;
 
-            AllPossibleTerms = _termController.GetDailyTermsFromRange(Constants.StartWorkTime, 0, Constants.EndWorkTime, 0);
+            AllPossibleTerms = _termService.GetDailyTermsFromRange(Constants.StartWorkTime, 0, Constants.EndWorkTime, 0);
 
             StartRange = AllPossibleTerms[0];
             EndRange = AllPossibleTerms[^1];
 
             PriorityScheduleAppointment = new PriorityScheduleAppointmentCommand(
                 this,
-                navigationStore);
+                navigationStore,
+                new AppointmentPrioritySearchService(
+                    new PriorityAppointmentFinder(
+                        new AppointmentTermService(),
+                        new AppointmentRepository()),
+                    new SimilarToPriorityAppointmentsFinder(
+                        new AppointmentRepository()),
+                    new AppointmentTermService()),
+                new AppointmentService(
+                    new AppointmentRepository(),
+                    new AppointmentChangeRequestRepository(),
+                    new AppointmentChangeRequestService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository())));
         }
     }
 }

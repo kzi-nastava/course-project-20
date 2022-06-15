@@ -10,6 +10,9 @@ namespace HealthCareCenter.Core.Rooms.Services
 {
     internal class HospitalRoomService
     {
+        // change to parameterized constructor when refactoring starts
+        private static readonly BaseAppointmentRepository _appointmentRepository = new AppointmentRepository();
+
         /// <summary>
         /// Return loaded hospital rooms from list.
         /// </summary>
@@ -185,7 +188,7 @@ namespace HealthCareCenter.Core.Rooms.Services
                 }
 
                 hospitalRoomID = hospitalRoom.ID;
-                foreach (Appointment appointment in AppointmentRepository.Appointments)
+                foreach (Appointment appointment in _appointmentRepository.Appointments)
                 {
                     if (hospitalRoom.AppointmentIDs.Contains(appointment.ID) && appointment.ScheduledDate.CompareTo(scheduledDate) == 0)
                     {
@@ -266,7 +269,7 @@ namespace HealthCareCenter.Core.Rooms.Services
 
         public static bool IsOccupied(int id, DateTime time)
         {
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            foreach (Appointment appointment in _appointmentRepository.Appointments)
             {
                 if (appointment.HospitalRoomID != id)
                 {

@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Core;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.GUI.Patient.SharedCommands;
@@ -20,13 +21,13 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
             MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure?", "Schedule appointment?", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                if (AppointmentService.ShouldSendToSecretary(_viewModel.ChosenAppointment.AppointmentDate))
+                if (_appointmentService.ShouldSendToSecretary(_viewModel.ChosenAppointment.AppointmentDate))
                 {
                     _ = MessageBox.Show("Since there are less than 2 days until this appointment starts, a request will be sent to the secretary",
                         "My App", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
-                bool passed = AppointmentService.Cancel(
+                bool passed = _appointmentService.Cancel(
                     _viewModel.ChosenAppointment.AppointmentID, _viewModel.Patient.ID, _viewModel.ChosenAppointment.AppointmentDate);
 
                 if (!passed)
@@ -42,17 +43,30 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
                     return;
                 }
 
-                _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _viewModel.Patient);
+                _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(
+                    new AppointmentService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new AppointmentChangeRequestService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository())),
+                    _viewModel.Patient,
+                    _navigationStore);
             }
         }
 
         private readonly MyAppointmentsViewModel _viewModel;
         private readonly NavigationStore _navigationStore;
+        private readonly IAppointmentService _appointmentService;
 
-        public CancelAppointmentCommand(MyAppointmentsViewModel viewModel, NavigationStore navigationStore)
+        public CancelAppointmentCommand(
+            MyAppointmentsViewModel viewModel,
+            NavigationStore navigationStore,
+            IAppointmentService appointmentService)
         {
             _viewModel = viewModel;
             _navigationStore = navigationStore;
+            _appointmentService = appointmentService;
         }
     }
 }

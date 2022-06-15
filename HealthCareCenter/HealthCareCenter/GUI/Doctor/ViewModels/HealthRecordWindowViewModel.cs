@@ -24,13 +24,19 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private User signedUser;
         private int healthRecordIndex;
         private Medicine chosenMedicine;
+        private readonly BaseAppointmentRepository _appointmentRepository;
 
         private HealthRecord selectedPatientsHealthRecord;
-        public HealthRecordWindowViewModel(DoctorWindowViewModel service, User _signedUser, DoctorWindow _window)
+        public HealthRecordWindowViewModel(
+            DoctorWindowViewModel service, 
+            User _signedUser, 
+            DoctorWindow _window,
+            BaseAppointmentRepository appointmentRepository)
         {
             window = _window;
             signedUser = _signedUser;
             windowService = service;
+            _appointmentRepository = appointmentRepository;
         }
 
         public void UpdateHealthRecord()
@@ -130,14 +136,14 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             healthRecordID = healthRecord.ID.ToString();
             height = healthRecord.Height.ToString();
             weight = healthRecord.Weight.ToString();
-            if (AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis == null)
+            if (_appointmentRepository.Appointments[appointmentIndex].PatientAnamnesis == null)
             {
                 anamnesis = "No anamnesis";
                 window.createAPrescription.IsEnabled = false;
             }
             else
             {
-                anamnesis = AppointmentRepository.Appointments[appointmentIndex].PatientAnamnesis.Comment;
+                anamnesis = _appointmentRepository.Appointments[appointmentIndex].PatientAnamnesis.Comment;
                 window.createAPrescription.IsEnabled = true;
             }
             window.FillHealthRecordData(healthRecordID, height, weight, alergens, previousDiseases, anamnesis);

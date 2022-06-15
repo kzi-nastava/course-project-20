@@ -10,6 +10,12 @@ namespace HealthCareCenter.Core.Appointments.Services.Priority
     class SimilarToPriorityAppointmentsFinder : ISimilarToPriorityAppointmentsFinder
     {
         // create attributes for AppointmentRepository and HospitalRoomService
+        private readonly BaseAppointmentRepository _appointmentRepository;
+
+        public SimilarToPriorityAppointmentsFinder(BaseAppointmentRepository appointmentRepository)
+        {
+            _appointmentRepository = appointmentRepository;
+        }
 
         public List<Appointment> AppointmentsSimilarToPrioritySearch(int doctorID, int healthRecordID, DateTime finalScheduleDate, List<AppointmentTerm> possibleTerms)
         {
@@ -21,7 +27,7 @@ namespace HealthCareCenter.Core.Appointments.Services.Priority
                 foreach (AppointmentTerm term in possibleTerms)
                 {
                     bool isAvailable = true;
-                    foreach (Appointment appointment in AppointmentRepository.Appointments)
+                    foreach (Appointment appointment in _appointmentRepository.Appointments)
                     {
                         if (doctorID == appointment.DoctorID &&
                             term.Hours == appointment.ScheduledDate.Hour &&
@@ -44,14 +50,9 @@ namespace HealthCareCenter.Core.Appointments.Services.Priority
                             continue;
                         }
 
-                        if (AppointmentRepository.Appointments == null)
-                        {
-                            AppointmentRepository.Load();
-                        }
-
                         Appointment possibleAppointment = new Appointment()
                         {
-                            ID = AppointmentRepository.GetLargestID() + 1,
+                            ID = _appointmentRepository.GetLargestID() + 1,
                             Type = AppointmentType.Checkup,
                             ScheduledDate = scheduleDate,
                             CreatedDate = DateTime.Now,

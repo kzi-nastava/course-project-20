@@ -12,11 +12,15 @@ namespace HealthCareCenter.Core.Appointments.Services.Priority
     class PriorityAppointmentFinder : IPriorityAppointmentFinder
     {
         // make attributes for IHospitalRoomService and BaseAppointmentRepository
+        private readonly BaseAppointmentRepository _appointmentRepository;
         private readonly IAppointmentTermService _termService;
 
-        public PriorityAppointmentFinder(IAppointmentTermService termService)
+        public PriorityAppointmentFinder(
+            IAppointmentTermService termService,
+            BaseAppointmentRepository appointmentRepository)
         {
             _termService = termService;
+            _appointmentRepository = appointmentRepository;
         }
 
         public Appointment BothPrioritiesSearch(int doctorID, int healthRecordID, DateTime finalScheduleDate, AppointmentTerm startRange, AppointmentTerm endRange)
@@ -79,7 +83,7 @@ namespace HealthCareCenter.Core.Appointments.Services.Priority
                 foreach (AppointmentTerm term in possibleTerms)
                 {
                     bool isAvailable = true;
-                    foreach (Appointment appointment in AppointmentRepository.Appointments)
+                    foreach (Appointment appointment in _appointmentRepository.Appointments)
                     {
                         if (doctorID == appointment.DoctorID &&
                             term.Hours == appointment.ScheduledDate.Hour &&
@@ -102,14 +106,9 @@ namespace HealthCareCenter.Core.Appointments.Services.Priority
                             continue;
                         }
 
-                        if (AppointmentRepository.Appointments == null)
-                        {
-                            AppointmentRepository.Load();
-                        }
-
                         Appointment newAppointment = new Appointment()
                         {
-                            ID = AppointmentRepository.GetLargestID() + 1,
+                            ID = _appointmentRepository.GetLargestID() + 1,
                             Type = AppointmentType.Checkup,
                             ScheduledDate = scheduleDate,
                             CreatedDate = DateTime.Now,

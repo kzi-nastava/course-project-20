@@ -9,10 +9,14 @@ using HealthCareCenter.Core.Users;
 
 namespace HealthCareCenter.Core.Patients
 {
-    public static class PatientService
+    public class PatientService
     {
         private const int _creationTrollLimit = 100;
         private const int _modificationTrollLimit = 100;
+
+        // change to parametarized constructor when PatientService refactoring starts
+        private static readonly BaseAppointmentRepository _appointmentRepository = new AppointmentRepository();
+        private static readonly BaseAppointmentChangeRequestRepository _changeRequestRepository = new AppointmentChangeRequestRepository();
 
         public static Patient Get(int id)
         {
@@ -168,7 +172,7 @@ namespace HealthCareCenter.Core.Patients
         public static bool CheckCreationTroll(Patient possibleTroll)
         {
             int creationCount = 0;
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            foreach (Appointment appointment in _appointmentRepository.Appointments)
             {
                 if (appointment.HealthRecordID == possibleTroll.HealthRecordID)
                 {
@@ -201,7 +205,7 @@ namespace HealthCareCenter.Core.Patients
         public static bool CheckModificationTroll(Patient possibleTroll)
         {
             int modificationCount = 0;
-            foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
+            foreach (AppointmentChangeRequest changeRequest in _changeRequestRepository.Requests)
             {
                 if (changeRequest.PatientID == possibleTroll.ID)
                 {

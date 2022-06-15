@@ -1,5 +1,6 @@
 ﻿using HealthCareCenter.Core;
 using HealthCareCenter.Core.Appointments.Models;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.Appointments.Urgent;
 using HealthCareCenter.Core.Appointments.Urgent.Controllers;
@@ -36,7 +37,18 @@ namespace HealthCareCenter.Secretary
             _patient = patient;
             _type = type;
             _info = new PostponableAppointmentsDTO(info);
-            BaseUrgentAppointmentService service = new UrgentAppointmentService(new TermsService(), new NotificationService(new NotificationRepository())) { OccupiedInfo = _info };
+            BaseUrgentAppointmentService service = new UrgentAppointmentService(
+                new TermsService(
+                    new AppointmentRepository()),
+                new NotificationService(
+                    new NotificationRepository()),
+                new AppointmentRepository(),
+                new AppointmentService(
+                    new AppointmentRepository(),
+                    new AppointmentChangeRequestRepository(),
+                    new AppointmentChangeRequestService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository()))) { OccupiedInfo = _info };
             _controller = new OccupiedAppointmentsController(service);
 
             InitializeComponent();

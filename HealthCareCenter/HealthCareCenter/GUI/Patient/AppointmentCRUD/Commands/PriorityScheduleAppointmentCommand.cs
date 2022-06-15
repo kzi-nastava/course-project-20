@@ -1,6 +1,6 @@
 ﻿using HealthCareCenter.Core;
-using HealthCareCenter.Core.Appointments.Controllers;
 using HealthCareCenter.Core.Appointments.Models;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.Appointments.Services.Priority;
 using HealthCareCenter.Core.Rooms.Services;
@@ -20,14 +20,22 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
             _ = MessageBox.Show("Couldn't find appointments by priority, showing 3 closest to priority",
                     "My App", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            List<Appointment> similarToPriority = _prioritySearchController.GetAppointmentsSimilarToPriorites(
+            List<Appointment> similarToPriority = _prioritySearchService.GetAppointmentsSimilarToPriorites(
                 _viewModel.IsDoctorPriority, _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.HealthRecordID,
                 _viewModel.ChosenDate, _viewModel.StartRange, _viewModel.EndRange);
 
             if (similarToPriority.Count == 0)
             {
                 _ = MessageBox.Show("Couldn't find appointments similar to priority", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
-                _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _viewModel.Patient);
+                _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(
+                    new AppointmentService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new AppointmentChangeRequestService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository())),
+                    _viewModel.Patient,
+                    _navigationStore);
                 return;
             }
 
@@ -60,7 +68,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
                 return;
             }
 
-            Appointment newAppointment = _prioritySearchController.GetPriorityAppointment(
+            Appointment newAppointment = _prioritySearchService.GetPriorityAppointment(
                 _viewModel.IsDoctorPriority, Convert.ToInt32(_viewModel.ChosenDoctor.DoctorID), _viewModel.Patient.HealthRecordID,
                 _viewModel.ChosenDate, _viewModel.StartRange, _viewModel.EndRange);
 
@@ -76,7 +84,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
             MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure?", "Schedule appointment?", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                bool passed = AppointmentService.Schedule(newAppointment, true);
+                bool passed = _appointmentService.Schedule(newAppointment, true);
                 if (!passed)
                 {
                     _ = MessageBox.Show("Trolling limit reached! This account will be blocked", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -89,7 +97,15 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
 
                     return;
                 }
-                _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _viewModel.Patient);
+                _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(
+                    new AppointmentService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new AppointmentChangeRequestService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository())),
+                    _viewModel.Patient,
+                    _navigationStore);
             }
         }
 
@@ -107,14 +123,22 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
             if (hospitalRoomID == -1)
             {
                 MessageBox.Show("No available rooms", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
-                _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _viewModel.Patient);
+                _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(
+                    new AppointmentService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new AppointmentChangeRequestService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository())),
+                    _viewModel.Patient,
+                    _navigationStore);
                 return;
             }
 
             MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure?", "Schedule appointment?", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                bool passed = AppointmentService.Schedule(
+                bool passed = _appointmentService.Schedule(
                     scheduleDate, doctorID, _viewModel.Patient.HealthRecordID, hospitalRoomID);
                 if (!passed)
                 {
@@ -128,7 +152,15 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
 
                     return;
                 }
-                _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _viewModel.Patient);
+                _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(
+                    new AppointmentService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new AppointmentChangeRequestService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository())),
+                    _viewModel.Patient,
+                    _navigationStore);
             }
         }
 
@@ -147,20 +179,19 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
 
         private readonly PrioritySchedulingViewModel _viewModel;
         private readonly NavigationStore _navigationStore;
-        private readonly AppointmentPrioritySearchController _prioritySearchController;
+        private readonly IAppointmentPrioritySearchService _prioritySearchService;
+        private readonly IAppointmentService _appointmentService;
 
         public PriorityScheduleAppointmentCommand(
             PrioritySchedulingViewModel viewModel, 
-            NavigationStore navigationStore)
+            NavigationStore navigationStore,
+            IAppointmentPrioritySearchService prioritySearchService,
+            IAppointmentService appointmentService)
         {
             _viewModel = viewModel;
             _navigationStore = navigationStore;
-            _prioritySearchController = new AppointmentPrioritySearchController(
-                new AppointmentPrioritySearchService(
-                    new PriorityAppointmentFinder(new AppointmentTermService()),
-                    new SimilarToPriorityAppointmentsFinder(),
-                    new AppointmentTermService()));
-
+            _prioritySearchService = prioritySearchService;
+            _appointmentService = appointmentService;
         }
     }
 }

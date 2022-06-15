@@ -1,5 +1,6 @@
 ﻿using HealthCareCenter.Core;
 using HealthCareCenter.Core.Appointments.Models;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands;
 using HealthCareCenter.GUI.Patient.SharedCommands;
@@ -32,12 +33,15 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         public ICommand CancelAppointment { get; }
         public ICommand PriorityScheduling { get; }
 
-        public MyAppointmentsViewModel(NavigationStore navigationStore, Core.Patients.Patient patient)
+        public MyAppointmentsViewModel(
+            IAppointmentService appointmentService,
+            Core.Patients.Patient patient,
+            NavigationStore navigationStore)
         {
             Patient = patient;
 
             _appointments = new List<AppointmentViewModel>();
-            List<Appointment> unfinishedAppointments = AppointmentService.GetPatientUnfinishedAppointments(patient.HealthRecordID);
+            List<Appointment> unfinishedAppointments = appointmentService.GetPatientUnfinishedAppointments(patient.HealthRecordID);
             foreach (Appointment appointment in unfinishedAppointments)
             {
                 _appointments.Add(new AppointmentViewModel(appointment));
@@ -45,7 +49,15 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
 
             CreateAppointment = new ShowAppointmentFormCommand(this, navigationStore, false);
             ModifyAppointment = new ShowAppointmentFormCommand(this, navigationStore, true);
-            CancelAppointment = new CancelAppointmentCommand(this, navigationStore);
+            CancelAppointment = new CancelAppointmentCommand(
+                this, 
+                navigationStore,
+                new AppointmentService(
+                    new AppointmentRepository(),
+                    new AppointmentChangeRequestRepository(),
+                    new AppointmentChangeRequestService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository())));
             PriorityScheduling = new NavigateCommand(navigationStore, ViewType.PriorityScheduling, patient);
         }
     }

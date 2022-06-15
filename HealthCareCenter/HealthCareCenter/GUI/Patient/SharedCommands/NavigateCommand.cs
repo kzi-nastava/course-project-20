@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Core;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.GUI.Patient.DoctorSearch;
@@ -15,19 +16,44 @@ namespace HealthCareCenter.GUI.Patient.SharedCommands
             switch (_viewType)
             {
                 case ViewType.MyAppointments:
-                    _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _patient);
+                    _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(
+                        new AppointmentService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new AppointmentChangeRequestService(
+                                new AppointmentRepository(),
+                                new AppointmentChangeRequestRepository())),
+                        _patient, 
+                        _navigationStore);
                     break;
                 case ViewType.PriorityScheduling:
-                    _navigationStore.CurrentViewModel = new PrioritySchedulingViewModel(_patient, _navigationStore);
+                    _navigationStore.CurrentViewModel = new PrioritySchedulingViewModel(
+                        new AppointmentTermService(),
+                        _patient, 
+                        _navigationStore);
                     break;
                 case ViewType.MyHealthRecord:
-                    _navigationStore.CurrentViewModel = new MyHealthRecordViewModel(_patient);
+                    _navigationStore.CurrentViewModel = new MyHealthRecordViewModel(
+                        new AppointmentService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new AppointmentChangeRequestService(
+                                new AppointmentRepository(),
+                                new AppointmentChangeRequestRepository())),
+                        _patient);
                     break;
                 case ViewType.MyPrescriptions:
                     _navigationStore.CurrentViewModel = new MyPrescriptionsViewModel(_navigationStore, _patient);
                     break;
                 case ViewType.DoctorSurvey:
-                    _navigationStore.CurrentViewModel = new DoctorSurveyViewModel(_patient);
+                    _navigationStore.CurrentViewModel = new DoctorSurveyViewModel(
+                        new AppointmentService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new AppointmentChangeRequestService(
+                                new AppointmentRepository(),
+                                new AppointmentChangeRequestRepository())),
+                        _patient);
                     break;
                 case ViewType.HealthCenterSurvey:
                     _navigationStore.CurrentViewModel = new HealthCenterSurveyViewModel(_patient);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using HealthCareCenter.Core;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Patients.Controllers;
@@ -105,7 +106,11 @@ namespace HealthCareCenter.Secretary
 
         private void ViewReferralsButton_Click(object sender, RoutedEventArgs e)
         {
-            PatientReferralsWindow window = new PatientReferralsWindow(_patient, new ReferralsService(new ReferralRepository()));
+            PatientReferralsWindow window = new PatientReferralsWindow(
+                _patient, 
+                new ReferralsService(
+                    new ReferralRepository(),
+                    new AppointmentRepository()));
             window.ShowDialog();
         }
 

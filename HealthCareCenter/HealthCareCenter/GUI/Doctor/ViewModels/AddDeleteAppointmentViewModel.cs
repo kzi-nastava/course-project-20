@@ -21,11 +21,19 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private DoctorWindow previousWindow;
         private DoctorWindowViewModel previousService;
         private int selectedAppointmentIndex;
-        public AddDeleteAppointmentViewModel(Core.Users.Models.Doctor _signedUser, DoctorWindow scheduleWindow, bool add, DoctorWindowViewModel service, int rowIndex = -1)
+        private readonly BaseAppointmentRepository _appointmentRepository;
+
+        public AddDeleteAppointmentViewModel(
+            Core.Users.Models.Doctor _signedUser,
+            DoctorWindow scheduleWindow,
+            bool add,
+            DoctorWindowViewModel service,
+            BaseAppointmentRepository appointmentRepository,
+            int rowIndex = -1)
         {
             previousService = service;
             previousWindow = scheduleWindow;
-            window = new AddAlterAppointmentWindow(this);
+            window = new AddAlterAppointmentWindow(this, new AppointmentRepository());
             signedUser = _signedUser;
             FillPatientsTable();
             FillDateTimeComboBoxes();
@@ -37,12 +45,14 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 window.alterAppointment.Visibility = Visibility.Visible;
                 CommitAlteringChanges(rowIndex);
             }
+            _appointmentRepository = appointmentRepository;
+
             window.Show();
         }
         public void CommitAlteringChanges(int rowIndex)
         {
             selectedAppointmentIndex = rowIndex;
-            Appointment appointment = AppointmentRepository.Appointments[rowIndex];
+            Appointment appointment = _appointmentRepository.Appointments[rowIndex];
             ParseAppointmentData(appointment);
         }
 
@@ -58,7 +68,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             if (isBeingCreated)
                 appointment = new Appointment();
             else
-                appointment = AppointmentRepository.Appointments[selectedAppointmentIndex];
+                appointment = _appointmentRepository.Appointments[selectedAppointmentIndex];
 
             id = GetRowItemID(window.patientsDataGrid, "Id");
             if (id == -1) return false;
@@ -100,15 +110,15 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             if (isBeingCreated)
             {
                 appointment.ID = ++AppointmentRepository.LargestID;
-                AppointmentRepository.Appointments.Add(appointment);
+                _appointmentRepository.Appointments.Add(appointment);
             }
-            UpdateAppointmentsTable(AppointmentRepository.Appointments);
+            UpdateAppointmentsTable(_appointmentRepository.Appointments);
             return true;
         }
 
         public bool TimeIsAvailable(Appointment appointment, DateTime displayedDate)
         {
-            foreach (Appointment appointments in AppointmentRepository.Appointments)
+            foreach (Appointment appointments in _appointmentRepository.Appointments)
             {
                 if (appointments.ID == appointment.ID)
                 {

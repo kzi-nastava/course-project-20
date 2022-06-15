@@ -10,38 +10,41 @@ namespace HealthCareCenter.Core.Appointments.Services
 {
     public class AppointmentChangeRequestService : IAppointmentChangeRequestService
     {
-        public static void DeleteAppointment(AppointmentChangeRequest request)
-        {
-            if (AppointmentRepository.Appointments == null)
-            {
-                return;
-            }
+        private readonly BaseAppointmentRepository _appointmentRepository;
+        private readonly BaseAppointmentChangeRequestRepository _changeRequestRepository;
 
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
+        public AppointmentChangeRequestService(
+            BaseAppointmentRepository appointmentRepository, 
+            BaseAppointmentChangeRequestRepository changeRequestRepository)
+        {
+            _appointmentRepository = appointmentRepository;
+            _changeRequestRepository = changeRequestRepository;
+        }
+
+        public void DeleteAppointment(AppointmentChangeRequest request)
+        {
+            foreach (Appointment appointment in _appointmentRepository.Appointments)
             {
                 if (appointment.ID == request.AppointmentID)
                 {
                     HospitalRoomService.Get(appointment.HospitalRoomID).AppointmentIDs.Remove(appointment.ID);
-                    AppointmentRepository.Appointments.Remove(appointment);
+                    _appointmentRepository.Appointments.Remove(appointment);
+                    _appointmentRepository.Save();
                     break;
                 }
             }
         }
 
-        public static void EditAppointment(AppointmentChangeRequest request)
+        public void EditAppointment(AppointmentChangeRequest request)
         {
-            if (AppointmentRepository.Appointments == null)
-            {
-                return;
-            }
-
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            foreach (Appointment appointment in _appointmentRepository.Appointments)
             {
                 if (appointment.ID == request.AppointmentID)
                 {
                     appointment.ScheduledDate = request.NewDate;
                     appointment.Type = request.NewAppointmentType;
                     appointment.DoctorID = request.NewDoctorID;
+                    _appointmentRepository.Save();
                     break;
                 }
             }
@@ -49,7 +52,7 @@ namespace HealthCareCenter.Core.Appointments.Services
 
         public void Refresh(List<DeleteRequestForDisplay> deleteRequests, List<EditRequestForDisplay> editRequests, Patient patient)
         {
-            foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
+            foreach (AppointmentChangeRequest request in _changeRequestRepository.Requests)
             {
                 if (request.State != RequestState.Waiting || request.PatientID != patient.ID)
                 {
@@ -70,7 +73,7 @@ namespace HealthCareCenter.Core.Appointments.Services
         {
             EditRequestForDisplay editRequest = new EditRequestForDisplay(request.ID, request.DateSent);
 
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            foreach (Appointment appointment in _appointmentRepository.Appointments)
             {
                 if (appointment.ID != request.AppointmentID)
                 {
@@ -115,7 +118,7 @@ namespace HealthCareCenter.Core.Appointments.Services
         {
             DeleteRequestForDisplay deleteRequest = new DeleteRequestForDisplay(request.ID, request.DateSent);
 
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            foreach (Appointment appointment in _appointmentRepository.Appointments)
             {
                 if (appointment.ID != request.AppointmentID)
                 {
@@ -144,7 +147,7 @@ namespace HealthCareCenter.Core.Appointments.Services
         public void RejectEditRequest(int requestID)
         {
             Get(requestID).State = RequestState.Denied;
-            AppointmentChangeRequestRepository.Save();
+            _changeRequestRepository.Save();
         }
 
         public void AcceptEditRequest(int requestID)
@@ -153,14 +156,14 @@ namespace HealthCareCenter.Core.Appointments.Services
             request.State = RequestState.Approved;
             EditAppointment(request);
 
-            AppointmentRepository.Save();
-            AppointmentChangeRequestRepository.Save();
+            _appointmentRepository.Save();
+            _changeRequestRepository.Save();
         }
 
         public void RejectDeleteRequest(int requestID)
         {
             Get(requestID).State = RequestState.Denied;
-            AppointmentChangeRequestRepository.Save();
+            _changeRequestRepository.Save();
         }
 
         public void AcceptDeleteRequest(int requestID)
@@ -169,13 +172,13 @@ namespace HealthCareCenter.Core.Appointments.Services
             request.State = RequestState.Approved;
             DeleteAppointment(request);
 
-            AppointmentRepository.Save();
-            AppointmentChangeRequestRepository.Save();
+            _appointmentRepository.Save();
+            _changeRequestRepository.Save();
         }
 
         private AppointmentChangeRequest Get(int requestID)
         {
-            foreach (AppointmentChangeRequest request in AppointmentChangeRequestRepository.Requests)
+            foreach (AppointmentChangeRequest request in _changeRequestRepository.Requests)
             {
                 if (request.ID == requestID)
                 {

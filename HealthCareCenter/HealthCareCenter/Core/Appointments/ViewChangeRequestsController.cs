@@ -13,8 +13,6 @@ namespace HealthCareCenter.Core.Appointments
         public ViewChangeRequestsController(IAppointmentChangeRequestService service)
         {
             _service = service;
-            AppointmentChangeRequestRepository.Load();
-            AppointmentRepository.Load();
         }
 
         public void Refresh(List<DeleteRequestForDisplay> deleteRequests, List<EditRequestForDisplay> editRequests, Patient patient)

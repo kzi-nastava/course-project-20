@@ -9,17 +9,25 @@ using System.Collections.Generic;
 
 namespace HealthCareCenter.Core.Appointments.Services
 {
-    public static class AppointmentService
+    public class AppointmentService : IAppointmentService
     {
+        private readonly BaseAppointmentRepository _appointmentRepository;
+        private readonly BaseAppointmentChangeRequestRepository _changeRequestRepository;
+        private readonly IAppointmentChangeRequestService _changeRequestService;
 
-        public static Appointment Get(OccupiedAppointment appointmentDisplay)
+        public AppointmentService(
+            BaseAppointmentRepository appointmentRepository,
+            BaseAppointmentChangeRequestRepository changeRequestRepository,
+            IAppointmentChangeRequestService changeRequestService)
         {
-            if (AppointmentRepository.Appointments == null)
-            {
-                AppointmentRepository.Load();
-            }
+            _appointmentRepository = appointmentRepository;
+            _changeRequestRepository = changeRequestRepository;
+            _changeRequestService = changeRequestService;
+        }
 
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
+        public Appointment Get(OccupiedAppointment appointmentDisplay)
+        {
+            foreach (Appointment appointment in _appointmentRepository.Appointments)
             {
                 if (appointment.ID == appointmentDisplay.ID)
                 {
@@ -29,15 +37,10 @@ namespace HealthCareCenter.Core.Appointments.Services
             return null;
         }
 
-        public static List<Appointment> GetPatientUnfinishedAppointments(int patientHealthRecordID)
+        public List<Appointment> GetPatientUnfinishedAppointments(int patientHealthRecordID)
         {
-            if (AppointmentRepository.Appointments == null)
-            {
-                AppointmentRepository.Load();
-            }
-
             List<Appointment> unfinishedAppointments = new List<Appointment>();
-            foreach (Appointment potentialAppointment in AppointmentRepository.Appointments)
+            foreach (Appointment potentialAppointment in _appointmentRepository.Appointments)
             {
                 if (potentialAppointment.HealthRecordID == patientHealthRecordID)
                 {
@@ -51,15 +54,10 @@ namespace HealthCareCenter.Core.Appointments.Services
             return unfinishedAppointments;
         }
 
-        public static List<Appointment> GetPatientFinishedAppointments(int patientHealthRecordID)
+        public List<Appointment> GetPatientFinishedAppointments(int patientHealthRecordID)
         {
-            if (AppointmentRepository.Appointments == null)
-            {
-                AppointmentRepository.Load();
-            }
-
             List<Appointment> finishedAppointments = new List<Appointment>();
-            foreach (Appointment potentialAppointment in AppointmentRepository.Appointments)
+            foreach (Appointment potentialAppointment in _appointmentRepository.Appointments)
             {
                 if (potentialAppointment.HealthRecordID == patientHealthRecordID)
                 {
@@ -73,15 +71,15 @@ namespace HealthCareCenter.Core.Appointments.Services
             return finishedAppointments;
         }
 
-        public static bool Schedule(Appointment appointment, bool checkTroll)
+        public bool Schedule(Appointment appointment, bool checkTroll)
         {
             if (checkTroll && PatientService.CheckCreationTroll(PatientService.GetPatientByHealthRecordID(appointment.HealthRecordID)))
             {
                 return false;
             }
 
-            AppointmentRepository.Appointments.Add(appointment);
-            AppointmentRepository.Save();
+            _appointmentRepository.Appointments.Add(appointment);
+            _appointmentRepository.Save();
 
             HospitalRoomService.Update(appointment.HospitalRoomID, appointment);
             HospitalRoomRepository.Save();
@@ -89,7 +87,7 @@ namespace HealthCareCenter.Core.Appointments.Services
             return true;
         }
 
-        public static bool Schedule(DateTime scheduleDate, int doctorID, int healthRecordID, int hospitalRoomID)
+        public bool Schedule(DateTime scheduleDate, int doctorID, int healthRecordID, int hospitalRoomID)
         {
             if (PatientService.CheckCreationTroll(PatientService.GetPatientByHealthRecordID(healthRecordID)))
             {
@@ -98,7 +96,7 @@ namespace HealthCareCenter.Core.Appointments.Services
 
             Appointment appointment = new Appointment
             {
-                ID = AppointmentRepository.GetLargestID() + 1,
+                ID = _appointmentRepository.GetLargestID() + 1,
                 Type = AppointmentType.Checkup,
                 CreatedDate = DateTime.Now,
                 ScheduledDate = scheduleDate,
@@ -109,8 +107,8 @@ namespace HealthCareCenter.Core.Appointments.Services
                 PatientAnamnesis = null
             };
 
-            AppointmentRepository.Appointments.Add(appointment);
-            AppointmentRepository.Save();
+            _appointmentRepository.Appointments.Add(appointment);
+            _appointmentRepository.Save();
 
             HospitalRoomService.Update(appointment.HospitalRoomID, appointment);
             HospitalRoomRepository.Save();
@@ -118,7 +116,7 @@ namespace HealthCareCenter.Core.Appointments.Services
             return true;
         }
 
-        public static bool Edit(DateTime scheduleDate, DateTime oldScheduleDate, int appointmentID, int doctorID, int patientID, int hospitalRoomID)
+        public bool Edit(DateTime scheduleDate, DateTime oldScheduleDate, int appointmentID, int doctorID, int patientID, int hospitalRoomID)
         {
             if (PatientService.CheckModificationTroll(PatientService.Get(patientID)))
             {
@@ -127,7 +125,7 @@ namespace HealthCareCenter.Core.Appointments.Services
 
             AppointmentChangeRequest newChangeRequest = new AppointmentChangeRequest()
             {
-                ID = AppointmentChangeRequestRepository.GetLargestID() + 1,
+                ID = _appointmentRepository.GetLargestID() + 1,
                 AppointmentID = appointmentID,
                 RequestType = RequestType.MakeChanges,
                 State = RequestState.Waiting,
@@ -139,7 +137,7 @@ namespace HealthCareCenter.Core.Appointments.Services
             };
             if (ShouldSendToSecretary(oldScheduleDate))
             {
-                foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
+                foreach (AppointmentChangeRequest changeRequest in _changeRequestRepository.Requests)
                 {
                     if (changeRequest.AppointmentID == appointmentID)
                     {
@@ -147,30 +145,30 @@ namespace HealthCareCenter.Core.Appointments.Services
                         changeRequest.NewDate = newChangeRequest.NewDate;
                         changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
                         changeRequest.RequestType = newChangeRequest.RequestType;
-                        AppointmentChangeRequestRepository.Save();
+                        _changeRequestRepository.Save();
                         return true;
                     }
                 }
-                AppointmentChangeRequestRepository.Requests.Add(newChangeRequest);
-                AppointmentChangeRequestRepository.Save();
+                _changeRequestRepository.Requests.Add(newChangeRequest);
+                _changeRequestRepository.Save();
                 return true;
             }
             else
             {
                 HospitalRoomService.AddAppointmentToRoom(hospitalRoomID, newChangeRequest.AppointmentID);
-                AppointmentChangeRequestService.EditAppointment(newChangeRequest);
+                _changeRequestService.EditAppointment(newChangeRequest);
             }
 
             return true;
         }
 
-        public static bool ShouldSendToSecretary(DateTime scheduleDate)
+        public bool ShouldSendToSecretary(DateTime scheduleDate)
         {
             TimeSpan timeTillAppointment = scheduleDate.Date.Subtract(DateTime.Now.Date);
             return timeTillAppointment.TotalDays <= 2;
         }
 
-        public static bool Cancel(int appointmentID, int patientID, DateTime appointmentScheduleDate)
+        public bool Cancel(int appointmentID, int patientID, DateTime appointmentScheduleDate)
         {
             if (PatientService.CheckModificationTroll(PatientService.Get(patientID)))
             {
@@ -179,7 +177,7 @@ namespace HealthCareCenter.Core.Appointments.Services
 
             AppointmentChangeRequest newChangeRequest = new AppointmentChangeRequest
             {
-                ID = AppointmentChangeRequestRepository.GetLargestID() + 1,
+                ID = _changeRequestRepository.GetLargestID() + 1,
                 AppointmentID = appointmentID,
                 RequestType = RequestType.Delete,
                 DateSent = DateTime.Now,
@@ -188,7 +186,7 @@ namespace HealthCareCenter.Core.Appointments.Services
 
             if (ShouldSendToSecretary(appointmentScheduleDate))
             {
-                foreach (AppointmentChangeRequest changeRequest in AppointmentChangeRequestRepository.Requests)
+                foreach (AppointmentChangeRequest changeRequest in _changeRequestRepository.Requests)
                 {
                     if (changeRequest.AppointmentID == newChangeRequest.AppointmentID)
                     {
@@ -196,24 +194,24 @@ namespace HealthCareCenter.Core.Appointments.Services
                         changeRequest.NewDate = newChangeRequest.NewDate;
                         changeRequest.NewDoctorID = newChangeRequest.NewDoctorID;
                         changeRequest.RequestType = newChangeRequest.RequestType;
-                        AppointmentChangeRequestRepository.Save();
+                        _changeRequestRepository.Save();
                         return true;
                     }
                 }
-                AppointmentChangeRequestRepository.Requests.Add(newChangeRequest);
-                AppointmentChangeRequestRepository.Save();
+                _changeRequestRepository.Requests.Add(newChangeRequest);
+                _changeRequestRepository.Save();
                 return true;
             }
             else
             {
-                AppointmentChangeRequestService.DeleteAppointment(newChangeRequest);
-                AppointmentRepository.Save();
+                _changeRequestService.DeleteAppointment(newChangeRequest);
+                _changeRequestRepository.Save();
             }
 
             return true;
         }
 
-        public static List<Appointment> GetByAnamnesisKeyword(string searchKeyword, int healthRecordID)
+        public List<Appointment> GetByAnamnesisKeyword(string searchKeyword, int healthRecordID)
         {
             List<Appointment> finishedAppointments = GetPatientFinishedAppointments(healthRecordID);
             if (string.IsNullOrEmpty(searchKeyword))
@@ -234,9 +232,9 @@ namespace HealthCareCenter.Core.Appointments.Services
             return appointmentsByKeyword;
         }
 
-        public static bool IsAvailable(DateTime scheduleDate, int doctorID)
+        public bool IsAvailable(DateTime scheduleDate, int doctorID)
         {
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            foreach (Appointment appointment in _appointmentRepository.Appointments)
             {
                 if (appointment.ScheduledDate.CompareTo(scheduleDate) == 0 && doctorID == appointment.DoctorID)
                 {
@@ -246,7 +244,7 @@ namespace HealthCareCenter.Core.Appointments.Services
             return true;
         }
 
-        public static List<Appointment> Sort(List<Appointment> appointments, string sortCriteria)
+        public List<Appointment> Sort(List<Appointment> appointments, string sortCriteria)
         {
             switch (sortCriteria)
             {
@@ -266,10 +264,10 @@ namespace HealthCareCenter.Core.Appointments.Services
             return appointments;
         }
 
-        public static List<Appointment> GetAppointmentsInTheFollowingDays(DateTime date, int numberOfDays)
+        public List<Appointment> GetAppointmentsInTheFollowingDays(DateTime date, int numberOfDays)
         {
             List<Appointment> appointments = new List<Appointment>();
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            foreach (Appointment appointment in _appointmentRepository.Appointments)
             {
                 TimeSpan timeSpan = appointment.ScheduledDate.Subtract(date);
                 if (timeSpan.TotalDays <= 3 && timeSpan.TotalDays >= 0)
@@ -280,14 +278,9 @@ namespace HealthCareCenter.Core.Appointments.Services
             return appointments;
         }
 
-        public static Appointment Get(int appointmentID)
+        public Appointment Get(int appointmentID)
         {
-            if (AppointmentRepository.Appointments == null)
-            {
-                AppointmentRepository.Load();
-            }
-
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            foreach (Appointment appointment in _appointmentRepository.Appointments)
             {
                 if (appointment.ID == appointmentID)
                 {
