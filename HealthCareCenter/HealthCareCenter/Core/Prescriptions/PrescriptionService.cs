@@ -19,6 +19,9 @@ namespace HealthCareCenter.Core.Prescriptions
         public static List<int> MedicineInstructions { get; set; }
         private static int doctorID;
 
+        // change during solid refactoring
+        private static readonly BaseMedicineInstructionRepository _medicineInstructionRepository = new MedicineInstructionRepository();
+
         public static bool ClearData(bool finishing)
         {
             _times.Clear();
@@ -56,7 +59,7 @@ namespace HealthCareCenter.Core.Prescriptions
             try
             {
                 MedicineInstruction _medicineInstruction = new MedicineInstruction(++MedicineInstructionRepository.LargestID, comment, _times, dailyConsumption, consumptionPeriod, medicineID);
-                MedicineInstructionRepository.MedicineInstructions.Add(_medicineInstruction);
+                _medicineInstructionRepository.MedicineInstructions.Add(_medicineInstruction);
                 MedicineInstructions.Add(_medicineInstruction.ID);
                 return true;
             }

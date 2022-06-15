@@ -2,6 +2,7 @@
 using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Urgent;
 using HealthCareCenter.Core.Patients;
+using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.Core.Rooms.Repositories;
 using HealthCareCenter.Core.Rooms.Services;
 using System;
@@ -14,15 +15,18 @@ namespace HealthCareCenter.Core.Appointments.Services
         private readonly BaseAppointmentRepository _appointmentRepository;
         private readonly BaseAppointmentChangeRequestRepository _changeRequestRepository;
         private readonly IAppointmentChangeRequestService _changeRequestService;
+        private readonly IPatientService _patientService;
 
         public AppointmentService(
             BaseAppointmentRepository appointmentRepository,
             BaseAppointmentChangeRequestRepository changeRequestRepository,
-            IAppointmentChangeRequestService changeRequestService)
+            IAppointmentChangeRequestService changeRequestService,
+            IPatientService patientService)
         {
             _appointmentRepository = appointmentRepository;
             _changeRequestRepository = changeRequestRepository;
             _changeRequestService = changeRequestService;
+            _patientService = patientService;
         }
 
         public Appointment Get(OccupiedAppointment appointmentDisplay)
@@ -73,7 +77,7 @@ namespace HealthCareCenter.Core.Appointments.Services
 
         public bool Schedule(Appointment appointment, bool checkTroll)
         {
-            if (checkTroll && PatientService.CheckCreationTroll(PatientService.GetPatientByHealthRecordID(appointment.HealthRecordID)))
+            if (checkTroll && _patientService.CheckCreationTroll(_patientService.GetPatientByHealthRecordID(appointment.HealthRecordID)))
             {
                 return false;
             }
@@ -89,7 +93,7 @@ namespace HealthCareCenter.Core.Appointments.Services
 
         public bool Schedule(DateTime scheduleDate, int doctorID, int healthRecordID, int hospitalRoomID)
         {
-            if (PatientService.CheckCreationTroll(PatientService.GetPatientByHealthRecordID(healthRecordID)))
+            if (_patientService.CheckCreationTroll(_patientService.GetPatientByHealthRecordID(healthRecordID)))
             {
                 return false;
             }
@@ -118,7 +122,7 @@ namespace HealthCareCenter.Core.Appointments.Services
 
         public bool Edit(DateTime scheduleDate, DateTime oldScheduleDate, int appointmentID, int doctorID, int patientID, int hospitalRoomID)
         {
-            if (PatientService.CheckModificationTroll(PatientService.Get(patientID)))
+            if (_patientService.CheckModificationTroll(_patientService.Get(patientID)))
             {
                 return false;
             }
@@ -170,7 +174,7 @@ namespace HealthCareCenter.Core.Appointments.Services
 
         public bool Cancel(int appointmentID, int patientID, DateTime appointmentScheduleDate)
         {
-            if (PatientService.CheckModificationTroll(PatientService.Get(patientID)))
+            if (_patientService.CheckModificationTroll(_patientService.Get(patientID)))
             {
                 return false;
             }

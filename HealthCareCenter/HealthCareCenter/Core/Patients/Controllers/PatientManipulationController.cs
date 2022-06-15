@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Patients.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,21 +8,27 @@ namespace HealthCareCenter.Core.Patients.Controllers
 {
     public class PatientManipulationController
     {
-        public PatientManipulationController()
+        private readonly IHealthRecordService _healthRecordService;
+        private readonly IPatientService _patientService;
+
+        public PatientManipulationController(
+            IHealthRecordService healthRecordService,
+            IPatientService patientService)
         {
-            HealthRecordRepository.Load();
+            _healthRecordService = healthRecordService;
+            _patientService = patientService;
         }
 
         public List<Patient> GetBlockedPatients()
         {
-            return PatientService.GetBlockedPatients();
+            return _patientService.GetBlockedPatients();
         }
 
         public void Block(Patient patient, List<Patient> blockedPatients)
         {
             if (!patient.IsBlocked)
             {
-                PatientService.Block(patient, blockedPatients);
+                _patientService.Block(patient, blockedPatients);
             }
             else
             {
@@ -33,7 +40,7 @@ namespace HealthCareCenter.Core.Patients.Controllers
         {
             if (patient.IsBlocked)
             {
-                PatientService.Unblock(patient, blockedPatients);
+                _patientService.Unblock(patient, blockedPatients);
             }
             else
             {
@@ -43,17 +50,17 @@ namespace HealthCareCenter.Core.Patients.Controllers
 
         public void UpdateMaxIDsIfNeeded()
         {
-            PatientService.UpdateMaxIDsIfNeeded();
+            _patientService.UpdateMaxIDsIfNeeded();
         }
 
         public void Delete(Patient patient)
         {
-            PatientService.Delete(patient);
+            _patientService.Delete(patient);
         }
 
         public HealthRecord GetRecord(Patient patient)
         {
-            return HealthRecordService.Get(patient);
+            return _healthRecordService.Get(patient);
         }
     }
 }

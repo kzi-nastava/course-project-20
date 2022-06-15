@@ -15,13 +15,13 @@ namespace HealthCareCenter.Core.Referrals.Controllers
     {
         private readonly IVacationRequestService _vacationRequestService;
         private readonly ITermsService _termsService;
-        private readonly IReferralsService _referralsService;
+        private readonly IReferralService _referralsService;
 
         public ScheduleAppointmentReferralController()
         {
         }
 
-        public ScheduleAppointmentReferralController(IVacationRequestService vacationRequestService, ITermsService termsService, IReferralsService referralsService)
+        public ScheduleAppointmentReferralController(IVacationRequestService vacationRequestService, ITermsService termsService, IReferralService referralsService)
         {
             _vacationRequestService = vacationRequestService;
             _termsService = termsService;

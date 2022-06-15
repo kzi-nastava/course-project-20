@@ -1,4 +1,5 @@
-﻿using HealthCareCenter.Core.Medicine.Services;
+﻿using HealthCareCenter.Core.Medicine.Repositories;
+using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Prescriptions;
 using HealthCareCenter.GUI.Patient.Profile.Commands;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
@@ -72,7 +73,10 @@ namespace HealthCareCenter.GUI.Patient.Profile.ViewModels
         public ICommand SearchInstruction { get; }
         public ICommand ShowInstruction { get; }
 
-        public MyPrescriptionsViewModel(NavigationStore navigationStore, Core.Patients.Patient patient)
+        public MyPrescriptionsViewModel(
+            IMedicineInstructionService medicineInstructionService,
+            Core.Patients.Patient patient,
+            NavigationStore navigationStore)
         {
             Patient = patient;
 
@@ -82,15 +86,27 @@ namespace HealthCareCenter.GUI.Patient.Profile.ViewModels
             {
                 foreach (int instructionID in prescription.MedicineInstructionIDs)
                 {
-                    instructions.Add(new MedicineInstructionFromPrescriptionViewModel(
-                        prescription, MedicineInstructionService.GetSingle(instructionID))); ;
+                    instructions.Add(
+                        new MedicineInstructionFromPrescriptionViewModel(
+                            prescription, 
+                            medicineInstructionService.GetSingle(instructionID),
+                            new MedicineService(
+                                new MedicineRepository()))); ;
                 }
             }
             Instructions = instructions;
 
             SetNotificationTime = new SetNotificationTimeCommand(this);
-            SearchInstruction = new SearchInstructionsCommand(this);
-            ShowInstruction = new ShowInstructionCommand(this);
+            SearchInstruction = new SearchInstructionsCommand(
+                this,
+                new MedicineInstructionService(
+                    new MedicineInstructionRepository()),
+                new MedicineService(
+                    new MedicineRepository()));
+            ShowInstruction = new ShowInstructionCommand(
+                this,
+                new MedicineInstructionService(
+                    new MedicineInstructionRepository()));
         }
     }
 }

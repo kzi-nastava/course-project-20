@@ -14,17 +14,27 @@ namespace HealthCareCenter.Core.Notifications.Services
 {
     public class NotificationService : INotificationService
     {
-        private readonly BaseNotificationRepository _repository;
+        private readonly BaseNotificationRepository _notificationRepository;
+        private readonly IHealthRecordService _healthRecordService;
+        private readonly IMedicineInstructionService _medicineInstructionService;
+        private readonly IMedicineService _medicineService;
 
-        public NotificationService(BaseNotificationRepository repository)
+        public NotificationService(
+            BaseNotificationRepository repository,
+            IHealthRecordService healthRecordService,
+            IMedicineInstructionService medicineInstructionService,
+            IMedicineService medicineService)
         {
-            _repository = repository;
+            _notificationRepository = repository;
+            _healthRecordService = healthRecordService;
+            _medicineInstructionService = medicineInstructionService;
+            _medicineService = medicineService;
         }
 
         public List<Notification> GetUnopened(User user)
         {
             List<Notification> notifications = new List<Notification>();
-            foreach (Notification notification in _repository.Notifications)
+            foreach (Notification notification in _notificationRepository.Notifications)
             {
                 if (notification.UserID == user.ID && !notification.Opened)
                 {
@@ -32,16 +42,16 @@ namespace HealthCareCenter.Core.Notifications.Services
                     notifications.Add(notification);
                 }
             }
-            _repository.Save();
+            _notificationRepository.Save();
             return notifications;
         }
 
         public void Send(int userID, string message)
         {
-            _repository.CalculateMaxID();
-            Notification notification = new Notification(++_repository.maxID, message, userID);
-            _repository.Notifications.Add(notification);
-            _repository.Save();
+            _notificationRepository.CalculateMaxID();
+            Notification notification = new Notification(++_notificationRepository.maxID, message, userID);
+            _notificationRepository.Notifications.Add(notification);
+            _notificationRepository.Save();
         }
 
         public Dictionary<int, Dictionary<int, int>> GetNotificationsSentDict(List<Prescription> patientPrescriptions)
@@ -57,7 +67,7 @@ namespace HealthCareCenter.Core.Notifications.Services
                 Dictionary<int, int> notificationsToSend = new Dictionary<int, int>();
                 foreach (int medicineInstructionID in prescription.MedicineInstructionIDs)
                 {
-                    MedicineInstruction instruction = MedicineInstructionService.GetSingle(medicineInstructionID);
+                    MedicineInstruction instruction = _medicineInstructionService.GetSingle(medicineInstructionID);
                     notificationsToSend.Add(instruction.ID, 0);
                     foreach (DateTime takingTime in instruction.ConsumptionTime)
                     {
@@ -81,12 +91,12 @@ namespace HealthCareCenter.Core.Notifications.Services
         public string Send(Appointment postponedAppointment, Appointment newAppointment, Patient patient)
         {
             string notificationToShowNow = null;
-            HealthRecord postponedRecord = HealthRecordService.Get(postponedAppointment);
+            HealthRecord postponedRecord = _healthRecordService.Get(postponedAppointment);
 
-            _repository.CalculateMaxID();
-            Notification postponedPatientNotification = new Notification(++_repository.maxID, $"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedRecord.PatientID);
-            Notification postponedDoctorNotification = new Notification(++_repository.maxID, $"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedAppointment.DoctorID);
-            Notification newDoctorNotification = new Notification(++_repository.maxID, $"A new urgent appointment has been scheduled for you at {newAppointment.ScheduledDate} in room {HospitalRoomService.Get(newAppointment.HospitalRoomID).Name}.", newAppointment.DoctorID);
+            _notificationRepository.CalculateMaxID();
+            Notification postponedPatientNotification = new Notification(++_notificationRepository.maxID, $"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedRecord.PatientID);
+            Notification postponedDoctorNotification = new Notification(++_notificationRepository.maxID, $"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedAppointment.DoctorID);
+            Notification newDoctorNotification = new Notification(++_notificationRepository.maxID, $"A new urgent appointment has been scheduled for you at {newAppointment.ScheduledDate} in room {HospitalRoomService.Get(newAppointment.HospitalRoomID).Name}.", newAppointment.DoctorID);
 
             if (postponedRecord.PatientID == patient.ID)
             {
@@ -94,8 +104,8 @@ namespace HealthCareCenter.Core.Notifications.Services
                 notificationToShowNow = postponedPatientNotification.Message;
             }
 
-            _repository.Notifications.AddRange(new Notification[] { postponedPatientNotification, postponedDoctorNotification, newDoctorNotification });
-            _repository.Save();
+            _notificationRepository.Notifications.AddRange(new Notification[] { postponedPatientNotification, postponedDoctorNotification, newDoctorNotification });
+            _notificationRepository.Save();
             return notificationToShowNow;
         }
 
@@ -106,7 +116,7 @@ namespace HealthCareCenter.Core.Notifications.Services
             {
                 foreach (KeyValuePair<int, int> intructionNotificationTimeIndex in kvp.Value)
                 {
-                    MedicineInstruction instruction = MedicineInstructionService.GetSingle(intructionNotificationTimeIndex.Key);
+                    MedicineInstruction instruction = _medicineInstructionService.GetSingle(intructionNotificationTimeIndex.Key);
                     if (intructionNotificationTimeIndex.Value >= instruction.ConsumptionTime.Count)
                     {
                         continue;
@@ -117,7 +127,7 @@ namespace HealthCareCenter.Core.Notifications.Services
                     int hoursTilConsumption = (int)Math.Round(timePassedTakingMedicine.TotalHours);
                     if (hoursTilConsumption > 0 && hoursTilConsumption <= patient.NotificationReceiveTime)
                     {
-                        string medicineName = MedicineService.GetName(instruction.MedicineID);
+                        string medicineName = _medicineService.GetName(instruction.MedicineID);
                         string notificationInfo = $"Medicine consumption notification! Medicine: {medicineName}, Time to take: {takingTime.TimeOfDay}, Prescription ID: {kvp.Key}";
                         notificationsToSend.Add(notificationInfo);
                         ++kvp.Value[intructionNotificationTimeIndex.Key];

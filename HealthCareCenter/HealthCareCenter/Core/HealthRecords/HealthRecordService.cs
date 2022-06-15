@@ -3,11 +3,18 @@ using HealthCareCenter.Core.Patients;
 
 namespace HealthCareCenter.Core.HealthRecords
 {
-    public static class HealthRecordService
+    public class HealthRecordService : IHealthRecordService
     {
-        public static HealthRecord GetRecordByPatientID(int id)
+        private readonly BaseHealthRecordRepository _healthRecordRepository;
+
+        public HealthRecordService(BaseHealthRecordRepository healthRecordRepository)
         {
-            foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
+            _healthRecordRepository = healthRecordRepository;
+        }
+
+        public HealthRecord GetRecordByPatientID(int id)
+        {
+            foreach (HealthRecord healthRecord in _healthRecordRepository.Records)
             {
                 if (id == healthRecord.PatientID)
                 {
@@ -17,9 +24,9 @@ namespace HealthCareCenter.Core.HealthRecords
             return null;
         }
 
-        public static HealthRecord Get(int id)
+        public HealthRecord Get(int id)
         {
-            foreach (HealthRecord healthRecord in HealthRecordRepository.Records)
+            foreach (HealthRecord healthRecord in _healthRecordRepository.Records)
             {
                 if (id == healthRecord.ID)
                 {
@@ -29,9 +36,9 @@ namespace HealthCareCenter.Core.HealthRecords
             return null;
         }
 
-        public static HealthRecord Get(Patient patient)
+        public HealthRecord Get(Patient patient)
         {
-            foreach (HealthRecord record in HealthRecordRepository.Records)
+            foreach (HealthRecord record in _healthRecordRepository.Records)
             {
                 if (patient.HealthRecordID == record.ID)
                 {
@@ -41,14 +48,9 @@ namespace HealthCareCenter.Core.HealthRecords
             return null;
         }
 
-        public static HealthRecord Get(Appointment appointment)
+        public HealthRecord Get(Appointment appointment)
         {
-            if (HealthRecordRepository.Records == null)
-            {
-                HealthRecordRepository.Load();
-            }
-
-            foreach (HealthRecord record in HealthRecordRepository.Records)
+            foreach (HealthRecord record in _healthRecordRepository.Records)
             {
                 if (appointment.HealthRecordID == record.ID)
                 {
@@ -58,7 +60,7 @@ namespace HealthCareCenter.Core.HealthRecords
             return null;
         }
 
-        public static string CheckAllergens(HealthRecord record)
+        public string CheckAllergens(HealthRecord record)
         {
             string alergens = "";
             if (record.Allergens != null)
@@ -75,7 +77,7 @@ namespace HealthCareCenter.Core.HealthRecords
                 return "none";
             }
         }
-        public static string CheckPreviousDiseases(HealthRecord record)
+        public string CheckPreviousDiseases(HealthRecord record)
         {
             string previousDiseases = "";
             if (record.PreviousDiseases != null)
@@ -93,16 +95,16 @@ namespace HealthCareCenter.Core.HealthRecords
             }
         }
 
-        public static void Update(double height, double weight, string[] previousDiseases, string[] allergens, int recordIndex)
+        public void Update(double height, double weight, string[] previousDiseases, string[] allergens, int recordIndex)
         {
-            HealthRecord healthRecord = HealthRecordRepository.Records[recordIndex];
+            HealthRecord healthRecord = _healthRecordRepository.Records[recordIndex];
             healthRecord.Height = height;
             healthRecord.Weight = weight;
             FillPreviousDiseases(previousDiseases, healthRecord);
             FillAllergens(allergens, healthRecord);
         }
 
-        public static void FillPreviousDiseases(string[] previousDiseases, HealthRecord record)
+        public void FillPreviousDiseases(string[] previousDiseases, HealthRecord record)
         {
             record.PreviousDiseases.Clear();
             foreach (string disease in previousDiseases)
@@ -113,9 +115,10 @@ namespace HealthCareCenter.Core.HealthRecords
                 }
 
                 record.PreviousDiseases.Add(disease);
+                _healthRecordRepository.Save();
             }
         }
-        public static void FillAllergens(string[] allergens, HealthRecord record)
+        public void FillAllergens(string[] allergens, HealthRecord record)
         {
             record.Allergens.Clear();
             foreach (string allergen in allergens)
@@ -126,10 +129,11 @@ namespace HealthCareCenter.Core.HealthRecords
                 }
 
                 record.Allergens.Add(allergen);
+                _healthRecordRepository.Save();
             }
         }
 
-        public static string IsAllergicTo(Medicine.Models.Medicine medicine, HealthRecord record)
+        public string IsAllergicTo(Medicine.Models.Medicine medicine, HealthRecord record)
         {
             foreach (string ingredient in medicine.Ingredients)
                 if (record.Allergens.Contains(ingredient))
@@ -137,19 +141,20 @@ namespace HealthCareCenter.Core.HealthRecords
             return "";
         }
 
-        public static void Delete(Patient patient)
+        public void Delete(Patient patient)
         {
-            foreach (HealthRecord record in HealthRecordRepository.Records)
+            foreach (HealthRecord record in _healthRecordRepository.Records)
             {
                 if (patient.HealthRecordID != record.ID)
                 {
                     continue;
                 }
-                HealthRecordRepository.Records.Remove(record);
-                if (patient.HealthRecordID == HealthRecordRepository.maxID)
+                _healthRecordRepository.Records.Remove(record);
+                if (patient.HealthRecordID == _healthRecordRepository.LargestID)
                 {
-                    HealthRecordRepository.CalculateMaxID();
+                    _healthRecordRepository.CalculateMaxID();
                 }
+                _healthRecordRepository.Save();
                 return;
             }
         }

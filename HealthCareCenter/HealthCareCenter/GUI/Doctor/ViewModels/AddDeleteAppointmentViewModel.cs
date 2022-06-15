@@ -11,6 +11,7 @@ using HealthCareCenter.Core.Users.Models;
 using HealthCareCenter.Core;
 using HealthCareCenter.Core.Users;
 using HealthCareCenter.Core.Patients;
+using HealthCareCenter.Core.Patients.Services;
 
 namespace HealthCareCenter.GUI.Doctor.ViewModels
 {
@@ -22,6 +23,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private DoctorWindowViewModel previousService;
         private int selectedAppointmentIndex;
         private readonly BaseAppointmentRepository _appointmentRepository;
+        private readonly IPatientService _patientService;
 
         public AddDeleteAppointmentViewModel(
             Core.Users.Models.Doctor _signedUser,
@@ -29,6 +31,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             bool add,
             DoctorWindowViewModel service,
             BaseAppointmentRepository appointmentRepository,
+            IPatientService patientService,
             int rowIndex = -1)
         {
             previousService = service;
@@ -46,6 +49,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 CommitAlteringChanges(rowIndex);
             }
             _appointmentRepository = appointmentRepository;
+            _patientService = patientService;
 
             window.Show();
         }
@@ -88,7 +92,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             sucessfull = TimeIsAvailable(appointment, displayedDate);
             if (!sucessfull) return false;
 
-            Core.Patients.Patient patient = PatientService.Get(id);
+            Core.Patients.Patient patient = _patientService.Get(id);
             if (patient == null) return false;
 
             currentDate = DateTime.Today;
@@ -169,7 +173,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 appointmentTypeIndex = 1;
             }
 
-            patientIndex = PatientService.GetIndex(appointment.HealthRecordID);
+            patientIndex = _patientService.GetIndex(appointment.HealthRecordID);
             window.FillAppointmentWithDefaultValues(year, month, day, hour, minute, appointmentTypeIndex, patientIndex, emergency);
 
         }

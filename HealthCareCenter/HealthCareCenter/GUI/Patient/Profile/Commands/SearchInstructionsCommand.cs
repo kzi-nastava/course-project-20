@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Core.Medicine.Models;
+using HealthCareCenter.Core.Medicine.Repositories;
 using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Prescriptions;
 using HealthCareCenter.GUI.Patient.Profile.ViewModels;
@@ -22,8 +23,12 @@ namespace HealthCareCenter.GUI.Patient.Profile.Commands
                 {
                     foreach (int instructionID in prescription.MedicineInstructionIDs)
                     {
-                        instructions.Add(new MedicineInstructionFromPrescriptionViewModel(
-                            prescription, MedicineInstructionService.GetSingle(instructionID))); ;
+                        instructions.Add(
+                            new MedicineInstructionFromPrescriptionViewModel(
+                                prescription,
+                                _medicineInstructionService.GetSingle(instructionID),
+                                new MedicineService(
+                                    new MedicineRepository())));
                     }
                 }
 
@@ -36,12 +41,16 @@ namespace HealthCareCenter.GUI.Patient.Profile.Commands
             {
                 foreach (int instructionID in prescription.MedicineInstructionIDs)
                 {
-                    MedicineInstruction instruction = MedicineInstructionService.GetSingle(instructionID);
-                    if (MedicineService.GetName(instruction.MedicineID).ToLower().Contains(
+                    MedicineInstruction instruction = _medicineInstructionService.GetSingle(instructionID);
+                    if (_medicineService.GetName(instruction.MedicineID).ToLower().Contains(
                         _viewModel.SearchKeyword.Trim().ToLower()))
                     {
-                        instructions.Add(new MedicineInstructionFromPrescriptionViewModel(
-                            prescription, MedicineInstructionService.GetSingle(instructionID)));
+                        instructions.Add(
+                            new MedicineInstructionFromPrescriptionViewModel(
+                                prescription,
+                                _medicineInstructionService.GetSingle(instructionID),
+                                new MedicineService(
+                                    new MedicineRepository())));
                     }
                 }
             }
@@ -50,10 +59,17 @@ namespace HealthCareCenter.GUI.Patient.Profile.Commands
         }
 
         private readonly MyPrescriptionsViewModel _viewModel;
+        private readonly IMedicineInstructionService _medicineInstructionService;
+        private readonly IMedicineService _medicineService;
 
-        public SearchInstructionsCommand(MyPrescriptionsViewModel viewModel)
+        public SearchInstructionsCommand(
+            MyPrescriptionsViewModel viewModel,
+            IMedicineInstructionService medicineInstructionService,
+            IMedicineService medicineService)
         {
             _viewModel = viewModel;
+            _medicineInstructionService = medicineInstructionService;
+            _medicineService = medicineService;
         }
     }
 }

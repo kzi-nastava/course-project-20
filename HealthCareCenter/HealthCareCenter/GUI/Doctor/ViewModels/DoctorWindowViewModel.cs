@@ -22,6 +22,8 @@ using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Notifications.Services;
 using HealthCareCenter.Core.Notifications.Repositories;
 using HealthCareCenter.Core.Rooms;
+using HealthCareCenter.Core.Medicine.Services;
+using HealthCareCenter.Core.Medicine.Repositories;
 
 namespace HealthCareCenter.GUI.Doctor.ViewModels
 {
@@ -33,19 +35,21 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private DoctorWindow window;
         private Referral referral;
         private Medicine chosenMedicine;
-        private IReferralsService _referralsService;
+        private IReferralService _referralsService;
         private IRoomService _roomService;
         private BaseReferralRepository _referralRepository;
         private readonly BaseAppointmentRepository _appointmentRepository;
         private readonly IAppointmentService _appointmentService;
+        private readonly IHealthRecordService _healthRecordService;
 
         public DoctorWindowViewModel(
             User signedUser, 
-            IReferralsService referralsService,
+            IReferralService referralsService,
             BaseReferralRepository referralRepository,
             BaseAppointmentRepository appointmentRepository,
             IAppointmentService appointmentService,
-            IRoomService roomService)
+            IRoomService roomService,
+            IHealthRecordService healthRecordService)
         {
             _referralsService = referralsService;
             _signedUser = signedUser;
@@ -55,9 +59,20 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             window = new DoctorWindow(
                 signedUser, 
                 this, 
-                new NotificationService(new NotificationRepository()),
-                new AppointmentRepository());
+                new NotificationService(
+                    new NotificationRepository(),
+                    new HealthRecordService(
+                        new HealthRecordRepository()),
+                    new MedicineInstructionService(
+                        new MedicineInstructionRepository()),
+                    new MedicineService(
+                        new MedicineRepository())),
+                new AppointmentRepository(),
+                new HealthRecordRepository(),
+                new MedicineRepository(),
+                new MedicineInstructionRepository());
             _roomService = roomService;
+            _healthRecordService = healthRecordService;
             window.Show();
         }
 
@@ -143,7 +158,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 {
                     continue;
                 }
-                HealthRecord patientsHealthRecord = HealthRecordService.Get(appointment.HealthRecordID);
+                HealthRecord patientsHealthRecord = _healthRecordService.Get(appointment.HealthRecordID);
                 if (patientsHealthRecord != null)
                     window.AddAppointmentToAppointmentsTable(appointment, patientsHealthRecord.PatientID);
                 else

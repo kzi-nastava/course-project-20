@@ -17,14 +17,14 @@ namespace HealthCareCenter.Secretary
         private List<PatientReferralForDisplay> _referrals;
 
         private readonly PatientReferralsController _controller;
-        private IReferralsService _service;
+        private IReferralService _service;
 
         public PatientReferralsWindow()
         {
             InitializeComponent();
         }
 
-        public PatientReferralsWindow(Patient patient, IReferralsService service)
+        public PatientReferralsWindow(Patient patient, IReferralService service)
         {
             _patient = patient;
             _service = service;

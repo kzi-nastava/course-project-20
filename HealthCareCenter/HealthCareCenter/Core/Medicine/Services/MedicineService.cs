@@ -5,16 +5,18 @@ using HealthCareCenter.Core.Medicine.Repositories;
 
 namespace HealthCareCenter.Core.Medicine.Services
 {
-    public class MedicineService
+    public class MedicineService : IMedicineService
     {
-        public static string GetName(int ID)
-        {
-            if (MedicineRepository.Medicines == null)
-            {
-                return null;
-            }
+        private readonly BaseMedicineRepository _medicineRepository;
 
-            foreach (Models.Medicine medicine in MedicineRepository.Medicines)
+        public MedicineService(BaseMedicineRepository medicineRepository)
+        {
+            _medicineRepository = medicineRepository;
+        }
+
+        public string GetName(int ID)
+        {
+            foreach (Models.Medicine medicine in _medicineRepository.Medicines)
             {
                 if (medicine.ID == ID)
                 {

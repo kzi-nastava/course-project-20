@@ -1,5 +1,8 @@
 ﻿using HealthCareCenter.Core.Equipment.Services;
+using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Medicine.Controllers;
+using HealthCareCenter.Core.Medicine.Repositories;
+using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Notifications.Repositories;
 using HealthCareCenter.Core.Notifications.Services;
 using HealthCareCenter.Core.Rooms.Services;
@@ -211,7 +214,14 @@ namespace HealthCareCenter
         private void CrudHospitalRoomMenuItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new CrudHospitalRoomWindow(_signedManager,
-                new NotificationService(new NotificationRepository()),
+                new NotificationService(
+                    new NotificationRepository(),
+                    new HealthRecordService(
+                        new HealthRecordRepository()),
+                    new MedicineInstructionService(
+                        new MedicineInstructionRepository()),
+                    new MedicineService(
+                        new MedicineRepository())),
                 new EquipmentRearrangementService(),
                 new RoomService(new EquipmentRearrangementService())));
         }
@@ -220,7 +230,8 @@ namespace HealthCareCenter
         {
             ShowWindow(new HospitalEquipmentReviewWindow(_signedManager,
                 new EquipmentRearrangementService(),
-                new RoomService(new EquipmentRearrangementService())));        }
+                new RoomService(new EquipmentRearrangementService())));
+        }
 
         private void ArrangingEquipmentItemClick(object sender, RoutedEventArgs e)
         {

@@ -1,6 +1,10 @@
 ﻿using HealthCareCenter.Core;
 using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Medicine.Repositories;
+using HealthCareCenter.Core.Medicine.Services;
+using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.GUI.Patient.DoctorSearch;
 using HealthCareCenter.GUI.Patient.Profile.ViewModels;
@@ -22,7 +26,15 @@ namespace HealthCareCenter.GUI.Patient.SharedCommands
                             new AppointmentChangeRequestRepository(),
                             new AppointmentChangeRequestService(
                                 new AppointmentRepository(),
-                                new AppointmentChangeRequestRepository())),
+                                new AppointmentChangeRequestRepository()),
+                            new PatientService(
+                                new AppointmentRepository(),
+                                new AppointmentChangeRequestRepository(),
+                                new HealthRecordRepository(),
+                                new HealthRecordService(
+                                    new HealthRecordRepository()),
+                                new PatientEditService(
+                                    new HealthRecordRepository()))),
                         _patient, 
                         _navigationStore);
                     break;
@@ -39,11 +51,25 @@ namespace HealthCareCenter.GUI.Patient.SharedCommands
                             new AppointmentChangeRequestRepository(),
                             new AppointmentChangeRequestService(
                                 new AppointmentRepository(),
-                                new AppointmentChangeRequestRepository())),
+                                new AppointmentChangeRequestRepository()),
+                            new PatientService(
+                                new AppointmentRepository(),
+                                new AppointmentChangeRequestRepository(),
+                                new HealthRecordRepository(),
+                                new HealthRecordService(
+                                    new HealthRecordRepository()),
+                                new PatientEditService(
+                                    new HealthRecordRepository()))),
+                        new HealthRecordService(
+                            new HealthRecordRepository()),
                         _patient);
                     break;
                 case ViewType.MyPrescriptions:
-                    _navigationStore.CurrentViewModel = new MyPrescriptionsViewModel(_navigationStore, _patient);
+                    _navigationStore.CurrentViewModel = new MyPrescriptionsViewModel(
+                        new MedicineInstructionService(
+                            new MedicineInstructionRepository()),
+                        _patient,
+                        _navigationStore);
                     break;
                 case ViewType.DoctorSurvey:
                     _navigationStore.CurrentViewModel = new DoctorSurveyViewModel(
@@ -52,7 +78,15 @@ namespace HealthCareCenter.GUI.Patient.SharedCommands
                             new AppointmentChangeRequestRepository(),
                             new AppointmentChangeRequestService(
                                 new AppointmentRepository(),
-                                new AppointmentChangeRequestRepository())),
+                                new AppointmentChangeRequestRepository()),
+                            new PatientService(
+                                new AppointmentRepository(),
+                                new AppointmentChangeRequestRepository(),
+                                new HealthRecordRepository(),
+                                new HealthRecordService(
+                                    new HealthRecordRepository()),
+                                new PatientEditService(
+                                    new HealthRecordRepository()))),
                         _patient);
                     break;
                 case ViewType.HealthCenterSurvey:

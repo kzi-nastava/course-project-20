@@ -14,6 +14,7 @@ using HealthCareCenter.Core.Medicine.Models;
 using HealthCareCenter.Core.Medicine.Repositories;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Patients;
+using HealthCareCenter.Core.Patients.Services;
 
 namespace HealthCareCenter.GUI.Doctor.ViewModels
 {
@@ -25,18 +26,27 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private int healthRecordIndex;
         private Medicine chosenMedicine;
         private readonly BaseAppointmentRepository _appointmentRepository;
+        private readonly IHealthRecordService _healthRecordService;
+        private readonly BaseMedicineRepository _medicineRepository;
+        private readonly IPatientService _patientService;
 
         private HealthRecord selectedPatientsHealthRecord;
         public HealthRecordWindowViewModel(
             DoctorWindowViewModel service, 
             User _signedUser, 
             DoctorWindow _window,
-            BaseAppointmentRepository appointmentRepository)
+            BaseAppointmentRepository appointmentRepository,
+            IHealthRecordService healthRecordService,
+            BaseMedicineRepository medicineRepository,
+            IPatientService patientService)
         {
             window = _window;
             signedUser = _signedUser;
             windowService = service;
             _appointmentRepository = appointmentRepository;
+            _healthRecordService = healthRecordService;
+            _medicineRepository = medicineRepository;
+            _patientService = patientService;
         }
 
         public void UpdateHealthRecord()
@@ -47,7 +57,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             weight = double.Parse(window.weigthTextBox.Text);
             previousDiseases = window.previousDiseasesTextBox.Text.Split(",");
             allergens = window.alergensTextBox.Text.Split(",");
-            HealthRecordService.Update(height, weight, previousDiseases, allergens, healthRecordIndex);
+            _healthRecordService.Update(height, weight, previousDiseases, allergens, healthRecordIndex);
         }
 
         public void RemoveMedicineFromSelectedMedicine()
@@ -116,7 +126,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         public void UpdateHealthRecordWindow()
         {
             FillMedicinesTable();
-            HealthRecord healthRecord = HealthRecordService.GetRecordByPatientID(windowService.selectedPatientID);
+            HealthRecord healthRecord = _healthRecordService.GetRecordByPatientID(windowService.selectedPatientID);
             ParseHealthRecordData(healthRecord);
             selectedPatientsHealthRecord = healthRecord;
         }
@@ -131,8 +141,8 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 MessageBox.Show("No row is selected");
                 return;
             }
-            alergens = HealthRecordService.CheckAllergens(healthRecord);
-            previousDiseases = HealthRecordService.CheckPreviousDiseases(healthRecord);
+            alergens = _healthRecordService.CheckAllergens(healthRecord);
+            previousDiseases = _healthRecordService.CheckPreviousDiseases(healthRecord);
             healthRecordID = healthRecord.ID.ToString();
             height = healthRecord.Height.ToString();
             weight = healthRecord.Weight.ToString();
@@ -152,7 +162,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         public void FillMedicinesTable()
         {
             window.medicineDataTable.Rows.Clear();
-            foreach (Medicine medicine in MedicineRepository.Medicines)
+            foreach (Medicine medicine in _medicineRepository.Medicines)
             {
                 window.AddMedicineToMedicineTable(medicine, window.medicineDataTable);
             }
@@ -183,11 +193,11 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             appointmentIndex = GetSelectedIndex(window.scheduleDataGrid);
             if (id == -1 || appointmentIndex == -1)
                 return false;
-            Core.Patients.Patient patient = PatientService.Get(id);
-            HealthRecord healthRecord = HealthRecordService.Get(patient);
+            Core.Patients.Patient patient = _patientService.Get(id);
+            HealthRecord healthRecord = _healthRecordService.Get(patient);
             if (patient == null || healthRecord == null)
                 return false;
-            healthRecordIndex = PatientService.GetIndex(id);
+            healthRecordIndex = _patientService.GetIndex(id);
             ParseHealthRecordData(healthRecord);
             return true;
         }
@@ -203,7 +213,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             medicineIndex = GetSelectedIndex(window.medicationDataGrid);
             if (medicineIndex == -1)
                 return false;
-            chosenMedicine = MedicineRepository.Medicines[medicineIndex];
+            chosenMedicine = _medicineRepository.Medicines[medicineIndex];
             isAlergic = CheckAlergies(chosenMedicine);
             if (isAlergic)
                 return false;
@@ -214,7 +224,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
 
         private bool CheckAlergies(Medicine medicine)
         {
-            string ingredient = HealthRecordService.IsAllergicTo(medicine, selectedPatientsHealthRecord);
+            string ingredient = _healthRecordService.IsAllergicTo(medicine, selectedPatientsHealthRecord);
             if (ingredient != "")
             {
                 MessageBox.Show("Patient is allergic to: " + ingredient);

@@ -22,6 +22,10 @@ using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Medicine.Services;
+using HealthCareCenter.Core.Medicine.Repositories;
+using HealthCareCenter.Core.Patients.Services;
 
 namespace HealthCareCenter
 {
@@ -109,7 +113,7 @@ namespace HealthCareCenter
             {
                 DoctorWindowViewModel doctorWindowService = new DoctorWindowViewModel(
                     (Doctor)user,
-                    new ReferralsService(
+                    new ReferralService(
                         new ReferralRepository(),
                         new AppointmentRepository()), 
                     new ReferralRepository(),
@@ -119,14 +123,31 @@ namespace HealthCareCenter
                         new AppointmentChangeRequestRepository(),
                         new AppointmentChangeRequestService(
                             new AppointmentRepository(),
-                            new AppointmentChangeRequestRepository())),
-                    new RoomService(new EquipmentRearrangementService()));
+                            new AppointmentChangeRequestRepository()),
+                        new PatientService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new HealthRecordRepository(),
+                            new HealthRecordService(
+                                new HealthRecordRepository()),
+                            new PatientEditService(
+                                new HealthRecordRepository()))),
+                    new RoomService(new EquipmentRearrangementService()),
+                    new HealthRecordService(
+                        new HealthRecordRepository()));
                 Close();
             }
             else if (user.GetType() == typeof(Manager))
             {
                 ShowWindow(new CrudHospitalRoomWindow((Manager)user,
-                    new NotificationService(new NotificationRepository()),
+                    new NotificationService(
+                        new NotificationRepository(),
+                        new HealthRecordService(
+                            new HealthRecordRepository()),
+                        new MedicineInstructionService(
+                            new MedicineInstructionRepository()),
+                        new MedicineService(
+                            new MedicineRepository())),
                     new EquipmentRearrangementService(),
                     new RoomService(new EquipmentRearrangementService())));
             }
@@ -148,18 +169,46 @@ namespace HealthCareCenter
                         new AppointmentChangeRequestRepository(),
                         new AppointmentChangeRequestService(
                             new AppointmentRepository(),
-                            new AppointmentChangeRequestRepository())),
+                            new AppointmentChangeRequestRepository()),
+                        new PatientService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new HealthRecordRepository(),
+                            new HealthRecordService(
+                                new HealthRecordRepository()),
+                            new PatientEditService(
+                                new HealthRecordRepository()))),
                     patient,
                     navStore);
                 GUI.Patient.MainWindow win = new GUI.Patient.MainWindow()
                 {
-                    DataContext = new MainViewModel(navStore, patient, new NotificationService(new NotificationRepository()))
+                    DataContext = new MainViewModel(
+                        navStore, 
+                        patient, 
+                        new NotificationService(
+                            new NotificationRepository(),
+                            new HealthRecordService(
+                                new HealthRecordRepository()),
+                            new MedicineInstructionService(
+                                new MedicineInstructionRepository()),
+                            new MedicineService(
+                                new MedicineRepository())))
                 };
                 ShowWindow(win);
             }
             else if (user.GetType() == typeof(Core.Users.Models.Secretary))
             {
-                ShowWindow(new SecretaryWindow(user, new NotificationService(new NotificationRepository()), _dynamicEquipmentService));
+                ShowWindow(new SecretaryWindow(
+                    user, 
+                    new NotificationService(
+                        new NotificationRepository(),
+                        new HealthRecordService(
+                            new HealthRecordRepository()),
+                        new MedicineInstructionService(
+                            new MedicineInstructionRepository()),
+                        new MedicineService(
+                            new MedicineRepository())),
+                    _dynamicEquipmentService));
             }
             return true;
         }

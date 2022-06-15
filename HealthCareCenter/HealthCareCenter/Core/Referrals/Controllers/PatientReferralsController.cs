@@ -9,9 +9,9 @@ namespace HealthCareCenter.Core.Referrals.Controllers
 {
     public class PatientReferralsController
     {
-        private readonly IReferralsService _referralsService;
+        private readonly IReferralService _referralsService;
 
-        public PatientReferralsController(IReferralsService service)
+        public PatientReferralsController(IReferralService service)
         {
             _referralsService = service;
         }
