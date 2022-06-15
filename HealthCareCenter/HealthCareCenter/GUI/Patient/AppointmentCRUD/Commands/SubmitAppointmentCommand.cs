@@ -92,6 +92,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
             {
                 bool passed = _appointmentService.Schedule(
                     scheduleDate, _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.HealthRecordID, hospitalRoomID);
+
                 _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(
                     new AppointmentService(
                         new AppointmentRepository(),
@@ -138,6 +139,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
                 bool passed = _appointmentService.Edit(
                     scheduleDate, _viewModel.ChosenAppointment.AppointmentDate, _viewModel.ChosenAppointment.AppointmentID,
                     _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.ID, hospitalRoomID);
+
                 _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(
                     new AppointmentService(
                         new AppointmentRepository(),

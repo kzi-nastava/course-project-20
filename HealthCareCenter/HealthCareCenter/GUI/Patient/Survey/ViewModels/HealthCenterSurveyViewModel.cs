@@ -1,4 +1,6 @@
-﻿using HealthCareCenter.GUI.Patient.SharedViewModels;
+﻿using HealthCareCenter.Core.Surveys.Repositories;
+using HealthCareCenter.Core.Surveys.Services;
+using HealthCareCenter.GUI.Patient.SharedViewModels;
 using HealthCareCenter.GUI.Patient.Survey.Commands;
 using System.Windows.Input;
 
@@ -54,7 +56,11 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
             SatisfiedTicked5 = true;
             WouldRecommendTicked5 = true;
 
-            SubmitReview = new SubmitHealthcareCenterReviewCommand(this);
+            SubmitReview = new SubmitHealthcareCenterReviewCommand(
+                this,
+                new HealthcareSurveyRatingRepository(),
+                new HealthcareSurveyRatingService(
+                    new HealthcareSurveyRatingRepository()));
         }
     }
 }

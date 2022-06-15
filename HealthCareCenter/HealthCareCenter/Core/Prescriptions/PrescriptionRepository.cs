@@ -1,31 +1,13 @@
-﻿using HealthCareCenter.Core;
-using HealthCareCenter.Core.Medicine.Models;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace HealthCareCenter.Core.Prescriptions
 {
-    public static class PrescriptionRepository
+    public class PrescriptionRepository : BasePrescriptionRepository
     {
-        private static List<Prescription> _prescriptions;
-        public static List<Prescription> Prescriptions
-        {
-            get
-            {
-                if (_prescriptions == null)
-                {
-                    Load();
-                }
-                return _prescriptions;
-            }
-            set => _prescriptions = value;
-        }
-        public static List<MedicineInstruction> MedicineInstructions { get; set; }
-        public static int LargestID { get; set; }
-        public static List<Prescription> Load()
+        public override List<Prescription> Load()
         {
             var settings = new JsonSerializerSettings
             {
@@ -37,7 +19,8 @@ namespace HealthCareCenter.Core.Prescriptions
             LargestID = _prescriptions.Count == 0 ? 0 : Prescriptions[^1].ID;
             return _prescriptions;
         }
-        public static void Save()
+
+        public override void Save()
         {
             try
             {

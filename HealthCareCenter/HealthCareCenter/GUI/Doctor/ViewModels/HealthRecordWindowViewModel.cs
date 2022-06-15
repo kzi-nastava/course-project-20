@@ -29,6 +29,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private readonly IHealthRecordService _healthRecordService;
         private readonly BaseMedicineRepository _medicineRepository;
         private readonly IPatientService _patientService;
+        private readonly BasePrescriptionService _prescriptionService;
 
         private HealthRecord selectedPatientsHealthRecord;
         public HealthRecordWindowViewModel(
@@ -38,7 +39,8 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             BaseAppointmentRepository appointmentRepository,
             IHealthRecordService healthRecordService,
             BaseMedicineRepository medicineRepository,
-            IPatientService patientService)
+            IPatientService patientService,
+            BasePrescriptionService prescriptionService)
         {
             window = _window;
             signedUser = _signedUser;
@@ -47,6 +49,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             _healthRecordService = healthRecordService;
             _medicineRepository = medicineRepository;
             _patientService = patientService;
+            _prescriptionService = prescriptionService;
         }
 
         public void UpdateHealthRecord()
@@ -67,7 +70,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 return;
             try
             {
-                PrescriptionService.SelectedMedicine = null;
+                _prescriptionService.SelectedMedicine = null;
                 DeleteMedicineFromTable(medicineIndex);
             }
             catch { }
@@ -81,7 +84,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         {
             string hour = window.hourOfMedicineTakingComboBox.SelectedItem.ToString();
             string minute = window.minuteOfMedicineTakingComboBox.SelectedItem.ToString();
-            bool successful = PrescriptionService.AddTime(hour, minute);
+            bool successful = _prescriptionService.AddTime(hour, minute);
             if (successful)
                 MessageBox.Show("Time added successfuly");
             else
@@ -105,21 +108,21 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 default: consumptionPeriod = ConsumptionPeriod.Any; break;
             }
             consumptionsPerDay = window.consumptionPerDayComboBox.SelectedIndex + 1;
-            bool successful = PrescriptionService.CreateMedicineInstruction(0, instructions, consumptionsPerDay, consumptionPeriod, chosenMedicine.ID);
+            bool successful = _prescriptionService.CreateMedicineInstruction(0, instructions, consumptionsPerDay, consumptionPeriod, chosenMedicine.ID);
             if (!successful)
                 return;
-            PrescriptionService.ClearData(false);
+            _prescriptionService.ClearData(false);
             window.selectedMedicineDataTable.Clear();
         }
 
         public void CreateAPrescription()
         {
-            bool successful = PrescriptionService.Create();
+            bool successful = _prescriptionService.Create();
             if (!successful)
                 return;
             window.EnableMedicineGrid(false);
             window.selectedMedicineDataTable.Rows.Clear();
-            PrescriptionService.ClearData(true);
+            _prescriptionService.ClearData(true);
             MessageBox.Show("Added prescription successfuly");
         }
 
@@ -205,7 +208,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         {
             int medicineIndex;
             bool isAlergic;
-            if (PrescriptionService.SelectedMedicine != null)
+            if (_prescriptionService.SelectedMedicine != null)
             {
                 MessageBox.Show("U already selected a medicine");
                 return false;
@@ -217,7 +220,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             isAlergic = CheckAlergies(chosenMedicine);
             if (isAlergic)
                 return false;
-            PrescriptionService.SelectedMedicine = chosenMedicine;
+            _prescriptionService.SelectedMedicine = chosenMedicine;
             return true;
         }
 
@@ -249,7 +252,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         public void FillSelectedMedicinesTable()
         {
             window.selectedMedicineDataTable.Rows.Clear();
-            Medicine medicine = PrescriptionService.SelectedMedicine;
+            Medicine medicine = _prescriptionService.SelectedMedicine;
             window.AddMedicineToMedicineTable(chosenMedicine, window.selectedMedicineDataTable);
             window.selectedMedicationDataGrid.ItemsSource = window.selectedMedicineDataTable.DefaultView;
         }

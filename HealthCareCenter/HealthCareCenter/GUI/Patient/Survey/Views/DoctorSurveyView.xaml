@@ -93,11 +93,6 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            <Button Content="Choose doctor"
-                    Grid.Row="6"
-                    Style="{StaticResource HealthcareCenterButtonTheme}"
-                    Margin="5"
-                    Command="{Binding ChooseDoctorFromAppointment}"/>
         </Grid>
         
 

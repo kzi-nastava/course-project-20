@@ -7,22 +7,27 @@ using System.Windows;
 
 namespace HealthCareCenter.Core.Prescriptions
 {
-    public static class PrescriptionService
+    public class PrescriptionService : BasePrescriptionService
     {
-        public static void Initialise(int _doctorID)
+        private readonly BaseMedicineInstructionRepository _medicineInstructionRepository;
+        private readonly BasePrescriptionRepository _prescriptionRepository;
+
+        public PrescriptionService(
+            BaseMedicineInstructionRepository medicineInstructionRepository,
+            BasePrescriptionRepository prescriptionRepository)
         {
-            doctorID = _doctorID;
+            _medicineInstructionRepository = medicineInstructionRepository;
+            _prescriptionRepository = prescriptionRepository;
             MedicineInstructions = new List<int>();
+            _times = new List<DateTime>();
         }
-        private static List<DateTime> _times = new List<DateTime>();
-        public static Medicine.Models.Medicine SelectedMedicine { get; set; }
-        public static List<int> MedicineInstructions { get; set; }
-        private static int doctorID;
 
-        // change during solid refactoring
-        private static readonly BaseMedicineInstructionRepository _medicineInstructionRepository = new MedicineInstructionRepository();
+        public override void SetDoctorID(int doctorID)
+        {
+            _doctorID = doctorID;
+        }
 
-        public static bool ClearData(bool finishing)
+        public override bool ClearData(bool finishing)
         {
             _times.Clear();
             if (finishing)
@@ -30,7 +35,8 @@ namespace HealthCareCenter.Core.Prescriptions
             SelectedMedicine = null;
             return true;
         }
-        public static bool AddTime(string hour, string minute)
+
+        public override bool AddTime(string hour, string minute)
         {
             try
             {
@@ -51,7 +57,8 @@ namespace HealthCareCenter.Core.Prescriptions
                 return false;
             }
         }
-        public static bool CreateMedicineInstruction(int id, string comment, int dailyConsumption, ConsumptionPeriod consumptionPeriod, int medicineID)
+
+        public override bool CreateMedicineInstruction(int id, string comment, int dailyConsumption, ConsumptionPeriod consumptionPeriod, int medicineID)
         {
             bool sucessfull = CheckData(false);
             if (!sucessfull)
@@ -68,18 +75,18 @@ namespace HealthCareCenter.Core.Prescriptions
                 return false;
             }
         }
-        public static bool Create()
+        public override bool Create()
         {
             bool sucessfull = CheckData(true);
             if (!sucessfull)
                 return false;
             List<int> medicineInstructions = new List<int>(MedicineInstructions);
-            Prescription prescription = new Prescription(++PrescriptionRepository.LargestID, doctorID, medicineInstructions);
-            PrescriptionRepository.Prescriptions.Add(prescription);
+            Prescription prescription = new Prescription(++_prescriptionRepository.LargestID, _doctorID, medicineInstructions);
+            _prescriptionRepository.Prescriptions.Add(prescription);
             return true;
         }
 
-        private static bool CheckData(bool finishing)
+        protected override bool CheckData(bool finishing)
         {
             if (_times.Count == 0 && !finishing)
             {
@@ -99,11 +106,11 @@ namespace HealthCareCenter.Core.Prescriptions
             return true;
         }
 
-        public static bool Add(Prescription prescription)
+        public override bool Add(Prescription prescription)
         {
             try
             {
-                PrescriptionRepository.Prescriptions.Add(prescription);
+                _prescriptionRepository.Prescriptions.Add(prescription);
                 return true;
             }
             catch
@@ -112,15 +119,15 @@ namespace HealthCareCenter.Core.Prescriptions
             }
         }
 
-        public static List<Prescription> GetPatientPrescriptions(int healthRecordID)
+        public override List<Prescription> GetPatientPrescriptions(int healthRecordID)
         {
-            if (PrescriptionRepository.Prescriptions == null)
+            if (_prescriptionRepository.Prescriptions == null)
             {
                 return null;
             }
 
             List<Prescription> patientPrescriptions = new List<Prescription>();
-            foreach (Prescription prescription in PrescriptionRepository.Prescriptions)
+            foreach (Prescription prescription in _prescriptionRepository.Prescriptions)
             {
                 if (prescription.HealthRecordID == healthRecordID)
                 {

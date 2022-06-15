@@ -26,6 +26,7 @@ using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Medicine.Repositories;
 using HealthCareCenter.Core.Patients.Services;
+using HealthCareCenter.Core.Prescriptions;
 
 namespace HealthCareCenter
 {
@@ -183,8 +184,6 @@ namespace HealthCareCenter
                 GUI.Patient.MainWindow win = new GUI.Patient.MainWindow()
                 {
                     DataContext = new MainViewModel(
-                        navStore, 
-                        patient, 
                         new NotificationService(
                             new NotificationRepository(),
                             new HealthRecordService(
@@ -192,7 +191,12 @@ namespace HealthCareCenter
                             new MedicineInstructionService(
                                 new MedicineInstructionRepository()),
                             new MedicineService(
-                                new MedicineRepository())))
+                                new MedicineRepository())),
+                        new PrescriptionService(
+                            new MedicineInstructionRepository(),
+                            new PrescriptionRepository()),
+                        patient,
+                        navStore)
                 };
                 ShowWindow(win);
             }

@@ -31,6 +31,8 @@ namespace HealthCareCenter.DoctorGUI
         private readonly BaseHealthRecordRepository _healthRecordRepository;
         private readonly BaseMedicineRepository _medicineRepository;
         private readonly BaseMedicineInstructionRepository _medicineInstructionRepository;
+        private readonly BasePrescriptionService _prescriptionService;
+        private readonly BasePrescriptionRepository _prescriptionRepository;
 
         private Doctor signedUser;
 
@@ -50,13 +52,17 @@ namespace HealthCareCenter.DoctorGUI
             BaseAppointmentRepository appointmentRepository,
             BaseHealthRecordRepository healthRecordRepository,
             BaseMedicineRepository medicineRepository,
-            BaseMedicineInstructionRepository medicineInstructionRepository)
+            BaseMedicineInstructionRepository medicineInstructionRepository,
+            BasePrescriptionService prescriptionService,
+            BasePrescriptionRepository prescriptionRepository)
         {
             _notificationService = notificationService;
             _appointmentRepository = appointmentRepository;
             _healthRecordRepository = healthRecordRepository;
             _medicineRepository = medicineRepository;
             _medicineInstructionRepository = medicineInstructionRepository;
+            _prescriptionService = prescriptionService;
+            _prescriptionRepository = prescriptionRepository;
             healthRecordWindowService = new HealthRecordWindowViewModel(
                 windowService, 
                 user, 
@@ -72,17 +78,19 @@ namespace HealthCareCenter.DoctorGUI
                     new HealthRecordService(
                         new HealthRecordRepository()),
                     new PatientEditService(
-                        new HealthRecordRepository())));
+                        new HealthRecordRepository())),
+                new PrescriptionService(
+                    new MedicineInstructionRepository(),
+                    new PrescriptionRepository()));
             this.scheduleWindowService = windowService;
             signedUser = (Doctor)user;
-            PrescriptionService.Initialise(signedUser.ID);
+            _prescriptionService.SetDoctorID(signedUser.ID);
             CreateAppointmentTable();
             CreatePatientsTable();
             CreateDoctorsTable();
             CreateMedicineTable();
             CreateMedicineCreationRequestTable();
             CreateEquipmentTable();
-            PrescriptionRepository.Load();
             MedicineCreationRequestRepository.Load();
             HospitalRoomRepository.Load();
             InitializeComponent();
@@ -490,7 +498,7 @@ namespace HealthCareCenter.DoctorGUI
         {
             _healthRecordRepository.Save();
             _appointmentRepository.Save();
-            PrescriptionRepository.Save();
+            _prescriptionRepository.Save();
             _medicineInstructionRepository.Save();
             _medicineRepository.Save();
             MedicineCreationRequestRepository.Save();

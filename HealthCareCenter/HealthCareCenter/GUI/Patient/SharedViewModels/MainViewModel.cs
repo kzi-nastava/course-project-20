@@ -13,11 +13,12 @@ namespace HealthCareCenter.GUI.Patient.SharedViewModels
 {
     internal class MainViewModel : ViewModelBase
     {
-        private readonly NavigationStore _navigationStore;
-        private readonly Core.Patients.Patient _patient;
         private INotificationService _notificationService;
+        
+        private readonly Core.Patients.Patient _patient;
 
-
+        private readonly NavigationStore _navigationStore;
+        
         private readonly Dictionary<int, Dictionary<int, int>> _notificationsFromPrescriptionsToSend;
 
         public ViewModelBase CurrentViewModel => _navigationStore.CurrentViewModel;
@@ -32,7 +33,11 @@ namespace HealthCareCenter.GUI.Patient.SharedViewModels
 
         public string CurrentViewLabel { get; set; }
 
-        public MainViewModel(NavigationStore navigationStore, Core.Patients.Patient patient, INotificationService notificationService)
+        public MainViewModel(
+            INotificationService notificationService,
+            BasePrescriptionService prescriptionService,
+            Core.Patients.Patient patient,
+            NavigationStore navigationStore)
         {
             _notificationService = notificationService;
             _navigationStore = navigationStore;
@@ -41,7 +46,8 @@ namespace HealthCareCenter.GUI.Patient.SharedViewModels
             _patient = patient;
 
             _notificationsFromPrescriptionsToSend = _notificationService.GetNotificationsSentDict(
-                PrescriptionService.GetPatientPrescriptions(_patient.HealthRecordID));
+                prescriptionService.GetPatientPrescriptions(
+                    _patient.HealthRecordID));
             ShowNotifications();  // show notifications on startup
 
             StartNotificationChecks();

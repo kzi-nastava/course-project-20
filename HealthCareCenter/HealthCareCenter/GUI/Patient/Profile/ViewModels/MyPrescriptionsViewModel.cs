@@ -75,12 +75,13 @@ namespace HealthCareCenter.GUI.Patient.Profile.ViewModels
 
         public MyPrescriptionsViewModel(
             IMedicineInstructionService medicineInstructionService,
+            BasePrescriptionService prescriptionService,
             Core.Patients.Patient patient,
             NavigationStore navigationStore)
         {
             Patient = patient;
 
-            PatientPrescriptions = PrescriptionService.GetPatientPrescriptions(patient.HealthRecordID);
+            PatientPrescriptions = prescriptionService.GetPatientPrescriptions(patient.HealthRecordID);
             List<MedicineInstructionFromPrescriptionViewModel> instructions = new List<MedicineInstructionFromPrescriptionViewModel>();
             foreach (Prescription prescription in PatientPrescriptions)
             {

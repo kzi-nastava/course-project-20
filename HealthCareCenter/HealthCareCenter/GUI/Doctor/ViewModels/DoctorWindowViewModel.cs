@@ -24,6 +24,7 @@ using HealthCareCenter.Core.Notifications.Repositories;
 using HealthCareCenter.Core.Rooms;
 using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Medicine.Repositories;
+using HealthCareCenter.Core.Prescriptions;
 
 namespace HealthCareCenter.GUI.Doctor.ViewModels
 {
@@ -70,7 +71,11 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 new AppointmentRepository(),
                 new HealthRecordRepository(),
                 new MedicineRepository(),
-                new MedicineInstructionRepository());
+                new MedicineInstructionRepository(),
+                new PrescriptionService(
+                    new MedicineInstructionRepository(),
+                    new PrescriptionRepository()),
+                new PrescriptionRepository());
             _roomService = roomService;
             _healthRecordService = healthRecordService;
             window.Show();

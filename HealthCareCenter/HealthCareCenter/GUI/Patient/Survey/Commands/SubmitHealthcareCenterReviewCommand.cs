@@ -23,7 +23,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.Commands
 
             string confirmationMessage = "Submit review?";
             bool isOverwrite = false;
-            if (HealthcareSurveyRatingService.HasPatientAlreadyReviewed(_viewModel.Patient.ID))
+            if (_healthcareRatingService.HasPatientAlreadyReviewed(_viewModel.Patient.ID))
             {
                 _ = MessageBox.Show("You already have a review", "My App", MessageBoxButton.OK, MessageBoxImage.Information);
                 confirmationMessage = "Do you want to overwrite your previous review?";
@@ -35,25 +35,29 @@ namespace HealthCareCenter.GUI.Patient.Survey.Commands
             {
                 if (isOverwrite)
                 {
-                    _ = HealthcareSurveyRatingService.OverwriteExistingReview(surveyRating);
+                    _healthcareRatingService.OverwriteExistingReview(surveyRating);
                 }
                 else
                 {
-                    HealthcareSurveyRatingRepository.Ratings.Add(surveyRating);
+                    _healthcareRatingService.AddRating(surveyRating);
                 }
 
-                HealthcareSurveyRatingRepository.Save();
                 _viewModel.CommentOnHealthcareCenter = "";
             }
-
-
         }
 
         private readonly HealthCenterSurveyViewModel _viewModel;
+        private readonly BaseHealthcareSurveyRatingRepository _healthcareRatingRepository;
+        private readonly IHealthcareSurveyRatingService _healthcareRatingService;
 
-        public SubmitHealthcareCenterReviewCommand(HealthCenterSurveyViewModel viewModel)
+        public SubmitHealthcareCenterReviewCommand(
+            HealthCenterSurveyViewModel viewModel,
+            BaseHealthcareSurveyRatingRepository healthcareRatingRepository,
+            IHealthcareSurveyRatingService healthcareRatingService)
         {
             _viewModel = viewModel;
+            _healthcareRatingRepository = healthcareRatingRepository;
+            _healthcareRatingService = healthcareRatingService;
         }
 
         private double GetTickedGradeServiceQuality()

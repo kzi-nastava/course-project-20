@@ -5,6 +5,7 @@ using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Medicine.Repositories;
 using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Patients.Services;
+using HealthCareCenter.Core.Prescriptions;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.GUI.Patient.DoctorSearch;
 using HealthCareCenter.GUI.Patient.Profile.ViewModels;
@@ -68,6 +69,9 @@ namespace HealthCareCenter.GUI.Patient.SharedCommands
                     _navigationStore.CurrentViewModel = new MyPrescriptionsViewModel(
                         new MedicineInstructionService(
                             new MedicineInstructionRepository()),
+                        new PrescriptionService(
+                            new MedicineInstructionRepository(),
+                            new PrescriptionRepository()),
                         _patient,
                         _navigationStore);
                     break;

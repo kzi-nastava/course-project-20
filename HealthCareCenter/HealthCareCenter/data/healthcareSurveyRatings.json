@@ -1,12 +1,7 @@
 [
   {
     "PatientID": 2,
-    "Comment": "Loved it!",
-    "Rating": 4.75
-  },
-  {
-    "PatientID": 4,
-    "Comment": "Staff is very polite and doctors are very professional!",
-    "Rating": 4.5
+    "Comment": "Amazing!",
+    "Rating": 5.0
   }
 ]

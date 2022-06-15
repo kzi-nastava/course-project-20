@@ -7,6 +7,7 @@ using HealthCareCenter.Core.Notifications.Services;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.Core.Surveys.Controllers;
 using HealthCareCenter.Core.Surveys.Models;
+using HealthCareCenter.Core.Surveys.Repositories;
 using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users.Models;
 using System;
@@ -31,7 +32,8 @@ namespace HealthCareCenter
     {
         private Manager _signedManager;
         private string[] _healthcareSurveysHeader = { "PatientID", "Comment", "Rating" };
-        private HealthcareSurveysOverviewController _contoller = new HealthcareSurveysOverviewController();
+        private HealthcareSurveysOverviewController _contoller = new HealthcareSurveysOverviewController(
+            new HealthcareSurveyRatingRepository());
 
         public HealthcareSurveysOverviewWindow(Manager manager)
         {
