@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Core.Appointments.Models;
+using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users.Models;
 using System;
 using System.Collections.Generic;
@@ -62,19 +63,21 @@ namespace HealthCareCenter.Core.Users.Services
                 case "First name":
                     doctorsByKeyword = SearchByFirstName(searchKeyword);
                     break;
+
                 case "Last name":
                     doctorsByKeyword = SearchByLastName(searchKeyword);
                     break;
+
                 case "Professional area":
                     doctorsByKeyword = SearchByProfessionalArea(searchKeyword);
                     break;
+
                 default:
                     doctorsByKeyword = new List<Doctor>();
                     break;
             }
 
             return doctorsByKeyword;
-
         }
 
         private static List<Doctor> SearchByFirstName(string firstName)
@@ -129,16 +132,19 @@ namespace HealthCareCenter.Core.Users.Services
                         case "First name":
                             doctors.Sort(new DoctorFirstNameCompare());
                             break;
+
                         case "Last name":
                             doctors.Sort(new DoctorLastNameCompare());
                             break;
+
                         case "Professional area":
                             doctors.Sort(new DoctorProfessionalAreaCompare());
                             break;
                     }
                     break;
+
                 case "Rating":
-                    doctors.Sort(new DoctorRatingCompare());
+                    doctors.Sort(new DoctorRatingCompare(new DoctorSurveyRatingService()));
                     break;
             }
 

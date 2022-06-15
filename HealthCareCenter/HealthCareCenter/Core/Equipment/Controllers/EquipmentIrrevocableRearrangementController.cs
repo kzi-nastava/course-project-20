@@ -9,6 +9,13 @@ namespace HealthCareCenter.Core.Equipment.Controllers
 {
     internal class EquipmentIrrevocableRearrangementController
     {
+        private readonly IEquipmentRearrangementService _equipmentRearrangementService;
+
+        public EquipmentIrrevocableRearrangementController(IEquipmentRearrangementService equipmentRearrangementService)
+        {
+            _equipmentRearrangementService = _equipmentRearrangementService;
+        }
+
         public List<Models.Equipment> SplitRoomEquipments { get; set; }
         public HospitalRoom SplitRoom { get; set; }
         public HospitalRoom Room1 { get; set; }
@@ -75,7 +82,7 @@ namespace HealthCareCenter.Core.Equipment.Controllers
         {
             SplitRoomEquipments.Remove(equipment);
             EquipmentRearrangement rearrangement = new EquipmentRearrangement(equipment, FinishDate, roomId);
-            EquipmentRearrangementService.Set(rearrangement, equipment);
+            _equipmentRearrangementService.Set(rearrangement, equipment);
         }
 
         private void DoIrrevocableRearrangement(string newRoom, Models.Equipment equipment)

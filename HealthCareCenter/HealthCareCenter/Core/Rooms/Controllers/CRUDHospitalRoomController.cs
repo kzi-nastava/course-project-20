@@ -8,6 +8,13 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 {
     public class CRUDHospitalRoomController
     {
+        private IRoomService _roomService;
+
+        public CRUDHospitalRoomController(IRoomService roomService)
+        {
+            _roomService = roomService;
+        }
+
         public void Create(RoomType roomType, string roomName)
         {
             if (!IsHospitalRoomNameInputValide(roomName)) { throw new InvalideHospitalRoomNameException(); }
@@ -31,7 +38,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
             HospitalRoom hospitalRoom = HospitalRoomService.Get(parsedRoomId);
             hospitalRoom.Name = newRoomName;
             hospitalRoom.Type = newRoomType;
-            RoomService.Update(hospitalRoom);
+            _roomService.Update(hospitalRoom);
         }
 
         public List<HospitalRoom> GetRoomsToDisplay()
@@ -64,15 +71,15 @@ namespace HealthCareCenter.Core.Rooms.Controllers
             if (!IsHospitalRoomIdInputValide(roomId)) { throw new InvalideHospitalRoomIdException(roomId); }
 
             int parsedRoomId = Convert.ToInt32(roomId);
-            Room room = RoomService.Get(parsedRoomId);
+            Room room = _roomService.Get(parsedRoomId);
 
             if (!IsHospitalRoomFound(room)) { throw new HospitalRoomNotFoundException(roomId); }
 
-            if (RoomService.IsStorage(room)) { throw new StorageIdException(); }
+            if (_roomService.IsStorage(room)) { throw new StorageIdException(); }
 
             HospitalRoom hospitalRoom = (HospitalRoom)room;
 
-            if (RoomService.ContainAnyEquipment(hospitalRoom)) { throw new HospitalRoomContainsEquipmentException(roomId); }
+            if (_roomService.ContainAnyEquipment(hospitalRoom)) { throw new HospitalRoomContainsEquipmentException(roomId); }
 
             if (HospitalRoomService.ContainsAnyAppointment(hospitalRoom)) { throw new HospitalRoomContainsEquipmentException(roomId); }
 
@@ -86,8 +93,8 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 
             if (!IsHospitalRoomNameInputValide(newRoomName)) { throw new InvalideHospitalRoomNameException(); }
 
-            Room room = RoomService.Get(parsedRoomId);
-            if (RoomService.IsStorage(room)) { throw new StorageIdException(); }
+            Room room = _roomService.Get(parsedRoomId);
+            if (_roomService.IsStorage(room)) { throw new StorageIdException(); }
 
             HospitalRoom hospitalRoom = (HospitalRoom)room;
             if (!IsHospitalRoomFound(hospitalRoom)) { throw new HospitalRoomNotFoundException(roomId); }

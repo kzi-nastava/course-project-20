@@ -1,6 +1,7 @@
 ﻿using HealthCareCenter.Core;
 using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
@@ -15,6 +16,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         public Core.Patients.Patient Patient { get; }
 
         private List<DoctorViewModel> _doctors;
+
         public List<DoctorViewModel> Doctors
         {
             get => _doctors;
@@ -26,6 +28,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         }
 
         private DoctorViewModel _chosenDoctor;
+
         public DoctorViewModel ChosenDoctor
         {
             get => _chosenDoctor;
@@ -37,6 +40,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         }
 
         private DateTime _chosenDate;
+
         public DateTime ChosenDate
         {
             get => _chosenDate;
@@ -48,6 +52,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         }
 
         private List<AppointmentTerm> _allTerms;
+
         public List<AppointmentTerm> AllTerms
         {
             get => _allTerms;
@@ -59,6 +64,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         }
 
         private AppointmentTerm _chosenTerm;
+
         public AppointmentTerm ChosenTerm
         {
             get => _chosenTerm;
@@ -94,7 +100,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
                 List<Core.Users.Models.Doctor> allDoctors = UserRepository.Doctors;
                 foreach (Core.Users.Models.Doctor doctor in allDoctors)
                 {
-                    DoctorViewModel doctorViewModel = new DoctorViewModel(doctor);
+                    DoctorViewModel doctorViewModel = new DoctorViewModel(doctor, new DoctorSurveyRatingService());
                     _doctors.Add(doctorViewModel);
                     if (ChosenAppointment != null && doctorViewModel.DoctorID == ChosenAppointment.DoctorID)
                     {
@@ -107,7 +113,6 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
                 _doctors.Add(chosenDoctor);
                 ChosenDoctor = chosenDoctor;
             }
-
         }
 
         private void FillAppointmentSchedulesListView()
@@ -130,6 +135,5 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
                 ChosenTerm = AllTerms[0];
             }
         }
-
     }
 }

@@ -1,6 +1,7 @@
 ﻿using HealthCareCenter.Core;
 using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
@@ -17,6 +18,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         public List<DoctorViewModel> Doctors { get; }
 
         private DoctorViewModel _chosenDoctor;
+
         public DoctorViewModel ChosenDoctor
         {
             get => _chosenDoctor;
@@ -28,6 +30,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         }
 
         private List<PriorityNotFoundChoiceViewModel> _priorityNotFoundChoices;
+
         public List<PriorityNotFoundChoiceViewModel> PriorityNotFoundChoices
         {
             get => _priorityNotFoundChoices;
@@ -39,6 +42,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         }
 
         private PriorityNotFoundChoiceViewModel _priorityNotFoundChoice;
+
         public PriorityNotFoundChoiceViewModel PriorityNotFoundChoice
         {
             get => _priorityNotFoundChoice;
@@ -50,6 +54,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         }
 
         private bool _isDoctorPriority;
+
         public bool IsDoctorPriority
         {
             get => _isDoctorPriority;
@@ -61,6 +66,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         }
 
         private DateTime _chosenDate;
+
         public DateTime ChosenDate
         {
             get => _chosenDate;
@@ -72,6 +78,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         }
 
         private List<AppointmentTerm> _allPossibleTerms;
+
         public List<AppointmentTerm> AllPossibleTerms
         {
             get => _allPossibleTerms;
@@ -83,6 +90,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         }
 
         private AppointmentTerm _startRange;
+
         public AppointmentTerm StartRange
         {
             get => _startRange;
@@ -94,6 +102,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
         }
 
         private AppointmentTerm _endRange;
+
         public AppointmentTerm EndRange
         {
             get => _endRange;
@@ -114,7 +123,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
             List<Core.Users.Models.Doctor> allDoctors = UserRepository.Doctors;
             foreach (Core.Users.Models.Doctor doctor in allDoctors)
             {
-                Doctors.Add(new DoctorViewModel(doctor));
+                Doctors.Add(new DoctorViewModel(doctor, new DoctorSurveyRatingService()));
             }
 
             PriorityNotFoundChoices = new List<PriorityNotFoundChoiceViewModel>();

@@ -11,9 +11,18 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 {
     public class HospitalRoomOverviewController
     {
+        private readonly IEquipmentRearrangementService _equipmentRearrangementService;
+        private readonly IRoomService _roomService;
+
+        public HospitalRoomOverviewController(IEquipmentRearrangementService equipmentRearrangementService, IRoomService roomService)
+        {
+            _equipmentRearrangementService = equipmentRearrangementService;
+            _roomService = roomService;
+        }
+
         public List<List<string>> GetFilteredEquipmentSearchResult(string searchContent, string amount, string equipmentType, string roomType)
         {
-            List <Equipment.Models.Equipment> equipments = EquipmentService.GetEquipments();
+            List<Equipment.Models.Equipment> equipments = EquipmentService.GetEquipments();
             List<List<string>> equipmentsForDisplay = new List<List<string>>();
             foreach (Equipment.Models.Equipment equipment in equipments)
             {
@@ -26,7 +35,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
                 else
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
-                    EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipment.RearrangementID);
+                    EquipmentRearrangement rearrangement = _equipmentRearrangementService.Get(equipment.RearrangementID);
                     equipmentAttributesToDisplay.Add(rearrangement.MoveTime.ToString(Constants.DateFormat));
                     equipmentAttributesToDisplay.Add(rearrangement.NewRoomID.ToString());
                     FilterEquipment(ref equipmentsForDisplay, equipmentAttributesToDisplay, searchContent, amount, equipmentType, roomType);
@@ -51,7 +60,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
                 else
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
-                    EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipment.RearrangementID);
+                    EquipmentRearrangement rearrangement = _equipmentRearrangementService.Get(equipment.RearrangementID);
                     equipmentAttributesToDisplay.Add(rearrangement.MoveTime.ToString(Constants.DateFormat));
                     equipmentAttributesToDisplay.Add(rearrangement.NewRoomID.ToString());
                     equipmentForDisplay.Add(equipmentAttributesToDisplay);
@@ -92,7 +101,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
             if (roomType == "Storage" && currentRoomId == "0") { return true; }
             else if (currentRoomId != "0")
             {
-                HospitalRoom room = (HospitalRoom)RoomService.Get(Convert.ToInt32(currentRoomId));
+                HospitalRoom room = (HospitalRoom)_roomService.Get(Convert.ToInt32(currentRoomId));
                 if (roomType == room.Type.ToString()) { return true; }
             }
             return false;
@@ -125,21 +134,21 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 
             Room storage = StorageRepository.Load();
 
-            if (amount == "Out of stock") { if (!RoomService.ContainsEquipment(storage, equipmentName)) { return true; } }
+            if (amount == "Out of stock") { if (!_roomService.ContainsEquipment(storage, equipmentName)) { return true; } }
 
             if (amount == "0-10")
             {
-                if (!RoomService.ContainsEquipment(storage, equipmentName)) { return false; }
+                if (!_roomService.ContainsEquipment(storage, equipmentName)) { return false; }
 
-                if (RoomService.GetEquipmentAmount(storage, equipmentName) > 0 &&
-                    RoomService.GetEquipmentAmount(storage, equipmentName) < 10) { return true; }
+                if (_roomService.GetEquipmentAmount(storage, equipmentName) > 0 &&
+                    _roomService.GetEquipmentAmount(storage, equipmentName) < 10) { return true; }
             }
 
             if (amount == "10+")
             {
-                if (!RoomService.ContainsEquipment(storage, equipmentName)) { return false; }
+                if (!_roomService.ContainsEquipment(storage, equipmentName)) { return false; }
 
-                if (RoomService.GetEquipmentAmount(storage, equipmentName) > 10) { return true; }
+                if (_roomService.GetEquipmentAmount(storage, equipmentName) > 10) { return true; }
             }
 
             return false;

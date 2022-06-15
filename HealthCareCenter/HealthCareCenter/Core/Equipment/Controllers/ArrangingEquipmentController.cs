@@ -12,6 +12,15 @@ namespace HealthCareCenter.Core.Equipment.Controllers
 {
     public class ArrangingEquipmentController
     {
+        private readonly IEquipmentRearrangementService _equipmentRearrangementService;
+        private readonly IRoomService _roomService;
+
+        public ArrangingEquipmentController(IEquipmentRearrangementService equipmentRearrangementService, IRoomService roomService)
+        {
+            _equipmentRearrangementService = equipmentRearrangementService;
+            _roomService = roomService;
+        }
+
         public void SetRearrangement(string newRoomId, string equipmentForRearrangementId, string rearrangementDate, string rearrangementTime)
         {
             IsPossibleToCreateRearrangement(newRoomId, equipmentForRearrangementId, rearrangementDate, rearrangementTime);
@@ -26,7 +35,7 @@ namespace HealthCareCenter.Core.Equipment.Controllers
                 equipmentForRearrangement.CurrentRoomID, parsedNewRoomId);
 
             IsPossibleToSetRearrangement(rearrangement);
-            EquipmentRearrangementService.Set(rearrangement, equipmentForRearrangement);
+            _equipmentRearrangementService.Set(rearrangement, equipmentForRearrangement);
         }
 
         public void UndoRearrangement(string equipmentForRearrangementId)
@@ -35,10 +44,10 @@ namespace HealthCareCenter.Core.Equipment.Controllers
 
             int parsedEquipmentForRearrangementId = Convert.ToInt32(equipmentForRearrangementId);
             Models.Equipment equipmentForRearrangement = EquipmentService.Get(parsedEquipmentForRearrangementId);
-            EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipmentForRearrangement.RearrangementID);
+            EquipmentRearrangement rearrangement = _equipmentRearrangementService.Get(equipmentForRearrangement.RearrangementID);
 
             IsPossibleToUndoEquipmentRearrangement(rearrangement, equipmentForRearrangement);
-            EquipmentRearrangementService.Remove(equipmentForRearrangement);
+            _equipmentRearrangementService.Remove(equipmentForRearrangement);
         }
 
         public List<List<string>> GetEquipmentsForDisplay()
@@ -72,7 +81,7 @@ namespace HealthCareCenter.Core.Equipment.Controllers
         private List<string> GetScheduledEquipmentAttributes(Models.Equipment equipment)
         {
             List<string> equipmentAttributesToDisplay = equipment.ToList();
-            EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipment.RearrangementID);
+            EquipmentRearrangement rearrangement = _equipmentRearrangementService.Get(equipment.RearrangementID);
             equipmentAttributesToDisplay.Add(rearrangement.MoveTime.ToString(Constants.DateFormat));
             equipmentAttributesToDisplay.Add(rearrangement.NewRoomID.ToString());
             return equipmentAttributesToDisplay;
@@ -143,8 +152,8 @@ namespace HealthCareCenter.Core.Equipment.Controllers
         {
             if (!IsNewRoomIdInputValide(newRoomId)) { throw new InvalideHospitalRoomIdException(newRoomId); }
             int parsedNewRoomId = Convert.ToInt32(newRoomId);
-            Room newRoom = RoomService.GetPremesisForEquipmentTransfer(parsedNewRoomId);
-            if (!RoomService.IsStorage(newRoom))
+            Room newRoom = _roomService.GetPremesisForEquipmentTransfer(parsedNewRoomId);
+            if (!_roomService.IsStorage(newRoom))
             {
                 HospitalRoom newHospitalRoom = (HospitalRoom)newRoom;
                 if (!IsNewRoomFound(newHospitalRoom)) { throw new HospitalRoomNotFoundException(newRoomId); }
@@ -184,8 +193,8 @@ namespace HealthCareCenter.Core.Equipment.Controllers
             }
 
             // Checking are rooms available
-            Room currentRoom = RoomService.GetPremesisForEquipmentTransfer(rearrangement.OldRoomID);
-            Room newRoom = RoomService.GetPremesisForEquipmentTransfer(rearrangement.NewRoomID);
+            Room currentRoom = _roomService.GetPremesisForEquipmentTransfer(rearrangement.OldRoomID);
+            Room newRoom = _roomService.GetPremesisForEquipmentTransfer(rearrangement.NewRoomID);
 
             if (!IsRoomAvailable(currentRoom, rearrangement))
             {
@@ -214,7 +223,7 @@ namespace HealthCareCenter.Core.Equipment.Controllers
             {
                 throw new EquipmentDesntContainScheduledRearrangementException(equipment.ID.ToString());
             }
-            if (EquipmentRearrangementService.IsIrrevocable(rearrangement))
+            if (_equipmentRearrangementService.IsIrrevocable(rearrangement))
             {
                 throw new EquipmentRearrangementIsIrevocableException(rearrangement.ID.ToString());
             }

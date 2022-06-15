@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Surveys.Models
 {
-    internal class DoctorSurveyRating : SurveyRating
+    public class DoctorSurveyRating : SurveyRating
     {
         public int DoctorID { get; set; }
 

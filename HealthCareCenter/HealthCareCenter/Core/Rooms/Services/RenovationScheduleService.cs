@@ -9,6 +9,14 @@ namespace HealthCareCenter.Core.Rooms.Services
 {
     public class RenovationScheduleService
     {
+        // Change to nonstatic later
+        private static IRoomService _roomService;
+
+        public RenovationScheduleService(IRoomService roomService)
+        {
+            _roomService = roomService;
+        }
+
         public static List<RenovationSchedule> GetRenovations()
         {
             return RenovationScheduleRepository.Renovations;
@@ -174,8 +182,9 @@ namespace HealthCareCenter.Core.Rooms.Services
             HospitalRoom room2 = HospitalRoomForRenovationService.Get(renovationSchedule.Room2ID);
             HospitalRoomService.Insert(newRoom);
             // -----
-            RoomService.TransferAllEquipment(room1, newRoom);
-            RoomService.TransferAllEquipment(room2, newRoom);
+
+            _roomService.TransferAllEquipment(room1, newRoom);
+            _roomService.TransferAllEquipment(room2, newRoom);
             // -----
             HospitalRoomForRenovationService.Delete(room1);
             HospitalRoomForRenovationService.Delete(room2);
