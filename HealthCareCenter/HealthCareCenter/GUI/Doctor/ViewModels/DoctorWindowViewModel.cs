@@ -22,6 +22,8 @@ using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Notifications.Services;
 using HealthCareCenter.Core.Notifications.Repositories;
 using HealthCareCenter.Core.Rooms;
+using HealthCareCenter.Core.Medicine.Services;
+using HealthCareCenter.Core.Medicine.Repositories;
 
 namespace HealthCareCenter.GUI.Doctor.ViewModels
 {
@@ -38,25 +40,32 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private BaseReferralRepository _referralRepository;
         private readonly BaseAppointmentRepository _appointmentRepository;
         private readonly IAppointmentService _appointmentService;
+        private readonly IMedicineCreationRequestService _medicineCreationRequestService;
+        private readonly AMedicineCreationRequestRepository _medicineCreationRequestRepository;
 
         public DoctorWindowViewModel(
-            User signedUser, 
+            User signedUser,
             IReferralsService referralsService,
             BaseReferralRepository referralRepository,
             BaseAppointmentRepository appointmentRepository,
             IAppointmentService appointmentService,
-            IRoomService roomService)
+            IRoomService roomService,
+            IMedicineCreationRequestService medicineCreationRequestService,
+            AMedicineCreationRequestRepository medicineCreationRequestRepository)
         {
             _referralsService = referralsService;
             _signedUser = signedUser;
             _referralRepository = referralRepository;
             _appointmentRepository = appointmentRepository;
             _appointmentService = appointmentService;
+            _medicineCreationRequestRepository = medicineCreationRequestRepository;
+
+            _medicineCreationRequestService = medicineCreationRequestService;
             window = new DoctorWindow(
-                signedUser, 
-                this, 
+                signedUser,
+                this,
                 new NotificationService(new NotificationRepository()),
-                new AppointmentRepository());
+                new AppointmentRepository(), _medicineCreationRequestService, _medicineCreationRequestRepository);
             _roomService = roomService;
             window.Show();
         }

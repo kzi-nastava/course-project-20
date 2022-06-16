@@ -1,6 +1,7 @@
 ﻿using HealthCareCenter.Core.Equipment.Controllers;
 using HealthCareCenter.Core.Equipment.Models;
 using HealthCareCenter.Core.Equipment.Services;
+using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Rooms;
 using HealthCareCenter.Core.Rooms.Models;
 using HealthCareCenter.Core.Rooms.Services;
@@ -37,7 +38,9 @@ namespace HealthCareCenter
         private readonly IEquipmentRearrangementService _equipmentRearrangementService;
         private readonly IDoctorSurveyRatingService _doctorSurveyRatingService;
 
-        public EquipmentIrrevocableRearrangementWindow(Manager manager, DateTime finishDate, HospitalRoom splitRoom, HospitalRoom room1, HospitalRoom room2, IRoomService roomService, IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService, IHospitalRoomForRenovationService hospitalRoomForRenovationService, IRenovationScheduleService renovationScheduleService, IEquipmentRearrangementService equipmentRearrangementService, IDoctorSurveyRatingService doctorSurveyRatingService)
+        private readonly IMedicineCreationRequestService _medicineCreationRequestService;
+
+        public EquipmentIrrevocableRearrangementWindow(Manager manager, DateTime finishDate, HospitalRoom splitRoom, HospitalRoom room1, HospitalRoom room2, IRoomService roomService, IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService, IHospitalRoomForRenovationService hospitalRoomForRenovationService, IRenovationScheduleService renovationScheduleService, IEquipmentRearrangementService equipmentRearrangementService, IDoctorSurveyRatingService doctorSurveyRatingService, IMedicineCreationRequestService medicineCreationRequestService)
         {
             _roomService = roomService;
             _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
@@ -45,6 +48,7 @@ namespace HealthCareCenter
             _renovationScheduleService = renovationScheduleService;
             _equipmentRearrangementService = equipmentRearrangementService;
             _doctorSurveyRatingService = doctorSurveyRatingService;
+            _medicineCreationRequestService = medicineCreationRequestService;
 
             _signedManager = manager;
             List<Equipment> splitRoomEquipments = roomService.GetAllEquipment(splitRoom);
@@ -91,7 +95,7 @@ namespace HealthCareCenter
                 if (_contoller.IsSplitRoomContainsEquipment())
                 {
                     MessageBox.Show("Rearrangement is done!");
-                    ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager, _roomService, _hospitalRoomUnderConstructionService, _hospitalRoomForRenovationService, _renovationScheduleService, _equipmentRearrangementService, _doctorSurveyRatingService));
+                    ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager, _roomService, _hospitalRoomUnderConstructionService, _hospitalRoomForRenovationService, _renovationScheduleService, _equipmentRearrangementService, _doctorSurveyRatingService, _medicineCreationRequestService));
                 }
 
                 FillDataGridEquipment();

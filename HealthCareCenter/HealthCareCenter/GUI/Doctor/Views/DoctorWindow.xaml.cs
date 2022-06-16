@@ -17,6 +17,7 @@ using HealthCareCenter.Core.Medicine.Models;
 using HealthCareCenter.Core.Medicine.Repositories;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Notifications;
+using HealthCareCenter.Core.Medicine.Services;
 
 namespace HealthCareCenter.DoctorGUI
 {
@@ -27,6 +28,8 @@ namespace HealthCareCenter.DoctorGUI
         private HealthRecordWindowViewModel healthRecordWindowService;
         private NotificationService _notificationService;
         private readonly BaseAppointmentRepository _appointmentRepository;
+        private readonly IMedicineCreationRequestService _medicineCreationRequestService;
+        private readonly AMedicineCreationRequestRepository _medicineCreationRequestRepository;
 
         private Doctor signedUser;
 
@@ -38,15 +41,21 @@ namespace HealthCareCenter.DoctorGUI
         public DataTable medicineCreationRequestDataTable;
         public DataTable equipmentDataTable;
 
-        DataRow dr;
+        private DataRow dr;
+
         public DoctorWindow(
             User user,
-            DoctorWindowViewModel windowService, 
+            DoctorWindowViewModel windowService,
             NotificationService notificationService,
-            BaseAppointmentRepository appointmentRepository)
+            BaseAppointmentRepository appointmentRepository,
+            IMedicineCreationRequestService medicineCreationRequestService,
+            AMedicineCreationRequestRepository medicineCreationRequestRepository)
         {
             _notificationService = notificationService;
             _appointmentRepository = appointmentRepository;
+            _medicineCreationRequestService = medicineCreationRequestService;
+            _medicineCreationRequestRepository = medicineCreationRequestRepository;
+
             healthRecordWindowService = new HealthRecordWindowViewModel(windowService, user, this, new AppointmentRepository());
             this.scheduleWindowService = windowService;
             signedUser = (Doctor)user;
@@ -61,17 +70,16 @@ namespace HealthCareCenter.DoctorGUI
             MedicineRepository.Load();
             PrescriptionRepository.Load();
             MedicineInstructionRepository.Load();
-            MedicineCreationRequestRepository.Load();
+            _medicineCreationRequestRepository.Load();
             HospitalRoomRepository.Load();
             InitializeComponent();
 
             DisplayNotifications();
-            
         }
 
         private void DisplayNotifications()
         {
-            List<Notification> notifications = _notificationService.GetUnopened(signedUser);    
+            List<Notification> notifications = _notificationService.GetUnopened(signedUser);
             if (notifications.Count == 0)
             {
                 return;
@@ -135,6 +143,7 @@ namespace HealthCareCenter.DoctorGUI
             appointmentsDataTable.Columns.Add(dc7);
             appointmentsDataTable.Columns.Add(dc8);
         }
+
         private void CreatePatientsTable()
         {
             patientsDataTable = new DataTable("Patients");
@@ -145,6 +154,7 @@ namespace HealthCareCenter.DoctorGUI
             patientsDataTable.Columns.Add(dc2);
             patientsDataTable.Columns.Add(dc3);
         }
+
         private void CreateDoctorsTable()
         {
             doctorsDataTable = new DataTable("Doctors");
@@ -155,16 +165,18 @@ namespace HealthCareCenter.DoctorGUI
             doctorsDataTable.Columns.Add(dc2);
             doctorsDataTable.Columns.Add(dc3);
         }
+
         private void CreateEquipmentTable()
         {
             equipmentDataTable = new DataTable("Equipment");
-            DataColumn dc1 = new DataColumn("Name",typeof(string));
+            DataColumn dc1 = new DataColumn("Name", typeof(string));
             equipmentDataTable.Columns.Add(dc1);
         }
+
         private void CreateMedicineCreationRequestTable()
         {
             medicineCreationRequestDataTable = new DataTable("Requests");
-            DataColumn dc1 = new DataColumn("Id",typeof(int));
+            DataColumn dc1 = new DataColumn("Id", typeof(int));
             DataColumn dc2 = new DataColumn("Name", typeof(string));
             DataColumn dc3 = new DataColumn("Manufacturer", typeof(string));
             medicineCreationRequestDataTable.Columns.Add(dc1);
@@ -172,12 +184,10 @@ namespace HealthCareCenter.DoctorGUI
             medicineCreationRequestDataTable.Columns.Add(dc3);
         }
 
-
         //---------------------------------------------------------------------------------------
         //Putting data into tables and combo boxess
 
-
-        public void AddMedicineToMedicineTable(Medicine medicine,DataTable table)
+        public void AddMedicineToMedicineTable(Medicine medicine, DataTable table)
         {
             dr = table.NewRow();
             dr[0] = medicine.ID;
@@ -197,12 +207,14 @@ namespace HealthCareCenter.DoctorGUI
             dr[2] = request.Manufacturer;
             medicineCreationRequestDataTable.Rows.Add(dr);
         }
+
         public void AddEquipmentToEquipmentTable(string name)
         {
             dr = equipmentDataTable.NewRow();
             dr[0] = name;
             equipmentDataTable.Rows.Add(dr);
         }
+
         public void AddDoctorToDoctorsTable(Doctor doctor)
         {
             dr = doctorsDataTable.NewRow();
@@ -211,6 +223,7 @@ namespace HealthCareCenter.DoctorGUI
             dr[2] = doctor.LastName;
             doctorsDataTable.Rows.Add(dr);
         }
+
         public void AddAppointmentToAppointmentsTable(Appointment appointment, int patientID)
         {
             dr = appointmentsDataTable.NewRow();
@@ -224,6 +237,7 @@ namespace HealthCareCenter.DoctorGUI
             dr[7] = patientID;
             appointmentsDataTable.Rows.Add(dr);
         }
+
         public void FillHealthRecordData(string healthRecordID, string height, string weight, string alergens, string previousDiseases, string anamnesis)
         {
             idLabel.Content = healthRecordID;
@@ -242,13 +256,13 @@ namespace HealthCareCenter.DoctorGUI
             scheduleGrid.Visibility = Visibility.Visible;
             scheduleWindowService.FillAppointmentsTable(_appointmentRepository.Appointments);
         }
+
         private void DrugMenagmentButton_Click(object sender, RoutedEventArgs e)
         {
             startingGrid.Visibility = Visibility.Collapsed;
             drugManagementGrid.Visibility = Visibility.Visible;
-            medicineCreationWindowService = new MedicineCreationRequestWindowViewModel(this,signedUser);
+            medicineCreationWindowService = new MedicineCreationRequestWindowViewModel(this, signedUser, _medicineCreationRequestService, _medicineCreationRequestRepository);
         }
-
 
         //---------------------------------------------------------------------------------------
         //Buttons on schedule rewiew menu
@@ -260,33 +274,34 @@ namespace HealthCareCenter.DoctorGUI
                 true,
                 scheduleWindowService,
                 new AppointmentRepository());
-
         }
+
         private void Alter_Click(object sender, RoutedEventArgs e)
         {
-
             int rowIndex = TableService.GetSelectedIndex(scheduleDataGrid);
             if (rowIndex == -1) return;
             AddDeleteAppointmentViewModel appointmentService = new AddDeleteAppointmentViewModel(
-                signedUser, 
-                this, 
-                false, 
-                scheduleWindowService, 
+                signedUser,
+                this,
+                false,
+                scheduleWindowService,
                 new AppointmentRepository(),
                 rowIndex);
-
         }
+
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             int rowIndex = TableService.GetSelectedIndex(scheduleDataGrid);
-            if(rowIndex == -1) return;
+            if (rowIndex == -1) return;
             _appointmentRepository.Appointments.RemoveAt(rowIndex);
             scheduleWindowService.FillAppointmentsTable(_appointmentRepository.Appointments);
         }
+
         private void Search_Click(object sender, RoutedEventArgs e)
         {
             scheduleWindowService.SearchAppointments();
         }
+
         private void HealthRecord_Click(object sender, RoutedEventArgs e)
         {
             bool sucessfull = healthRecordWindowService.FindHealthRecord();
@@ -296,6 +311,7 @@ namespace HealthCareCenter.DoctorGUI
             scheduleGrid.Visibility = Visibility.Collapsed;
             backButton.Visibility = Visibility.Visible;
         }
+
         private void StartAppointment_Click(object sender, RoutedEventArgs e)
         {
             bool sucessfull = scheduleWindowService.FindRoomID();
@@ -312,7 +328,6 @@ namespace HealthCareCenter.DoctorGUI
             healthRecordWindowService.UpdateHealthRecordWindow();
         }
 
-
         //---------------------------------------------------------------------------------------
         //Health record menu buttons
         private void CreateAnamnesis_Click(object sender, RoutedEventArgs e)
@@ -320,11 +335,13 @@ namespace HealthCareCenter.DoctorGUI
             healthRecordGrid.Visibility = Visibility.Collapsed;
             anamnesisGrid.Visibility = Visibility.Visible;
         }
+
         private void UpdateHealthRecord_Click(object sender, RoutedEventArgs e)
         {
             ExitHealthRecord();
             healthRecordWindowService.UpdateHealthRecord();
         }
+
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             ExitHealthRecord();
@@ -332,12 +349,13 @@ namespace HealthCareCenter.DoctorGUI
             equimpentUpdateGrid.Visibility = Visibility.Visible;
             scheduleWindowService.FillEquipmentTable();
         }
+
         private void ReferToADifferentPracticioner_Click(object sender, RoutedEventArgs e)
         {
             healthRecordGrid.Visibility = Visibility.Collapsed;
             doctorReferalGrid.Visibility = Visibility.Visible;
             scheduleWindowService.CreateAReferral();
-            List<Doctor>doctors = scheduleWindowService.GetDoctorsByType();
+            List<Doctor> doctors = scheduleWindowService.GetDoctorsByType();
             scheduleWindowService.FillDoctorsTable(doctors);
         }
 
@@ -352,7 +370,8 @@ namespace HealthCareCenter.DoctorGUI
             medicineGrid.Visibility = Visibility.Collapsed;
         }
 
-        public void EnableMedicineGrid(bool enable) {
+        public void EnableMedicineGrid(bool enable)
+        {
             addMedicine.IsEnabled = enable;
             deleteMedicine.IsEnabled = enable;
             finishPrescriptionCreation.IsEnabled = enable;
@@ -364,11 +383,13 @@ namespace HealthCareCenter.DoctorGUI
             minuteOfMedicineTakingComboBox.IsEnabled = enable;
             addMedicineToPrescription.IsEnabled = enable;
         }
+
         private void CreateAPrescription_Click(object sender, RoutedEventArgs e)
         {
             EnableMedicineGrid(true);
             healthRecordWindowService.FillMedicineTakingComboBoxes();
         }
+
         private void AddMedicine_Click(object sender, RoutedEventArgs e)
         {
             bool sucessfull = healthRecordWindowService.SelectMedicine();
@@ -381,6 +402,7 @@ namespace HealthCareCenter.DoctorGUI
         {
             healthRecordWindowService.RemoveMedicineFromSelectedMedicine();
         }
+
         private void AddMedicineConsumptionTime_Click(object sender, RoutedEventArgs e)
         {
             healthRecordWindowService.AddMedicineConsumptionTime();
@@ -390,6 +412,7 @@ namespace HealthCareCenter.DoctorGUI
         {
             healthRecordWindowService.AddMedicineToPrescription();
         }
+
         private void FinishPrescriptionCreation_Click(object sender, RoutedEventArgs e)
         {
             healthRecordWindowService.CreateAPrescription();
@@ -413,8 +436,8 @@ namespace HealthCareCenter.DoctorGUI
                 return;
             doctorReferalGrid.Visibility = Visibility.Collapsed;
             healthRecordGrid.Visibility = Visibility.Visible;
-
         }
+
         private void SubmitAutomaticReferal_Click(object sender, RoutedEventArgs e)
         {
             bool sucessfull = scheduleWindowService.FillAutomaticReferralWithData();
@@ -423,6 +446,7 @@ namespace HealthCareCenter.DoctorGUI
             doctorReferalGrid.Visibility = Visibility.Collapsed;
             healthRecordGrid.Visibility = Visibility.Visible;
         }
+
         private void DoctorReferalBack_Click(object sender, RoutedEventArgs e)
         {
             doctorReferalGrid.Visibility = Visibility.Collapsed;
@@ -438,6 +462,7 @@ namespace HealthCareCenter.DoctorGUI
                 return;
             scheduleWindowService.FillDoctorsTable(doctors);
         }
+
         private void SpecializationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             List<Doctor> doctors = scheduleWindowService.GetDoctorsBySpecialization();
@@ -454,7 +479,7 @@ namespace HealthCareCenter.DoctorGUI
             _appointmentRepository.Save();
             PrescriptionRepository.Save();
             MedicineInstructionRepository.Save();
-            MedicineCreationRequestRepository.Save();
+            _medicineCreationRequestRepository.Save();
             HospitalRoomRepository.Save();
             LogOut();
         }
@@ -467,7 +492,6 @@ namespace HealthCareCenter.DoctorGUI
 
         private void AcceptMedicineRequestButton_Click(object sender, RoutedEventArgs e)
         {
-
             medicineCreationWindowService.AcceptRequestState();
             MessageBox.Show("Request approved");
         }

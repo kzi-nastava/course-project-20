@@ -14,12 +14,18 @@ using HealthCareCenter.Core.Medicine.Repositories;
 
 namespace HealthCareCenter.GUI.Doctor.ViewModels
 {
-    internal class MedicineCreationRequestWindowViewModel
+    public class MedicineCreationRequestWindowViewModel
     {
         private DoctorWindow window;
         private User signedUser;
-        public MedicineCreationRequestWindowViewModel(DoctorWindow _window, User _signedUser)
+
+        private IMedicineCreationRequestService _medicineCreationRequestService;
+        private AMedicineCreationRequestRepository _medicineCreationRequestRepository;
+
+        public MedicineCreationRequestWindowViewModel(DoctorWindow _window, User _signedUser, IMedicineCreationRequestService medicineCreationRequestService, AMedicineCreationRequestRepository medicineCreationRequestRepository)
         {
+            _medicineCreationRequestService = medicineCreationRequestService;
+            _medicineCreationRequestRepository = medicineCreationRequestRepository;
             window = _window;
             signedUser = _signedUser;
             FillMedicineRequestsTable();
@@ -28,7 +34,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         public void FillMedicineRequestsTable()
         {
             window.medicineCreationRequestDataTable.Rows.Clear();
-            foreach (MedicineCreationRequest request in MedicineCreationRequestRepository.Requests)
+            foreach (MedicineCreationRequest request in _medicineCreationRequestRepository.Requests)
             {
                 if (request.State != RequestState.Waiting)
                     continue;
@@ -36,10 +42,11 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             }
             window.medicineCreationRequestDataGrid.ItemsSource = window.medicineCreationRequestDataTable.DefaultView;
         }
+
         public void AcceptRequestState()
         {
             int medicineCreationRequestID = TableService.GetRowItemID(window.medicineCreationRequestDataGrid, "Id");
-            MedicineCreationRequest selectedRequest = MedicineCreationRequestService.GetMedicineCreationRequest(medicineCreationRequestID);
+            MedicineCreationRequest selectedRequest = _medicineCreationRequestService.GetMedicineCreationRequest(medicineCreationRequestID);
             selectedRequest.State = RequestState.Approved;
             FillMedicineRequestsTable();
         }
@@ -55,19 +62,18 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             int medicineCreationRequestID = TableService.GetRowItemID(window.medicineCreationRequestDataGrid, "Id");
             if (medicineCreationRequestID == -1)
                 return false;
-            MedicineCreationRequest selectedRequest = MedicineCreationRequestService.GetMedicineCreationRequest(medicineCreationRequestID);
+            MedicineCreationRequest selectedRequest = _medicineCreationRequestService.GetMedicineCreationRequest(medicineCreationRequestID);
             selectedRequest.State = RequestState.Denied;
             selectedRequest.DenyComment = denyMessage;
             FillMedicineRequestsTable();
             return true;
         }
 
-
         public void ParseIngredients()
         {
             int medicineCreationRequestID = TableService.GetRowItemID(window.medicineCreationRequestDataGrid, "Id");
-            MedicineCreationRequest request = MedicineCreationRequestService.GetMedicineCreationRequest(medicineCreationRequestID);
-            string ingredients = MedicineCreationRequestService.GetIngredients(request);
+            MedicineCreationRequest request = _medicineCreationRequestService.GetMedicineCreationRequest(medicineCreationRequestID);
+            string ingredients = _medicineCreationRequestService.GetIngredients(request);
             window.ingredientsTextBlock.Text = ingredients;
         }
     }

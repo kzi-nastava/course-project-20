@@ -25,6 +25,8 @@ using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.Rooms;
 using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Rooms.Repositories;
+using HealthCareCenter.Core.Medicine.Services;
+using HealthCareCenter.Core.Medicine.Repositories;
 
 namespace HealthCareCenter
 {
@@ -41,6 +43,10 @@ namespace HealthCareCenter
 
         private readonly IEquipmentRearrangementService _equipmentRearrangementService;
         private readonly IDoctorSurveyRatingService _doctorSurveyRatingService;
+
+        private readonly IMedicineCreationRequestService _medicineCreationRequestService;
+
+        private AMedicineCreationRequestRepository medicineCreationRequestRepository = new MedicineCreationRequestRepository();
 
         public LoginWindow(IDynamicEquipmentService dynamicEquipmentService) : this()
         {
@@ -59,6 +65,7 @@ namespace HealthCareCenter
                 new HospitalRoomUnderConstructionService(new HospitalRoomUnderConstructionRepository()), new HospitalRoomForRenovationService(new HospitalRoomForRenovationRepository()), new RenovationScheduleRepository());
             IDoctorSurveyRatingService doctorSurveyRatingService = new DoctorSurveyRatingService();
             IHospitalRoomForRenovationService hospitalRoomForRenovationService = new HospitalRoomForRenovationService(new HospitalRoomForRenovationRepository());
+            IMedicineCreationRequestService medicineCreationRequestService = new MedicineCreationRequestService(new MedicineCreationRequestRepository());
 
             _roomService = roomService;
             _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
@@ -66,6 +73,7 @@ namespace HealthCareCenter
             _renovationScheduleService = renovationScheduleService;
             _equipmentRearrangementService = equipmentRearrangementService;
             _doctorSurveyRatingService = doctorSurveyRatingService;
+            _medicineCreationRequestService = medicineCreationRequestService;
 
             InitializeComponent();
             DoEquipmentRearrangements();
@@ -149,12 +157,12 @@ namespace HealthCareCenter
                         new AppointmentChangeRequestService(
                             new AppointmentRepository(),
                             new AppointmentChangeRequestRepository())),
-                    new RoomService(new EquipmentRearrangementService(), new HospitalRoomUnderConstructionService(new HospitalRoomUnderConstructionRepository()), new HospitalRoomForRenovationService(new HospitalRoomForRenovationRepository())));
+                    _roomService, _medicineCreationRequestService, new MedicineCreationRequestRepository());
                 Close();
             }
             else if (user.GetType() == typeof(Manager))
             {
-                ShowWindow(new CrudHospitalRoomWindow((Manager)user, new NotificationService(new NotificationRepository()), _roomService, _hospitalRoomUnderConstructionService, _hospitalRoomForRenovationService, _renovationScheduleService, _equipmentRearrangementService, _doctorSurveyRatingService));
+                ShowWindow(new CrudHospitalRoomWindow((Manager)user, new NotificationService(new NotificationRepository()), _roomService, _hospitalRoomUnderConstructionService, _hospitalRoomForRenovationService, _renovationScheduleService, _equipmentRearrangementService, _doctorSurveyRatingService, _medicineCreationRequestService));
             }
             else if (user.GetType() == typeof(Patient))
             {

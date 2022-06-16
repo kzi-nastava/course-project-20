@@ -10,6 +10,15 @@ namespace HealthCareCenter.Core.Medicine.Controllers
 {
     public class ChangedMedicineCreationRequestController : BaseMedicineCreationRequestController
     {
+        private IMedicineCreationRequestService _medicineCreationRequestService;
+        private AMedicineCreationRequestRepository _medicineCreationRequestRepository;
+
+        public ChangedMedicineCreationRequestController(IMedicineCreationRequestService medicineCreationRequestService, AMedicineCreationRequestRepository medicineCreationRequestRepository)
+        {
+            _medicineCreationRequestService = medicineCreationRequestService;
+            _medicineCreationRequestRepository = medicineCreationRequestRepository;
+        }
+
         public MedicineCreationRequest DisplayedRequest { get; set; }
 
         public override void Send(string medicineName, string manufacturer)
@@ -29,14 +38,14 @@ namespace HealthCareCenter.Core.Medicine.Controllers
         {
             IsRequestValide(requestId);
             int parsedChangeRequestId = Convert.ToInt32(requestId);
-            DisplayedRequest = MedicineCreationRequestService.Get(parsedChangeRequestId);
+            DisplayedRequest = _medicineCreationRequestService.Get(parsedChangeRequestId);
             AddedIngrediens = DisplayedRequest.Ingredients;
         }
 
         public List<List<string>> GetRequestsForDisplay()
         {
             List<List<string>> requestsAttributesForDisplay = new List<List<string>>();
-            foreach (MedicineCreationRequest request in MedicineCreationRequestRepository.Requests)
+            foreach (MedicineCreationRequest request in _medicineCreationRequestRepository.Requests)
             {
                 if (request.State == RequestState.Denied)
                 {
@@ -52,8 +61,8 @@ namespace HealthCareCenter.Core.Medicine.Controllers
 
         private void SendRequest(MedicineCreationRequest request)
         {
-            MedicineCreationRequestService.Delete(request);
-            MedicineCreationRequestService.Add(request);
+            _medicineCreationRequestService.Delete(request);
+            _medicineCreationRequestService.Add(request);
         }
 
         private bool IsRequestIdValide(string id)
@@ -64,7 +73,7 @@ namespace HealthCareCenter.Core.Medicine.Controllers
         private bool IsRequestFound(string id)
         {
             int parsedId = Convert.ToInt32(id);
-            MedicineCreationRequest request = MedicineCreationRequestService.Get(parsedId);
+            MedicineCreationRequest request = _medicineCreationRequestService.Get(parsedId);
 
             if (request == null) { return false; }
             else if (request.State != RequestState.Denied) { return false; }
