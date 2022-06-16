@@ -1,10 +1,13 @@
-﻿[
+[
   {
     "ID": 0,
     "Name": "Ospamax",
     "Creation": "13/03/2022",
     "Expiration": "29/07/2023",
-    "Ingredients": [ "Vitamin A", "Tree pollen" ],
+    "Ingredients": [
+      "Vitamin A",
+      "Tree pollen"
+    ],
     "Manufacturer": "Benzol"
   },
   {
@@ -12,7 +15,9 @@
     "Name": "Probiotic",
     "Creation": "14/03/2022",
     "Expiration": "30/07/2023",
-    "Ingredients": [ "Vitamin A" ],
+    "Ingredients": [
+      "Vitamin A"
+    ],
     "Manufacturer": "Benzol"
   }
 ]

@@ -1,0 +1,23 @@
+﻿<Window x:Class="HealthCareCenter.GUI.Doctor.Views.RequestsPreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HealthCareCenter.GUI.Doctor.Views"
+        mc:Ignorable="d"
+        Title="RequestsPreviewWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <DataGrid Name="daysOffRequestsDataGrid" Grid.Column="1" Grid.Row="0"></DataGrid>
+        <Button Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Content="Back" Click="Button_Click"></Button>
+    </Grid>
+</Window>
