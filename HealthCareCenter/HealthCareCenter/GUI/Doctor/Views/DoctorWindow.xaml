@@ -28,10 +28,12 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Button x:Name="scheduleRewiew" Content="Schedule rewiew" Grid.Row="1" Grid.Column="1" Margin="10" Click="ScheduleRewiewButton_Click"/>
             <Button x:Name="drugMenagment" Content="Drug menagment" Grid.Row="2" Grid.Column="1" Margin="10" Click="DrugMenagmentButton_Click"/>
+            <Button x:Name="daysOff" Content="Days off" Grid.Row="3" Grid.Column="1" Margin="10" Click="daysOff_Click" />
         </Grid>
         
         

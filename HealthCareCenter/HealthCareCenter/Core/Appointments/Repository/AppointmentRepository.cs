@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace HealthCareCenter.Core.Appointments.Repository
 {
-    class AppointmentRepository : BaseAppointmentRepository
+    public class AppointmentRepository : BaseAppointmentRepository
     {
         public override List<Appointment> Load()
         {

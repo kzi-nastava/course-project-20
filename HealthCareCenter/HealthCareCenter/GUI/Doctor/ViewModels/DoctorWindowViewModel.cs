@@ -25,6 +25,8 @@ using HealthCareCenter.Core.Rooms;
 using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Medicine.Repositories;
 using HealthCareCenter.Core.Prescriptions;
+using HealthCareCenter.Core.Referrals.Repositories;
+using HealthCareCenter.Core.VacationRequests.Repositories;
 
 namespace HealthCareCenter.GUI.Doctor.ViewModels
 {
@@ -40,6 +42,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private IRoomService _roomService;
         private BaseReferralRepository _referralRepository;
         private readonly BaseAppointmentRepository _appointmentRepository;
+        private readonly BaseVacationRequestRepository _vacationRequestRepository;
         private readonly IAppointmentService _appointmentService;
         private readonly IHealthRecordService _healthRecordService;
 
@@ -57,25 +60,23 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             _referralRepository = referralRepository;
             _appointmentRepository = appointmentRepository;
             _appointmentService = appointmentService;
+            _vacationRequestRepository = new VacationRequestRepository();
             window = new DoctorWindow(
                 signedUser, 
                 this, 
-                new NotificationService(
-                    new NotificationRepository(),
-                    new HealthRecordService(
-                        new HealthRecordRepository()),
-                    new MedicineInstructionService(
-                        new MedicineInstructionRepository()),
-                    new MedicineService(
-                        new MedicineRepository())),
+                new NotificationService(new NotificationRepository(),
+                new HealthRecordService(new HealthRecordRepository()),
+                new MedicineInstructionService(new MedicineInstructionRepository()),
+                new MedicineService(new MedicineRepository())),
                 new AppointmentRepository(),
                 new HealthRecordRepository(),
                 new MedicineRepository(),
                 new MedicineInstructionRepository(),
-                new PrescriptionService(
-                    new MedicineInstructionRepository(),
-                    new PrescriptionRepository()),
-                new PrescriptionRepository());
+                new PrescriptionService(new MedicineInstructionRepository(),
+                new PrescriptionRepository()),
+                new PrescriptionRepository(),
+                new ReferralRepository(),
+                _vacationRequestRepository);
             _roomService = roomService;
             _healthRecordService = healthRecordService;
             window.Show();
@@ -329,6 +330,11 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 default: return null;
             }
             return DoctorService.GetDoctorsOfType(chosenType);
+        }
+
+        internal void createDaysOffWindow()
+        {
+            DaysOffViewModel daysOffViewModel = new DaysOffViewModel(_signedUser, (VacationRequestRepository)_vacationRequestRepository, new AppointmentRepository());
         }
     }
 }

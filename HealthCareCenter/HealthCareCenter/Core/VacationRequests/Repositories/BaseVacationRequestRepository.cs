@@ -7,6 +7,7 @@ namespace HealthCareCenter.Core.VacationRequests.Repositories
 {
     public abstract class BaseVacationRequestRepository
     {
+        public static int LargestID { get; set; }
         public List<VacationRequest> Requests { get; set; }
         public abstract void Load();
         public abstract void Save();
