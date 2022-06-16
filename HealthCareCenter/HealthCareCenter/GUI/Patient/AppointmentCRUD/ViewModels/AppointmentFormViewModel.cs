@@ -4,6 +4,7 @@ using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Patients.Services;
+using HealthCareCenter.Core.Surveys.Repositories;
 using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands;
@@ -129,7 +130,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
                 List<Core.Users.Models.Doctor> allDoctors = UserRepository.Doctors;
                 foreach (Core.Users.Models.Doctor doctor in allDoctors)
                 {
-                    DoctorViewModel doctorViewModel = new DoctorViewModel(doctor, new DoctorSurveyRatingService());
+                    DoctorViewModel doctorViewModel = new DoctorViewModel(doctor, new DoctorSurveyRatingService(new DoctorSurveyRatingRepository()));
                     _doctors.Add(doctorViewModel);
                     if (ChosenAppointment != null && doctorViewModel.DoctorID == ChosenAppointment.DoctorID)
                     {

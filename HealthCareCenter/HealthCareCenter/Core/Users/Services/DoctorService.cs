@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Core.Appointments.Models;
+using HealthCareCenter.Core.Surveys.Repositories;
 using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users.Models;
 using System;
@@ -144,7 +145,7 @@ namespace HealthCareCenter.Core.Users.Services
                     break;
 
                 case "Rating":
-                    doctors.Sort(new DoctorRatingCompare(new DoctorSurveyRatingService()));
+                    doctors.Sort(new DoctorRatingCompare(new DoctorSurveyRatingService(new DoctorSurveyRatingRepository())));
                     break;
             }
 

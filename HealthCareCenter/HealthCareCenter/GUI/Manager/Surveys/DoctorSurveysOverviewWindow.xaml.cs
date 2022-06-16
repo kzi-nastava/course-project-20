@@ -25,6 +25,7 @@ using HealthCareCenter.Core.Surveys.Controllers;
 using HealthCareCenter.Core.Surveys.Models;
 using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users.Models;
+using HealthCareCenter.Core.Surveys.Repositories;
 
 namespace HealthCareCenter
 {
@@ -61,7 +62,7 @@ namespace HealthCareCenter
             _medicineCreationRequestService = medicineCreationRequestService;
 
             _signedManager = manager;
-            _controller = new DoctorSurveyOverviewController(doctorSurveyRatingService);
+            _controller = new DoctorSurveyOverviewController(doctorSurveyRatingService, new DoctorSurveyRatingRepository());
             InitializeComponent();
             FillDataGridDoctorsSurveys();
             FillDataGridBest3Dctors();

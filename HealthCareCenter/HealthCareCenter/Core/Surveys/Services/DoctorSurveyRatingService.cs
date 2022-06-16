@@ -9,15 +9,18 @@ namespace HealthCareCenter.Core.Surveys.Services
 {
     public class DoctorSurveyRatingService : IDoctorSurveyRatingService
     {
-        public DoctorSurveyRatingService()
+        private readonly BaseDoctorSurveyRatingRepository _doctorSurveyRatingRepository;
+
+        public DoctorSurveyRatingService(BaseDoctorSurveyRatingRepository doctorSurveyRatingRepository)
         {
+            _doctorSurveyRatingRepository = doctorSurveyRatingRepository;
         }
 
         public double GetAverageRating(int doctorID)
         {
             double average = 0.0;
             double count = 0.0;
-            foreach (DoctorSurveyRating rating in DoctorSurveyRatingRepository.Ratings)
+            foreach (DoctorSurveyRating rating in _doctorSurveyRatingRepository.Ratings)
             {
                 if (rating.DoctorID == doctorID)
                 {
@@ -46,7 +49,7 @@ namespace HealthCareCenter.Core.Surveys.Services
 
         public bool HasPatientAlreadyReviewed(int patientID, int doctorID)
         {
-            foreach (DoctorSurveyRating rating in DoctorSurveyRatingRepository.Ratings)
+            foreach (DoctorSurveyRating rating in _doctorSurveyRatingRepository.Ratings)
             {
                 if (patientID == rating.PatientID && doctorID == rating.DoctorID)
                 {
@@ -57,19 +60,24 @@ namespace HealthCareCenter.Core.Surveys.Services
             return false;
         }
 
-        public bool OverwriteExistingReview(DoctorSurveyRating surveyRating)
+        public void OverwriteExistingReview(DoctorSurveyRating surveyRating)
         {
-            foreach (DoctorSurveyRating rating in DoctorSurveyRatingRepository.Ratings)
+            foreach (DoctorSurveyRating rating in _doctorSurveyRatingRepository.Ratings)
             {
                 if (rating.DoctorID == surveyRating.DoctorID && rating.PatientID == surveyRating.PatientID)
                 {
                     rating.Comment = surveyRating.Comment;
                     rating.Rating = surveyRating.Rating;
-                    return true;
+                    _doctorSurveyRatingRepository.Save();
+                    break;
                 }
             }
+        }
 
-            return false;
+        public void AddRating(DoctorSurveyRating rating)
+        {
+            _doctorSurveyRatingRepository.Ratings.Add(rating);
+            _doctorSurveyRatingRepository.Save();
         }
     }
 }

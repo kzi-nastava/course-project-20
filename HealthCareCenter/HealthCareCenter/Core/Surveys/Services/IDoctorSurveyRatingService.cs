@@ -13,6 +13,8 @@ namespace HealthCareCenter.Core.Surveys.Services
 
         bool HasPatientAlreadyReviewed(int patientID, int doctorID);
 
-        bool OverwriteExistingReview(DoctorSurveyRating surveyRating);
+        void OverwriteExistingReview(DoctorSurveyRating surveyRating);
+
+        void AddRating(DoctorSurveyRating rating);
     }
 }

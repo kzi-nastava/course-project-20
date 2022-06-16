@@ -1,5 +1,6 @@
 ﻿using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.Surveys.Repositories;
 using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users.Services;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
@@ -97,7 +98,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
             ServiceQualityTicked5 = true;
             WouldRecommendTicked5 = true;
 
-            SubmitReview = new SubmitDoctorReviewCommand(this, new DoctorSurveyRatingService());
+            SubmitReview = new SubmitDoctorReviewCommand(this, new DoctorSurveyRatingService(new DoctorSurveyRatingRepository()), new DoctorSurveyRatingRepository());
         }
     }
 }

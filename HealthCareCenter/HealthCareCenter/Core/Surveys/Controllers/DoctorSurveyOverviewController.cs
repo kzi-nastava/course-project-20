@@ -13,15 +13,17 @@ namespace HealthCareCenter.Core.Surveys.Controllers
     internal class DoctorSurveyOverviewController
     {
         private IDoctorSurveyRatingService _doctorSurveyRatingService;
+        private readonly BaseDoctorSurveyRatingRepository _doctorSurveyRatingRepository;
 
-        public DoctorSurveyOverviewController(IDoctorSurveyRatingService doctorSurveyRatingService)
+        public DoctorSurveyOverviewController(IDoctorSurveyRatingService doctorSurveyRatingService, BaseDoctorSurveyRatingRepository doctorSurveyRatingRepository)
         {
             _doctorSurveyRatingService = doctorSurveyRatingService;
+            _doctorSurveyRatingRepository = doctorSurveyRatingRepository;
         }
 
         public List<DoctorSurveyRating> GetDoctorSurveys()
         {
-            return DoctorSurveyRatingRepository.Ratings;
+            return _doctorSurveyRatingRepository.Ratings;
         }
 
         public List<List<string>> GetBest3Doctors()

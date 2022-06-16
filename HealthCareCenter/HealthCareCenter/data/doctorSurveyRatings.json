@@ -1,8 +1,8 @@
 [
   {
-    "DoctorID": 1,
+    "DoctorID": 5,
     "PatientID": 2,
-    "Comment": "Great doctor!",
-    "Rating": 5.0
+    "Comment": "",
+    "Rating": 3.5
   }
 ]

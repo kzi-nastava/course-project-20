@@ -23,6 +23,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using HealthCareCenter.Core.Surveys.Repositories;
 
 namespace HealthCareCenter
 {
@@ -198,7 +199,7 @@ namespace HealthCareCenter
                         new EquipmentRepository()),
                     new HospitalRoomUnderConstructionService(
                         new HospitalRoomUnderConstructionRepository())),
-                new DoctorSurveyRatingService(),
+                new DoctorSurveyRatingService(new DoctorSurveyRatingRepository()),
                 new MedicineCreationRequestService(
                     new MedicineCreationRequestRepository())));
         }

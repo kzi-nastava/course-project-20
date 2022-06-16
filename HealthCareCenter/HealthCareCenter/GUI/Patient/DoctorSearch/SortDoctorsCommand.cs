@@ -1,4 +1,5 @@
-﻿using HealthCareCenter.Core.Surveys.Services;
+﻿using HealthCareCenter.Core.Surveys.Repositories;
+using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users.Services;
 using HealthCareCenter.GUI.Patient.SharedCommands;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
@@ -29,7 +30,7 @@ namespace HealthCareCenter.GUI.Patient.DoctorSearch
             List<DoctorViewModel> sortedDoctorViewModels = new List<DoctorViewModel>();
             foreach (Core.Users.Models.Doctor doctor in sortedDoctors)
             {
-                sortedDoctorViewModels.Add(new DoctorViewModel(doctor, new DoctorSurveyRatingService()));
+                sortedDoctorViewModels.Add(new DoctorViewModel(doctor, new DoctorSurveyRatingService(new DoctorSurveyRatingRepository())));
             }
 
             _viewModel.Doctors = sortedDoctorViewModels;

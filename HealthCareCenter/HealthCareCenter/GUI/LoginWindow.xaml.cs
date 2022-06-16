@@ -31,6 +31,7 @@ using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.Core.Prescriptions;
 using HealthCareCenter.Core.Equipment.Repositories;
+using HealthCareCenter.Core.Surveys.Repositories;
 
 namespace HealthCareCenter
 {
@@ -91,7 +92,7 @@ namespace HealthCareCenter
                         new HospitalRoomForRenovationService(
                             new HospitalRoomForRenovationRepository())),
                 new HospitalRoomUnderConstructionService(new HospitalRoomUnderConstructionRepository()), new HospitalRoomForRenovationService(new HospitalRoomForRenovationRepository()), new RenovationScheduleRepository());
-            IDoctorSurveyRatingService doctorSurveyRatingService = new DoctorSurveyRatingService();
+            IDoctorSurveyRatingService doctorSurveyRatingService = new DoctorSurveyRatingService(new DoctorSurveyRatingRepository());
             IHospitalRoomForRenovationService hospitalRoomForRenovationService = new HospitalRoomForRenovationService(new HospitalRoomForRenovationRepository());
             IMedicineCreationRequestService medicineCreationRequestService = new MedicineCreationRequestService(new MedicineCreationRequestRepository());
 
@@ -260,7 +261,7 @@ namespace HealthCareCenter
                         new EquipmentRepository()),
                     new HospitalRoomUnderConstructionService(
                         new HospitalRoomUnderConstructionRepository())),
-                new DoctorSurveyRatingService(),
+                new DoctorSurveyRatingService(new DoctorSurveyRatingRepository()),
                 new MedicineCreationRequestService(
                     new MedicineCreationRequestRepository())));
             }
