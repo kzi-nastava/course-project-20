@@ -1,8 +1,10 @@
 ﻿using HealthCareCenter.Core.Equipment.Controllers;
 using HealthCareCenter.Core.Equipment.Models;
+using HealthCareCenter.Core.Equipment.Repositories;
 using HealthCareCenter.Core.Equipment.Services;
 using HealthCareCenter.Core.Rooms;
 using HealthCareCenter.Core.Rooms.Models;
+using HealthCareCenter.Core.Rooms.Repositories;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.Core.Users.Models;
 using System;
@@ -75,7 +77,11 @@ namespace HealthCareCenter
                 {
                     MessageBox.Show("Rearrangement is done!");
                     ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager,
-                        new RoomService(new EquipmentRearrangementService())));
+                        new RoomService(
+                            new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
+                            new StorageRepository(),
+                            new EquipmentService(
+                                new EquipmentRepository()))));
                 }
 
                 FillDataGridEquipment();

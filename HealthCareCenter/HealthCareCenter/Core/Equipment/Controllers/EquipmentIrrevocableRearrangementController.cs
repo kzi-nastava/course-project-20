@@ -10,10 +10,14 @@ namespace HealthCareCenter.Core.Equipment.Controllers
     internal class EquipmentIrrevocableRearrangementController
     {
         private readonly IEquipmentRearrangementService _equipmentRearrangementService;
+        private readonly IEquipmentService _equipmentService;
 
-        public EquipmentIrrevocableRearrangementController(IEquipmentRearrangementService equipmentRearrangementService)
+        public EquipmentIrrevocableRearrangementController(
+            IEquipmentRearrangementService equipmentRearrangementService,
+            IEquipmentService equipmentService)
         {
-            _equipmentRearrangementService = _equipmentRearrangementService;
+            _equipmentRearrangementService = equipmentRearrangementService;
+            _equipmentService = equipmentService;
         }
 
         public List<Models.Equipment> SplitRoomEquipments { get; set; }
@@ -37,7 +41,7 @@ namespace HealthCareCenter.Core.Equipment.Controllers
             {
                 IsEquipmentValide(equipmentId);
                 int parsedEquipmentId = Convert.ToInt32(equipmentId);
-                Models.Equipment equipment = EquipmentService.Get(parsedEquipmentId);
+                Models.Equipment equipment = _equipmentService.Get(parsedEquipmentId);
                 DoIrrevocableRearrangement(newRoom, equipment);
             }
         }
@@ -71,7 +75,7 @@ namespace HealthCareCenter.Core.Equipment.Controllers
                 throw new InvalideEquipmentIdExcpetion(equipmentId);
             }
             int parsedEquipmentId = Convert.ToInt32(equipmentId);
-            Models.Equipment equipment = EquipmentService.Get(parsedEquipmentId);
+            Models.Equipment equipment = _equipmentService.Get(parsedEquipmentId);
             if (!IsEquipmentFound(equipment))
             {
                 throw new EquipmentNotFoundException(equipmentId);

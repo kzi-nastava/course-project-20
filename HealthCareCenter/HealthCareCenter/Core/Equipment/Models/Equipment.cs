@@ -19,9 +19,9 @@ namespace HealthCareCenter.Core.Equipment.Models
         /// <summary>
         /// Constructor used for adding new equipment.
         /// </summary>
-        public Equipment(EquipmentType type, string name)
+        public Equipment(EquipmentType type, string name, BaseEquipmentRepository equipmentRepository)
         {
-            ID = EquipmentRepository.GetLargestEquipmentId() + 1;
+            ID = equipmentRepository.GetLargestID() + 1;
             CurrentRoomID = 0;
             Type = type;
             Name = name;

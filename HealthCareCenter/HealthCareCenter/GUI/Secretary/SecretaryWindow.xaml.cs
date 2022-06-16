@@ -4,6 +4,7 @@ using System.Windows;
 using HealthCareCenter.Core.Equipment.Services;
 using HealthCareCenter.Core.Notifications;
 using HealthCareCenter.Core.Notifications.Services;
+using HealthCareCenter.Core.Rooms.Repositories;
 using HealthCareCenter.Core.Users;
 using HealthCareCenter.Core.Users.Models;
 
@@ -59,7 +60,9 @@ namespace HealthCareCenter.Secretary
 
         private void EquipmentDistributionButton_Click(object sender, RoutedEventArgs e)
         {
-            DistributeDynamicEquipmentWindow window = new DistributeDynamicEquipmentWindow(_dynamicEquipmentService);
+            DistributeDynamicEquipmentWindow window = new DistributeDynamicEquipmentWindow(
+                _dynamicEquipmentService,
+                new StorageRepository());
             window.ShowDialog();
         }
         

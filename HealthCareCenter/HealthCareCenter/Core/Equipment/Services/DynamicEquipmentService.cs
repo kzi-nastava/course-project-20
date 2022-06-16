@@ -11,15 +11,19 @@ namespace HealthCareCenter.Core.Equipment.Services
     public class DynamicEquipmentService : IDynamicEquipmentService
     {
         private readonly BaseDynamicEquipmentRequestRepository _requestRepository;
+        private readonly BaseStorageRepository _storageRepository;
 
-        public DynamicEquipmentService(BaseDynamicEquipmentRequestRepository requestRepository)
+        public DynamicEquipmentService(
+            BaseDynamicEquipmentRequestRepository requestRepository,
+            BaseStorageRepository storageRepository)
         {
             _requestRepository = requestRepository;
+            _storageRepository = storageRepository;
         }
 
         public void FulfillRequestsIfNeeded()
         {
-            Room storage = StorageRepository.Load();
+            Room storage = _storageRepository.Load();
             foreach (DynamicEquipmentRequest request in _requestRepository.Requests)
             {
                 if (request.Fulfilled || request.Created.AddDays(1).CompareTo(DateTime.Now) > 0)
@@ -29,7 +33,7 @@ namespace HealthCareCenter.Core.Equipment.Services
                 FulfillRequest(storage, request);
             }
             _requestRepository.Save();
-            StorageRepository.Save(storage);
+            _storageRepository.Save(storage);
         }
 
         private void FulfillRequest(Room storage, DynamicEquipmentRequest request)
@@ -91,7 +95,7 @@ namespace HealthCareCenter.Core.Equipment.Services
 
         public List<string> GetMissingEquipment()
         {
-            Room storage = StorageRepository.Load();
+            Room storage = _storageRepository.Load();
             List<string> missingEquipment = new List<string>(Constants.DynamicEquipment);
             foreach (string equipment in storage.EquipmentAmounts.Keys)
             {
@@ -112,7 +116,7 @@ namespace HealthCareCenter.Core.Equipment.Services
             else
                 transferTo.EquipmentAmounts.Add(equipment, quantity);
 
-            StorageRepository.Save(storage);
+            _storageRepository.Save(storage);
             HospitalRoomRepository.Save();
         }
     }

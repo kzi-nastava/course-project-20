@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Core;
+using HealthCareCenter.Core.Equipment.Repositories;
 using HealthCareCenter.Core.Equipment.Services;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Medicine.Repositories;
@@ -8,6 +9,7 @@ using HealthCareCenter.Core.Notifications.Services;
 using HealthCareCenter.Core.Rooms;
 using HealthCareCenter.Core.Rooms.Controllers;
 using HealthCareCenter.Core.Rooms.Models;
+using HealthCareCenter.Core.Rooms.Repositories;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users.Models;
@@ -133,7 +135,17 @@ namespace HealthCareCenter
                 FillDataGridHospitalRoomsRenovationSplit();
 
                 DateTime parsedFinishDate = Convert.ToDateTime(finishDate);
-                ShowWindow(new EquipmentIrrevocableRearrangementWindow(_signedManager, parsedFinishDate, splitRoom, newRoom1, newRoom2, new RoomService(new EquipmentRearrangementService())));
+                ShowWindow(new EquipmentIrrevocableRearrangementWindow(
+                    _signedManager, 
+                    parsedFinishDate, 
+                    splitRoom, 
+                    newRoom1, 
+                    newRoom2,
+                    new RoomService(
+                    new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()))));
             }
             catch (Exception ex)
             {
@@ -158,34 +170,70 @@ namespace HealthCareCenter
                         new MedicineInstructionRepository()),
                     new MedicineService(
                         new MedicineRepository())),
-                new EquipmentRearrangementService(),
-                new RoomService(new EquipmentRearrangementService()))
+                new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
+                new RoomService(
+                    new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository())))
                 );
         }
 
         private void EquipmentReviewMenuItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new HospitalEquipmentReviewWindow(_signedManager, new EquipmentRearrangementService(), new RoomService(new EquipmentRearrangementService())));
+            ShowWindow(new HospitalEquipmentReviewWindow(
+                _signedManager, 
+                new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
+                new RoomService(
+                    new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()))));
         }
 
         private void ArrangingEquipmentItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ArrangingEquipmentWindow(_signedManager, new EquipmentRearrangementService(), new RoomService(new EquipmentRearrangementService())));
+            ShowWindow(new ArrangingEquipmentWindow(
+                _signedManager, 
+                new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
+                new RoomService(
+                    new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()))));
         }
 
         private void SimpleRenovationItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new HospitalRoomRenovationWindow(_signedManager, new RoomService(new EquipmentRearrangementService())));
+            ShowWindow(new HospitalRoomRenovationWindow(
+                _signedManager,
+                new RoomService(
+                    new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()))));
         }
 
         private void ComplexRenovationMergeItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ComplexHospitalRoomRenovationMergeWindow(_signedManager, new RoomService(new EquipmentRearrangementService())));
+            ShowWindow(new ComplexHospitalRoomRenovationMergeWindow(
+                _signedManager,
+                new RoomService(
+                    new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()))));
         }
 
         private void ComplexRenovationSplitItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager, new RoomService(new EquipmentRearrangementService())));
+            ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(
+                _signedManager,
+                new RoomService(
+                    new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()))));
         }
 
         private void CreateMedicineClick(object sender, RoutedEventArgs e)

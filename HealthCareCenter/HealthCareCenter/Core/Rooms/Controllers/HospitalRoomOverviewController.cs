@@ -13,20 +13,28 @@ namespace HealthCareCenter.Core.Rooms.Controllers
     {
         private readonly IEquipmentRearrangementService _equipmentRearrangementService;
         private readonly IRoomService _roomService;
+        private readonly IEquipmentService _equipmentService;
+        private readonly BaseStorageRepository _storageRepository;
 
-        public HospitalRoomOverviewController(IEquipmentRearrangementService equipmentRearrangementService, IRoomService roomService)
+        public HospitalRoomOverviewController(
+            IEquipmentRearrangementService equipmentRearrangementService,
+            IRoomService roomService,
+            IEquipmentService equipmentService,
+            BaseStorageRepository storageRepository)
         {
             _equipmentRearrangementService = equipmentRearrangementService;
             _roomService = roomService;
+            _equipmentService = equipmentService;
+            _storageRepository = storageRepository;
         }
 
         public List<List<string>> GetFilteredEquipmentSearchResult(string searchContent, string amount, string equipmentType, string roomType)
         {
-            List<Equipment.Models.Equipment> equipments = EquipmentService.GetEquipments();
+            List<Equipment.Models.Equipment> equipments = _equipmentService.GetEquipments();
             List<List<string>> equipmentsForDisplay = new List<List<string>>();
             foreach (Equipment.Models.Equipment equipment in equipments)
             {
-                if (!EquipmentService.HasScheduledRearrangement(equipment))
+                if (!_equipmentService.HasScheduledRearrangement(equipment))
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
                     AddEmptyFieldsForEquipmentDisplay(ref equipmentAttributesToDisplay);
@@ -47,11 +55,11 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 
         public List<List<string>> GetAllEquipmentsForDisplay()
         {
-            List<Equipment.Models.Equipment> equipments = EquipmentService.GetEquipments();
+            List<Equipment.Models.Equipment> equipments = _equipmentService.GetEquipments();
             List<List<string>> equipmentForDisplay = new List<List<string>>();
             foreach (Equipment.Models.Equipment equipment in equipments)
             {
-                if (!EquipmentService.HasScheduledRearrangement(equipment))
+                if (!_equipmentService.HasScheduledRearrangement(equipment))
                 {
                     List<string> equipmentAttributesToDisplay = equipment.ToList();
                     AddEmptyFieldsForEquipmentDisplay(ref equipmentAttributesToDisplay);
@@ -132,7 +140,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 
             if (amount == "") { return true; }
 
-            Room storage = StorageRepository.Load();
+            Room storage = _storageRepository.Load();
 
             if (amount == "Out of stock") { if (!_roomService.ContainsEquipment(storage, equipmentName)) { return true; } }
 

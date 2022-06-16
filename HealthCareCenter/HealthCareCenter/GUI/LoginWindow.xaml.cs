@@ -27,6 +27,8 @@ using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Medicine.Repositories;
 using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.Core.Prescriptions;
+using HealthCareCenter.Core.Rooms.Repositories;
+using HealthCareCenter.Core.Equipment.Repositories;
 
 namespace HealthCareCenter
 {
@@ -35,16 +37,17 @@ namespace HealthCareCenter
         private static BackgroundWorker _backgroundWorker = null;
         private static IDynamicEquipmentService _dynamicEquipmentService;
 
-        public LoginWindow(IDynamicEquipmentService dynamicEquipmentService) : this()
+        public LoginWindow(
+            IDynamicEquipmentService dynamicEquipmentService) : this()
         {
             _dynamicEquipmentService = dynamicEquipmentService;
         }
 
         public LoginWindow()
         {
-            IEquipmentRearrangementService equipmentRearrangementService = new EquipmentRearrangementService();
+            IEquipmentRearrangementService equipmentRearrangementService = new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository()));
             InitializeComponent();
-            DoEquipmentRearrangements(equipmentRearrangementService);
+            DoEquipmentRearrangements(equipmentRearrangementService, new EquipmentService(new EquipmentRepository()));
             FinshPossibleRenovation();
 
             try
@@ -59,9 +62,11 @@ namespace HealthCareCenter
             StartBackgroundWorkerIfNeeded();
         }
 
-        private void DoEquipmentRearrangements(IEquipmentRearrangementService equipmentRearrangementService)
+        private void DoEquipmentRearrangements(
+            IEquipmentRearrangementService equipmentRearrangementService,
+            IEquipmentService equipmentService)
         {
-            List<Equipment> equipments = EquipmentService.GetEquipments();
+            List<Equipment> equipments = equipmentService.GetEquipments();
             for (int i = 0; i < equipments.Count; i++)
             {
                 equipmentRearrangementService.DoPossibleRearrangement(equipments[i]);
@@ -133,7 +138,11 @@ namespace HealthCareCenter
                                 new HealthRecordRepository()),
                             new PatientEditService(
                                 new HealthRecordRepository()))),
-                    new RoomService(new EquipmentRearrangementService()),
+                    new RoomService(
+                        new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository())),
                     new HealthRecordService(
                         new HealthRecordRepository()));
                 Close();
@@ -149,8 +158,12 @@ namespace HealthCareCenter
                             new MedicineInstructionRepository()),
                         new MedicineService(
                             new MedicineRepository())),
-                    new EquipmentRearrangementService(),
-                    new RoomService(new EquipmentRearrangementService())));
+                    new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
+                    new RoomService(
+                        new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()))));
             }
             else if (user.GetType() == typeof(Patient))
             {

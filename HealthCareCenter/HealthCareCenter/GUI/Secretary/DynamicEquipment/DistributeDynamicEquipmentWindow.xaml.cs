@@ -18,9 +18,11 @@ namespace HealthCareCenter.Secretary
         private readonly Room _storage;
         private readonly DistributeDynamicEquipmentController _controller;
 
-        public DistributeDynamicEquipmentWindow(IDynamicEquipmentService dynamicEquipmentService)
+        public DistributeDynamicEquipmentWindow(
+            IDynamicEquipmentService dynamicEquipmentService,
+            BaseStorageRepository storageRepository)
         {
-            _storage = StorageRepository.Load();
+            _storage = storageRepository.Load();
             _controller = new DistributeDynamicEquipmentController(dynamicEquipmentService);
 
             InitializeComponent();

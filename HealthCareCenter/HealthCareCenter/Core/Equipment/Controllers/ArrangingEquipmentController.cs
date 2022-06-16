@@ -7,6 +7,7 @@ using HealthCareCenter.Core.Rooms.Models;
 using HealthCareCenter.Core.Equipment.Exceptions;
 using HealthCareCenter.Core.Rooms;
 using HealthCareCenter.Core.Exceptions;
+using HealthCareCenter.Core.Equipment.Repositories;
 
 namespace HealthCareCenter.Core.Equipment.Controllers
 {
@@ -14,11 +15,16 @@ namespace HealthCareCenter.Core.Equipment.Controllers
     {
         private readonly IEquipmentRearrangementService _equipmentRearrangementService;
         private readonly IRoomService _roomService;
+        private readonly IEquipmentService _equipmentService;
 
-        public ArrangingEquipmentController(IEquipmentRearrangementService equipmentRearrangementService, IRoomService roomService)
+        public ArrangingEquipmentController(
+            IEquipmentRearrangementService equipmentRearrangementService, 
+            IRoomService roomService,
+            IEquipmentService equipmentService)
         {
             _equipmentRearrangementService = equipmentRearrangementService;
             _roomService = roomService;
+            _equipmentService = equipmentService;
         }
 
         public void SetRearrangement(string newRoomId, string equipmentForRearrangementId, string rearrangementDate, string rearrangementTime)
@@ -27,7 +33,7 @@ namespace HealthCareCenter.Core.Equipment.Controllers
 
             int parsedNewRoomId = Convert.ToInt32(newRoomId);
             int parsedEquipmentForRearrangementId = Convert.ToInt32(equipmentForRearrangementId);
-            Models.Equipment equipmentForRearrangement = EquipmentService.Get(parsedEquipmentForRearrangementId);
+            Models.Equipment equipmentForRearrangement = _equipmentService.Get(parsedEquipmentForRearrangementId);
             DateTime rearrangementDateTime = Convert.ToDateTime(rearrangementDate + " " + rearrangementTime);
 
             EquipmentRearrangement rearrangement = new EquipmentRearrangement(
@@ -43,7 +49,7 @@ namespace HealthCareCenter.Core.Equipment.Controllers
             IsEqipmentForUndoigRearrangementValide(equipmentForRearrangementId);
 
             int parsedEquipmentForRearrangementId = Convert.ToInt32(equipmentForRearrangementId);
-            Models.Equipment equipmentForRearrangement = EquipmentService.Get(parsedEquipmentForRearrangementId);
+            Models.Equipment equipmentForRearrangement = _equipmentService.Get(parsedEquipmentForRearrangementId);
             EquipmentRearrangement rearrangement = _equipmentRearrangementService.Get(equipmentForRearrangement.RearrangementID);
 
             IsPossibleToUndoEquipmentRearrangement(rearrangement, equipmentForRearrangement);
@@ -54,10 +60,10 @@ namespace HealthCareCenter.Core.Equipment.Controllers
         {
             List<List<string>> equipmentsForDisplay = new List<List<string>>();
 
-            List<Models.Equipment> equipments = EquipmentService.GetEquipments();
+            List<Models.Equipment> equipments = _equipmentService.GetEquipments();
             foreach (Models.Equipment equipment in equipments)
             {
-                if (!EquipmentService.HasScheduledRearrangement(equipment))
+                if (!_equipmentService.HasScheduledRearrangement(equipment))
                 {
                     List<string> equipmentAttributesToDisplay = GetUnscheduledEquipmentAttributes(equipment);
                     equipmentsForDisplay.Add(equipmentAttributesToDisplay);
@@ -166,11 +172,11 @@ namespace HealthCareCenter.Core.Equipment.Controllers
             if (!IsEquipmentForRearrangementIdInputValide(equipmentId)) { throw new InvalideEquipmentIdExcpetion(equipmentId); }
 
             int parsedEquipmentForRearrangementId = Convert.ToInt32(equipmentId);
-            Models.Equipment equipmentForRearrangement = EquipmentService.Get(parsedEquipmentForRearrangementId);
+            Models.Equipment equipmentForRearrangement = _equipmentService.Get(parsedEquipmentForRearrangementId);
 
             if (!IsEquipmentForRearrangementFound(equipmentForRearrangement)) { throw new EquipmentNotFoundException(equipmentId); }
 
-            if (EquipmentService.HasScheduledRearrangement(equipmentForRearrangement))
+            if (_equipmentService.HasScheduledRearrangement(equipmentForRearrangement))
             {
                 throw new EquipmentAlreadyHasScheduledRearrangementException(equipmentId);
             }
@@ -212,7 +218,7 @@ namespace HealthCareCenter.Core.Equipment.Controllers
             if (!IsEquipmentForRearrangementIdInputValide(equipmentId)) { throw new InvalideEquipmentIdExcpetion(equipmentId); }
 
             int parsedEquipmentForRearrangementId = Convert.ToInt32(equipmentId);
-            Models.Equipment equipmentForRearrangement = EquipmentService.Get(parsedEquipmentForRearrangementId);
+            Models.Equipment equipmentForRearrangement = _equipmentService.Get(parsedEquipmentForRearrangementId);
 
             if (!IsEquipmentForRearrangementFound(equipmentForRearrangement)) { throw new EquipmentNotFoundException(equipmentId); }
         }

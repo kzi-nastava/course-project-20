@@ -1,5 +1,6 @@
 ﻿using HealthCareCenter.Core.Equipment.Repositories;
 using HealthCareCenter.Core.Equipment.Services;
+using HealthCareCenter.Core.Rooms.Repositories;
 using System.Windows;
 
 namespace HealthCareCenter
@@ -12,7 +13,9 @@ namespace HealthCareCenter
         protected override void OnStartup(StartupEventArgs e)
         {
             LoginWindow win = new LoginWindow(
-                new DynamicEquipmentService(new DynamicEquipmentRequestRepository()));
+                new DynamicEquipmentService(
+                    new DynamicEquipmentRequestRepository(),
+                    new StorageRepository()));
             win.Show();
             base.OnStartup(e);
         }
