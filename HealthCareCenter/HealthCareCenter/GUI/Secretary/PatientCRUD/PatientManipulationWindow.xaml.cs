@@ -17,9 +17,11 @@ namespace HealthCareCenter.Secretary
     {
         private List<Patient> _blockedPatients;
         private PatientManipulationController _controller;
+        private readonly BaseUserRepository _userRepository;
 
-        public PatientManipulationWindow()
+        public PatientManipulationWindow(BaseUserRepository userRepository)
         {
+            _userRepository = userRepository;
             InitializeComponent();
         }
 
@@ -35,9 +37,11 @@ namespace HealthCareCenter.Secretary
                     new HealthRecordService(
                         new HealthRecordRepository()),
                     new PatientEditService(
-                        new HealthRecordRepository())));
+                        new HealthRecordRepository(),
+                        new UserRepository()),
+                    new UserRepository()));
 
-            patientsDataGrid.ItemsSource = UserRepository.Patients;
+            patientsDataGrid.ItemsSource = _userRepository.Patients;
             try
             {
                 _blockedPatients = _controller.GetBlockedPatients();
@@ -51,7 +55,7 @@ namespace HealthCareCenter.Secretary
 
         private void ShowEveryoneRadioButton_Click(object sender, RoutedEventArgs e)
         {
-            patientsDataGrid.ItemsSource = UserRepository.Patients;
+            patientsDataGrid.ItemsSource = _userRepository.Patients;
         }
 
         private void ShowOnlyBlockedRadioButton_Click(object sender, RoutedEventArgs e)
@@ -107,7 +111,7 @@ namespace HealthCareCenter.Secretary
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            PatientCreateWindow window = new PatientCreateWindow(new HealthRecordRepository());
+            PatientCreateWindow window = new PatientCreateWindow(new HealthRecordRepository(), new UserRepository());
             window.ShowDialog();
             patientsDataGrid.Items.Refresh();
         }

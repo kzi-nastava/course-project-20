@@ -14,11 +14,16 @@ namespace HealthCareCenter.Core.Surveys.Controllers
     {
         private IDoctorSurveyRatingService _doctorSurveyRatingService;
         private readonly BaseDoctorSurveyRatingRepository _doctorSurveyRatingRepository;
+        private readonly IDoctorService _doctorService;
 
-        public DoctorSurveyOverviewController(IDoctorSurveyRatingService doctorSurveyRatingService, BaseDoctorSurveyRatingRepository doctorSurveyRatingRepository)
+        public DoctorSurveyOverviewController(
+            IDoctorSurveyRatingService doctorSurveyRatingService, 
+            BaseDoctorSurveyRatingRepository doctorSurveyRatingRepository,
+            IDoctorService doctorService)
         {
             _doctorSurveyRatingService = doctorSurveyRatingService;
             _doctorSurveyRatingRepository = doctorSurveyRatingRepository;
+            _doctorService = doctorService;
         }
 
         public List<DoctorSurveyRating> GetDoctorSurveys()
@@ -34,7 +39,7 @@ namespace HealthCareCenter.Core.Surveys.Controllers
             int i = 0;
             foreach (KeyValuePair<int, double> entry in doctorsRaitings)
             {
-                Doctor doctor = DoctorService.Get(entry.Key);
+                Doctor doctor = _doctorService.Get(entry.Key);
                 List<string> doctorAtributesForDisplay = new List<string>() { doctor.ID.ToString(), doctor.FirstName, doctor.LastName, entry.Value.ToString() };
                 doctors.Add(doctorAtributesForDisplay);
                 i++;
@@ -54,7 +59,7 @@ namespace HealthCareCenter.Core.Surveys.Controllers
             int i = 0;
             foreach (KeyValuePair<int, double> entry in doctorsRaitings.Reverse())
             {
-                Doctor doctor = DoctorService.Get(entry.Key);
+                Doctor doctor = _doctorService.Get(entry.Key);
                 List<string> doctorAtributesForDisplay = new List<string>() { doctor.ID.ToString(), doctor.FirstName, doctor.LastName, entry.Value.ToString() };
                 doctors.Add(doctorAtributesForDisplay);
                 i++;

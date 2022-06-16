@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.Users;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.GUI.Patient.SharedCommands;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
@@ -18,9 +19,10 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
 
             _navigationStore.CurrentViewModel = new AppointmentFormViewModel(
                 new AppointmentTermService(),
-                _viewModel.Patient, 
-                _navigationStore, 
-                _viewModel.ChosenAppointment, 
+                new UserRepository(),
+                _viewModel.Patient,
+                _navigationStore,
+                _viewModel.ChosenAppointment,
                 _isModification, null);
         }
 

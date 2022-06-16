@@ -12,13 +12,19 @@ namespace HealthCareCenter.Core.Appointments.Services
     {
         private readonly BaseAppointmentRepository _appointmentRepository;
         private readonly BaseAppointmentChangeRequestRepository _changeRequestRepository;
+        private readonly IHospitalRoomService _hospitalRoomService;
+        private readonly BaseUserRepository _userRepository;
 
         public AppointmentChangeRequestService(
-            BaseAppointmentRepository appointmentRepository, 
-            BaseAppointmentChangeRequestRepository changeRequestRepository)
+            BaseAppointmentRepository appointmentRepository,
+            BaseAppointmentChangeRequestRepository changeRequestRepository,
+            IHospitalRoomService hospitalRoomService,
+            BaseUserRepository userRepository)
         {
             _appointmentRepository = appointmentRepository;
             _changeRequestRepository = changeRequestRepository;
+            _hospitalRoomService = hospitalRoomService;
+            _userRepository = userRepository;
         }
 
         public void DeleteAppointment(AppointmentChangeRequest request)
@@ -27,7 +33,7 @@ namespace HealthCareCenter.Core.Appointments.Services
             {
                 if (appointment.ID == request.AppointmentID)
                 {
-                    HospitalRoomService.Get(appointment.HospitalRoomID).AppointmentIDs.Remove(appointment.ID);
+                    _hospitalRoomService.Get(appointment.HospitalRoomID).AppointmentIDs.Remove(appointment.ID);
                     _appointmentRepository.Appointments.Remove(appointment);
                     _appointmentRepository.Save();
                     break;
@@ -95,7 +101,7 @@ namespace HealthCareCenter.Core.Appointments.Services
         {
             bool foundOld = false;
             bool foundNew = false;
-            foreach (Doctor doctor in UserRepository.Doctors)
+            foreach (Doctor doctor in _userRepository.Doctors)
             {
                 if (doctor.ID == appointment.DoctorID)
                 {
@@ -134,7 +140,7 @@ namespace HealthCareCenter.Core.Appointments.Services
 
         private void LinkDoctor(DeleteRequestForDisplay deleteRequest, Appointment appointment)
         {
-            foreach (Doctor doctor in UserRepository.Doctors)
+            foreach (Doctor doctor in _userRepository.Doctors)
             {
                 if (doctor.ID == appointment.DoctorID)
                 {

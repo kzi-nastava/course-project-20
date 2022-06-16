@@ -1,6 +1,8 @@
 ﻿using HealthCareCenter.Core.Medicine.Repositories;
 using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Prescriptions;
+using HealthCareCenter.Core.Users;
+using HealthCareCenter.Core.Users.Services;
 using HealthCareCenter.GUI.Patient.Profile.Commands;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
 using System.Collections.Generic;
@@ -92,12 +94,16 @@ namespace HealthCareCenter.GUI.Patient.Profile.ViewModels
                             prescription, 
                             medicineInstructionService.GetSingle(instructionID),
                             new MedicineService(
-                                new MedicineRepository()))); ;
+                                new MedicineRepository()),
+                            new UserService(
+                                new UserRepository()))); ;
                 }
             }
             Instructions = instructions;
 
-            SetNotificationTime = new SetNotificationTimeCommand(this);
+            SetNotificationTime = new SetNotificationTimeCommand(
+                this,
+                new UserRepository());
             SearchInstruction = new SearchInstructionsCommand(
                 this,
                 new MedicineInstructionService(

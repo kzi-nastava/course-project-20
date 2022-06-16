@@ -13,6 +13,10 @@ using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Medicine.Repositories;
 using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Patients.Services;
+using HealthCareCenter.Core.Rooms.Services;
+using HealthCareCenter.Core.Rooms.Repositories;
+using HealthCareCenter.Core.Users;
+using HealthCareCenter.Core.Users.Services;
 
 namespace HealthCareCenter.Secretary
 {
@@ -45,23 +49,58 @@ namespace HealthCareCenter.Secretary
                     new MedicineInstructionService(
                         new MedicineInstructionRepository()),
                     new MedicineService(
-                        new MedicineRepository())),
+                        new MedicineRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
                 new AppointmentRepository(),
                 new AppointmentService(
-                    new AppointmentRepository(),
-                    new AppointmentChangeRequestRepository(),
-                    new AppointmentChangeRequestService(
-                        new AppointmentRepository(),
-                        new AppointmentChangeRequestRepository()),
-                    new PatientService(
                         new AppointmentRepository(),
                         new AppointmentChangeRequestRepository(),
-                        new HealthRecordRepository(),
-                        new HealthRecordService(
-                            new HealthRecordRepository()),
-                        new PatientEditService(
-                            new HealthRecordRepository())))) { UrgentInfo = _info };
-            _controller = new ScheduleUrgentAppointmentController(service);
+                        new AppointmentChangeRequestService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new HospitalRoomService(
+                                new AppointmentRepository(),
+                                new HospitalRoomForRenovationService(
+                                    new HospitalRoomForRenovationRepository()),
+                                new HospitalRoomRepository()),
+                            new UserRepository()),
+                        new PatientService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new HealthRecordRepository(),
+                            new HealthRecordService(
+                                new HealthRecordRepository()),
+                            new PatientEditService(
+                                new HealthRecordRepository(),
+                                new UserRepository()),
+                            new UserRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository()),
+                        new HospitalRoomRepository()),
+                new HospitalRoomService(
+                    new AppointmentRepository(),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomRepository()),
+                new HospitalRoomRepository(),
+                new UserRepository(),
+                new DoctorService(
+                    new DoctorSearchService(
+                        new UserRepository()),
+                    new UserRepository())) { UrgentInfo = _info };
+            _controller = new ScheduleUrgentAppointmentController(
+                service,
+                new DoctorService(
+                    new DoctorSearchService(
+                        new UserRepository()),
+                    new UserRepository()));
 
             InitializeComponent();
 

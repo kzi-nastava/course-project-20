@@ -26,6 +26,9 @@ using HealthCareCenter.Core.Surveys.Models;
 using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users.Models;
 using HealthCareCenter.Core.Surveys.Repositories;
+using HealthCareCenter.Core.Users.Services;
+using HealthCareCenter.Core.Users;
+using HealthCareCenter.Core.Appointments.Repository;
 
 namespace HealthCareCenter
 {
@@ -62,7 +65,13 @@ namespace HealthCareCenter
             _medicineCreationRequestService = medicineCreationRequestService;
 
             _signedManager = manager;
-            _controller = new DoctorSurveyOverviewController(doctorSurveyRatingService, new DoctorSurveyRatingRepository());
+            _controller = new DoctorSurveyOverviewController(
+                doctorSurveyRatingService, 
+                new DoctorSurveyRatingRepository(),
+                new DoctorService(
+                    new DoctorSearchService(
+                        new UserRepository()),
+                    new UserRepository()));
             InitializeComponent();
             FillDataGridDoctorsSurveys();
             FillDataGridBest3Dctors();
@@ -136,16 +145,78 @@ namespace HealthCareCenter
                     new HealthRecordService(
                         new HealthRecordRepository()),
                     new MedicineInstructionService(
-                        new MedicineInstructionRepository()),
-                    new MedicineService(
-                        new MedicineRepository())), 
-                _roomService, 
-                _hospitalRoomUnderConstructionService, 
-                _hospitalRoomForRenovationService, 
-                _renovationScheduleService, 
-                _equipmentRearrangementService, 
-                _doctorSurveyRatingService, 
-                _medicineCreationRequestService));
+                            new MedicineInstructionRepository()),
+                        new MedicineService(
+                            new MedicineRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
+                new RoomService(
+                    new StorageRepository(),
+                    new EquipmentService(
+                        new EquipmentRepository()),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository()),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
+                new HospitalRoomUnderConstructionService(
+                    new HospitalRoomUnderConstructionRepository()),
+                new HospitalRoomForRenovationService(
+                    new HospitalRoomForRenovationRepository()),
+                new RenovationScheduleService(
+                    new RoomService(
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()),
+                        new HospitalRoomUnderConstructionService(
+                            new HospitalRoomUnderConstructionRepository()),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository())),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository()),
+                    new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                    new RenovationScheduleRepository(),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
+                new EquipmentRearrangementService(
+                    new RoomService(
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()),
+                        new HospitalRoomUnderConstructionService(
+                            new HospitalRoomUnderConstructionRepository()),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository())),
+                    new EquipmentService(
+                        new EquipmentRepository()),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository())),
+                new DoctorSurveyRatingService(
+                    new DoctorSurveyRatingRepository(),
+                    new UserRepository()),
+                new MedicineCreationRequestService(
+                    new MedicineCreationRequestRepository())));
         }
 
         private void EquipmentReviewMenuItemClick(object sender, RoutedEventArgs e)

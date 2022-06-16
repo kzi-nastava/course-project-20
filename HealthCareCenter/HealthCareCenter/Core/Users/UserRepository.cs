@@ -9,29 +9,28 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Users
 {
-    public static class UserRepository
+    public class UserRepository : BaseUserRepository
     {
-        public static List<User> Users { get; set; }
-        public static List<Doctor> Doctors { get; set; }
-        public static List<Manager> Managers { get; set; }
-        public static List<Patient> Patients { get; set; }
-        public static List<Models.Secretary> Secretaries { get; set; }
-
-        public static int maxID = -1;
-
-        public static void CalculateMaxID()
+        public UserRepository()
         {
-            maxID = -1;
-            foreach (User user in Users)
-            {
-                if (user.ID > maxID)
-                {
-                    maxID = user.ID;
-                }
-            }
+            LoadUsers();
         }
 
-        public static void LoadUsers()
+        public override int CalculateMaxID()
+        {
+            LargestID = -1;
+            foreach (User user in Users)
+            {
+                if (user.ID > LargestID)
+                {
+                    LargestID = user.ID;
+                }
+            }
+
+            return LargestID;
+        }
+
+        public override void LoadUsers()
         {
             try
             {
@@ -61,7 +60,7 @@ namespace HealthCareCenter.Core.Users
             }
         }
 
-        public static void SavePatients()
+        public override void SavePatients()
         {
             try
             {
@@ -82,7 +81,7 @@ namespace HealthCareCenter.Core.Users
             }
         }
 
-        public static void SaveDoctors()
+        public override void SaveDoctors()
         {
             try
             {

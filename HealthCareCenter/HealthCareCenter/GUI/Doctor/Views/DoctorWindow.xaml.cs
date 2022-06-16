@@ -19,6 +19,7 @@ using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Notifications;
 using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Patients.Services;
+using HealthCareCenter.Core.Users;
 
 namespace HealthCareCenter.DoctorGUI
 {
@@ -36,6 +37,7 @@ namespace HealthCareCenter.DoctorGUI
         private readonly BaseMedicineInstructionRepository _medicineInstructionRepository;
         private readonly BasePrescriptionService _prescriptionService;
         private readonly BasePrescriptionRepository _prescriptionRepository;
+        private readonly BaseHospitalRoomRepository _hospitalRoomRepository;
 
         private Doctor signedUser;
 
@@ -60,7 +62,8 @@ namespace HealthCareCenter.DoctorGUI
             BaseMedicineRepository medicineRepository,
             BaseMedicineInstructionRepository medicineInstructionRepository,
             BasePrescriptionService prescriptionService,
-            BasePrescriptionRepository prescriptionRepository)
+            BasePrescriptionRepository prescriptionRepository,
+            BaseHospitalRoomRepository hospitalRoomRepository)
         {
             _notificationService = notificationService;
             _appointmentRepository = appointmentRepository;
@@ -71,6 +74,7 @@ namespace HealthCareCenter.DoctorGUI
             _medicineInstructionRepository = medicineInstructionRepository;
             _prescriptionService = prescriptionService;
             _prescriptionRepository = prescriptionRepository;
+            _hospitalRoomRepository = hospitalRoomRepository;
             healthRecordWindowService = new HealthRecordWindowViewModel(
                 windowService, 
                 user, 
@@ -86,7 +90,9 @@ namespace HealthCareCenter.DoctorGUI
                     new HealthRecordService(
                         new HealthRecordRepository()),
                     new PatientEditService(
-                        new HealthRecordRepository())),
+                        new HealthRecordRepository(),
+                        new UserRepository()),
+                    new UserRepository()),
                 new PrescriptionService(
                     new MedicineInstructionRepository(),
                     new PrescriptionRepository()));
@@ -105,7 +111,7 @@ namespace HealthCareCenter.DoctorGUI
             _medicineInstructionRepository.Load();
             _medicineCreationRequestRepository.Load();
             _medicineCreationRequestRepository.Load();
-            HospitalRoomRepository.Load();
+            _hospitalRoomRepository.Load();
             InitializeComponent();
 
             DisplayNotifications();
@@ -315,7 +321,10 @@ namespace HealthCareCenter.DoctorGUI
                     new HealthRecordService(
                         new HealthRecordRepository()),
                     new PatientEditService(
-                        new HealthRecordRepository())));
+                        new HealthRecordRepository(),
+                        new UserRepository()),
+                    new UserRepository()),
+                new UserRepository());
         }
 
         private void Alter_Click(object sender, RoutedEventArgs e)
@@ -335,7 +344,10 @@ namespace HealthCareCenter.DoctorGUI
                     new HealthRecordService(
                         new HealthRecordRepository()),
                     new PatientEditService(
-                        new HealthRecordRepository())),
+                        new HealthRecordRepository(),
+                        new UserRepository()),
+                    new UserRepository()),
+                new UserRepository(),
                 rowIndex);
         }
 
@@ -534,7 +546,7 @@ namespace HealthCareCenter.DoctorGUI
             _medicineInstructionRepository.Save();
             _medicineRepository.Save();
             _medicineCreationRequestRepository.Save();
-            HospitalRoomRepository.Save();
+            _hospitalRoomRepository.Save();
             LogOut();
         }
 

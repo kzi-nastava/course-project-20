@@ -11,15 +11,18 @@ namespace HealthCareCenter.Core.Appointments.Services.Priority
         private readonly IPriorityAppointmentFinder _priorityFinder;
         private readonly ISimilarToPriorityAppointmentsFinder _similarPriorityFinder;
         private readonly IAppointmentTermService _termService;
+        private readonly BaseUserRepository _userRepository;
 
         public AppointmentPrioritySearchService(
             IPriorityAppointmentFinder priorityFinder, 
             ISimilarToPriorityAppointmentsFinder similarPriorityFinder,
-            IAppointmentTermService termService)
+            IAppointmentTermService termService,
+            BaseUserRepository userRepository)
         {
             _priorityFinder = priorityFinder;
             _similarPriorityFinder = similarPriorityFinder;
             _termService = termService;
+            _userRepository = userRepository;
         }
 
         public Appointment GetPriorityAppointment(bool isDoctorPriority, int doctorID, int healthRecordID, DateTime finalScheduleDate, AppointmentTerm startRange, AppointmentTerm endRange)
@@ -39,7 +42,7 @@ namespace HealthCareCenter.Core.Appointments.Services.Priority
 
             if (isDoctorPriority)
             {
-                foreach (Doctor doctor in UserRepository.Doctors)
+                foreach (Doctor doctor in _userRepository.Doctors)
                 {
                     similarAppointments.AddRange(_similarPriorityFinder.AppointmentsSimilarToPrioritySearch(doctor.ID, healthRecordID, finalScheduleDate, possibleTerms));
                     if (similarAppointments.Count >= 3)

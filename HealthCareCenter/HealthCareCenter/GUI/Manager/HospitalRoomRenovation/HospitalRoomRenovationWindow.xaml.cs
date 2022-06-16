@@ -23,6 +23,7 @@ using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Medicine.Repositories;
 using HealthCareCenter.Core.Rooms.Repositories;
 using HealthCareCenter.Core.Equipment.Repositories;
+using HealthCareCenter.Core.Appointments.Repository;
 
 namespace HealthCareCenter
 {
@@ -56,7 +57,14 @@ namespace HealthCareCenter
             _medicineCreationRequestService = medicineCreationRequestService;
 
             _signedManager = manager;
-            _controller = new HospitalRoomRenovaitonController(roomService, renovationScheduleService);
+            _controller = new HospitalRoomRenovaitonController(
+                roomService, 
+                renovationScheduleService,
+                new HospitalRoomService(
+                    new AppointmentRepository(),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomRepository()));
             InitializeComponent();
             FillDataGridHospitalRooms();
             FillDataGridHospitalRoomsRenovation();
@@ -107,9 +115,14 @@ namespace HealthCareCenter
                     new HealthRecordService(
                         new HealthRecordRepository()),
                     new MedicineInstructionService(
-                        new MedicineInstructionRepository()),
-                    new MedicineService(
-                        new MedicineRepository())), 
+                            new MedicineInstructionRepository()),
+                        new MedicineService(
+                            new MedicineRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())), 
                 _roomService, 
                 _hospitalRoomUnderConstructionService, 
                 _hospitalRoomForRenovationService, 

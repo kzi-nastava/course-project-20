@@ -10,10 +10,12 @@ namespace HealthCareCenter.Core.Surveys.Services
     public class DoctorSurveyRatingService : IDoctorSurveyRatingService
     {
         private readonly BaseDoctorSurveyRatingRepository _doctorSurveyRatingRepository;
+        private readonly BaseUserRepository _userRepository;
 
-        public DoctorSurveyRatingService(BaseDoctorSurveyRatingRepository doctorSurveyRatingRepository)
+        public DoctorSurveyRatingService(BaseDoctorSurveyRatingRepository doctorSurveyRatingRepository, BaseUserRepository userRepository)
         {
             _doctorSurveyRatingRepository = doctorSurveyRatingRepository;
+            _userRepository = userRepository;
         }
 
         public double GetAverageRating(int doctorID)
@@ -35,7 +37,7 @@ namespace HealthCareCenter.Core.Surveys.Services
         public Dictionary<int, double> GetAllRatings()
         {
             Dictionary<int, double> doctorsRatings = new Dictionary<int, double>();
-            foreach (Doctor doctor in UserRepository.Doctors)
+            foreach (Doctor doctor in _userRepository.Doctors)
             {
                 double rating = GetAverageRating(doctor.ID);
                 if (rating > 0)

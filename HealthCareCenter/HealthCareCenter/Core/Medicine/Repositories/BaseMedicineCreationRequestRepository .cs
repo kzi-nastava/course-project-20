@@ -10,7 +10,7 @@ namespace HealthCareCenter.Core.Medicine.Repositories
         public List<MedicineCreationRequest> Requests;
         private int LargestID { get; set; }
 
-        public abstract int GetLargestId();
+        public abstract int CalculateMaxID();
 
         public abstract List<MedicineCreationRequest> Load();
 

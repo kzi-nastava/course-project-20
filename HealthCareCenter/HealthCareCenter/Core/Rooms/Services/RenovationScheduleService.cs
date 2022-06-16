@@ -13,13 +13,20 @@ namespace HealthCareCenter.Core.Rooms.Services
         private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
         private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
         private readonly BaseRenovationScheduleRepository _renovationScheduleRepository;
+        private readonly IHospitalRoomService _hospitalRoomService;
 
-        public RenovationScheduleService(IRoomService roomService, IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService, IHospitalRoomForRenovationService hospitalRoomForRenovationService, BaseRenovationScheduleRepository renovationScheduleRepository)
+        public RenovationScheduleService(
+            IRoomService roomService,
+            IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService, 
+            IHospitalRoomForRenovationService hospitalRoomForRenovationService,
+            BaseRenovationScheduleRepository renovationScheduleRepository,
+            IHospitalRoomService hospitalRoomService)
         {
             _roomService = roomService;
             _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
             _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
             _renovationScheduleRepository = renovationScheduleRepository;
+            _hospitalRoomService = hospitalRoomService;
         }
 
         public List<RenovationSchedule> GetRenovations()
@@ -62,7 +69,7 @@ namespace HealthCareCenter.Core.Rooms.Services
         public void ScheduleSimpleRenovation(RenovationSchedule renovationSchedule, HospitalRoom roomForRenovation)
         {
             Add(renovationSchedule);
-            HospitalRoomService.Delete(roomForRenovation);
+            _hospitalRoomService.Delete(roomForRenovation);
             _hospitalRoomForRenovationService.Add(roomForRenovation);
         }
 
@@ -70,8 +77,8 @@ namespace HealthCareCenter.Core.Rooms.Services
         {
             _hospitalRoomUnderConstructionService.Add(newRoom);
 
-            HospitalRoomService.Delete(room1);
-            HospitalRoomService.Delete(room2);
+            _hospitalRoomService.Delete(room1);
+            _hospitalRoomService.Delete(room2);
 
             _hospitalRoomForRenovationService.Add(room1);
             _hospitalRoomForRenovationService.Add(room2);
@@ -82,7 +89,7 @@ namespace HealthCareCenter.Core.Rooms.Services
         public void ScheduleSplitRenovation(RenovationSchedule renovationSchedule, HospitalRoom newRoom1, HospitalRoom newRoom2, HospitalRoom splitRoom)
         {
             _hospitalRoomForRenovationService.Add(splitRoom);
-            HospitalRoomService.Delete(splitRoom);
+            _hospitalRoomService.Delete(splitRoom);
 
             _hospitalRoomUnderConstructionService.Add(newRoom1);
             _hospitalRoomUnderConstructionService.Add(newRoom2);
@@ -118,7 +125,7 @@ namespace HealthCareCenter.Core.Rooms.Services
         private void FinishSimpleRenovation(RenovationSchedule renovationSchedule)
         {
             HospitalRoom renovatedRoom = _hospitalRoomForRenovationService.Get(renovationSchedule.MainRoomID);
-            HospitalRoomService.Insert(renovatedRoom);
+            _hospitalRoomService.Insert(renovatedRoom);
             _hospitalRoomForRenovationService.Delete(renovatedRoom);
             Delete(renovationSchedule);
         }
@@ -128,7 +135,7 @@ namespace HealthCareCenter.Core.Rooms.Services
             HospitalRoom newRoom = _hospitalRoomUnderConstructionService.Get(renovationSchedule.MainRoomID);
             HospitalRoom room1 = _hospitalRoomForRenovationService.Get(renovationSchedule.Room1ID);
             HospitalRoom room2 = _hospitalRoomForRenovationService.Get(renovationSchedule.Room2ID);
-            HospitalRoomService.Insert(newRoom);
+            _hospitalRoomService.Insert(newRoom);
             // -----
 
             _roomService.TransferAllEquipment(room1, newRoom);
@@ -150,8 +157,8 @@ namespace HealthCareCenter.Core.Rooms.Services
             _hospitalRoomUnderConstructionService.Delete(room2.ID);
             _hospitalRoomForRenovationService.Delete(mainRoom.ID);
 
-            HospitalRoomService.Insert(room1);
-            HospitalRoomService.Insert(room2);
+            _hospitalRoomService.Insert(room1);
+            _hospitalRoomService.Insert(room2);
 
             Delete(renovationSchedule);
         }

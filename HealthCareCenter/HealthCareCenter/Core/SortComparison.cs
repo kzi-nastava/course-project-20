@@ -18,10 +18,17 @@ namespace HealthCareCenter.Core
 
     internal class AppointmentDoctorCompare : IComparer<Appointment>
     {
+        private readonly BaseUserRepository _userRepository;
+
+        public AppointmentDoctorCompare(BaseUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
+
         public int Compare(Appointment a1, Appointment a2)
         {
             string a1DoctorName = "", a2DoctorName = "";
-            foreach (Doctor doctor in UserRepository.Doctors)
+            foreach (Doctor doctor in _userRepository.Doctors)
             {
                 if (doctor.ID == a1.DoctorID)
                 {
@@ -45,10 +52,17 @@ namespace HealthCareCenter.Core
 
     internal class AppointmentProfessionalAreaCompare : IComparer<Appointment>
     {
+        private readonly BaseUserRepository _userRepository;
+
+        public AppointmentProfessionalAreaCompare(BaseUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
+
         public int Compare(Appointment a1, Appointment a2)
         {
             string a1ProfessionalArea = "", a2ProfessionalArea = "";
-            foreach (Doctor doctor in UserRepository.Doctors)
+            foreach (Doctor doctor in _userRepository.Doctors)
             {
                 if (doctor.ID == a1.DoctorID)
                 {
@@ -96,7 +110,7 @@ namespace HealthCareCenter.Core
 
     internal class DoctorRatingCompare : IComparer<Doctor>
     {
-        private IDoctorSurveyRatingService _doctorSurveyRatingService;
+        private readonly IDoctorSurveyRatingService _doctorSurveyRatingService;
 
         public DoctorRatingCompare(IDoctorSurveyRatingService doctorSurveyRatingService)
         {

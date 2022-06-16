@@ -22,17 +22,29 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Services
         private readonly INotificationService _notificationService;
         private readonly BaseAppointmentRepository _appointmentRepository;
         private readonly IAppointmentService _appointmentService;
+        private readonly IHospitalRoomService _hospitalRoomService;
+        private readonly BaseHospitalRoomRepository _hospitalRoomRepository;
+        private readonly BaseUserRepository _userRepository;
+        private readonly IDoctorService _doctorService;
 
         public UrgentAppointmentService(
             ITermsService service, 
             INotificationService notificationService,
             BaseAppointmentRepository appointmentRepository,
-            IAppointmentService appointmentService)
+            IAppointmentService appointmentService,
+            IHospitalRoomService hospitalRoomService,
+            BaseHospitalRoomRepository hospitalRoomRepository,
+            BaseUserRepository userRepository,
+            IDoctorService doctorService)
         {
             _termsService = service;
             _notificationService = notificationService;
             _appointmentRepository = appointmentRepository;
             _appointmentService = appointmentService;
+            _hospitalRoomService = hospitalRoomService;
+            _hospitalRoomRepository = hospitalRoomRepository;
+            _userRepository = userRepository;
+            _doctorService = doctorService;
         }
 
         public override bool CheckTermAndRemoveUnavailables(DateTime potentialTime, List<Doctor> availableDoctors, List<HospitalRoom> availableRooms, List<Appointment> appointments, Patient patient)
@@ -47,8 +59,8 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Services
                 {
                     return false;
                 }
-                DoctorService.RemoveUnavailableDoctors(availableDoctors, appointment);
-                HospitalRoomService.RemoveUnavailableRooms(availableRooms, appointment);
+                _doctorService.RemoveUnavailableDoctors(availableDoctors, appointment);
+                _hospitalRoomService.RemoveUnavailableRooms(availableRooms, appointment);
             }
             return true;
         }
@@ -85,7 +97,7 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Services
 
         public override bool GetTermsAndSchedule(List<Doctor> doctors, AppointmentType type, Patient patient)
         {
-            List<HospitalRoom> rooms = HospitalRoomService.GetRoomsOfType(type);
+            List<HospitalRoom> rooms = _hospitalRoomService.GetRoomsOfType(type);
             foreach (string term in _termsService.GetTermsWithinTwoHours())
             {
                 DateTime potentialTime = _termsService.CreateTime(term);
@@ -110,7 +122,7 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Services
 
         public override bool TryScheduling(AppointmentType type, string doctorType, Patient patient)
         {
-            List<Doctor> doctors = DoctorService.GetDoctorsOfType(doctorType);
+            List<Doctor> doctors = _doctorService.GetDoctorsOfType(doctorType);
 
             UrgentInfo.OccupiedAppointments = new List<Appointment>();
             UrgentInfo.NewAppointments = new Dictionary<int, Appointment>();
@@ -131,8 +143,8 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Services
             postponedAppointment.ScheduledDate = selectedAppointment.PostponedTime;
             _appointmentRepository.Save();
 
-            HospitalRoomService.Update(newAppointment.HospitalRoomID, newAppointment);
-            HospitalRoomRepository.Save();
+            _hospitalRoomService.Update(newAppointment.HospitalRoomID, newAppointment);
+            _hospitalRoomRepository.Save();
 
             notification = _notificationService.Send(postponedAppointment, newAppointment, patient);
             return postponedAppointment;
@@ -153,7 +165,7 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Services
 
         private void LinkPatient(Appointment appointment, OccupiedAppointment appointmentDisplay)
         {
-            foreach (Patient patient in UserRepository.Patients)
+            foreach (Patient patient in _userRepository.Patients)
             {
                 if (appointment.HealthRecordID == patient.HealthRecordID)
                 {
@@ -165,7 +177,7 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Services
 
         private void LinkDoctor(Appointment appointment, OccupiedAppointment appointmentDisplay)
         {
-            foreach (Doctor doctor in UserRepository.Doctors)
+            foreach (Doctor doctor in _userRepository.Doctors)
             {
                 if (appointment.DoctorID == doctor.ID)
                 {

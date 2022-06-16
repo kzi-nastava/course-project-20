@@ -2,11 +2,18 @@
 
 namespace HealthCareCenter.Core.Users.Services
 {
-    public static class UserService
+    public class UserService : IUserService
     {
-        public static string GetFullName(int id)
+        private readonly BaseUserRepository _userRepository;
+
+        public UserService(BaseUserRepository userRepository)
         {
-            foreach (User user in UserRepository.Users)
+            _userRepository = userRepository;
+        }
+
+        public string GetFullName(int id)
+        {
+            foreach (User user in _userRepository.Users)
             {
                 if (user.ID == id)
                 {

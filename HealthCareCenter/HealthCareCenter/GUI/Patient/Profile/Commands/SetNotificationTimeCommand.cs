@@ -26,7 +26,7 @@ namespace HealthCareCenter.GUI.Patient.Profile.Commands
                 }
 
                 _viewModel.Patient.NotificationReceiveTime = notificationReceiveTime;
-                UserRepository.SavePatients();
+                _userRepository.SavePatients();
                 _ = MessageBox.Show("Notification time set successfully", "My App", MessageBoxButton.OK, MessageBoxImage.Information);
                 _viewModel.NotificationReceiveTime = "";
             }
@@ -37,10 +37,14 @@ namespace HealthCareCenter.GUI.Patient.Profile.Commands
         }
 
         private readonly MyPrescriptionsViewModel _viewModel;
+        private readonly BaseUserRepository _userRepository;
 
-        public SetNotificationTimeCommand(MyPrescriptionsViewModel viewModel)
+        public SetNotificationTimeCommand(
+            MyPrescriptionsViewModel viewModel,
+            BaseUserRepository userRepository)
         {
             _viewModel = viewModel;
+            _userRepository = userRepository;
         }
     }
 }

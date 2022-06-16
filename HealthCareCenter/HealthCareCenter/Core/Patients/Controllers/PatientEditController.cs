@@ -11,10 +11,12 @@ namespace HealthCareCenter.Core.Patients.Controllers
     public class PatientEditController : PatientController
     {
         private readonly IPatientService _patientService;
+        private readonly BaseUserRepository _userRepository;
 
-        public PatientEditController(IPatientService patientService)
+        public PatientEditController(IPatientService patientService, BaseUserRepository userRepository)
         {
             _patientService = patientService;
+            _userRepository = userRepository;
         }
 
         public void Edit(PatientDTO editedPatientDTO, HealthRecordDTO editedRecordDTO, Patient uneditedPatient, HealthRecord uneditedRecord)
@@ -59,7 +61,7 @@ namespace HealthCareCenter.Core.Patients.Controllers
             {
                 return;
             }
-            foreach (User user in UserRepository.Users)
+            foreach (User user in _userRepository.Users)
             {
                 if (user.Username == editedPatient.Username)
                 {

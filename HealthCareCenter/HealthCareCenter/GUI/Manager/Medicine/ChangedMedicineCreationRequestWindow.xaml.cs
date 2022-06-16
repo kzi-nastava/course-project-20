@@ -1,4 +1,5 @@
-﻿using HealthCareCenter.Core.Equipment.Repositories;
+﻿using HealthCareCenter.Core.Appointments.Repository;
+using HealthCareCenter.Core.Equipment.Repositories;
 using HealthCareCenter.Core.Equipment.Services;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Medicine.Controllers;
@@ -244,9 +245,14 @@ namespace HealthCareCenter
                     new HealthRecordService(
                         new HealthRecordRepository()),
                     new MedicineInstructionService(
-                        new MedicineInstructionRepository()),
-                    new MedicineService(
-                        new MedicineRepository())), 
+                            new MedicineInstructionRepository()),
+                        new MedicineService(
+                            new MedicineRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())), 
                 _roomService,
                 _hospitalRoomUnderConstructionService, 
                 _hospitalRoomForRenovationService, 

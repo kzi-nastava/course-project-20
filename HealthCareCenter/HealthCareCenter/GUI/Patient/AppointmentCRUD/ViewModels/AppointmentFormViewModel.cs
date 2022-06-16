@@ -4,6 +4,8 @@ using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Patients.Services;
+using HealthCareCenter.Core.Rooms.Repositories;
+using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.Core.Surveys.Repositories;
 using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users;
@@ -18,6 +20,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
     internal class AppointmentFormViewModel : ViewModelBase
     {
         private readonly IAppointmentTermService _termService;
+        private readonly BaseUserRepository _userRepository;
 
         public Core.Patients.Patient Patient { get; }
 
@@ -87,6 +90,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
 
         public AppointmentFormViewModel(
             IAppointmentTermService termService,
+            BaseUserRepository userRepository,
             Core.Patients.Patient patient,
             NavigationStore navigationStore,
             AppointmentViewModel chosenAppointment,
@@ -94,6 +98,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
             DoctorViewModel chosenDoctor)
         {
             _termService = termService;
+            _userRepository = userRepository;
 
             Patient = patient;
 
@@ -110,7 +115,13 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
                     new AppointmentChangeRequestRepository(),
                     new AppointmentChangeRequestService(
                         new AppointmentRepository(),
-                        new AppointmentChangeRequestRepository()),
+                        new AppointmentChangeRequestRepository(),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository()),
+                        new UserRepository()),
                     new PatientService(
                         new AppointmentRepository(),
                         new AppointmentChangeRequestRepository(),
@@ -118,7 +129,20 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
                         new HealthRecordService(
                             new HealthRecordRepository()),
                         new PatientEditService(
-                            new HealthRecordRepository()))));
+                            new HealthRecordRepository(),
+                            new UserRepository()),
+                        new UserRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository()),
+                    new HospitalRoomRepository()),
+                new HospitalRoomService(
+                    new AppointmentRepository(),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomRepository()));
         }
 
         private void FillDoctorListView(DoctorViewModel chosenDoctor)
@@ -127,10 +151,14 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
 
             if (chosenDoctor == null)
             {
-                List<Core.Users.Models.Doctor> allDoctors = UserRepository.Doctors;
+                List<Core.Users.Models.Doctor> allDoctors = _userRepository.Doctors;
                 foreach (Core.Users.Models.Doctor doctor in allDoctors)
                 {
-                    DoctorViewModel doctorViewModel = new DoctorViewModel(doctor, new DoctorSurveyRatingService(new DoctorSurveyRatingRepository()));
+                    DoctorViewModel doctorViewModel = new DoctorViewModel(
+                        doctor, 
+                        new DoctorSurveyRatingService(
+                            new DoctorSurveyRatingRepository(),
+                            new UserRepository()));
                     _doctors.Add(doctorViewModel);
                     if (ChosenAppointment != null && doctorViewModel.DoctorID == ChosenAppointment.DoctorID)
                     {

@@ -9,27 +9,31 @@ namespace HealthCareCenter.Core.Patients.Services
     public class PatientEditService : IPatientEditService
     {
         private readonly BaseHealthRecordRepository _healthRecordRepository;
+        private readonly BaseUserRepository _userRepository;
 
-        public PatientEditService(BaseHealthRecordRepository healthRecordRepository)
+        public PatientEditService(
+            BaseHealthRecordRepository healthRecordRepository,
+            BaseUserRepository userRepository)
         {
             _healthRecordRepository = healthRecordRepository;
+            _userRepository = userRepository;
         }
 
         public void AddToRepositories(HealthRecord record, Patient patient)
         {
             _healthRecordRepository.Records.Add(record);
-            UserRepository.Patients.Add(patient);
-            UserRepository.Users.Add(patient);
+            _userRepository.Patients.Add(patient);
+            _userRepository.Users.Add(patient);
         }
 
         public void DeletePatient(Patient patient)
         {
-            UserRepository.Patients.Remove(patient);
-            UserRepository.Users.Remove(patient);
+            _userRepository.Patients.Remove(patient);
+            _userRepository.Users.Remove(patient);
 
-            if (patient.ID == UserRepository.maxID)
+            if (patient.ID == _userRepository.LargestID)
             {
-                UserRepository.CalculateMaxID();
+                _userRepository.CalculateMaxID();
             }
         }
 
@@ -53,7 +57,7 @@ namespace HealthCareCenter.Core.Patients.Services
         public void SaveRepositories()
         {
             _healthRecordRepository.Save();
-            UserRepository.SavePatients();
+            _userRepository.SavePatients();
         }
     }
 }

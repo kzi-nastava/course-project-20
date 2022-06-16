@@ -11,10 +11,14 @@ namespace HealthCareCenter.Core.Appointments.Services.Priority
     {
         // create attributes for AppointmentRepository and HospitalRoomService
         private readonly BaseAppointmentRepository _appointmentRepository;
+        private readonly IHospitalRoomService _hospitalRoomService;
 
-        public SimilarToPriorityAppointmentsFinder(BaseAppointmentRepository appointmentRepository)
+        public SimilarToPriorityAppointmentsFinder(
+            BaseAppointmentRepository appointmentRepository,
+            IHospitalRoomService hospitalRoomService)
         {
             _appointmentRepository = appointmentRepository;
+            _hospitalRoomService = hospitalRoomService;
         }
 
         public List<Appointment> AppointmentsSimilarToPrioritySearch(int doctorID, int healthRecordID, DateTime finalScheduleDate, List<AppointmentTerm> possibleTerms)
@@ -44,7 +48,7 @@ namespace HealthCareCenter.Core.Appointments.Services.Priority
                         string scheduleDateParse = date.ToString().Split(" ")[0] + " " + term.ToString();
                         DateTime scheduleDate = Convert.ToDateTime(scheduleDateParse);
 
-                        int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(scheduleDate, RoomType.Checkup);
+                        int hospitalRoomID = _hospitalRoomService.GetAvailableRoomID(scheduleDate, RoomType.Checkup);
                         if (hospitalRoomID == -1)
                         {
                             continue;

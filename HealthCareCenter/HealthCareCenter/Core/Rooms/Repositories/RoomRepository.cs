@@ -9,16 +9,21 @@ namespace HealthCareCenter.Core.Rooms.Repositories
     {
         private BaseHospitalRoomUnderConstructionRepository _hospitalRoomUnderConstructionRepository;
         private BaseHospitalRoomForRenovationRepository _hospitalRoomForRenovationRepository;
+        private readonly BaseHospitalRoomRepository _hospitalRoomRepository;
 
-        public RoomRepository(BaseHospitalRoomUnderConstructionRepository hospitalRoomUnderConstructionRepository, BaseHospitalRoomForRenovationRepository hospitalRoomForRenovationRepository)
+        public RoomRepository(
+            BaseHospitalRoomUnderConstructionRepository hospitalRoomUnderConstructionRepository,
+            BaseHospitalRoomForRenovationRepository hospitalRoomForRenovationRepository,
+            BaseHospitalRoomRepository hospitalRoomRepository)
         {
             _hospitalRoomUnderConstructionRepository = hospitalRoomUnderConstructionRepository;
             _hospitalRoomForRenovationRepository = hospitalRoomForRenovationRepository;
+            _hospitalRoomRepository = hospitalRoomRepository;
         }
 
         public List<int> GetLargestIDs()
         {
-            List<int> largestIDs = new List<int> { HospitalRoomRepository.GetLargestRoomId(), _hospitalRoomForRenovationRepository.GetLargestRoomId(), _hospitalRoomUnderConstructionRepository.GetLargestRoomId() };
+            List<int> largestIDs = new List<int> { _hospitalRoomRepository.GetLargestID(), _hospitalRoomForRenovationRepository.GetLargestRoomId(), _hospitalRoomUnderConstructionRepository.GetLargestRoomId() };
             return largestIDs;
         }
     }

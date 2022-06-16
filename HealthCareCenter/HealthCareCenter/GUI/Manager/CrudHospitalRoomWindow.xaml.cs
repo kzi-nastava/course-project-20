@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Core;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Equipment.Repositories;
 using HealthCareCenter.Core.Equipment.Services;
 using HealthCareCenter.Core.HealthRecords;
@@ -51,7 +52,14 @@ namespace HealthCareCenter
 
             _signedManager = manager;
 
-            _controler = new CRUDHospitalRoomController(_roomService, hospitalRoomForRenovationService);
+            _controler = new CRUDHospitalRoomController(
+                _roomService, 
+                hospitalRoomForRenovationService,
+                new HospitalRoomService(
+                    new AppointmentRepository(),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomRepository()));
             InitializeComponent();
             FillRoomTypeComboBox();
             FillDataGridHospitalRooms();
@@ -168,7 +176,12 @@ namespace HealthCareCenter
                     new MedicineInstructionService(
                         new MedicineInstructionRepository()),
                     new MedicineService(
-                        new MedicineRepository())),
+                        new MedicineRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
                 _roomService, 
                 _hospitalRoomUnderConstructionService, 
                 _hospitalRoomForRenovationService, 

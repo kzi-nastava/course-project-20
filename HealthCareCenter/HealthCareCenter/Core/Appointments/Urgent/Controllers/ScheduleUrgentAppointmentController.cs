@@ -12,10 +12,14 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Controllers
     public class ScheduleUrgentAppointmentController
     {
         private readonly BaseUrgentAppointmentService _urgentAppointmentService;
+        private readonly IDoctorService _doctorService;
         
-        public ScheduleUrgentAppointmentController(BaseUrgentAppointmentService service)
+        public ScheduleUrgentAppointmentController(
+            BaseUrgentAppointmentService urgentAppointmentService,
+            IDoctorService doctorService)
         {
-            _urgentAppointmentService = service;
+            _urgentAppointmentService = urgentAppointmentService;
+            _doctorService = doctorService;
         }
 
         public bool TryScheduling(AppointmentType type, string doctorType, Patient patient)
@@ -25,7 +29,7 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Controllers
 
         public List<string> GetTypesOfDoctors()
         {
-            return DoctorService.GetTypesOfDoctors();
+            return _doctorService.GetTypesOfDoctors();
         }
     }
 }

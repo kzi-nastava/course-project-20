@@ -2,6 +2,8 @@
 using HealthCareCenter.Core.Medicine.Repositories;
 using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Prescriptions;
+using HealthCareCenter.Core.Users;
+using HealthCareCenter.Core.Users.Services;
 using HealthCareCenter.GUI.Patient.Profile.ViewModels;
 using HealthCareCenter.GUI.Patient.SharedCommands;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
@@ -28,7 +30,9 @@ namespace HealthCareCenter.GUI.Patient.Profile.Commands
                                 prescription,
                                 _medicineInstructionService.GetSingle(instructionID),
                                 new MedicineService(
-                                    new MedicineRepository())));
+                                    new MedicineRepository()),
+                                new UserService(
+                                    new UserRepository())));
                     }
                 }
 
@@ -50,7 +54,9 @@ namespace HealthCareCenter.GUI.Patient.Profile.Commands
                                 prescription,
                                 _medicineInstructionService.GetSingle(instructionID),
                                 new MedicineService(
-                                    new MedicineRepository())));
+                                    new MedicineRepository()),
+                                new UserService(
+                                    new UserRepository())));
                     }
                 }
             }

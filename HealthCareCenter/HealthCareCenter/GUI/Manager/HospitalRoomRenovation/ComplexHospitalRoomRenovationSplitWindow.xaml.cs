@@ -25,6 +25,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using HealthCareCenter.Core.Appointments.Repository;
 
 namespace HealthCareCenter
 {
@@ -65,7 +66,16 @@ namespace HealthCareCenter
             _medicineCreationRequestService = medicineCreationRequestService;
 
             _signedManager = manager;
-            _controller = new ComplexRoomRenovationSplitController(roomService, hospitalRoomUnderConstructionService, renovationScheduleService, hospitalRoomForRenovationService);
+            _controller = new ComplexRoomRenovationSplitController(
+                roomService, 
+                hospitalRoomUnderConstructionService, 
+                renovationScheduleService, 
+                hospitalRoomForRenovationService,
+                new HospitalRoomService(
+                    new AppointmentRepository(),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomRepository()));
             InitializeComponent();
             FillAllComboBoxes();
             FillDataGridHospitalRooms();
@@ -177,9 +187,14 @@ namespace HealthCareCenter
                     new HealthRecordService(
                         new HealthRecordRepository()),
                     new MedicineInstructionService(
-                        new MedicineInstructionRepository()),
-                    new MedicineService(
-                        new MedicineRepository())),
+                            new MedicineInstructionRepository()),
+                        new MedicineService(
+                            new MedicineRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
                 _roomService, _hospitalRoomUnderConstructionService, 
                 _hospitalRoomForRenovationService, 
                 _renovationScheduleService, 

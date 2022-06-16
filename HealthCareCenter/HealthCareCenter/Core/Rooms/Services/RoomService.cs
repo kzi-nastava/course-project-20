@@ -15,17 +15,20 @@ namespace HealthCareCenter.Core.Rooms.Services
         private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
         private readonly BaseStorageRepository _storageRepository;
         private readonly IEquipmentService _equipmentService;
+        private readonly IHospitalRoomService _hospitalRoomService;
 
         public RoomService(
             BaseStorageRepository storageRepository,
             IEquipmentService equipmentService,
             IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService,
-            IHospitalRoomForRenovationService hospitalRoomForRenovationService)
+            IHospitalRoomForRenovationService hospitalRoomForRenovationService,
+            IHospitalRoomService hospitalRoomService)
         {
             _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
             _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
             _storageRepository = storageRepository;
             _equipmentService = equipmentService;
+            _hospitalRoomService = hospitalRoomService;
         }
 
         /// <summary>
@@ -34,7 +37,7 @@ namespace HealthCareCenter.Core.Rooms.Services
         /// <returns>equipments amount</returns>
         public Dictionary<string, int> GetEquipmentsAmount()
         {
-            List<HospitalRoom> rooms = HospitalRoomService.GetRooms();
+            List<HospitalRoom> rooms = _hospitalRoomService.GetRooms();
             Room storage = _storageRepository.Load();
 
             List<Room> hospitalPremises = new List<Room>();
@@ -79,13 +82,13 @@ namespace HealthCareCenter.Core.Rooms.Services
                 else
                 {
                     HospitalRoom hospitalRoom = (HospitalRoom)room;
-                    if (HospitalRoomService.IsCurrentlyRenovating(hospitalRoom))
+                    if (_hospitalRoomService.IsCurrentlyRenovating(hospitalRoom))
                     {
                         _hospitalRoomForRenovationService.Update(hospitalRoom);
                     }
                     else
                     {
-                        HospitalRoomService.Update(hospitalRoom);
+                        _hospitalRoomService.Update(hospitalRoom);
                     }
                 }
                 return true;
@@ -107,7 +110,7 @@ namespace HealthCareCenter.Core.Rooms.Services
                 }
                 if (room == null)
                 {
-                    room = HospitalRoomService.Get(roomId);
+                    room = _hospitalRoomService.Get(roomId);
                 }
                 if (room == null)
                 {
@@ -144,7 +147,7 @@ namespace HealthCareCenter.Core.Rooms.Services
                 }
                 if (room == null)
                 {
-                    room = HospitalRoomService.Get(roomId);
+                    room = _hospitalRoomService.Get(roomId);
                 }
 
                 return room;

@@ -25,6 +25,7 @@ using HealthCareCenter.Core.Rooms.Repositories;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users.Models;
+using HealthCareCenter.Core.Appointments.Repository;
 
 namespace HealthCareCenter
 {
@@ -177,15 +178,20 @@ namespace HealthCareCenter
         private void CrudHospitalRoomMenuItemClick(object sender, RoutedEventArgs e)
         {
             ShowWindow(new CrudHospitalRoomWindow(
-                _signedManager, 
+                _signedManager,
                 new NotificationService(
                     new NotificationRepository(),
                     new HealthRecordService(
                         new HealthRecordRepository()),
                     new MedicineInstructionService(
-                        new MedicineInstructionRepository()),
-                    new MedicineService(
-                        new MedicineRepository())),
+                            new MedicineInstructionRepository()),
+                        new MedicineService(
+                            new MedicineRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
                 _roomService, 
                 _hospitalRoomUnderConstructionService, 
                 _hospitalRoomForRenovationService, 

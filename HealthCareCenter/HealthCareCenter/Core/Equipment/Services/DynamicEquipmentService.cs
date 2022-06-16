@@ -12,13 +12,16 @@ namespace HealthCareCenter.Core.Equipment.Services
     {
         private readonly BaseDynamicEquipmentRequestRepository _requestRepository;
         private readonly BaseStorageRepository _storageRepository;
+        private readonly BaseHospitalRoomRepository _hospitalRoomRepository;
 
         public DynamicEquipmentService(
             BaseDynamicEquipmentRequestRepository requestRepository,
-            BaseStorageRepository storageRepository)
+            BaseStorageRepository storageRepository,
+            BaseHospitalRoomRepository hospitalRoomRepository)
         {
             _requestRepository = requestRepository;
             _storageRepository = storageRepository;
+            _hospitalRoomRepository = hospitalRoomRepository;
         }
 
         public void FulfillRequestsIfNeeded()
@@ -117,7 +120,7 @@ namespace HealthCareCenter.Core.Equipment.Services
                 transferTo.EquipmentAmounts.Add(equipment, quantity);
 
             _storageRepository.Save(storage);
-            HospitalRoomRepository.Save();
+            _hospitalRoomRepository.Save();
         }
     }
 }

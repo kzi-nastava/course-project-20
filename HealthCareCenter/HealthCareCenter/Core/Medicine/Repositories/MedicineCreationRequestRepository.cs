@@ -16,7 +16,7 @@ namespace HealthCareCenter.Core.Medicine.Repositories
             Requests = Load();
         }
 
-        public override int GetLargestId()
+        public override int CalculateMaxID()
         {
             try
             {

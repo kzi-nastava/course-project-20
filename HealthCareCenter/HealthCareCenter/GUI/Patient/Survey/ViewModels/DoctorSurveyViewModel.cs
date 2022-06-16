@@ -2,6 +2,7 @@
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.Surveys.Repositories;
 using HealthCareCenter.Core.Surveys.Services;
+using HealthCareCenter.Core.Users;
 using HealthCareCenter.Core.Users.Services;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
 using HealthCareCenter.GUI.Patient.Survey.Commands;
@@ -12,6 +13,8 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
 {
     internal class DoctorSurveyViewModel : ViewModelBase
     {
+        private readonly IUserService _userService;
+
         public Core.Patients.Patient Patient { get; }
 
         private List<AppointmentViewModel> _appointments;
@@ -37,7 +40,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
                 OnPropertyChanged(nameof(ChosenAppointment));
                 if (_chosenAppointment != null)
                 {
-                    DoctorFullName = UserService.GetFullName(_chosenAppointment.DoctorID);
+                    DoctorFullName = _userService.GetFullName(_chosenAppointment.DoctorID);
                 }
             }
         }
@@ -81,9 +84,12 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
         public ICommand SubmitReview { get; }
 
         public DoctorSurveyViewModel(
+            IUserService userService,
             IAppointmentService appointmentService,
             Core.Patients.Patient patient)
         {
+            _userService = userService;
+
             Patient = patient;
 
             _appointments = new List<AppointmentViewModel>();
@@ -98,7 +104,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
             ServiceQualityTicked5 = true;
             WouldRecommendTicked5 = true;
 
-            SubmitReview = new SubmitDoctorReviewCommand(this, new DoctorSurveyRatingService(new DoctorSurveyRatingRepository()), new DoctorSurveyRatingRepository());
+            SubmitReview = new SubmitDoctorReviewCommand(this, new DoctorSurveyRatingService(new DoctorSurveyRatingRepository(), new UserRepository()), new DoctorSurveyRatingRepository());
         }
     }
 }

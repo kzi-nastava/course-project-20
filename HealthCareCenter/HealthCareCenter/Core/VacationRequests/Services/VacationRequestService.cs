@@ -12,11 +12,16 @@ namespace HealthCareCenter.Core.VacationRequests.Services
     {
         private readonly INotificationService _notificationService;
         private readonly BaseVacationRequestRepository _vacationRequestRepository;
+        private readonly BaseUserRepository _userRepository;
 
-        public VacationRequestService(INotificationService notificationService, BaseVacationRequestRepository vacationRequestRepository)
+        public VacationRequestService(
+            INotificationService notificationService,
+            BaseVacationRequestRepository vacationRequestRepository,
+            BaseUserRepository userRepository)
         {
             _notificationService = notificationService;
             _vacationRequestRepository = vacationRequestRepository;
+            _userRepository = userRepository;
         }
 
         public bool OnVacation(int doctorID, DateTime when)
@@ -56,7 +61,7 @@ namespace HealthCareCenter.Core.VacationRequests.Services
 
         private void LinkDoctor(VacationRequest request, VacationRequestForDisplay requestDisplay)
         {
-            foreach (Doctor doctor in UserRepository.Doctors)
+            foreach (Doctor doctor in _userRepository.Doctors)
             {
                 if (doctor.ID == request.DoctorID)
                 {

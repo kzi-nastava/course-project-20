@@ -3,6 +3,9 @@ using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Patients.Services;
+using HealthCareCenter.Core.Rooms.Repositories;
+using HealthCareCenter.Core.Rooms.Services;
+using HealthCareCenter.Core.Users;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.GUI.Patient.SharedCommands;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
@@ -51,7 +54,13 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
                         new AppointmentChangeRequestRepository(),
                         new AppointmentChangeRequestService(
                             new AppointmentRepository(),
-                            new AppointmentChangeRequestRepository()),
+                            new AppointmentChangeRequestRepository(),
+                            new HospitalRoomService(
+                                new AppointmentRepository(),
+                                new HospitalRoomForRenovationService(
+                                    new HospitalRoomForRenovationRepository()),
+                                new HospitalRoomRepository()),
+                            new UserRepository()),
                         new PatientService(
                             new AppointmentRepository(),
                             new AppointmentChangeRequestRepository(),
@@ -59,7 +68,15 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
                             new HealthRecordService(
                                 new HealthRecordRepository()),
                             new PatientEditService(
-                                new HealthRecordRepository()))),
+                                new HealthRecordRepository(),
+                                new UserRepository()),
+                            new UserRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository()),
+                        new HospitalRoomRepository()),
                     _viewModel.Patient,
                     _navigationStore);
             }

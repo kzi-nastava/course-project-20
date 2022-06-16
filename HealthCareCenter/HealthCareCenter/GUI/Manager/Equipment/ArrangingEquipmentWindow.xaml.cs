@@ -24,6 +24,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using HealthCareCenter.Core.Surveys.Repositories;
+using HealthCareCenter.Core.Appointments.Repository;
+using HealthCareCenter.Core.Users;
 
 namespace HealthCareCenter
 {
@@ -160,32 +162,53 @@ namespace HealthCareCenter
                     new MedicineInstructionService(
                             new MedicineInstructionRepository()),
                         new MedicineService(
-                            new MedicineRepository())),
+                            new MedicineRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
                 new RoomService(
+                    new StorageRepository(),
+                    new EquipmentService(
+                        new EquipmentRepository()),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository()),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
+                new HospitalRoomUnderConstructionService(
+                    new HospitalRoomUnderConstructionRepository()),
+                new HospitalRoomForRenovationService(
+                    new HospitalRoomForRenovationRepository()),
+                new RenovationScheduleService(
+                    new RoomService(
                         new StorageRepository(),
                         new EquipmentService(
                             new EquipmentRepository()),
                         new HospitalRoomUnderConstructionService(
                             new HospitalRoomUnderConstructionRepository()),
                         new HospitalRoomForRenovationService(
-                            new HospitalRoomForRenovationRepository())),
-                new HospitalRoomUnderConstructionService(
-                    new HospitalRoomUnderConstructionRepository()),
-                new HospitalRoomForRenovationService(
-                    new HospitalRoomForRenovationRepository()),
-                new RenovationScheduleService(
-                    new RoomService(new StorageRepository(),
-                        new EquipmentService(
-                            new EquipmentRepository()),
-                        new HospitalRoomUnderConstructionService(
-                            new HospitalRoomUnderConstructionRepository()),
-                        new HospitalRoomForRenovationService(
-                            new HospitalRoomForRenovationRepository())),
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository())),
                     new HospitalRoomUnderConstructionService(
                         new HospitalRoomUnderConstructionRepository()),
                     new HospitalRoomForRenovationService(
-                        new HospitalRoomForRenovationRepository()),
-                    new RenovationScheduleRepository()),
+                            new HospitalRoomForRenovationRepository()),
+                    new RenovationScheduleRepository(),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
                 new EquipmentRearrangementService(
                     new RoomService(
                         new StorageRepository(),
@@ -194,12 +217,19 @@ namespace HealthCareCenter
                         new HospitalRoomUnderConstructionService(
                             new HospitalRoomUnderConstructionRepository()),
                         new HospitalRoomForRenovationService(
-                            new HospitalRoomForRenovationRepository())),
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository())),
                     new EquipmentService(
                         new EquipmentRepository()),
                     new HospitalRoomUnderConstructionService(
                         new HospitalRoomUnderConstructionRepository())),
-                new DoctorSurveyRatingService(new DoctorSurveyRatingRepository()),
+                new DoctorSurveyRatingService(
+                    new DoctorSurveyRatingRepository(),
+                    new UserRepository()),
                 new MedicineCreationRequestService(
                     new MedicineCreationRequestRepository())));
         }
@@ -234,13 +264,18 @@ namespace HealthCareCenter
             ShowWindow(new MedicineCreationRequestWindow(
                 _signedManager,
                 new RoomService(
-                        new StorageRepository(),
-                        new EquipmentService(
-                            new EquipmentRepository()),
-                        new HospitalRoomUnderConstructionService(
-                            new HospitalRoomUnderConstructionRepository()),
+                    new StorageRepository(),
+                    new EquipmentService(
+                        new EquipmentRepository()),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository()),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
                         new HospitalRoomForRenovationService(
-                            new HospitalRoomForRenovationRepository())), 
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())), 
                 _hospitalRoomUnderConstructionService, 
                 _hospitalRoomForRenovationService, 
                 _renovationScheduleService, 

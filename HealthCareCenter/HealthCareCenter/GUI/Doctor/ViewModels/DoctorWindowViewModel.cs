@@ -25,6 +25,7 @@ using HealthCareCenter.Core.Rooms;
 using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Medicine.Repositories;
 using HealthCareCenter.Core.Prescriptions;
+using HealthCareCenter.Core.Rooms.Repositories;
 
 namespace HealthCareCenter.GUI.Doctor.ViewModels
 {
@@ -44,6 +45,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private readonly IMedicineCreationRequestService _medicineCreationRequestService;
         private readonly BaseMedicineCreationRequestRepository _medicineCreationRequestRepository;
         private readonly IHealthRecordService _healthRecordService;
+        private readonly IDoctorService _doctorService;
 
         public DoctorWindowViewModel(
             User signedUser,
@@ -54,7 +56,8 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             IRoomService roomService,
             IMedicineCreationRequestService medicineCreationRequestService,
             BaseMedicineCreationRequestRepository medicineCreationRequestRepository,
-            IHealthRecordService healthRecordService)
+            IHealthRecordService healthRecordService,
+            IDoctorService doctorService)
         {
             _referralsService = referralsService;
             _signedUser = signedUser;
@@ -65,6 +68,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             _medicineCreationRequestService = medicineCreationRequestService;
             _roomService = roomService;
             _healthRecordService = healthRecordService;
+            _doctorService = doctorService;
             window = new DoctorWindow(
                 signedUser,
                 this,
@@ -73,9 +77,14 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                     new HealthRecordService(
                         new HealthRecordRepository()),
                     new MedicineInstructionService(
-                        new MedicineInstructionRepository()),
-                    new MedicineService(
-                        new MedicineRepository())),
+                            new MedicineInstructionRepository()),
+                        new MedicineService(
+                            new MedicineRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
                 new AppointmentRepository(),
                 new MedicineCreationRequestService(
                     new MedicineCreationRequestRepository()),
@@ -86,7 +95,8 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 new PrescriptionService(
                     new MedicineInstructionRepository(),
                     new PrescriptionRepository()),
-                new PrescriptionRepository());
+                new PrescriptionRepository(),
+                new HospitalRoomRepository());
             window.Show();
         }
 
@@ -322,7 +332,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 case 0: chosenType = "General practitioner"; window.specializationComboBox.IsEnabled = false; window.submitAutomaticReferal.IsEnabled = false; break;
                 case 1: chosenType = "Special"; window.specializationComboBox.IsEnabled = true; return GetDoctorsBySpecialization();
             }
-            return DoctorService.GetDoctorsOfType(chosenType);
+            return _doctorService.GetDoctorsOfType(chosenType);
         }
 
         public List<Core.Users.Models.Doctor> GetDoctorsBySpecialization()
@@ -337,7 +347,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 case 1: chosenType = "Cardiologist"; break;
                 default: return null;
             }
-            return DoctorService.GetDoctorsOfType(chosenType);
+            return _doctorService.GetDoctorsOfType(chosenType);
         }
     }
 }

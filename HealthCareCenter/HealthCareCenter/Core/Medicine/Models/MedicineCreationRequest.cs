@@ -31,7 +31,7 @@ namespace HealthCareCenter.Core.Medicine.Models
         public MedicineCreationRequest(string name, List<string> ingredients, string manufacturer, RequestState state, string denyComment = "")
         {
             MedicineCreationRequestRepository medicineCreationRequestRepository = new MedicineCreationRequestRepository();
-            ID = medicineCreationRequestRepository.GetLargestId() + 1;
+            ID = medicineCreationRequestRepository.CalculateMaxID() + 1;
             Name = name;
             Ingredients = ingredients;
             Manufacturer = manufacturer;

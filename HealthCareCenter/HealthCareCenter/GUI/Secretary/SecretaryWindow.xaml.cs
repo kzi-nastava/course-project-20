@@ -48,7 +48,7 @@ namespace HealthCareCenter.Secretary
 
         private void PatientButton_Click(object sender, RoutedEventArgs e)
         {
-            PatientManipulationWindow window = new PatientManipulationWindow();
+            PatientManipulationWindow window = new PatientManipulationWindow(new UserRepository());
             window.ShowDialog();
         }
 
@@ -62,7 +62,8 @@ namespace HealthCareCenter.Secretary
         {
             DistributeDynamicEquipmentWindow window = new DistributeDynamicEquipmentWindow(
                 _dynamicEquipmentService,
-                new StorageRepository());
+                new StorageRepository(),
+                new HospitalRoomRepository());
             window.ShowDialog();
         }
         

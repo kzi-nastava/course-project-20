@@ -12,20 +12,23 @@ namespace HealthCareCenter.Core.Rooms.Controllers
         private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
         private readonly IRenovationScheduleService _renovationScheduleService;
         private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
+        private readonly IHospitalRoomService _hospitalRoomService;
 
         public ComplexHospitalRoomRenovationMergeController(IRoomService roomService,
             IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService,
-            IRenovationScheduleService renovationScheduleService, IHospitalRoomForRenovationService hospitalRoomForRenovationService)
+            IRenovationScheduleService renovationScheduleService, IHospitalRoomForRenovationService hospitalRoomForRenovationService,
+            IHospitalRoomService hospitalRoomService)
         {
             _roomSerivece = roomService;
             _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
             _renovationScheduleService = renovationScheduleService;
             _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
+            _hospitalRoomService = hospitalRoomService;
         }
 
         public List<HospitalRoom> GetRoomsForDisplay()
         {
-            return HospitalRoomService.GetRooms();
+            return _hospitalRoomService.GetRooms();
         }
 
         public void Merge(string room1Id, string room2Id, string renovationStartDate, string renovationFinishDate, string newRoomName, string newRoomType)
@@ -34,8 +37,8 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 
             int parsedRoom1Id = Convert.ToInt32(room1Id);
             int parsedRoom2Id = Convert.ToInt32(room2Id);
-            HospitalRoom room1 = HospitalRoomService.Get(parsedRoom1Id);
-            HospitalRoom room2 = HospitalRoomService.Get(parsedRoom2Id);
+            HospitalRoom room1 = _hospitalRoomService.Get(parsedRoom1Id);
+            HospitalRoom room2 = _hospitalRoomService.Get(parsedRoom2Id);
 
             DateTime parsedRenovationStartDate = Convert.ToDateTime(renovationStartDate);
             DateTime parsedRenovationFinishDate = Convert.ToDateTime(renovationFinishDate);
@@ -120,7 +123,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
             }
             int parsedHospitalRoomId = Convert.ToInt32(roomId);
 
-            HospitalRoom room = HospitalRoomService.Get(parsedHospitalRoomId);
+            HospitalRoom room = _hospitalRoomService.Get(parsedHospitalRoomId);
 
             if (!IsHospitalRoomFound(room))
             {
@@ -138,7 +141,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 
         private void IsPossibleRoomRenovation(HospitalRoom room)
         {
-            if (HospitalRoomService.ContainsAnyAppointment(room))
+            if (_hospitalRoomService.ContainsAnyAppointment(room))
             {
                 throw new HospitalRoomContainAppointmentException(room.ID.ToString());
             }
@@ -178,8 +181,8 @@ namespace HealthCareCenter.Core.Rooms.Controllers
         {
             int parsedRoom1Id = Convert.ToInt32(room1Id);
             int parsedRoom2Id = Convert.ToInt32(room2Id);
-            HospitalRoom room1 = HospitalRoomService.Get(parsedRoom1Id);
-            HospitalRoom room2 = HospitalRoomService.Get(parsedRoom2Id);
+            HospitalRoom room1 = _hospitalRoomService.Get(parsedRoom1Id);
+            HospitalRoom room2 = _hospitalRoomService.Get(parsedRoom2Id);
 
             IsPossibleRoomRenovation(room1);
             IsPossibleRoomRenovation(room2);

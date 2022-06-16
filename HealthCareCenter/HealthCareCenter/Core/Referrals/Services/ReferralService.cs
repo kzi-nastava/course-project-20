@@ -15,10 +15,17 @@ namespace HealthCareCenter.Core.Referrals.Services
     {
         private readonly BaseReferralRepository _referralsRepository;
         private readonly BaseAppointmentRepository _appointmentRepository;
+        private readonly IHospitalRoomService _hospitalRoomService;
+        private readonly BaseUserRepository _userRepository;
+        private readonly BaseHospitalRoomRepository _hospitalRoomRepository;
+
 
         public ReferralService(
             BaseReferralRepository referralsRepository,
-            BaseAppointmentRepository appointmentRepository)
+            BaseAppointmentRepository appointmentRepository,
+            IHospitalRoomService hospitalRoomService,
+            BaseUserRepository userRepository,
+            BaseHospitalRoomRepository hospitalRoomRepository)
         {
             _referralsRepository = referralsRepository;
             _appointmentRepository = appointmentRepository;
@@ -49,7 +56,7 @@ namespace HealthCareCenter.Core.Referrals.Services
 
         private void LinkDoctor(Referral referral, PatientReferralForDisplay patientReferral)
         {
-            foreach (Doctor doctor in UserRepository.Doctors)
+            foreach (Doctor doctor in _userRepository.Doctors)
             {
                 if (doctor.ID != referral.DoctorID)
                 {
@@ -79,8 +86,8 @@ namespace HealthCareCenter.Core.Referrals.Services
             _appointmentRepository.Appointments.Add(appointment);
             _appointmentRepository.Save();
 
-            HospitalRoomService.Update(appointment.HospitalRoomID, appointment);
-            HospitalRoomRepository.Save();
+            _hospitalRoomService.Update(appointment.HospitalRoomID, appointment);
+            _hospitalRoomRepository.Save();
 
             _referralsRepository.Referrals.Remove(referral);
             _referralsRepository.Save();

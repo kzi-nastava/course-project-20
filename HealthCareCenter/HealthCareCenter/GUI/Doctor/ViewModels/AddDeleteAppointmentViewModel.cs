@@ -24,6 +24,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private int selectedAppointmentIndex;
         private readonly BaseAppointmentRepository _appointmentRepository;
         private readonly IPatientService _patientService;
+        private readonly BaseUserRepository _userRepository;
 
         public AddDeleteAppointmentViewModel(
             Core.Users.Models.Doctor _signedUser,
@@ -32,6 +33,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             DoctorWindowViewModel service,
             BaseAppointmentRepository appointmentRepository,
             IPatientService patientService,
+            BaseUserRepository userRepository,
             int rowIndex = -1)
         {
             previousService = service;
@@ -50,6 +52,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             }
             _appointmentRepository = appointmentRepository;
             _patientService = patientService;
+            _userRepository = userRepository;
 
             window.Show();
         }
@@ -222,7 +225,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         public void FillPatientsTable()
         {
             window.patientsDataTable.Rows.Clear();
-            foreach (Core.Patients.Patient patient in UserRepository.Patients)
+            foreach (Core.Patients.Patient patient in _userRepository.Patients)
             {
                 window.AddPatientToPatientsTable(patient);
             }

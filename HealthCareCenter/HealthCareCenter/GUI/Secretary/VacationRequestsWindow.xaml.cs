@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using HealthCareCenter.Core.Notifications.Services;
+using HealthCareCenter.Core.Users;
 using HealthCareCenter.Core.VacationRequests;
 using HealthCareCenter.Core.VacationRequests.Models;
 using HealthCareCenter.Core.VacationRequests.Repositories;
@@ -17,7 +18,11 @@ namespace HealthCareCenter.Secretary
 
         public VacationRequestsWindow(INotificationService notificationService)
         {
-            _controller = new VacationRequestsController(new VacationRequestService(notificationService, new VacationRequestRepository()));
+            _controller = new VacationRequestsController(
+                new VacationRequestService(
+                    notificationService, 
+                    new VacationRequestRepository(),
+                    new UserRepository()));
 
             InitializeComponent();
 

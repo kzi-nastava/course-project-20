@@ -18,6 +18,9 @@ using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Medicine.Repositories;
+using HealthCareCenter.Core.Rooms.Services;
+using HealthCareCenter.Core.Rooms.Repositories;
+using HealthCareCenter.Core.Users;
 
 namespace HealthCareCenter.Secretary
 {
@@ -49,11 +52,22 @@ namespace HealthCareCenter.Secretary
                         new MedicineInstructionService(
                             new MedicineInstructionRepository()),
                         new MedicineService(
-                            new MedicineRepository())),
-                new VacationRequestRepository()), 
+                            new MedicineRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository())),
+                    new VacationRequestRepository(),
+                    new UserRepository()),
                 new TermsService(
                     new AppointmentRepository()),
-                referralsService);
+                referralsService,
+                new HospitalRoomService(
+                    new AppointmentRepository(),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomRepository()));
 
             InitializeComponent();
 
