@@ -29,6 +29,9 @@ namespace HealthCareCenter.Core.Referrals.Services
         {
             _referralsRepository = referralsRepository;
             _appointmentRepository = appointmentRepository;
+            _hospitalRoomService = hospitalRoomService;
+            _userRepository = userRepository;
+            _hospitalRoomRepository = hospitalRoomRepository;
         }
 
         public List<PatientReferralForDisplay> Get(Patient patient)
