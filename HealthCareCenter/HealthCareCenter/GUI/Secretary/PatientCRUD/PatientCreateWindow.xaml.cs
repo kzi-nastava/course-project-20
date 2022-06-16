@@ -26,8 +26,6 @@ namespace HealthCareCenter.Secretary
             BaseHealthRecordRepository healthRecordRepository,
             BaseUserRepository userRepository)
         {
-            InitializeComponent();
-
             _controller = new PatientCreateController(
                 new PatientService(
                     new AppointmentRepository(),
@@ -42,6 +40,8 @@ namespace HealthCareCenter.Secretary
                 new UserRepository());
             _healthRecordRepository = healthRecordRepository;
             _userRepository = userRepository;
+
+            InitializeComponent();
         }
 
         private void Reset()

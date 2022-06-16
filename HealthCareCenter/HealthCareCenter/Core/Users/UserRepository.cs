@@ -14,6 +14,7 @@ namespace HealthCareCenter.Core.Users
         public UserRepository()
         {
             LoadUsers();
+            CalculateMaxID();
         }
 
         public override int CalculateMaxID()
