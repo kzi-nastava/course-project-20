@@ -20,11 +20,19 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Services
     {
         private readonly ITermsService _termsService;
         private readonly INotificationService _notificationService;
+        private readonly BaseAppointmentRepository _appointmentRepository;
+        private readonly IAppointmentService _appointmentService;
 
-        public UrgentAppointmentService(ITermsService service, INotificationService notificationService)
+        public UrgentAppointmentService(
+            ITermsService service, 
+            INotificationService notificationService,
+            BaseAppointmentRepository appointmentRepository,
+            IAppointmentService appointmentService)
         {
             _termsService = service;
             _notificationService = notificationService;
+            _appointmentRepository = appointmentRepository;
+            _appointmentService = appointmentService;
         }
 
         public override bool CheckTermAndRemoveUnavailables(DateTime potentialTime, List<Doctor> availableDoctors, List<HospitalRoom> availableRooms, List<Appointment> appointments, Patient patient)
@@ -47,13 +55,13 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Services
 
         public override void PrepareForPotentialPostponing(List<Doctor> doctors, List<HospitalRoom> rooms, DateTime potentialTime, Patient patient)
         {
-            List<Appointment> appointments = new List<Appointment>(AppointmentRepository.Appointments);
-            for (int i = 0; i < AppointmentRepository.Appointments.Count; i++)
+            List<Appointment> appointments = new List<Appointment>(_appointmentRepository.Appointments);
+            for (int i = 0; i < _appointmentRepository.Appointments.Count; i++)
             {
-                if (AppointmentRepository.Appointments[i].ScheduledDate.CompareTo(potentialTime) != 0)
+                if (_appointmentRepository.Appointments[i].ScheduledDate.CompareTo(potentialTime) != 0)
                     continue;
 
-                appointments.Remove(AppointmentRepository.Appointments[i]);
+                appointments.Remove(_appointmentRepository.Appointments[i]);
 
                 List<Doctor> availableDoctors = new List<Doctor>(doctors);
                 List<HospitalRoom> availableRooms = new List<HospitalRoom>(rooms);
@@ -64,14 +72,14 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Services
                     AddPostponingInfo(availableDoctors, availableRooms, i);
                 }
 
-                appointments.Add(AppointmentRepository.Appointments[i]);
+                appointments.Add(_appointmentRepository.Appointments[i]);
             }
         }
 
         private void AddPostponingInfo(List<Doctor> availableDoctors, List<HospitalRoom> availableRooms, int index)
         {
-            UrgentInfo.OccupiedAppointments.Add(AppointmentRepository.Appointments[index]);
-            UrgentInfo.NewAppointments.Add(AppointmentRepository.Appointments[index].ID,
+            UrgentInfo.OccupiedAppointments.Add(_appointmentRepository.Appointments[index]);
+            UrgentInfo.NewAppointments.Add(_appointmentRepository.Appointments[index].ID,
                 new Appointment { DoctorID = availableDoctors[0].ID, HospitalRoomID = availableRooms[0].ID });
         }
 
@@ -85,11 +93,11 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Services
                 List<Doctor> availableDoctors = new List<Doctor>(doctors);
                 List<HospitalRoom> availableRooms = new List<HospitalRoom>(rooms);
 
-                bool isValid = CheckTermAndRemoveUnavailables(potentialTime, availableDoctors, availableRooms, AppointmentRepository.Appointments, patient);
+                bool isValid = CheckTermAndRemoveUnavailables(potentialTime, availableDoctors, availableRooms, _appointmentRepository.Appointments, patient);
 
                 if (isValid && availableDoctors.Count > 0 && availableRooms.Count > 0)
                 {
-                    AppointmentService.Schedule(new Appointment(potentialTime, availableRooms[0].ID, availableDoctors[0].ID, patient.HealthRecordID, type, true), false);
+                    _appointmentService.Schedule(new Appointment(potentialTime, availableRooms[0].ID, availableDoctors[0].ID, patient.HealthRecordID, type, true), false);
                     return true;
                 }
                 else
@@ -116,12 +124,12 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Services
 
         public override Appointment Postpone(ref string notification, Patient patient, AppointmentType type, OccupiedAppointment selectedAppointment)
         {
-            Appointment postponedAppointment = AppointmentService.Get(selectedAppointment);
+            Appointment postponedAppointment = _appointmentService.Get(selectedAppointment);
 
             Appointment newAppointment = new Appointment(selectedAppointment.ScheduledDate, OccupiedInfo.NewAppointments[postponedAppointment.ID].HospitalRoomID, OccupiedInfo.NewAppointments[postponedAppointment.ID].DoctorID, patient.HealthRecordID, type, true);
-            AppointmentRepository.Appointments.Add(newAppointment);
+            _appointmentRepository.Appointments.Add(newAppointment);
             postponedAppointment.ScheduledDate = selectedAppointment.PostponedTime;
-            AppointmentRepository.Save();
+            _appointmentRepository.Save();
 
             HospitalRoomService.Update(newAppointment.HospitalRoomID, newAppointment);
             HospitalRoomRepository.Save();
@@ -169,7 +177,7 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Services
 
         public override bool IsPostponableTo(DateTime newTime, Appointment occupiedAppointment)
         {
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            foreach (Appointment appointment in _appointmentRepository.Appointments)
             {
                 if (appointment.ScheduledDate.CompareTo(newTime) != 0)
                 {

@@ -11,6 +11,7 @@ using HealthCareCenter.Core.Users.Models;
 using HealthCareCenter.Core;
 using HealthCareCenter.Core.Users;
 using HealthCareCenter.Core.Patients;
+using HealthCareCenter.Core.Patients.Services;
 
 namespace HealthCareCenter.GUI.Doctor.ViewModels
 {
@@ -21,11 +22,21 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private DoctorWindow previousWindow;
         private DoctorWindowViewModel previousService;
         private int selectedAppointmentIndex;
-        public AddDeleteAppointmentViewModel(Core.Users.Models.Doctor _signedUser, DoctorWindow scheduleWindow, bool add, DoctorWindowViewModel service, int rowIndex = -1)
+        private readonly BaseAppointmentRepository _appointmentRepository;
+        private readonly IPatientService _patientService;
+
+        public AddDeleteAppointmentViewModel(
+            Core.Users.Models.Doctor _signedUser,
+            DoctorWindow scheduleWindow,
+            bool add,
+            DoctorWindowViewModel service,
+            BaseAppointmentRepository appointmentRepository,
+            IPatientService patientService,
+            int rowIndex = -1)
         {
             previousService = service;
             previousWindow = scheduleWindow;
-            window = new AddAlterAppointmentWindow(this);
+            window = new AddAlterAppointmentWindow(this, new AppointmentRepository());
             signedUser = _signedUser;
             FillPatientsTable();
             FillDateTimeComboBoxes();
@@ -37,12 +48,15 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 window.alterAppointment.Visibility = Visibility.Visible;
                 CommitAlteringChanges(rowIndex);
             }
+            _appointmentRepository = appointmentRepository;
+            _patientService = patientService;
+
             window.Show();
         }
         public void CommitAlteringChanges(int rowIndex)
         {
             selectedAppointmentIndex = rowIndex;
-            Appointment appointment = AppointmentRepository.Appointments[rowIndex];
+            Appointment appointment = _appointmentRepository.Appointments[rowIndex];
             ParseAppointmentData(appointment);
         }
 
@@ -58,7 +72,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             if (isBeingCreated)
                 appointment = new Appointment();
             else
-                appointment = AppointmentRepository.Appointments[selectedAppointmentIndex];
+                appointment = _appointmentRepository.Appointments[selectedAppointmentIndex];
 
             id = GetRowItemID(window.patientsDataGrid, "Id");
             if (id == -1) return false;
@@ -78,7 +92,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             sucessfull = TimeIsAvailable(appointment, displayedDate);
             if (!sucessfull) return false;
 
-            Core.Patients.Patient patient = PatientService.Get(id);
+            Core.Patients.Patient patient = _patientService.Get(id);
             if (patient == null) return false;
 
             currentDate = DateTime.Today;
@@ -100,15 +114,15 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             if (isBeingCreated)
             {
                 appointment.ID = ++AppointmentRepository.LargestID;
-                AppointmentRepository.Appointments.Add(appointment);
+                _appointmentRepository.Appointments.Add(appointment);
             }
-            UpdateAppointmentsTable(AppointmentRepository.Appointments);
+            UpdateAppointmentsTable(_appointmentRepository.Appointments);
             return true;
         }
 
         public bool TimeIsAvailable(Appointment appointment, DateTime displayedDate)
         {
-            foreach (Appointment appointments in AppointmentRepository.Appointments)
+            foreach (Appointment appointments in _appointmentRepository.Appointments)
             {
                 if (appointments.ID == appointment.ID)
                 {
@@ -159,7 +173,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 appointmentTypeIndex = 1;
             }
 
-            patientIndex = PatientService.GetIndex(appointment.HealthRecordID);
+            patientIndex = _patientService.GetIndex(appointment.HealthRecordID);
             window.FillAppointmentWithDefaultValues(year, month, day, hour, minute, appointmentTypeIndex, patientIndex, emergency);
 
         }

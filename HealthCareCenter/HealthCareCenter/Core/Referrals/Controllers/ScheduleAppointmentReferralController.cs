@@ -15,19 +15,17 @@ namespace HealthCareCenter.Core.Referrals.Controllers
     {
         private readonly IVacationRequestService _vacationRequestService;
         private readonly ITermsService _termsService;
-        private readonly IReferralsService _referralsService;
+        private readonly IReferralService _referralsService;
 
         public ScheduleAppointmentReferralController()
         {
-            AppointmentRepository.Load();
         }
 
-        public ScheduleAppointmentReferralController(IVacationRequestService vacationRequestService, ITermsService termsService, IReferralsService referralsService)
+        public ScheduleAppointmentReferralController(IVacationRequestService vacationRequestService, ITermsService termsService, IReferralService referralsService)
         {
             _vacationRequestService = vacationRequestService;
             _termsService = termsService;
             _referralsService = referralsService;
-            AppointmentRepository.Load();
         }
 
         public List<string> GetAvailableTerms(int doctorID, DateTime when)

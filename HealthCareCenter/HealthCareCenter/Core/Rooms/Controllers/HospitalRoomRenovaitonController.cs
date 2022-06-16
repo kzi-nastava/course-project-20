@@ -8,6 +8,13 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 {
     public class HospitalRoomRenovaitonController
     {
+        private IRoomService _roomService;
+
+        public HospitalRoomRenovaitonController(IRoomService roomService)
+        {
+            _roomService = roomService;
+        }
+
         public void ScheduleRenovation(string hospitalRoomForRenovationId, string startDate, string finishDate)
         {
             IsPossibleToScheduleRenovtion(hospitalRoomForRenovationId, startDate, finishDate);
@@ -89,7 +96,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
         private void IsPossibleRenovation(HospitalRoom roomForRenovation)
         {
             if (HospitalRoomService.ContainsAnyAppointment(roomForRenovation)) { throw new HospitalRoomContainAppointmentException(roomForRenovation.ID.ToString()); }
-            if (RoomService.ContainsAnyRearrangement(roomForRenovation)) { throw new HospitalRoomContainEquipmentRearrangementException(roomForRenovation.ID.ToString()); }
+            if (_roomService.ContainsAnyRearrangement(roomForRenovation)) { throw new HospitalRoomContainEquipmentRearrangementException(roomForRenovation.ID.ToString()); }
         }
 
         private void IsPossibleToScheduleRenovtion(string hospitalRoomForRenovationId, string startDate, string finishDate)

@@ -9,6 +9,14 @@ namespace HealthCareCenter.Core.Appointments.Services
     {
         // returns all terms from 8:00 to 21:00 knowing that an appointment lasts 15 minutes
         // example { "8:00", "8:15", "8:30" ... "20:30", "20:45" }
+
+        private readonly BaseAppointmentRepository _appointmentRepository;
+
+        public TermsService(BaseAppointmentRepository appointmentRepository)
+        {
+            _appointmentRepository = appointmentRepository;
+        }
+
         public List<string> GetPossibleDailyTerms()
         {
             int hours = 8;
@@ -80,7 +88,7 @@ namespace HealthCareCenter.Core.Appointments.Services
         public List<string> GetAvailableTerms(int doctorID, DateTime when)
         {
             List<string> terms = GetPossibleDailyTerms();
-            foreach (Appointment appointment in AppointmentRepository.Appointments)
+            foreach (Appointment appointment in _appointmentRepository.Appointments)
             {
                 if (appointment.DoctorID != doctorID || appointment.ScheduledDate.Date.CompareTo(when) != 0)
                 {

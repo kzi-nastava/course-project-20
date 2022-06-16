@@ -7,9 +7,13 @@ using System.Linq;
 
 namespace HealthCareCenter.Core.Surveys.Services
 {
-    internal class DoctorSurveyRatingService
+    public class DoctorSurveyRatingService : IDoctorSurveyRatingService
     {
-        public static double GetAverageRating(int doctorID)
+        public DoctorSurveyRatingService()
+        {
+        }
+
+        public double GetAverageRating(int doctorID)
         {
             double average = 0.0;
             double count = 0.0;
@@ -25,7 +29,7 @@ namespace HealthCareCenter.Core.Surveys.Services
             return count == 0.0 ? 0.0 : average / count;
         }
 
-        public static Dictionary<int, double> GetAllRatings()
+        public Dictionary<int, double> GetAllRatings()
         {
             Dictionary<int, double> doctorsRatings = new Dictionary<int, double>();
             foreach (Doctor doctor in UserRepository.Doctors)
@@ -40,7 +44,7 @@ namespace HealthCareCenter.Core.Surveys.Services
             return orderedDoctorsRatings;
         }
 
-        public static bool HasPatientAlreadyReviewed(int patientID, int doctorID)
+        public bool HasPatientAlreadyReviewed(int patientID, int doctorID)
         {
             foreach (DoctorSurveyRating rating in DoctorSurveyRatingRepository.Ratings)
             {
@@ -53,7 +57,7 @@ namespace HealthCareCenter.Core.Surveys.Services
             return false;
         }
 
-        public static bool OverwriteExistingReview(DoctorSurveyRating surveyRating)
+        public bool OverwriteExistingReview(DoctorSurveyRating surveyRating)
         {
             foreach (DoctorSurveyRating rating in DoctorSurveyRatingRepository.Ratings)
             {

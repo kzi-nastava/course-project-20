@@ -26,6 +26,7 @@ namespace HealthCareCenter.Core.VacationRequests.Repositories
 
                 string JSONTextRequests = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\vacationRequests.json");
                 Requests = (List<VacationRequest>)JsonConvert.DeserializeObject<IEnumerable<VacationRequest>>(JSONTextRequests, settings);
+                LargestID = Requests.Count == 0 ? 0 : Requests[^1].ID;
             }
             catch (Exception ex)
             {

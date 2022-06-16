@@ -1,13 +1,18 @@
 ﻿using HealthCareCenter.Core;
 using HealthCareCenter.Core.Appointments.Models;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.Appointments.Urgent;
 using HealthCareCenter.Core.Appointments.Urgent.Controllers;
 using HealthCareCenter.Core.Appointments.Urgent.DTO;
 using HealthCareCenter.Core.Appointments.Urgent.Services;
+using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Medicine.Repositories;
+using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Notifications.Repositories;
 using HealthCareCenter.Core.Notifications.Services;
 using HealthCareCenter.Core.Patients;
+using HealthCareCenter.Core.Patients.Services;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -36,7 +41,32 @@ namespace HealthCareCenter.Secretary
             _patient = patient;
             _type = type;
             _info = new PostponableAppointmentsDTO(info);
-            BaseUrgentAppointmentService service = new UrgentAppointmentService(new TermsService(), new NotificationService(new NotificationRepository())) { OccupiedInfo = _info };
+            BaseUrgentAppointmentService service = new UrgentAppointmentService(
+                new TermsService(
+                    new AppointmentRepository()),
+                new NotificationService(
+                    new NotificationRepository(),
+                    new HealthRecordService(
+                        new HealthRecordRepository()),
+                    new MedicineInstructionService(
+                        new MedicineInstructionRepository()),
+                    new MedicineService(
+                        new MedicineRepository())),
+                new AppointmentRepository(),
+                new AppointmentService(
+                    new AppointmentRepository(),
+                    new AppointmentChangeRequestRepository(),
+                    new AppointmentChangeRequestService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository()),
+                    new PatientService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new HealthRecordRepository(),
+                        new HealthRecordService(
+                            new HealthRecordRepository()),
+                        new PatientEditService(
+                            new HealthRecordRepository())))) { OccupiedInfo = _info };
             _controller = new OccupiedAppointmentsController(service);
 
             InitializeComponent();

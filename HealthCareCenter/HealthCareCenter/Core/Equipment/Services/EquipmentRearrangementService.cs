@@ -1,6 +1,7 @@
 ﻿using HealthCareCenter.Core.Equipment.Models;
 using HealthCareCenter.Core.Equipment.Repositories;
 using HealthCareCenter.Core.Exceptions;
+using HealthCareCenter.Core.Rooms;
 using HealthCareCenter.Core.Rooms.Models;
 using HealthCareCenter.Core.Rooms.Services;
 using System;
@@ -9,27 +10,38 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Equipment.Services
 {
-    public static class EquipmentRearrangementService
+    public class EquipmentRearrangementService : IEquipmentRearrangementService
     {
-        private static bool IsBeforeCurrentTime(DateTime rearrangementDate)
+        private readonly IRoomService _roomService;
+
+        public EquipmentRearrangementService(IRoomService roomService)
+        {
+            _roomService = roomService;
+        }
+
+        public EquipmentRearrangementService()
+        {
+        }
+
+        private bool IsBeforeCurrentTime(DateTime rearrangementDate)
         {
             DateTime now = DateTime.Now;
             int value = DateTime.Compare(rearrangementDate, now);
             return value < 0;
         }
 
-        public static List<EquipmentRearrangement> GetRearrangements()
+        public List<EquipmentRearrangement> GetRearrangements()
         {
             return EquipmentRearrangementRepository.Rearrangements;
         }
 
-        public static void Add(EquipmentRearrangement newRearrangement)
+        public void Add(EquipmentRearrangement newRearrangement)
         {
             EquipmentRearrangementRepository.Rearrangements.Add(newRearrangement);
             EquipmentRearrangementRepository.Save();
         }
 
-        public static EquipmentRearrangement Get(int id)
+        public EquipmentRearrangement Get(int id)
         {
             try
             {
@@ -54,7 +66,7 @@ namespace HealthCareCenter.Core.Equipment.Services
             }
         }
 
-        public static bool Delete(int id)
+        public bool Delete(int id)
         {
             try
             {
@@ -80,7 +92,7 @@ namespace HealthCareCenter.Core.Equipment.Services
             }
         }
 
-        public static bool Update(EquipmentRearrangement rearrangement)
+        public bool Update(EquipmentRearrangement rearrangement)
         {
             try
             {
@@ -106,15 +118,15 @@ namespace HealthCareCenter.Core.Equipment.Services
             }
         }
 
-        public static void Remove(Models.Equipment equipment)
+        public void Remove(Models.Equipment equipment)
         {
-            Room currentRoom = RoomService.Get(equipment.CurrentRoomID);
+            Room currentRoom = _roomService.Get(equipment.CurrentRoomID);
 
             if (EquipmentService.HasScheduledRearrangement(equipment))
             {
                 // Get rearrangement
-                EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipment.RearrangementID);
-                Room newRoomOfRearrangement = RoomService.Get(equipment.CurrentRoomID);
+                EquipmentRearrangement rearrangement = Get(equipment.RearrangementID);
+                Room newRoomOfRearrangement = _roomService.Get(equipment.CurrentRoomID);
 
                 // Romeve rearrangement id from list RearrangemetIDs of newRoomOfPreviusRearrangement and currenRoom
                 newRoomOfRearrangement.EquipmentRearrangementsIDs.Remove(rearrangement.ID);
@@ -125,8 +137,8 @@ namespace HealthCareCenter.Core.Equipment.Services
 
                 // Update rooms
                 //********************************************
-                RoomService.Update(newRoomOfRearrangement);
-                RoomService.Update(currentRoom);
+                _roomService.Update(newRoomOfRearrangement);
+                _roomService.Update(currentRoom);
                 //********************************************
 
                 // Rearrangement removed
@@ -135,10 +147,10 @@ namespace HealthCareCenter.Core.Equipment.Services
             }
         }
 
-        public static void Set(EquipmentRearrangement rearrangement, Models.Equipment equipment)
+        public void Set(EquipmentRearrangement rearrangement, Models.Equipment equipment)
         {
-            Room currentRoom = RoomService.Get(equipment.CurrentRoomID);
-            Room newRoomOfCurrentRearrangement = RoomService.Get(rearrangement.NewRoomID);
+            Room currentRoom = _roomService.Get(equipment.CurrentRoomID);
+            Room newRoomOfCurrentRearrangement = _roomService.Get(rearrangement.NewRoomID);
 
             // Equipment already has rearrangemt
             if (EquipmentService.HasScheduledRearrangement(equipment))
@@ -157,24 +169,24 @@ namespace HealthCareCenter.Core.Equipment.Services
 
             // Update Rooms
             //********************************************
-            RoomService.Update(newRoomOfCurrentRearrangement);
-            RoomService.Update(currentRoom);
+            _roomService.Update(newRoomOfCurrentRearrangement);
+            _roomService.Update(currentRoom);
             //********************************************
 
             // Update equipment information
             EquipmentService.Update(equipment);
         }
 
-        public static void DoPossibleRearrangement(Models.Equipment equipment)
+        public void DoPossibleRearrangement(Models.Equipment equipment)
         {
             if (EquipmentService.HasScheduledRearrangement(equipment))
             {
-                EquipmentRearrangement rearrangement = EquipmentRearrangementService.Get(equipment.RearrangementID);
+                EquipmentRearrangement rearrangement = Get(equipment.RearrangementID);
 
                 if (IsBeforeCurrentTime(rearrangement.MoveTime))
                 {
-                    Room currentRoom = RoomService.Get(equipment.CurrentRoomID);
-                    Room newRoomOfRearrangement = RoomService.Get(rearrangement.NewRoomID);
+                    Room currentRoom = _roomService.Get(equipment.CurrentRoomID);
+                    Room newRoomOfRearrangement = _roomService.Get(rearrangement.NewRoomID);
 
                     // update data about equipment number in rooms
                     currentRoom.EquipmentAmounts[equipment.Name]--;
@@ -188,8 +200,8 @@ namespace HealthCareCenter.Core.Equipment.Services
                         newRoomOfRearrangement.EquipmentAmounts.Add(equipment.Name, 1);
                     }
 
-                    RoomService.Update(currentRoom);
-                    RoomService.Update(newRoomOfRearrangement);
+                    _roomService.Update(currentRoom);
+                    _roomService.Update(newRoomOfRearrangement);
                     equipment.CurrentRoomID = rearrangement.NewRoomID;
                     Remove(equipment);
                     EquipmentService.Update(equipment);
@@ -197,7 +209,7 @@ namespace HealthCareCenter.Core.Equipment.Services
             }
         }
 
-        public static bool IsIrrevocable(EquipmentRearrangement rearrangement)
+        public bool IsIrrevocable(EquipmentRearrangement rearrangement)
         {
             List<HospitalRoom> rooms = HospitalRoomUnderConstructionService.GetRooms();
             foreach (HospitalRoom room in rooms)

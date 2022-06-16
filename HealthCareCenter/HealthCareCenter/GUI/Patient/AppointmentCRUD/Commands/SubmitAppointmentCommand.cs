@@ -1,5 +1,8 @@
 ﻿using HealthCareCenter.Core;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.GUI.Patient.SharedCommands;
@@ -35,11 +38,16 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
 
         private readonly NavigationStore _navigationStore;
         private readonly AppointmentFormViewModel _viewModel;
+        private readonly IAppointmentService _appointmentService;
 
-        public SubmitAppointmentCommand(NavigationStore navigationStore, AppointmentFormViewModel viewModel)
+        public SubmitAppointmentCommand(
+            NavigationStore navigationStore, 
+            AppointmentFormViewModel viewModel,
+            IAppointmentService appointmentService)
         {
             _navigationStore = navigationStore;
             _viewModel = viewModel;
+            _appointmentService = appointmentService;
         }
 
         private bool IsValid(DateTime scheduleDate, int hospitalRoomID)
@@ -62,7 +70,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
                 return false;
             }
 
-            if (!AppointmentService.IsAvailable(scheduleDate, _viewModel.ChosenDoctor.DoctorID))
+            if (!_appointmentService.IsAvailable(scheduleDate, _viewModel.ChosenDoctor.DoctorID))
             {
                 _ = MessageBox.Show("That schedule is unavailable", "Configuration", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
@@ -82,9 +90,26 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
             MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure?", "Schedule appointment?", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                bool passed = AppointmentService.Schedule(
+                bool passed = _appointmentService.Schedule(
                     scheduleDate, _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.HealthRecordID, hospitalRoomID);
-                _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _viewModel.Patient);
+
+                _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(
+                    new AppointmentService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new AppointmentChangeRequestService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository()),
+                        new PatientService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new HealthRecordRepository(),
+                            new HealthRecordService(
+                                new HealthRecordRepository()),
+                            new PatientEditService(
+                                new HealthRecordRepository()))),
+                    _viewModel.Patient,
+                    _navigationStore);
 
                 if (!passed)
                 {
@@ -106,15 +131,32 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands
             MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure?", "Schedule appointment?", MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                if (AppointmentService.ShouldSendToSecretary(_viewModel.ChosenAppointment.AppointmentDate))
+                if (_appointmentService.ShouldSendToSecretary(_viewModel.ChosenAppointment.AppointmentDate))
                 {
                     _ = MessageBox.Show("Since there are less than 2 days until this appointment starts, a request will be sent to the secretary",
                         "My App", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-                bool passed = AppointmentService.Edit(
+                bool passed = _appointmentService.Edit(
                     scheduleDate, _viewModel.ChosenAppointment.AppointmentDate, _viewModel.ChosenAppointment.AppointmentID,
                     _viewModel.ChosenDoctor.DoctorID, _viewModel.Patient.ID, hospitalRoomID);
-                _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(_navigationStore, _viewModel.Patient);
+
+                _navigationStore.CurrentViewModel = new MyAppointmentsViewModel(
+                    new AppointmentService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new AppointmentChangeRequestService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository()),
+                        new PatientService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new HealthRecordRepository(),
+                            new HealthRecordService(
+                                new HealthRecordRepository()),
+                            new PatientEditService(
+                                new HealthRecordRepository()))),
+                    _viewModel.Patient,
+                    _navigationStore);
 
                 if (!passed)
                 {

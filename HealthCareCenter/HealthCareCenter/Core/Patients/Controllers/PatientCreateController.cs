@@ -1,4 +1,5 @@
 ﻿using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.Core.Users;
 using HealthCareCenter.Core.Users.Models;
 using System;
@@ -9,6 +10,13 @@ namespace HealthCareCenter.Core.Patients.Controllers
 {
     public class PatientCreateController : PatientController
     {
+        private readonly IPatientService _patientService;
+
+        public PatientCreateController(IPatientService patientService)
+        {
+            _patientService = patientService;
+        }
+
         public void Create(PatientDTO patientDTO, HealthRecordDTO recordDTO)
         {
             try
@@ -27,7 +35,7 @@ namespace HealthCareCenter.Core.Patients.Controllers
             HealthRecord record = new HealthRecord(recordDTO.ID, height, weight, recordDTO.PreviousDiseases, recordDTO.Allergens, recordDTO.PatientID);
             Patient patient = new Patient(patientDTO.ID, patientDTO.Username, patientDTO.Password, patientDTO.FirstName, patientDTO.LastName, (DateTime)patientDTO.DateOfBirth, patientDTO.IsBlocked, patientDTO.BlockedBy, patientDTO.PrescriptionIDs, patientDTO.HealthRecordID);
 
-            PatientService.Create(patient, record);
+            _patientService.Create(patient, record);
         }
 
         private void ValidateUsername(PatientDTO patient)

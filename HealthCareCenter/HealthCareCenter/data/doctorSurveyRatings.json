@@ -2,7 +2,7 @@
   {
     "DoctorID": 1,
     "PatientID": 2,
-    "Comment": "Solid!",
-    "Rating": 3.5
+    "Comment": "Great doctor!",
+    "Rating": 5.0
   }
 ]

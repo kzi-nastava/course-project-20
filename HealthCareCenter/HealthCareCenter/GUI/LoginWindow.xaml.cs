@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -20,6 +20,13 @@ using HealthCareCenter.Core.Referrals.Services;
 using HealthCareCenter.Core.Referrals.Repositories;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.Core.Patients;
+using HealthCareCenter.Core.Appointments.Repository;
+using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Medicine.Services;
+using HealthCareCenter.Core.Medicine.Repositories;
+using HealthCareCenter.Core.Patients.Services;
+using HealthCareCenter.Core.Prescriptions;
 
 namespace HealthCareCenter
 {
@@ -28,24 +35,6 @@ namespace HealthCareCenter
         private static BackgroundWorker _backgroundWorker = null;
         private static IDynamicEquipmentService _dynamicEquipmentService;
 
-        private void DoEquipmentRearrangements()
-        {
-            List<Equipment> equipments = EquipmentService.GetEquipments();
-            for (int i = 0; i < equipments.Count; i++)
-            {
-                EquipmentRearrangementService.DoPossibleRearrangement(equipments[i]);
-            }
-        }
-
-        private void FinshPossibleRenovation()
-        {
-            List<RenovationSchedule> renovations = RenovationScheduleService.GetRenovations();
-            for (int i = 0; i < renovations.Count; i++)
-            {
-                RenovationScheduleService.FinishRenovation(renovations[i]);
-            }
-        }
-
         public LoginWindow(IDynamicEquipmentService dynamicEquipmentService) : this()
         {
             _dynamicEquipmentService = dynamicEquipmentService;
@@ -53,8 +42,9 @@ namespace HealthCareCenter
 
         public LoginWindow()
         {
+            IEquipmentRearrangementService equipmentRearrangementService = new EquipmentRearrangementService();
             InitializeComponent();
-            DoEquipmentRearrangements();
+            DoEquipmentRearrangements(equipmentRearrangementService);
             FinshPossibleRenovation();
 
             try
@@ -67,6 +57,24 @@ namespace HealthCareCenter
             }
 
             StartBackgroundWorkerIfNeeded();
+        }
+
+        private void DoEquipmentRearrangements(IEquipmentRearrangementService equipmentRearrangementService)
+        {
+            List<Equipment> equipments = EquipmentService.GetEquipments();
+            for (int i = 0; i < equipments.Count; i++)
+            {
+                equipmentRearrangementService.DoPossibleRearrangement(equipments[i]);
+            }
+        }
+
+        private void FinshPossibleRenovation()
+        {
+            List<RenovationSchedule> renovations = RenovationScheduleService.GetRenovations();
+            for (int i = 0; i < renovations.Count; i++)
+            {
+                RenovationScheduleService.FinishRenovation(renovations[i]);
+            }
         }
 
         private void StartBackgroundWorkerIfNeeded()
@@ -104,12 +112,45 @@ namespace HealthCareCenter
         {
             if (user.GetType() == typeof(Doctor))
             {
-                DoctorWindowViewModel doctorWindowService = new DoctorWindowViewModel((Doctor)user, new ReferralsService(new ReferralRepository()), new ReferralRepository());
+                DoctorWindowViewModel doctorWindowService = new DoctorWindowViewModel(
+                    (Doctor)user,
+                    new ReferralService(
+                        new ReferralRepository(),
+                        new AppointmentRepository()), 
+                    new ReferralRepository(),
+                    new AppointmentRepository(),
+                    new AppointmentService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new AppointmentChangeRequestService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository()),
+                        new PatientService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new HealthRecordRepository(),
+                            new HealthRecordService(
+                                new HealthRecordRepository()),
+                            new PatientEditService(
+                                new HealthRecordRepository()))),
+                    new RoomService(new EquipmentRearrangementService()),
+                    new HealthRecordService(
+                        new HealthRecordRepository()));
                 Close();
             }
             else if (user.GetType() == typeof(Manager))
             {
-                ShowWindow(new CrudHospitalRoomWindow((Manager)user, new NotificationService(new NotificationRepository())));
+                ShowWindow(new CrudHospitalRoomWindow((Manager)user,
+                    new NotificationService(
+                        new NotificationRepository(),
+                        new HealthRecordService(
+                            new HealthRecordRepository()),
+                        new MedicineInstructionService(
+                            new MedicineInstructionRepository()),
+                        new MedicineService(
+                            new MedicineRepository())),
+                    new EquipmentRearrangementService(),
+                    new RoomService(new EquipmentRearrangementService())));
             }
             else if (user.GetType() == typeof(Patient))
             {
@@ -123,16 +164,55 @@ namespace HealthCareCenter
                 }
 
                 NavigationStore navStore = NavigationStore.GetInstance();
-                navStore.CurrentViewModel = new MyAppointmentsViewModel(navStore, patient);
+                navStore.CurrentViewModel = new MyAppointmentsViewModel(
+                    new AppointmentService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new AppointmentChangeRequestService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository()),
+                        new PatientService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new HealthRecordRepository(),
+                            new HealthRecordService(
+                                new HealthRecordRepository()),
+                            new PatientEditService(
+                                new HealthRecordRepository()))),
+                    patient,
+                    navStore);
                 GUI.Patient.MainWindow win = new GUI.Patient.MainWindow()
                 {
-                    DataContext = new MainViewModel(navStore, patient, new NotificationService(new NotificationRepository()))
+                    DataContext = new MainViewModel(
+                        new NotificationService(
+                            new NotificationRepository(),
+                            new HealthRecordService(
+                                new HealthRecordRepository()),
+                            new MedicineInstructionService(
+                                new MedicineInstructionRepository()),
+                            new MedicineService(
+                                new MedicineRepository())),
+                        new PrescriptionService(
+                            new MedicineInstructionRepository(),
+                            new PrescriptionRepository()),
+                        patient,
+                        navStore)
                 };
                 ShowWindow(win);
             }
             else if (user.GetType() == typeof(Core.Users.Models.Secretary))
             {
-                ShowWindow(new SecretaryWindow(user, new NotificationService(new NotificationRepository()), _dynamicEquipmentService));
+                ShowWindow(new SecretaryWindow(
+                    user, 
+                    new NotificationService(
+                        new NotificationRepository(),
+                        new HealthRecordService(
+                            new HealthRecordRepository()),
+                        new MedicineInstructionService(
+                            new MedicineInstructionRepository()),
+                        new MedicineService(
+                            new MedicineRepository())),
+                    _dynamicEquipmentService));
             }
             return true;
         }

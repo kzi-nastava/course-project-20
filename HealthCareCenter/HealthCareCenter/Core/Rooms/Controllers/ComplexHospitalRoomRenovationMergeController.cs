@@ -8,6 +8,13 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 {
     internal class ComplexHospitalRoomRenovationMergeController
     {
+        private readonly IRoomService _roomSerivece;
+
+        public ComplexHospitalRoomRenovationMergeController(IRoomService roomService)
+        {
+            _roomSerivece = roomService;
+        }
+
         public List<HospitalRoom> GetRoomsForDisplay()
         {
             return HospitalRoomService.GetRooms();
@@ -128,7 +135,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
                 throw new HospitalRoomContainAppointmentException(room.ID.ToString());
             }
 
-            if (RoomService.ContainAnyEquipment(room))
+            if (_roomSerivece.ContainAnyEquipment(room))
             {
                 throw new HospitalRoomContainEquipmentRearrangementException(room.ID.ToString());
             }

@@ -12,6 +12,13 @@ namespace HealthCareCenter.Core.Surveys.Controllers
 {
     internal class DoctorSurveyOverviewController
     {
+        private IDoctorSurveyRatingService _doctorSurveyRatingService;
+
+        public DoctorSurveyOverviewController(IDoctorSurveyRatingService doctorSurveyRatingService)
+        {
+            _doctorSurveyRatingService = doctorSurveyRatingService;
+        }
+
         public List<DoctorSurveyRating> GetDoctorSurveys()
         {
             return DoctorSurveyRatingRepository.Ratings;
@@ -21,7 +28,7 @@ namespace HealthCareCenter.Core.Surveys.Controllers
         {
             List<List<string>> doctors = new List<List<string>>();
 
-            Dictionary<int, double> doctorsRaitings = DoctorSurveyRatingService.GetAllRatings();
+            Dictionary<int, double> doctorsRaitings = _doctorSurveyRatingService.GetAllRatings();
             int i = 0;
             foreach (KeyValuePair<int, double> entry in doctorsRaitings)
             {
@@ -41,7 +48,7 @@ namespace HealthCareCenter.Core.Surveys.Controllers
         {
             List<List<string>> doctors = new List<List<string>>();
 
-            Dictionary<int, double> doctorsRaitings = DoctorSurveyRatingService.GetAllRatings();
+            Dictionary<int, double> doctorsRaitings = _doctorSurveyRatingService.GetAllRatings();
             int i = 0;
             foreach (KeyValuePair<int, double> entry in doctorsRaitings.Reverse())
             {

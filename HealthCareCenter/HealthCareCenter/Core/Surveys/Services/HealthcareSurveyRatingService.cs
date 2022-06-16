@@ -3,13 +3,20 @@ using HealthCareCenter.Core.Surveys.Repositories;
 
 namespace HealthCareCenter.Core.Surveys.Services
 {
-    class HealthcareSurveyRatingService
+    class HealthcareSurveyRatingService : IHealthcareSurveyRatingService
     {
-        public static double GetAverageRating()
+        private readonly BaseHealthcareSurveyRatingRepository _healthcareRatingRepository;
+
+        public HealthcareSurveyRatingService(BaseHealthcareSurveyRatingRepository healthcareRatingRepository)
+        {
+            _healthcareRatingRepository = healthcareRatingRepository;
+        }
+
+        public double GetAverageRating()
         {
             double average = 0.0;
             double count = 0.0;
-            foreach (SurveyRating rating in HealthcareSurveyRatingRepository.Ratings)
+            foreach (SurveyRating rating in _healthcareRatingRepository.Ratings)
             {
                 average += rating.Rating;
                 ++count;
@@ -18,9 +25,9 @@ namespace HealthCareCenter.Core.Surveys.Services
             return count == 0.0 ? 0.0 : average / count;
         }
 
-        public static bool HasPatientAlreadyReviewed(int patientID)
+        public bool HasPatientAlreadyReviewed(int patientID)
         {
-            foreach (SurveyRating rating in HealthcareSurveyRatingRepository.Ratings)
+            foreach (SurveyRating rating in _healthcareRatingRepository.Ratings)
             {
                 if (patientID == rating.PatientID)
                 {
@@ -31,19 +38,24 @@ namespace HealthCareCenter.Core.Surveys.Services
             return false;
         }
 
-        public static bool OverwriteExistingReview(SurveyRating surveyRating)
+        public void OverwriteExistingReview(SurveyRating surveyRating)
         {
-            foreach (SurveyRating rating in HealthcareSurveyRatingRepository.Ratings)
+            foreach (SurveyRating rating in _healthcareRatingRepository.Ratings)
             {
                 if (rating.PatientID == surveyRating.PatientID)
                 {
                     rating.Comment = surveyRating.Comment;
                     rating.Rating = surveyRating.Rating;
-                    return true;
+                    _healthcareRatingRepository.Save();
+                    break;
                 }
             }
+        }
 
-            return false;
+        public void AddRating(SurveyRating rating)
+        {
+            _healthcareRatingRepository.Ratings.Add(rating);
+            _healthcareRatingRepository.Save();
         }
     }
 }

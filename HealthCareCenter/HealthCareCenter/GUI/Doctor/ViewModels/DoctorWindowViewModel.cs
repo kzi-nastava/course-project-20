@@ -21,6 +21,12 @@ using HealthCareCenter.Core.Referrals.Repositories;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Notifications.Services;
 using HealthCareCenter.Core.Notifications.Repositories;
+using HealthCareCenter.Core.Rooms;
+using HealthCareCenter.Core.Medicine.Services;
+using HealthCareCenter.Core.Medicine.Repositories;
+using HealthCareCenter.Core.Prescriptions;
+using HealthCareCenter.Core.Referrals.Repositories;
+using HealthCareCenter.Core.VacationRequests.Repositories;
 
 namespace HealthCareCenter.GUI.Doctor.ViewModels
 {
@@ -32,15 +38,47 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private DoctorWindow window;
         private Referral referral;
         private Medicine chosenMedicine;
-        private IReferralsService _referralsService;
+        private IReferralService _referralsService;
+        private IRoomService _roomService;
         private BaseReferralRepository _referralRepository;
+        private readonly BaseAppointmentRepository _appointmentRepository;
+        private readonly BaseVacationRequestRepository _vacationRequestRepository;
+        private readonly IAppointmentService _appointmentService;
+        private readonly IHealthRecordService _healthRecordService;
 
-        public DoctorWindowViewModel(User signedUser, IReferralsService referralsService, BaseReferralRepository referralRepository)
+        public DoctorWindowViewModel(
+            User signedUser, 
+            IReferralService referralsService,
+            BaseReferralRepository referralRepository,
+            BaseAppointmentRepository appointmentRepository,
+            IAppointmentService appointmentService,
+            IRoomService roomService,
+            IHealthRecordService healthRecordService)
         {
             _referralsService = referralsService;
             _signedUser = signedUser;
             _referralRepository = referralRepository;
-            window = new DoctorWindow(signedUser, this, new NotificationService(new NotificationRepository()));
+            _appointmentRepository = appointmentRepository;
+            _appointmentService = appointmentService;
+            _vacationRequestRepository = new VacationRequestRepository();
+            window = new DoctorWindow(
+                signedUser, 
+                this, 
+                new NotificationService(new NotificationRepository(),
+                new HealthRecordService(new HealthRecordRepository()),
+                new MedicineInstructionService(new MedicineInstructionRepository()),
+                new MedicineService(new MedicineRepository())),
+                new AppointmentRepository(),
+                new HealthRecordRepository(),
+                new MedicineRepository(),
+                new MedicineInstructionRepository(),
+                new PrescriptionService(new MedicineInstructionRepository(),
+                new PrescriptionRepository()),
+                new PrescriptionRepository(),
+                new ReferralRepository(),
+                _vacationRequestRepository);
+            _roomService = roomService;
+            _healthRecordService = healthRecordService;
             window.Show();
         }
 
@@ -54,7 +92,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             Room room;
             try
             {
-                room = RoomService.Get(selectedRoomID);
+                room = _roomService.Get(selectedRoomID);
             }
             catch (Exception ex)
             {
@@ -115,9 +153,9 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         public void FillAppointmentsTable(List<Appointment> appointments)
         {
             window.appointmentsDataTable.Rows.Clear();
-            if (AppointmentRepository.Appointments == null)
+            if (_appointmentRepository.Appointments == null)
             {
-                appointments = AppointmentRepository.Load();
+                appointments = _appointmentRepository.Load();
             }
 
             foreach (Appointment appointment in appointments)
@@ -126,7 +164,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 {
                     continue;
                 }
-                HealthRecord patientsHealthRecord = HealthRecordService.Get(appointment.HealthRecordID);
+                HealthRecord patientsHealthRecord = _healthRecordService.Get(appointment.HealthRecordID);
                 if (patientsHealthRecord != null)
                     window.AddAppointmentToAppointmentsTable(appointment, patientsHealthRecord.PatientID);
                 else
@@ -147,7 +185,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
 
             unparsedDate = day + "/" + month + "/" + year;
             DateTime date = DateTime.ParseExact(unparsedDate, Constants.DateFormat, CultureInfo.InvariantCulture);
-            List<Appointment> appointmentsResult = AppointmentService.GetAppointmentsInTheFollowingDays(date, 3);
+            List<Appointment> appointmentsResult = _appointmentService.GetAppointmentsInTheFollowingDays(date, 3);
             FillAppointmentsTable(appointmentsResult);
         }
 
@@ -171,7 +209,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             Anamnesis anamnesis = new Anamnesis();
             anamnesis.Comment = anamnesisComment;
             anamnesis.ID = selectedAppointmentIndex;
-            AppointmentRepository.Appointments[selectedAppointmentIndex].PatientAnamnesis = anamnesis;
+            _appointmentRepository.Appointments[selectedAppointmentIndex].PatientAnamnesis = anamnesis;
             window.anamnesisLabel.Content = anamnesisComment;
         }
 
@@ -219,8 +257,8 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             string equipmentName = TableService.GetRowItem(window.equipmentDataGrid, "Name");
             if (equipmentName == "")
                 return;
-            Room room = RoomService.Get(selectedRoomID);
-            int amount = RoomService.GetEquipmentAmount(room, equipmentName);
+            Room room = _roomService.Get(selectedRoomID);
+            int amount = _roomService.GetEquipmentAmount(room, equipmentName);
             window.equipmentTextBlock.Text = amount.ToString();
         }
 
@@ -232,7 +270,7 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             unparsedAmount = window.equipmentTextBox.Text;
             usedAmount = CheckTheAmount(unparsedAmount, equipmentName, selectedRoomID);
             if (usedAmount == -1) return;
-            Room room = RoomService.Get(selectedRoomID);
+            Room room = _roomService.Get(selectedRoomID);
             room.EquipmentAmounts[equipmentName] -= usedAmount;
             MessageBox.Show(equipmentName + " sucessfully updated");
             window.equipmentTextBox.Text = "";
@@ -251,15 +289,14 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 MessageBox.Show("Invalid number");
                 return -1;
             }
-            room = RoomService.Get(selectedRoomID);
-            oldAmount = RoomService.GetEquipmentAmount(room, equipmentName);
+            room = _roomService.Get(selectedRoomID);
+            oldAmount = _roomService.GetEquipmentAmount(room, equipmentName);
             if (oldAmount < usedAmount)
             {
                 MessageBox.Show("The number is too big");
                 return -1;
             }
             return usedAmount;
-
         }
 
         public List<Core.Users.Models.Doctor> GetDoctorsByType()
@@ -293,6 +330,11 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                 default: return null;
             }
             return DoctorService.GetDoctorsOfType(chosenType);
+        }
+
+        internal void createDaysOffWindow()
+        {
+            DaysOffViewModel daysOffViewModel = new DaysOffViewModel(_signedUser, (VacationRequestRepository)_vacationRequestRepository, new AppointmentRepository());
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.Core.Users;
 using HealthCareCenter.Core.Users.Models;
 
@@ -9,6 +10,13 @@ namespace HealthCareCenter.Core.Patients.Controllers
 {
     public class PatientEditController : PatientController
     {
+        private readonly IPatientService _patientService;
+
+        public PatientEditController(IPatientService patientService)
+        {
+            _patientService = patientService;
+        }
+
         public void Edit(PatientDTO editedPatientDTO, HealthRecordDTO editedRecordDTO, Patient uneditedPatient, HealthRecord uneditedRecord)
         {
             try
@@ -27,7 +35,7 @@ namespace HealthCareCenter.Core.Patients.Controllers
             HealthRecord editedRecord = new HealthRecord(editedRecordDTO.ID, height, weight, editedRecordDTO.PreviousDiseases, editedRecordDTO.Allergens, editedRecordDTO.PatientID);
             Patient editedPatient = new Patient(editedPatientDTO.ID, editedPatientDTO.Username, editedPatientDTO.Password, editedPatientDTO.FirstName, editedPatientDTO.LastName, (DateTime)editedPatientDTO.DateOfBirth, editedPatientDTO.IsBlocked, editedPatientDTO.BlockedBy, editedPatientDTO.PrescriptionIDs, editedPatientDTO.HealthRecordID);
 
-            PatientService.Edit(uneditedPatient, uneditedRecord, editedPatient, editedRecord);
+            _patientService.Edit(uneditedPatient, uneditedRecord, editedPatient, editedRecord);
         }
 
         private void ValidateData(PatientDTO patient, HealthRecordDTO record, Patient uneditedPatient)

@@ -11,11 +11,10 @@ namespace HealthCareCenter.Core.Appointments.Urgent.Controllers
 {
     public class ScheduleUrgentAppointmentController
     {
-        private BaseUrgentAppointmentService _urgentAppointmentService;
-
+        private readonly BaseUrgentAppointmentService _urgentAppointmentService;
+        
         public ScheduleUrgentAppointmentController(BaseUrgentAppointmentService service)
         {
-            AppointmentRepository.Load();
             _urgentAppointmentService = service;
         }
 

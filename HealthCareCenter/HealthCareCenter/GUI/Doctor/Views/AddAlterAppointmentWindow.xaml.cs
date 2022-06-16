@@ -17,12 +17,16 @@ namespace HealthCareCenter.DoctorGUI
     public partial class AddAlterAppointmentWindow : Window
     {
         private AddDeleteAppointmentViewModel windowService;
+        private readonly BaseAppointmentRepository _appointmentRepository;
 
         public DataTable patientsDataTable;
         private DataRow dr;
-        public AddAlterAppointmentWindow(AddDeleteAppointmentViewModel _windowService)
+        public AddAlterAppointmentWindow(
+            AddDeleteAppointmentViewModel _windowService,
+            BaseAppointmentRepository appointmentRepository)
         {
             windowService = _windowService;
+            _appointmentRepository = appointmentRepository;
             CreatePatientsTable();
             InitializeComponent();
         }
@@ -72,7 +76,7 @@ namespace HealthCareCenter.DoctorGUI
             bool sucessfull = windowService.ParseAppointmentData(false);
             if (!sucessfull)
                 return;
-            windowService.UpdateAppointmentsTable(AppointmentRepository.Appointments);
+            windowService.UpdateAppointmentsTable(_appointmentRepository.Appointments);
             Close();
         }
     }

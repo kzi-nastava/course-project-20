@@ -8,6 +8,8 @@ namespace HealthCareCenter.Core.Appointments.Services
 {
     public interface IAppointmentChangeRequestService
     {
+        void DeleteAppointment(AppointmentChangeRequest request);
+        void EditAppointment(AppointmentChangeRequest request);
         void Refresh(List<DeleteRequestForDisplay> deleteRequests, List<EditRequestForDisplay> editRequests, Patient patient);
         void RejectEditRequest(int requestID);
         void AcceptEditRequest(int requestID);

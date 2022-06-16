@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Referrals.Services
 {
-    public interface IReferralsService
+    public interface IReferralService
     {
         List<PatientReferralForDisplay> Get(Patient patient);
         Referral Get(int referralID);

@@ -1,5 +1,7 @@
 ﻿using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.Surveys.Services;
+using HealthCareCenter.Core.Users.Services;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
 using HealthCareCenter.GUI.Patient.Survey.Commands;
 using System.Collections.Generic;
@@ -7,11 +9,12 @@ using System.Windows.Input;
 
 namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
 {
-    class DoctorSurveyViewModel : ViewModelBase
+    internal class DoctorSurveyViewModel : ViewModelBase
     {
         public Core.Patients.Patient Patient { get; }
 
         private List<AppointmentViewModel> _appointments;
+
         public List<AppointmentViewModel> Appointments
         {
             get => _appointments;
@@ -23,6 +26,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
         }
 
         private AppointmentViewModel _chosenAppointment;
+
         public AppointmentViewModel ChosenAppointment
         {
             get => _chosenAppointment;
@@ -30,10 +34,15 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
             {
                 _chosenAppointment = value;
                 OnPropertyChanged(nameof(ChosenAppointment));
+                if (_chosenAppointment != null)
+                {
+                    DoctorFullName = UserService.GetFullName(_chosenAppointment.DoctorID);
+                }
             }
         }
 
         private string _doctorFullName;
+
         public string DoctorFullName
         {
             get => _doctorFullName;
@@ -45,6 +54,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
         }
 
         private string _commentOnDoctor;
+
         public string CommentOnDoctor
         {
             get => _commentOnDoctor;
@@ -67,15 +77,16 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
         public bool WouldRecommendTicked4 { get; set; }
         public bool WouldRecommendTicked5 { get; set; }
 
-        public ICommand ChooseDoctorFromAppointment { get; }
         public ICommand SubmitReview { get; }
 
-        public DoctorSurveyViewModel(Core.Patients.Patient patient)
+        public DoctorSurveyViewModel(
+            IAppointmentService appointmentService,
+            Core.Patients.Patient patient)
         {
             Patient = patient;
 
             _appointments = new List<AppointmentViewModel>();
-            List<Appointment> finishedAppointment = AppointmentService.GetPatientFinishedAppointments(Patient.HealthRecordID);
+            List<Appointment> finishedAppointment = appointmentService.GetPatientFinishedAppointments(Patient.HealthRecordID);
             foreach (Appointment appointment in finishedAppointment)
             {
                 _appointments.Add(new AppointmentViewModel(appointment));
@@ -86,9 +97,7 @@ namespace HealthCareCenter.GUI.Patient.Survey.ViewModels
             ServiceQualityTicked5 = true;
             WouldRecommendTicked5 = true;
 
-            ChooseDoctorFromAppointment = new ChooseDoctorFromAppointmentCommand(this);
-            SubmitReview = new SubmitDoctorReviewCommand(this);
+            SubmitReview = new SubmitDoctorReviewCommand(this, new DoctorSurveyRatingService());
         }
-
     }
 }

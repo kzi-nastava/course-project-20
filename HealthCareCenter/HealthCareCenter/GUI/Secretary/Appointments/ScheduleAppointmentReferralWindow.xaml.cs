@@ -14,6 +14,10 @@ using HealthCareCenter.Core.VacationRequests.Repositories;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.Referrals.Controllers;
 using HealthCareCenter.Core.Patients;
+using HealthCareCenter.Core.Appointments.Repository;
+using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Medicine.Services;
+using HealthCareCenter.Core.Medicine.Repositories;
 
 namespace HealthCareCenter.Secretary
 {
@@ -31,12 +35,25 @@ namespace HealthCareCenter.Secretary
             InitializeComponent();
         }
 
-        public ScheduleAppointmentReferralWindow(Patient patient, Referral referral, IReferralsService referralsService)
+        public ScheduleAppointmentReferralWindow(Patient patient, Referral referral, IReferralService referralsService)
         {
             _patient = patient;
             _referral = referral;
 
-            _controller = new ScheduleAppointmentReferralController(new VacationRequestService(new NotificationService(new NotificationRepository()), new VacationRequestRepository()), new TermsService(), referralsService);
+            _controller = new ScheduleAppointmentReferralController(
+                new VacationRequestService(
+                    new NotificationService(
+                        new NotificationRepository(),
+                        new HealthRecordService(
+                            new HealthRecordRepository()),
+                        new MedicineInstructionService(
+                            new MedicineInstructionRepository()),
+                        new MedicineService(
+                            new MedicineRepository())),
+                new VacationRequestRepository()), 
+                new TermsService(
+                    new AppointmentRepository()),
+                referralsService);
 
             InitializeComponent();
 

@@ -20,5 +20,16 @@
     "NewDoctorID": 1,
     "DateSent": "31/05/2022 18:53",
     "PatientID": 2
+  },
+  {
+    "ID": 10,
+    "AppointmentID": 14,
+    "RequestType": 1,
+    "State": 2,
+    "NewDate": "16/06/2022 14:15",
+    "NewAppointmentType": 0,
+    "NewDoctorID": 5,
+    "DateSent": "15/06/2022 19:26",
+    "PatientID": 2
   }
 ]

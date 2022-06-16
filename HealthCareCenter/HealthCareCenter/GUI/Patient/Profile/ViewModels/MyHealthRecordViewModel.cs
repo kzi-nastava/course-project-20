@@ -1,6 +1,8 @@
 ﻿using HealthCareCenter.Core.Appointments.Models;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.GUI.Patient.Profile.Commands;
 using HealthCareCenter.GUI.Patient.SharedViewModels;
 using System.Collections.Generic;
@@ -119,12 +121,17 @@ namespace HealthCareCenter.GUI.Patient.Profile.ViewModels
         public ICommand SearchAppointments { get; }
         public ICommand ShowAnamnesis { get; }
 
-        public MyHealthRecordViewModel(Core.Patients.Patient patient)
+        public MyHealthRecordViewModel(
+            IAppointmentService appointmentService,
+            IHealthRecordService healthRecordService,
+            Core.Patients.Patient patient)
         {
             Patient = patient;
-            HealthRecord = HealthRecordService.Get(patient);
+            HealthRecord = healthRecordService.Get(patient);
+
             _patientHeight = HealthRecord.Height.ToString() + "cm";
             _patientWeight = HealthRecord.Weight.ToString() + "kg";
+
             foreach (string allergen in HealthRecord.Allergens)
             {
                 _patientAllergens += "- " + allergen + "\n";
@@ -143,15 +150,60 @@ namespace HealthCareCenter.GUI.Patient.Profile.ViewModels
             ChosenSortCriteria = _sortCriteria[0];
 
             _appointments = new List<AppointmentViewModel>();
-            List<Appointment> finishedAppointment = AppointmentService.GetPatientFinishedAppointments(HealthRecord.ID);
+            List<Appointment> finishedAppointment = appointmentService.GetPatientFinishedAppointments(HealthRecord.ID);
             foreach (Appointment appointment in finishedAppointment)
             {
                 _appointments.Add(new AppointmentViewModel(appointment));
             }
 
-            SortAppointments = new SortAppointmentsCommand(this);
-            SearchAppointments = new SearchAppointmentsCommand(this);
-            ShowAnamnesis = new ShowAnamnesisCommand(this);
+            SortAppointments = new SortAppointmentsCommand(
+                this,
+                new AppointmentService(
+                    new AppointmentRepository(),
+                    new AppointmentChangeRequestRepository(),
+                    new AppointmentChangeRequestService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository()),
+                    new PatientService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new HealthRecordRepository(),
+                        new HealthRecordService(
+                            new HealthRecordRepository()),
+                        new PatientEditService(
+                            new HealthRecordRepository()))));
+            SearchAppointments = new SearchAppointmentsCommand(
+                this,
+                new AppointmentService(
+                    new AppointmentRepository(),
+                    new AppointmentChangeRequestRepository(),
+                    new AppointmentChangeRequestService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository()),
+                    new PatientService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new HealthRecordRepository(),
+                        new HealthRecordService(
+                            new HealthRecordRepository()),
+                        new PatientEditService(
+                            new HealthRecordRepository()))));
+            ShowAnamnesis = new ShowAnamnesisCommand(
+                this,
+                new AppointmentService(
+                    new AppointmentRepository(),
+                    new AppointmentChangeRequestRepository(),
+                    new AppointmentChangeRequestService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository()),
+                    new PatientService(
+                        new AppointmentRepository(),
+                        new AppointmentChangeRequestRepository(),
+                        new HealthRecordRepository(),
+                        new HealthRecordService(
+                            new HealthRecordRepository()),
+                        new PatientEditService(
+                            new HealthRecordRepository()))));
         }
     }
 }

@@ -1,29 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using HealthCareCenter.Core.Appointments.Models;
 using Newtonsoft.Json;
 
 namespace HealthCareCenter.Core.Appointments.Repository
 {
-    class AppointmentRepository
+    public class AppointmentRepository : BaseAppointmentRepository
     {
-        private static List<Appointment> _appointments;
-        public static List<Appointment> Appointments
-        {
-            get
-            {
-                if (_appointments == null)
-                {
-                    Load();
-                }
-                return _appointments;
-            }
-        }
-        public static int LargestID { get; set; }
-
-        public static List<Appointment> Load()
+        public override List<Appointment> Load()
         {
             var settings = new JsonSerializerSettings
             {
@@ -36,7 +21,7 @@ namespace HealthCareCenter.Core.Appointments.Repository
             return _appointments;
         }
 
-        public static void Save()
+        public override void Save()
         {
             try
             {
@@ -57,7 +42,7 @@ namespace HealthCareCenter.Core.Appointments.Repository
             }
         }
 
-        public static int GetLargestID()
+        public override int GetLargestID()
         {
             int largestID = -1;
             foreach (Appointment appointment in Appointments)

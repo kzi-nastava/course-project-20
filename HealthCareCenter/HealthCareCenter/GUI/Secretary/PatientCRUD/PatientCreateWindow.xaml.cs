@@ -1,7 +1,9 @@
 ﻿using HealthCareCenter.Core;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Patients.Controllers;
+using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.Core.Users;
 using System;
 using System.Collections.Generic;
@@ -17,12 +19,22 @@ namespace HealthCareCenter.Secretary
     public partial class PatientCreateWindow : Window
     {
         private readonly PatientCreateController _controller;
+        private readonly BaseHealthRecordRepository _healthRecordRepository;
 
-        public PatientCreateWindow()
+        public PatientCreateWindow(BaseHealthRecordRepository healthRecordRepository)
         {
             InitializeComponent();
 
-            _controller = new PatientCreateController();
+            _controller = new PatientCreateController(
+                new PatientService(
+                    new AppointmentRepository(),
+                    new AppointmentChangeRequestRepository(),
+                    new HealthRecordRepository(),
+                    new HealthRecordService(
+                        new HealthRecordRepository()),
+                    new PatientEditService(
+                        new HealthRecordRepository())));
+            _healthRecordRepository = healthRecordRepository;
         }
 
         private void Reset()
@@ -174,8 +186,8 @@ namespace HealthCareCenter.Secretary
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            HealthRecordDTO record = new HealthRecordDTO(HealthRecordRepository.maxID + 1, heightTextBox.Text, weightTextBox.Text, previousDiseasesListBox.Items.Cast<String>().ToList(), allergensListBox.Items.Cast<String>().ToList(), UserRepository.maxID + 1);
-            PatientDTO patient = new PatientDTO(UserRepository.maxID + 1, usernameTextBox.Text, passwordTextBox.Text, firstNameTextBox.Text, lastNameTextBox.Text, birthDatePicker.SelectedDate, false, Blocker.None, new List<int>(), HealthRecordRepository.maxID + 1);
+            HealthRecordDTO record = new HealthRecordDTO(_healthRecordRepository.LargestID + 1, heightTextBox.Text, weightTextBox.Text, previousDiseasesListBox.Items.Cast<String>().ToList(), allergensListBox.Items.Cast<String>().ToList(), UserRepository.maxID + 1);
+            PatientDTO patient = new PatientDTO(UserRepository.maxID + 1, usernameTextBox.Text, passwordTextBox.Text, firstNameTextBox.Text, lastNameTextBox.Text, birthDatePicker.SelectedDate, false, Blocker.None, new List<int>(), _healthRecordRepository.LargestID + 1);
 
             try
             {

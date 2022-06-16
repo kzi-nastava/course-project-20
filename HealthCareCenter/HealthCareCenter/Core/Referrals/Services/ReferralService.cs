@@ -11,13 +11,17 @@ using System.Collections.Generic;
 
 namespace HealthCareCenter.Core.Referrals.Services
 {
-    public class ReferralsService : IReferralsService
+    public class ReferralService : IReferralService
     {
         private readonly BaseReferralRepository _referralsRepository;
+        private readonly BaseAppointmentRepository _appointmentRepository;
 
-        public ReferralsService(BaseReferralRepository repository)
+        public ReferralService(
+            BaseReferralRepository referralsRepository,
+            BaseAppointmentRepository appointmentRepository)
         {
-            _referralsRepository = repository;
+            _referralsRepository = referralsRepository;
+            _appointmentRepository = appointmentRepository;
         }
 
         public List<PatientReferralForDisplay> Get(Patient patient)
@@ -72,8 +76,8 @@ namespace HealthCareCenter.Core.Referrals.Services
 
         public void Schedule(Referral referral, Appointment appointment)
         {
-            AppointmentRepository.Appointments.Add(appointment);
-            AppointmentRepository.Save();
+            _appointmentRepository.Appointments.Add(appointment);
+            _appointmentRepository.Save();
 
             HospitalRoomService.Update(appointment.HospitalRoomID, appointment);
             HospitalRoomRepository.Save();

@@ -11,7 +11,8 @@ namespace HealthCareCenter
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            LoginWindow win = new LoginWindow(new DynamicEquipmentService(new DynamicEquipmentRequestRepository()));
+            LoginWindow win = new LoginWindow(
+                new DynamicEquipmentService(new DynamicEquipmentRequestRepository()));
             win.Show();
             base.OnStartup(e);
         }

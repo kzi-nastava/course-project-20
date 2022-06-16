@@ -7,23 +7,10 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Medicine.Repositories
 {
-    public static class MedicineInstructionRepository
+    public class MedicineInstructionRepository : BaseMedicineInstructionRepository
     {
-        private static List<MedicineInstruction> _medicineInstructions;
-        public static List<MedicineInstruction> MedicineInstructions
-        {
-            get
-            {
-                if (_medicineInstructions == null)
-                {
-                    Load();
-                }
-                return _medicineInstructions;
-            }
-            set => _medicineInstructions = value;
-        }
-        public static int LargestID { get; set; }
-        public static List<MedicineInstruction> Load()
+        
+        public override List<MedicineInstruction> Load()
         {
             var settings = new JsonSerializerSettings
             {
@@ -35,7 +22,7 @@ namespace HealthCareCenter.Core.Medicine.Repositories
             LargestID = _medicineInstructions.Count == 0 ? 0 : MedicineInstructions[^1].ID;
             return _medicineInstructions;
         }
-        public static void Save()
+        public override void Save()
         {
             try
             {
@@ -54,6 +41,19 @@ namespace HealthCareCenter.Core.Medicine.Repositories
             {
                 throw ex;
             }
+        }
+
+        public override int CalculateMaxID()
+        {
+            LargestID = -1;
+            foreach (MedicineInstruction instruction in MedicineInstructions)
+            {
+                if (instruction.ID > LargestID)
+                {
+                    LargestID = instruction.ID;
+                }
+            }
+            return LargestID;
         }
     }
 }
