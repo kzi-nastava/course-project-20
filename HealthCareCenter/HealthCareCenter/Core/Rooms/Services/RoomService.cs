@@ -11,38 +11,17 @@ namespace HealthCareCenter.Core.Rooms.Services
 {
     public class RoomService : IRoomService
     {
-        private readonly IEquipmentRearrangementService _equipmentRearrangementService;
         private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
         private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
         private readonly BaseStorageRepository _storageRepository;
         private readonly IEquipmentService _equipmentService;
 
         public RoomService(
-            IEquipmentRearrangementService equipmentRearrangementService,
             BaseStorageRepository storageRepository,
             IEquipmentService equipmentService,
             IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService,
             IHospitalRoomForRenovationService hospitalRoomForRenovationService)
         {
-            _equipmentRearrangementService = equipmentRearrangementService;
-            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
-            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
-            _storageRepository = storageRepository;
-            _equipmentService = equipmentService;
-        }
-
-        public RoomService(
-            BaseStorageRepository storageRepository,
-            IEquipmentService equipmentService,
-            IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService,
-            IHospitalRoomForRenovationService hospitalRoomForRenovationService)
-        {
-            _equipmentRearrangementService = new EquipmentRearrangementService(
-                this, 
-                new EquipmentService(
-                    new EquipmentRepository()),
-                new HospitalRoomUnderConstructionService(
-                    new HospitalRoomUnderConstructionRepository()));
             _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
             _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
             _storageRepository = storageRepository;
@@ -262,9 +241,9 @@ namespace HealthCareCenter.Core.Rooms.Services
             }
         }
 
-        public bool ContainsAnyRearrangement(Room room)
+        public bool ContainsAnyRearrangement(Room room, IEquipmentRearrangementService equipmentRearrangementService)
         {
-            List<EquipmentRearrangement> rearrangements = _equipmentRearrangementService.GetRearrangements();
+            List<EquipmentRearrangement> rearrangements = equipmentRearrangementService.GetRearrangements();
             foreach (EquipmentRearrangement rearrangement in rearrangements)
             {
                 if (rearrangement.OldRoomID == room.ID || rearrangement.NewRoomID == room.ID)

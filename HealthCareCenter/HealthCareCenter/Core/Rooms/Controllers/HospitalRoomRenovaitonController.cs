@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.Core.Rooms.Models;
 using HealthCareCenter.Core.Exceptions;
+using HealthCareCenter.Core.Equipment.Services;
+using HealthCareCenter.Core.Rooms.Repositories;
+using HealthCareCenter.Core.Equipment.Repositories;
 
 namespace HealthCareCenter.Core.Rooms.Controllers
 {
@@ -98,7 +101,21 @@ namespace HealthCareCenter.Core.Rooms.Controllers
         private void IsPossibleRenovation(HospitalRoom roomForRenovation)
         {
             if (HospitalRoomService.ContainsAnyAppointment(roomForRenovation)) { throw new HospitalRoomContainAppointmentException(roomForRenovation.ID.ToString()); }
-            if (_roomService.ContainsAnyRearrangement(roomForRenovation)) { throw new HospitalRoomContainEquipmentRearrangementException(roomForRenovation.ID.ToString()); }
+            if (_roomService.ContainsAnyRearrangement(
+                roomForRenovation,
+                new EquipmentRearrangementService(
+                    new RoomService(
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()),
+                        new HospitalRoomUnderConstructionService(
+                            new HospitalRoomUnderConstructionRepository()),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository())),
+                    new EquipmentService(
+                        new EquipmentRepository()),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository())))) { throw new HospitalRoomContainEquipmentRearrangementException(roomForRenovation.ID.ToString()); }
         }
 
         private void IsPossibleToScheduleRenovtion(string hospitalRoomForRenovationId, string startDate, string finishDate)

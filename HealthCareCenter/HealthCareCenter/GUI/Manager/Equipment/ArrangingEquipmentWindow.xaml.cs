@@ -4,7 +4,6 @@ using HealthCareCenter.Core.Equipment.Services;
 using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Medicine.Repositories;
-using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Notifications.Repositories;
 using HealthCareCenter.Core.Notifications.Services;
 using HealthCareCenter.Core.Rooms;

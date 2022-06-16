@@ -4,6 +4,9 @@ using System.Text;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.Core.Rooms.Models;
 using HealthCareCenter.Core.Exceptions;
+using HealthCareCenter.Core.Equipment.Services;
+using HealthCareCenter.Core.Rooms.Repositories;
+using HealthCareCenter.Core.Equipment.Repositories;
 
 namespace HealthCareCenter.Core.Rooms.Controllers
 {
@@ -188,7 +191,21 @@ namespace HealthCareCenter.Core.Rooms.Controllers
                 throw new HospitalRoomContainAppointmentException(splitRoom.ID.ToString());
             }
 
-            if (_roomService.ContainsAnyRearrangement(splitRoom))
+            if (_roomService.ContainsAnyRearrangement(
+                splitRoom, 
+                new EquipmentRearrangementService(
+                    new RoomService(
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()),
+                        new HospitalRoomUnderConstructionService(
+                            new HospitalRoomUnderConstructionRepository()),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository())),
+                    new EquipmentService(
+                        new EquipmentRepository()),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository()))))
             {
                 throw new HospitalRoomContainEquipmentRearrangementException(splitRoom.ID.ToString());
             }
