@@ -6,23 +6,9 @@ using System.IO;
 
 namespace HealthCareCenter.Core.Surveys.Repositories
 {
-    internal class DoctorSurveyRatingRepository
+    internal class DoctorSurveyRatingRepository : BaseDoctorSurveyRatingRepository
     {
-        private static List<DoctorSurveyRating> _ratings;
-
-        public static List<DoctorSurveyRating> Ratings
-        {
-            get
-            {
-                if (_ratings == null)
-                {
-                    Load();
-                }
-                return _ratings;
-            }
-        }
-
-        public static void Load()
+        public override void Load()
         {
             try
             {
@@ -40,7 +26,7 @@ namespace HealthCareCenter.Core.Surveys.Repositories
             }
         }
 
-        public static void Save()
+        public override void Save()
         {
             try
             {

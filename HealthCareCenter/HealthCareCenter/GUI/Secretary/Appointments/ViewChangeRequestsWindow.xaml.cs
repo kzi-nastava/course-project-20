@@ -3,6 +3,9 @@ using HealthCareCenter.Core.Appointments.Models;
 using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.Patients;
+using HealthCareCenter.Core.Rooms.Repositories;
+using HealthCareCenter.Core.Rooms.Services;
+using HealthCareCenter.Core.Users;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -33,7 +36,13 @@ namespace HealthCareCenter.Secretary
             _controller = new ViewChangeRequestsController(
                 new AppointmentChangeRequestService(
                     new AppointmentRepository(),
-                    new AppointmentChangeRequestRepository()));
+                    new AppointmentChangeRequestRepository(),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository()),
+                    new UserRepository()));
 
             InitializeComponent();
 

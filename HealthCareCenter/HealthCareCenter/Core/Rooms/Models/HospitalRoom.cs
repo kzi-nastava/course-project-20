@@ -20,7 +20,11 @@ namespace HealthCareCenter.Core.Rooms.Models
         /// </summary>
         public HospitalRoom(RoomType type, string name)
         {
-            List<int> largestIDs = new List<int> { HospitalRoomRepository.GetLargestRoomId(), HospitalRoomForRenovationRepository.GetLargestRoomId(), HospitalRoomUnderConstructionRepository.GetLargestRoomId() };
+            RoomRepository roomRepository = new RoomRepository(
+                new HospitalRoomUnderConstructionRepository(),
+                new HospitalRoomForRenovationRepository(),
+                new HospitalRoomRepository());
+            List<int> largestIDs = roomRepository.GetLargestIDs();
 
             ID = largestIDs.Max() + 1;
             Name = name;

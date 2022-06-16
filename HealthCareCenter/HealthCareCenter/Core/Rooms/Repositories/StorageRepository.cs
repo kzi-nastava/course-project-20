@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Rooms.Repositories
 {
-    internal class StorageRepository
+    internal class StorageRepository : BaseStorageRepository
     {
         private const string _fileName = "storage.json";
 
@@ -15,7 +15,7 @@ namespace HealthCareCenter.Core.Rooms.Repositories
         /// Get storage data.
         /// </summary>
         /// <returns>Storage as room object.</returns>
-        public static Room Load()
+        public override Room Load()
         {
             try
             {
@@ -40,7 +40,7 @@ namespace HealthCareCenter.Core.Rooms.Repositories
         /// </summary>
         /// <param name="storage"></param>
         /// <returns></returns>
-        public static bool Save(Room storage)
+        public override bool Save(Room storage)
         {
             try
             {

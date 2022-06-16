@@ -1,21 +1,34 @@
 ﻿using HealthCareCenter.Core.Equipment.Models;
+using HealthCareCenter.Core.Equipment.Repositories;
 using HealthCareCenter.Core.Equipment.Services;
 using HealthCareCenter.Core.Exceptions;
 using HealthCareCenter.Core.Rooms.Models;
 using HealthCareCenter.Core.Rooms.Repositories;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace HealthCareCenter.Core.Rooms.Services
 {
     public class RoomService : IRoomService
     {
-        private IEquipmentRearrangementService _equipmentRearrangementService;
+        private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
+        private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
+        private readonly BaseStorageRepository _storageRepository;
+        private readonly IEquipmentService _equipmentService;
+        private readonly IHospitalRoomService _hospitalRoomService;
 
-        public RoomService(IEquipmentRearrangementService equipmentRearrangementService)
+        public RoomService(
+            BaseStorageRepository storageRepository,
+            IEquipmentService equipmentService,
+            IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService,
+            IHospitalRoomForRenovationService hospitalRoomForRenovationService,
+            IHospitalRoomService hospitalRoomService)
         {
-            _equipmentRearrangementService = equipmentRearrangementService;
+            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
+            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
+            _storageRepository = storageRepository;
+            _equipmentService = equipmentService;
+            _hospitalRoomService = hospitalRoomService;
         }
 
         /// <summary>
@@ -24,8 +37,8 @@ namespace HealthCareCenter.Core.Rooms.Services
         /// <returns>equipments amount</returns>
         public Dictionary<string, int> GetEquipmentsAmount()
         {
-            List<HospitalRoom> rooms = HospitalRoomService.GetRooms();
-            Room storage = StorageRepository.Load();
+            List<HospitalRoom> rooms = _hospitalRoomService.GetRooms();
+            Room storage = _storageRepository.Load();
 
             List<Room> hospitalPremises = new List<Room>();
 
@@ -64,18 +77,18 @@ namespace HealthCareCenter.Core.Rooms.Services
             {
                 if (IsStorage(room))
                 {
-                    StorageRepository.Save(room);
+                    _storageRepository.Save(room);
                 }
                 else
                 {
                     HospitalRoom hospitalRoom = (HospitalRoom)room;
-                    if (HospitalRoomService.IsCurrentlyRenovating(hospitalRoom))
+                    if (_hospitalRoomService.IsCurrentlyRenovating(hospitalRoom))
                     {
-                        HospitalRoomForRenovationService.Update(hospitalRoom);
+                        _hospitalRoomForRenovationService.Update(hospitalRoom);
                     }
                     else
                     {
-                        HospitalRoomService.Update(hospitalRoom);
+                        _hospitalRoomService.Update(hospitalRoom);
                     }
                 }
                 return true;
@@ -93,19 +106,19 @@ namespace HealthCareCenter.Core.Rooms.Services
                 Room room = null;
                 if (roomId == 0)
                 {
-                    room = StorageRepository.Load();
+                    room = _storageRepository.Load();
                 }
                 if (room == null)
                 {
-                    room = HospitalRoomService.Get(roomId);
+                    room = _hospitalRoomService.Get(roomId);
                 }
                 if (room == null)
                 {
-                    room = HospitalRoomForRenovationService.Get(roomId);
+                    room = _hospitalRoomForRenovationService.Get(roomId);
                 }
                 if (room == null)
                 {
-                    room = HospitalRoomUnderConstructionService.Get(roomId);
+                    room = _hospitalRoomUnderConstructionService.Get(roomId);
                 }
                 if (room == null)
                 {
@@ -130,11 +143,11 @@ namespace HealthCareCenter.Core.Rooms.Services
                 Room room = null;
                 if (roomId == 0)
                 {
-                    room = StorageRepository.Load();
+                    room = _storageRepository.Load();
                 }
                 if (room == null)
                 {
-                    room = HospitalRoomService.Get(roomId);
+                    room = _hospitalRoomService.Get(roomId);
                 }
 
                 return room;
@@ -205,7 +218,7 @@ namespace HealthCareCenter.Core.Rooms.Services
         /// <returns></returns>
         public bool Contains(Room room, Equipment.Models.Equipment specificEquipment)
         {
-            List<Equipment.Models.Equipment> equipments = EquipmentService.GetEquipments();
+            List<Equipment.Models.Equipment> equipments = _equipmentService.GetEquipments();
             foreach (Equipment.Models.Equipment equipment in equipments)
             {
                 if (equipment.CurrentRoomID == room.ID)
@@ -221,7 +234,7 @@ namespace HealthCareCenter.Core.Rooms.Services
 
         public void TransferAllEquipment(Room currentEquipmentRoom, Room newEquipmentRoom)
         {
-            List<Equipment.Models.Equipment> equipments = EquipmentService.GetEquipments();
+            List<Equipment.Models.Equipment> equipments = _equipmentService.GetEquipments();
             for (int i = 0; i < equipments.Count; i++)
             {
                 if (equipments[i].CurrentRoomID == currentEquipmentRoom.ID)
@@ -231,9 +244,9 @@ namespace HealthCareCenter.Core.Rooms.Services
             }
         }
 
-        public bool ContainsAnyRearrangement(Room room)
+        public bool ContainsAnyRearrangement(Room room, IEquipmentRearrangementService equipmentRearrangementService)
         {
-            List<EquipmentRearrangement> rearrangements = _equipmentRearrangementService.GetRearrangements();
+            List<EquipmentRearrangement> rearrangements = equipmentRearrangementService.GetRearrangements();
             foreach (EquipmentRearrangement rearrangement in rearrangements)
             {
                 if (rearrangement.OldRoomID == room.ID || rearrangement.NewRoomID == room.ID)
@@ -247,7 +260,7 @@ namespace HealthCareCenter.Core.Rooms.Services
         public List<Equipment.Models.Equipment> GetAllEquipment(Room room)
         {
             List<Equipment.Models.Equipment> roomEquipments = new List<Equipment.Models.Equipment>();
-            List<Equipment.Models.Equipment> equipments = EquipmentService.GetEquipments();
+            List<Equipment.Models.Equipment> equipments = _equipmentService.GetEquipments();
             foreach (Equipment.Models.Equipment equipment in equipments)
             {
                 if (equipment.CurrentRoomID == room.ID)
@@ -311,7 +324,7 @@ namespace HealthCareCenter.Core.Rooms.Services
             IncreaseEquipmentAmount(equipment, newEquipmentRoom);
             Update(currentEquipmentRoom);
             equipment.CurrentRoomID = newEquipmentRoom.ID;
-            EquipmentService.Update(equipment);
+            _equipmentService.Update(equipment);
         }
 
         private void TransferEquipment(Room currnetRoom, Equipment.Models.Equipment equipment, Room newEquipmentRoom)

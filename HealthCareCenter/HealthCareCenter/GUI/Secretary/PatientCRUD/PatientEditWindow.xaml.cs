@@ -3,6 +3,7 @@ using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Patients.Controllers;
 using HealthCareCenter.Core.Patients.Services;
+using HealthCareCenter.Core.Users;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -43,7 +44,10 @@ namespace HealthCareCenter.Secretary
                     new HealthRecordService(
                         new HealthRecordRepository()),
                     new PatientEditService(
-                        new HealthRecordRepository())));
+                        new HealthRecordRepository(),
+                        new UserRepository()),
+                    new UserRepository()),
+                new UserRepository());
         }
 
         private void Reset()

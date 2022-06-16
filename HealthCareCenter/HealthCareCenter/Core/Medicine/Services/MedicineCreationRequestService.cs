@@ -7,18 +7,26 @@ using HealthCareCenter.Core.Medicine.Repositories;
 
 namespace HealthCareCenter.Core.Medicine.Services
 {
-    public class MedicineCreationRequestService
+    public class MedicineCreationRequestService : IMedicineCreationRequestService
     {
-        public static MedicineCreationRequest GetMedicineCreationRequest(int id)
+        private readonly BaseMedicineCreationRequestRepository _medicineCreationRequestRepository;
+
+        public MedicineCreationRequestService(BaseMedicineCreationRequestRepository medicineCreationRequestRepository)
         {
-            foreach (MedicineCreationRequest request in MedicineCreationRequestRepository.Requests)
+            _medicineCreationRequestRepository = medicineCreationRequestRepository;
+        }
+
+        public MedicineCreationRequest GetMedicineCreationRequest(int id)
+        {
+            foreach (MedicineCreationRequest request in _medicineCreationRequestRepository.Requests)
             {
                 if (id == request.ID)
                     return request;
             }
             return null;
         }
-        public static string GetIngredients(MedicineCreationRequest request)
+
+        public string GetIngredients(MedicineCreationRequest request)
         {
             string ingredients = "";
             foreach (string ingredient in request.Ingredients)
@@ -29,11 +37,12 @@ namespace HealthCareCenter.Core.Medicine.Services
                 return ingredients.Substring(0, ingredients.Length - 1);
             return ingredients;
         }
-        public static MedicineCreationRequest Get(int id)
+
+        public MedicineCreationRequest Get(int id)
         {
             try
             {
-                foreach (MedicineCreationRequest request in MedicineCreationRequestRepository.Requests)
+                foreach (MedicineCreationRequest request in _medicineCreationRequestRepository.Requests)
                 {
                     if (request.ID == id)
                     {
@@ -54,27 +63,27 @@ namespace HealthCareCenter.Core.Medicine.Services
             }
         }
 
-        public static List<MedicineCreationRequest> GetMedicines()
+        public List<MedicineCreationRequest> GetMedicines()
         {
-            return MedicineCreationRequestRepository.Requests;
+            return _medicineCreationRequestRepository.Requests;
         }
 
-        public static void Add(MedicineCreationRequest newMedicineCreationRequest)
+        public void Add(MedicineCreationRequest newMedicineCreationRequest)
         {
-            MedicineCreationRequestRepository.Requests.Add(newMedicineCreationRequest);
-            MedicineCreationRequestRepository.Save();
+            _medicineCreationRequestRepository.Requests.Add(newMedicineCreationRequest);
+            _medicineCreationRequestRepository.Save();
         }
 
-        public static bool Delete(int id)
+        public bool Delete(int id)
         {
             try
             {
-                for (int i = 0; i < MedicineCreationRequestRepository.Requests.Count; i++)
+                for (int i = 0; i < _medicineCreationRequestRepository.Requests.Count; i++)
                 {
-                    if (id == MedicineCreationRequestRepository.Requests[i].ID)
+                    if (id == _medicineCreationRequestRepository.Requests[i].ID)
                     {
-                        MedicineCreationRequestRepository.Requests.RemoveAt(i);
-                        MedicineCreationRequestRepository.Save();
+                        _medicineCreationRequestRepository.Requests.RemoveAt(i);
+                        _medicineCreationRequestRepository.Save();
                         return true;
                     }
                 }
@@ -91,16 +100,16 @@ namespace HealthCareCenter.Core.Medicine.Services
             }
         }
 
-        public static bool Delete(MedicineCreationRequest medicineCreationRequest)
+        public bool Delete(MedicineCreationRequest medicineCreationRequest)
         {
             try
             {
-                for (int i = 0; i < MedicineCreationRequestRepository.Requests.Count; i++)
+                for (int i = 0; i < _medicineCreationRequestRepository.Requests.Count; i++)
                 {
-                    if (medicineCreationRequest.ID == MedicineCreationRequestRepository.Requests[i].ID)
+                    if (medicineCreationRequest.ID == _medicineCreationRequestRepository.Requests[i].ID)
                     {
-                        MedicineCreationRequestRepository.Requests.RemoveAt(i);
-                        MedicineCreationRequestRepository.Save();
+                        _medicineCreationRequestRepository.Requests.RemoveAt(i);
+                        _medicineCreationRequestRepository.Save();
                         return true;
                     }
                 }
@@ -118,4 +127,3 @@ namespace HealthCareCenter.Core.Medicine.Services
         }
     }
 }
-

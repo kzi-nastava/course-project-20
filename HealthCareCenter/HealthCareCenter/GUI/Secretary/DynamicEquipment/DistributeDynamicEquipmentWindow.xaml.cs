@@ -3,10 +3,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using HealthCareCenter.Core;
+using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Equipment.Controllers;
 using HealthCareCenter.Core.Equipment.Services;
 using HealthCareCenter.Core.Rooms.Models;
 using HealthCareCenter.Core.Rooms.Repositories;
+using HealthCareCenter.Core.Rooms.Services;
 
 namespace HealthCareCenter.Secretary
 {
@@ -17,11 +19,22 @@ namespace HealthCareCenter.Secretary
     {
         private readonly Room _storage;
         private readonly DistributeDynamicEquipmentController _controller;
+        private readonly BaseHospitalRoomRepository _hospitalRoomRepository;
 
-        public DistributeDynamicEquipmentWindow(IDynamicEquipmentService dynamicEquipmentService)
+        public DistributeDynamicEquipmentWindow(
+            IDynamicEquipmentService dynamicEquipmentService,
+            BaseStorageRepository storageRepository,
+            BaseHospitalRoomRepository hospitalRoomRepository)
         {
-            _storage = StorageRepository.Load();
-            _controller = new DistributeDynamicEquipmentController(dynamicEquipmentService);
+            _storage = storageRepository.Load();
+            _controller = new DistributeDynamicEquipmentController(
+                dynamicEquipmentService,
+                new HospitalRoomService(
+                    new AppointmentRepository(),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomRepository()));
+            _hospitalRoomRepository = hospitalRoomRepository;
 
             InitializeComponent();
 
@@ -39,7 +52,7 @@ namespace HealthCareCenter.Secretary
         private void RefreshRoomsWithShortage()
         {
             AddIfHasShortage(_storage);
-            foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
+            foreach (HospitalRoom room in _hospitalRoomRepository.Rooms)
             {
                 AddIfHasShortage(room);
             }
@@ -89,7 +102,7 @@ namespace HealthCareCenter.Secretary
                 Name = "Storage",
                 ID = _storage.ID.ToString()
             });
-            foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
+            foreach (HospitalRoom room in _hospitalRoomRepository.Rooms)
             {
                 roomsToTransferFromComboBox.Items.Add(new
                 {

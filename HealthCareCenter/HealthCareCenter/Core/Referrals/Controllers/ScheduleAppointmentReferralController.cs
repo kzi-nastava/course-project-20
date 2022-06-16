@@ -16,16 +16,18 @@ namespace HealthCareCenter.Core.Referrals.Controllers
         private readonly IVacationRequestService _vacationRequestService;
         private readonly ITermsService _termsService;
         private readonly IReferralService _referralsService;
+        private readonly IHospitalRoomService _hospitalRoomService;
 
-        public ScheduleAppointmentReferralController()
-        {
-        }
-
-        public ScheduleAppointmentReferralController(IVacationRequestService vacationRequestService, ITermsService termsService, IReferralService referralsService)
+        public ScheduleAppointmentReferralController(
+            IVacationRequestService vacationRequestService,
+            ITermsService termsService, 
+            IReferralService referralsService,
+            IHospitalRoomService hospitalRoomService)
         {
             _vacationRequestService = vacationRequestService;
             _termsService = termsService;
             _referralsService = referralsService;
+            _hospitalRoomService = hospitalRoomService;
         }
 
         public List<string> GetAvailableTerms(int doctorID, DateTime when)
@@ -39,7 +41,7 @@ namespace HealthCareCenter.Core.Referrals.Controllers
 
         public List<HospitalRoomForDisplay> GetRooms(bool checkup)
         {
-            return HospitalRoomService.GetRooms(checkup);
+            return _hospitalRoomService.GetRooms(checkup);
         }
 
         public void Schedule(Referral referral, Appointment appointment)
@@ -49,7 +51,7 @@ namespace HealthCareCenter.Core.Referrals.Controllers
                 AppointmentRepository.LargestID--;
                 throw new Exception("Your term date has to be in the future.");
             }
-            if (HospitalRoomService.IsOccupied(appointment.HospitalRoomID, appointment.ScheduledDate))
+            if (_hospitalRoomService.IsOccupied(appointment.HospitalRoomID, appointment.ScheduledDate))
             {
                 AppointmentRepository.LargestID--;
                 throw new Exception("You must select a different room that is not occupied at the term date and time.");

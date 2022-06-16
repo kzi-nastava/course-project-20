@@ -5,6 +5,9 @@ using HealthCareCenter.Core.Appointments.Services;
 using HealthCareCenter.Core.Appointments.Services.Priority;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Patients.Services;
+using HealthCareCenter.Core.Rooms.Repositories;
+using HealthCareCenter.Core.Rooms.Services;
+using HealthCareCenter.Core.Surveys.Repositories;
 using HealthCareCenter.Core.Surveys.Services;
 using HealthCareCenter.Core.Users;
 using HealthCareCenter.GUI.Patient.AppointmentCRUD.Commands;
@@ -123,6 +126,7 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
 
         public PrioritySchedulingViewModel(
             IAppointmentTermService termService,
+            BaseUserRepository _userRepository,
             Core.Patients.Patient patient, 
             NavigationStore navigationStore)
         {
@@ -131,10 +135,10 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
             Patient = patient;
 
             Doctors = new List<DoctorViewModel>();
-            List<Core.Users.Models.Doctor> allDoctors = UserRepository.Doctors;
+            List<Core.Users.Models.Doctor> allDoctors = _userRepository.Doctors;
             foreach (Core.Users.Models.Doctor doctor in allDoctors)
             {
-                Doctors.Add(new DoctorViewModel(doctor, new DoctorSurveyRatingService()));
+                Doctors.Add(new DoctorViewModel(doctor, new DoctorSurveyRatingService(new DoctorSurveyRatingRepository(), new UserRepository())));
             }
 
             PriorityNotFoundChoices = new List<PriorityNotFoundChoiceViewModel>();
@@ -154,24 +158,55 @@ namespace HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels
                 new AppointmentPrioritySearchService(
                     new PriorityAppointmentFinder(
                         new AppointmentTermService(),
-                        new AppointmentRepository()),
-                    new SimilarToPriorityAppointmentsFinder(
-                        new AppointmentRepository()),
-                    new AppointmentTermService()),
-                new AppointmentService(
-                    new AppointmentRepository(),
-                    new AppointmentChangeRequestRepository(),
-                    new AppointmentChangeRequestService(
                         new AppointmentRepository(),
-                        new AppointmentChangeRequestRepository()),
-                    new PatientService(
+                        new UserRepository(),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository())),
+                    new SimilarToPriorityAppointmentsFinder(
+                        new AppointmentRepository(),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository())),
+                    new AppointmentTermService(),
+                    new UserRepository()),
+                new AppointmentService(
                         new AppointmentRepository(),
                         new AppointmentChangeRequestRepository(),
-                        new HealthRecordRepository(),
-                        new HealthRecordService(
-                            new HealthRecordRepository()),
-                        new PatientEditService(
-                            new HealthRecordRepository()))));
+                        new AppointmentChangeRequestService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new HospitalRoomService(
+                                new AppointmentRepository(),
+                                new HospitalRoomForRenovationService(
+                                    new HospitalRoomForRenovationRepository()),
+                                new HospitalRoomRepository()),
+                            new UserRepository()),
+                        new PatientService(
+                            new AppointmentRepository(),
+                            new AppointmentChangeRequestRepository(),
+                            new HealthRecordRepository(),
+                            new HealthRecordService(
+                                new HealthRecordRepository()),
+                            new PatientEditService(
+                                new HealthRecordRepository(),
+                                new UserRepository()),
+                            new UserRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository()),
+                        new HospitalRoomRepository()),
+                new HospitalRoomService(
+                    new AppointmentRepository(),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomRepository()));
         }
     }
 }

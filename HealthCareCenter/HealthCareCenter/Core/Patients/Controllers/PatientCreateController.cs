@@ -11,10 +11,12 @@ namespace HealthCareCenter.Core.Patients.Controllers
     public class PatientCreateController : PatientController
     {
         private readonly IPatientService _patientService;
+        private readonly BaseUserRepository _userRepository;
 
-        public PatientCreateController(IPatientService patientService)
+        public PatientCreateController(IPatientService patientService, BaseUserRepository userRepository)
         {
             _patientService = patientService;
+            _userRepository = userRepository;
         }
 
         public void Create(PatientDTO patientDTO, HealthRecordDTO recordDTO)
@@ -40,7 +42,7 @@ namespace HealthCareCenter.Core.Patients.Controllers
 
         private void ValidateUsername(PatientDTO patient)
         {
-            foreach (User user in UserRepository.Users)
+            foreach (User user in _userRepository.Users)
             {
                 if (user.Username == patient.Username)
                 {

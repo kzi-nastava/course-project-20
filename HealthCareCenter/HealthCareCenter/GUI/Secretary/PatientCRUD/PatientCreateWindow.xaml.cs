@@ -20,8 +20,11 @@ namespace HealthCareCenter.Secretary
     {
         private readonly PatientCreateController _controller;
         private readonly BaseHealthRecordRepository _healthRecordRepository;
+        private readonly BaseUserRepository _userRepository;
 
-        public PatientCreateWindow(BaseHealthRecordRepository healthRecordRepository)
+        public PatientCreateWindow(
+            BaseHealthRecordRepository healthRecordRepository,
+            BaseUserRepository userRepository)
         {
             InitializeComponent();
 
@@ -33,8 +36,12 @@ namespace HealthCareCenter.Secretary
                     new HealthRecordService(
                         new HealthRecordRepository()),
                     new PatientEditService(
-                        new HealthRecordRepository())));
+                        new HealthRecordRepository(),
+                        new UserRepository()),
+                    new UserRepository()),
+                new UserRepository());
             _healthRecordRepository = healthRecordRepository;
+            _userRepository = userRepository;
         }
 
         private void Reset()
@@ -49,7 +56,7 @@ namespace HealthCareCenter.Secretary
             allergenTextBox.Clear();
             previousDiseasesListBox.Items.Clear();
             allergensListBox.Items.Clear();
-            idTextBox.Text = (UserRepository.maxID + 1).ToString();
+            idTextBox.Text = (_userRepository.LargestID + 1).ToString();
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
@@ -157,7 +164,7 @@ namespace HealthCareCenter.Secretary
 
         private void Window_Initialized(object sender, EventArgs e)
         {
-            idTextBox.Text = (UserRepository.maxID + 1).ToString();
+            idTextBox.Text = (_userRepository.LargestID + 1).ToString();
         }
 
         private void PreviousDiseasesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -186,8 +193,8 @@ namespace HealthCareCenter.Secretary
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            HealthRecordDTO record = new HealthRecordDTO(_healthRecordRepository.LargestID + 1, heightTextBox.Text, weightTextBox.Text, previousDiseasesListBox.Items.Cast<String>().ToList(), allergensListBox.Items.Cast<String>().ToList(), UserRepository.maxID + 1);
-            PatientDTO patient = new PatientDTO(UserRepository.maxID + 1, usernameTextBox.Text, passwordTextBox.Text, firstNameTextBox.Text, lastNameTextBox.Text, birthDatePicker.SelectedDate, false, Blocker.None, new List<int>(), _healthRecordRepository.LargestID + 1);
+            HealthRecordDTO record = new HealthRecordDTO(_healthRecordRepository.LargestID + 1, heightTextBox.Text, weightTextBox.Text, previousDiseasesListBox.Items.Cast<String>().ToList(), allergensListBox.Items.Cast<String>().ToList(), _userRepository.LargestID + 1);
+            PatientDTO patient = new PatientDTO(_userRepository.LargestID + 1, usernameTextBox.Text, passwordTextBox.Text, firstNameTextBox.Text, lastNameTextBox.Text, birthDatePicker.SelectedDate, false, Blocker.None, new List<int>(), _healthRecordRepository.LargestID + 1);
 
             try
             {

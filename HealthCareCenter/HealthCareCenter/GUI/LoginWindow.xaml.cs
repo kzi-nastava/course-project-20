@@ -22,11 +22,17 @@ using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
-using HealthCareCenter.Core.HealthRecords;
+using HealthCareCenter.Core.Rooms;
+using HealthCareCenter.Core.Surveys.Services;
+using HealthCareCenter.Core.Rooms.Repositories;
 using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.Medicine.Repositories;
+using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.Core.Prescriptions;
+using HealthCareCenter.Core.Equipment.Repositories;
+using HealthCareCenter.Core.Surveys.Repositories;
+using HealthCareCenter.Core.Users.Services;
 
 namespace HealthCareCenter
 {
@@ -35,21 +41,104 @@ namespace HealthCareCenter
         private static BackgroundWorker _backgroundWorker = null;
         private static IDynamicEquipmentService _dynamicEquipmentService;
 
-        public LoginWindow(IDynamicEquipmentService dynamicEquipmentService) : this()
+        private readonly IRoomService _roomService;
+        private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
+
+        private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
+        private readonly IRenovationScheduleService _renovationScheduleService;
+
+        private readonly IEquipmentRearrangementService _equipmentRearrangementService;
+        private readonly IDoctorSurveyRatingService _doctorSurveyRatingService;
+
+        private readonly IMedicineCreationRequestService _medicineCreationRequestService;
+        private readonly BaseUserRepository _userRepository;
+
+        private BaseMedicineCreationRequestRepository medicineCreationRequestRepository = new MedicineCreationRequestRepository();
+
+        public LoginWindow(IDynamicEquipmentService dynamicEquipmentService, BaseUserRepository userRepository) : this()
         {
             _dynamicEquipmentService = dynamicEquipmentService;
+            _userRepository = userRepository;
         }
 
         public LoginWindow()
         {
-            IEquipmentRearrangementService equipmentRearrangementService = new EquipmentRearrangementService();
+            _userRepository = new UserRepository();
+            IRoomService roomService = new RoomService(
+                    new StorageRepository(),
+                    new EquipmentService(
+                        new EquipmentRepository()),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository()),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository()));
+            IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService = new HospitalRoomUnderConstructionService(new HospitalRoomUnderConstructionRepository());
+            IEquipmentRearrangementService equipmentRearrangementService = new EquipmentRearrangementService(
+                    new RoomService(
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()),
+                        new HospitalRoomUnderConstructionService(
+                            new HospitalRoomUnderConstructionRepository()),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository())),
+                    new EquipmentService(
+                        new EquipmentRepository()),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository()));
+            IRenovationScheduleService renovationScheduleService = new RenovationScheduleService(
+                new RoomService(
+                    new StorageRepository(),
+                    new EquipmentService(
+                        new EquipmentRepository()),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository()),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
+                new HospitalRoomUnderConstructionService(
+                    new HospitalRoomUnderConstructionRepository()),
+                new HospitalRoomForRenovationService(
+                    new HospitalRoomForRenovationRepository()),
+                new RenovationScheduleRepository(),
+                new HospitalRoomService(
+                    new AppointmentRepository(),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomRepository()));
+            IDoctorSurveyRatingService doctorSurveyRatingService = new DoctorSurveyRatingService(new DoctorSurveyRatingRepository(), new UserRepository());
+            IHospitalRoomForRenovationService hospitalRoomForRenovationService = new HospitalRoomForRenovationService(new HospitalRoomForRenovationRepository());
+            IMedicineCreationRequestService medicineCreationRequestService = new MedicineCreationRequestService(new MedicineCreationRequestRepository());
+
+            _roomService = roomService;
+            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
+            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
+            _renovationScheduleService = renovationScheduleService;
+            _equipmentRearrangementService = equipmentRearrangementService;
+            _doctorSurveyRatingService = doctorSurveyRatingService;
+            _medicineCreationRequestService = medicineCreationRequestService;
+
             InitializeComponent();
-            DoEquipmentRearrangements(equipmentRearrangementService);
+            DoEquipmentRearrangements(equipmentRearrangementService, new EquipmentService(new EquipmentRepository()));
             FinshPossibleRenovation();
 
             try
             {
-                UserRepository.LoadUsers();
+                _userRepository.LoadUsers();
             }
             catch (Exception ex)
             {
@@ -59,21 +148,23 @@ namespace HealthCareCenter
             StartBackgroundWorkerIfNeeded();
         }
 
-        private void DoEquipmentRearrangements(IEquipmentRearrangementService equipmentRearrangementService)
+        private void DoEquipmentRearrangements(
+            IEquipmentRearrangementService equipmentRearrangementService,
+            IEquipmentService equipmentService)
         {
-            List<Equipment> equipments = EquipmentService.GetEquipments();
+            List<Equipment> equipments = equipmentService.GetEquipments();
             for (int i = 0; i < equipments.Count; i++)
             {
-                equipmentRearrangementService.DoPossibleRearrangement(equipments[i]);
+                _equipmentRearrangementService.DoPossibleRearrangement(equipments[i]);
             }
         }
 
         private void FinshPossibleRenovation()
         {
-            List<RenovationSchedule> renovations = RenovationScheduleService.GetRenovations();
+            List<RenovationSchedule> renovations = _renovationScheduleService.GetRenovations();
             for (int i = 0; i < renovations.Count; i++)
             {
-                RenovationScheduleService.FinishRenovation(renovations[i]);
+                _renovationScheduleService.FinishRenovation(renovations[i]);
             }
         }
 
@@ -116,7 +207,14 @@ namespace HealthCareCenter
                     (Doctor)user,
                     new ReferralService(
                         new ReferralRepository(),
-                        new AppointmentRepository()), 
+                        new AppointmentRepository(),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository()),
+                        new UserRepository(),
+                        new HospitalRoomRepository()),
                     new ReferralRepository(),
                     new AppointmentRepository(),
                     new AppointmentService(
@@ -124,7 +222,13 @@ namespace HealthCareCenter
                         new AppointmentChangeRequestRepository(),
                         new AppointmentChangeRequestService(
                             new AppointmentRepository(),
-                            new AppointmentChangeRequestRepository()),
+                            new AppointmentChangeRequestRepository(),
+                            new HospitalRoomService(
+                                new AppointmentRepository(),
+                                new HospitalRoomForRenovationService(
+                                    new HospitalRoomForRenovationRepository()),
+                                new HospitalRoomRepository()),
+                            new UserRepository()),
                         new PatientService(
                             new AppointmentRepository(),
                             new AppointmentChangeRequestRepository(),
@@ -132,25 +236,118 @@ namespace HealthCareCenter
                             new HealthRecordService(
                                 new HealthRecordRepository()),
                             new PatientEditService(
-                                new HealthRecordRepository()))),
-                    new RoomService(new EquipmentRearrangementService()),
+                                new HealthRecordRepository(),
+                                new UserRepository()),
+                            new UserRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository()),
+                        new HospitalRoomRepository()),
+                    new RoomService(
+                    new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()),
+                        new HospitalRoomUnderConstructionService(
+                            new HospitalRoomUnderConstructionRepository()),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository())),
+                    new MedicineCreationRequestService(
+                        new MedicineCreationRequestRepository()),
+                    new MedicineCreationRequestRepository(),
                     new HealthRecordService(
-                        new HealthRecordRepository()));
+                        new HealthRecordRepository()),
+                    new DoctorService(
+                        new DoctorSearchService(
+                            new UserRepository()),
+                        new UserRepository()));
                 Close();
             }
             else if (user.GetType() == typeof(Manager))
             {
-                ShowWindow(new CrudHospitalRoomWindow((Manager)user,
-                    new NotificationService(
-                        new NotificationRepository(),
-                        new HealthRecordService(
-                            new HealthRecordRepository()),
-                        new MedicineInstructionService(
+                ShowWindow(new CrudHospitalRoomWindow(
+                (Manager)user,
+                new NotificationService(
+                    new NotificationRepository(),
+                    new HealthRecordService(
+                        new HealthRecordRepository()),
+                    new MedicineInstructionService(
                             new MedicineInstructionRepository()),
                         new MedicineService(
-                            new MedicineRepository())),
-                    new EquipmentRearrangementService(),
-                    new RoomService(new EquipmentRearrangementService())));
+                            new MedicineRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
+                new RoomService(
+                    new StorageRepository(),
+                    new EquipmentService(
+                        new EquipmentRepository()),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository()),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
+                new HospitalRoomUnderConstructionService(
+                    new HospitalRoomUnderConstructionRepository()),
+                new HospitalRoomForRenovationService(
+                    new HospitalRoomForRenovationRepository()),
+                new RenovationScheduleService(
+                    new RoomService(
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()),
+                        new HospitalRoomUnderConstructionService(
+                            new HospitalRoomUnderConstructionRepository()),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository())),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository()),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new RenovationScheduleRepository(),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository())),
+                new EquipmentRearrangementService(
+                    new RoomService(
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()),
+                        new HospitalRoomUnderConstructionService(
+                            new HospitalRoomUnderConstructionRepository()),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository())),
+                    new EquipmentService(
+                        new EquipmentRepository()),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository())),
+                new DoctorSurveyRatingService(new DoctorSurveyRatingRepository(), new UserRepository()),
+                new MedicineCreationRequestService(
+                    new MedicineCreationRequestRepository())));
             }
             else if (user.GetType() == typeof(Patient))
             {
@@ -170,7 +367,13 @@ namespace HealthCareCenter
                         new AppointmentChangeRequestRepository(),
                         new AppointmentChangeRequestService(
                             new AppointmentRepository(),
-                            new AppointmentChangeRequestRepository()),
+                            new AppointmentChangeRequestRepository(),
+                            new HospitalRoomService(
+                                new AppointmentRepository(),
+                                new HospitalRoomForRenovationService(
+                                    new HospitalRoomForRenovationRepository()),
+                                new HospitalRoomRepository()),
+                            new UserRepository()),
                         new PatientService(
                             new AppointmentRepository(),
                             new AppointmentChangeRequestRepository(),
@@ -178,7 +381,15 @@ namespace HealthCareCenter
                             new HealthRecordService(
                                 new HealthRecordRepository()),
                             new PatientEditService(
-                                new HealthRecordRepository()))),
+                                new HealthRecordRepository(),
+                                new UserRepository()),
+                            new UserRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository()),
+                        new HospitalRoomRepository()),
                     patient,
                     navStore);
                 GUI.Patient.MainWindow win = new GUI.Patient.MainWindow()
@@ -191,7 +402,12 @@ namespace HealthCareCenter
                             new MedicineInstructionService(
                                 new MedicineInstructionRepository()),
                             new MedicineService(
-                                new MedicineRepository())),
+                                new MedicineRepository()),
+                            new HospitalRoomService(
+                                new AppointmentRepository(),
+                                new HospitalRoomForRenovationService(
+                                    new HospitalRoomForRenovationRepository()),
+                                new HospitalRoomRepository())),
                         new PrescriptionService(
                             new MedicineInstructionRepository(),
                             new PrescriptionRepository()),
@@ -211,7 +427,12 @@ namespace HealthCareCenter
                         new MedicineInstructionService(
                             new MedicineInstructionRepository()),
                         new MedicineService(
-                            new MedicineRepository())),
+                            new MedicineRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository())),
                     _dynamicEquipmentService));
             }
             return true;
@@ -220,7 +441,7 @@ namespace HealthCareCenter
         private void TryLogin()
         {
             bool foundUser = false;
-            foreach (User user in UserRepository.Users)
+            foreach (User user in _userRepository.Users)
             {
                 if (user.Username != usernameTextBox.Text)
                 {

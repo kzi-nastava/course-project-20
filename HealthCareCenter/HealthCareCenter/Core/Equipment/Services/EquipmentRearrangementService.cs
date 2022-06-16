@@ -13,14 +13,17 @@ namespace HealthCareCenter.Core.Equipment.Services
     public class EquipmentRearrangementService : IEquipmentRearrangementService
     {
         private readonly IRoomService _roomService;
+        private readonly IEquipmentService _equipmentService;
+        private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
 
-        public EquipmentRearrangementService(IRoomService roomService)
+        public EquipmentRearrangementService(
+            IRoomService roomService,
+            IEquipmentService equipmentService,
+            IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService)
         {
             _roomService = roomService;
-        }
-
-        public EquipmentRearrangementService()
-        {
+            _equipmentService = equipmentService;
+            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
         }
 
         private bool IsBeforeCurrentTime(DateTime rearrangementDate)
@@ -122,7 +125,7 @@ namespace HealthCareCenter.Core.Equipment.Services
         {
             Room currentRoom = _roomService.Get(equipment.CurrentRoomID);
 
-            if (EquipmentService.HasScheduledRearrangement(equipment))
+            if (_equipmentService.HasScheduledRearrangement(equipment))
             {
                 // Get rearrangement
                 EquipmentRearrangement rearrangement = Get(equipment.RearrangementID);
@@ -143,7 +146,7 @@ namespace HealthCareCenter.Core.Equipment.Services
 
                 // Rearrangement removed
                 equipment.RearrangementID = -1;
-                EquipmentService.Update(equipment);
+                _equipmentService.Update(equipment);
             }
         }
 
@@ -153,7 +156,7 @@ namespace HealthCareCenter.Core.Equipment.Services
             Room newRoomOfCurrentRearrangement = _roomService.Get(rearrangement.NewRoomID);
 
             // Equipment already has rearrangemt
-            if (EquipmentService.HasScheduledRearrangement(equipment))
+            if (_equipmentService.HasScheduledRearrangement(equipment))
             {
                 Remove(equipment);
             }
@@ -174,12 +177,12 @@ namespace HealthCareCenter.Core.Equipment.Services
             //********************************************
 
             // Update equipment information
-            EquipmentService.Update(equipment);
+            _equipmentService.Update(equipment);
         }
 
         public void DoPossibleRearrangement(Models.Equipment equipment)
         {
-            if (EquipmentService.HasScheduledRearrangement(equipment))
+            if (_equipmentService.HasScheduledRearrangement(equipment))
             {
                 EquipmentRearrangement rearrangement = Get(equipment.RearrangementID);
 
@@ -204,14 +207,14 @@ namespace HealthCareCenter.Core.Equipment.Services
                     _roomService.Update(newRoomOfRearrangement);
                     equipment.CurrentRoomID = rearrangement.NewRoomID;
                     Remove(equipment);
-                    EquipmentService.Update(equipment);
+                    _equipmentService.Update(equipment);
                 }
             }
         }
 
         public bool IsIrrevocable(EquipmentRearrangement rearrangement)
         {
-            List<HospitalRoom> rooms = HospitalRoomUnderConstructionService.GetRooms();
+            List<HospitalRoom> rooms = _hospitalRoomUnderConstructionService.GetRooms();
             foreach (HospitalRoom room in rooms)
             {
                 if (room.ID == rearrangement.OldRoomID || room.ID == rearrangement.NewRoomID)

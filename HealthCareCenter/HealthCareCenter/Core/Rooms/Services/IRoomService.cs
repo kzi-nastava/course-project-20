@@ -1,4 +1,5 @@
-﻿using HealthCareCenter.Core.Rooms.Models;
+﻿using HealthCareCenter.Core.Equipment.Services;
+using HealthCareCenter.Core.Rooms.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -27,7 +28,7 @@ namespace HealthCareCenter.Core.Rooms
 
         void TransferAllEquipment(Room currentEquipmentRoom, Room newEquipmentRoom);
 
-        bool ContainsAnyRearrangement(Room room);
+        bool ContainsAnyRearrangement(Room room, IEquipmentRearrangementService equipmentRearrangementService);
 
         List<Equipment.Models.Equipment> GetAllEquipment(Room room);
     }

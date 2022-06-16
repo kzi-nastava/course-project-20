@@ -39,13 +39,12 @@ namespace HealthCareCenter.GUI.Patient.Survey.Commands
             {
                 if (isOverwrite)
                 {
-                    _ = _doctorSurveyRatingService.OverwriteExistingReview(surveyRating);
+                    _doctorSurveyRatingService.OverwriteExistingReview(surveyRating);
                 }
                 else
                 {
-                    DoctorSurveyRatingRepository.Ratings.Add(surveyRating);
+                    _doctorSurveyRatingService.AddRating(surveyRating);
                 }
-                DoctorSurveyRatingRepository.Save();
 
                 _viewModel.DoctorFullName = "N/A";
                 _viewModel.ChosenAppointment = null;
@@ -55,11 +54,16 @@ namespace HealthCareCenter.GUI.Patient.Survey.Commands
 
         private readonly DoctorSurveyViewModel _viewModel;
         private readonly IDoctorSurveyRatingService _doctorSurveyRatingService;
+        private readonly BaseDoctorSurveyRatingRepository _doctorSurveyRatingRepository;
 
-        public SubmitDoctorReviewCommand(DoctorSurveyViewModel viewModel, IDoctorSurveyRatingService doctorSurveyRatingService)
+        public SubmitDoctorReviewCommand(
+            DoctorSurveyViewModel viewModel, 
+            IDoctorSurveyRatingService doctorSurveyRatingService,
+            BaseDoctorSurveyRatingRepository doctorSurveyRatingRepository)
         {
             _viewModel = viewModel;
             _doctorSurveyRatingService = doctorSurveyRatingService;
+            _doctorSurveyRatingRepository = doctorSurveyRatingRepository;
         }
 
         private double GetTickedGradeServiceQuality()

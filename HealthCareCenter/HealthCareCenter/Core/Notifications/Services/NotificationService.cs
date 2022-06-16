@@ -18,17 +18,20 @@ namespace HealthCareCenter.Core.Notifications.Services
         private readonly IHealthRecordService _healthRecordService;
         private readonly IMedicineInstructionService _medicineInstructionService;
         private readonly IMedicineService _medicineService;
+        private readonly IHospitalRoomService _hospitalRoomService;
 
         public NotificationService(
             BaseNotificationRepository repository,
             IHealthRecordService healthRecordService,
             IMedicineInstructionService medicineInstructionService,
-            IMedicineService medicineService)
+            IMedicineService medicineService,
+            IHospitalRoomService hospitalRoomService)
         {
             _notificationRepository = repository;
             _healthRecordService = healthRecordService;
             _medicineInstructionService = medicineInstructionService;
             _medicineService = medicineService;
+            _hospitalRoomService = hospitalRoomService;
         }
 
         public List<Notification> GetUnopened(User user)
@@ -96,7 +99,7 @@ namespace HealthCareCenter.Core.Notifications.Services
             _notificationRepository.CalculateMaxID();
             Notification postponedPatientNotification = new Notification(++_notificationRepository.maxID, $"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedRecord.PatientID);
             Notification postponedDoctorNotification = new Notification(++_notificationRepository.maxID, $"The appointment you had scheduled at {newAppointment.ScheduledDate} has been postponed to {postponedAppointment.ScheduledDate}.", postponedAppointment.DoctorID);
-            Notification newDoctorNotification = new Notification(++_notificationRepository.maxID, $"A new urgent appointment has been scheduled for you at {newAppointment.ScheduledDate} in room {HospitalRoomService.Get(newAppointment.HospitalRoomID).Name}.", newAppointment.DoctorID);
+            Notification newDoctorNotification = new Notification(++_notificationRepository.maxID, $"A new urgent appointment has been scheduled for you at {newAppointment.ScheduledDate} in room {_hospitalRoomService.Get(newAppointment.HospitalRoomID).Name}.", newAppointment.DoctorID);
 
             if (postponedRecord.PatientID == patient.ID)
             {

@@ -7,20 +7,19 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Rooms.Repositories
 {
-    public static class HospitalRoomRepository
+    public class HospitalRoomRepository : BaseHospitalRoomRepository
     {
         private const string _fileName = "hospitalRooms.json";
-        public static List<HospitalRoom> Rooms = Load();
 
         /// <summary>
         /// Finding last(largest) id in file hospitalRooms.json.
         /// </summary>
         /// <returns>last(largest) id.</returns>
-        public static int GetLargestRoomId()
+        public override int GetLargestID()
         {
             try
             {
-                List<HospitalRoom> rooms = Rooms;
+                List<HospitalRoom> rooms = _rooms;
                 rooms.Sort((x, y) => x.ID.CompareTo(y.ID));
                 if (rooms.Count == 0)
                 {
@@ -39,7 +38,7 @@ namespace HealthCareCenter.Core.Rooms.Repositories
         /// Loads all hospital rooms from file hospitalRooms.json.
         /// </summary>
         /// <returns>List of all hospital rooms.</returns>
-        public static List<HospitalRoom> Load()
+        public override List<HospitalRoom> Load()
         {
             try
             {
@@ -50,9 +49,8 @@ namespace HealthCareCenter.Core.Rooms.Repositories
                 };
 
                 string JSONTextHospitalRooms = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"..\..\..\data\" + _fileName);
-                rooms = (List<HospitalRoom>)JsonConvert.DeserializeObject<IEnumerable<HospitalRoom>>(JSONTextHospitalRooms, settings);
-                Rooms = rooms;
-                return rooms;
+                _rooms = (List<HospitalRoom>)JsonConvert.DeserializeObject<IEnumerable<HospitalRoom>>(JSONTextHospitalRooms, settings);
+                return _rooms;
             }
             catch (Exception ex)
             {
@@ -65,7 +63,7 @@ namespace HealthCareCenter.Core.Rooms.Repositories
         /// </summary>
         /// <param name="rooms">Data that will replace the old ones.</param>
         /// <returns>true if data update performed properly.</returns>
-        public static bool Save()
+        public override bool Save()
         {
             try
             {

@@ -7,12 +7,16 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Rooms.Repositories
 {
-    internal class HospitalRoomUnderConstructionRepository
+    public class HospitalRoomUnderConstructionRepository : BaseHospitalRoomUnderConstructionRepository
     {
         private const string fileName = "hospitalRoomsUnderConstruction.json";
-        public static List<HospitalRoom> Rooms = Load();
 
-        public static int GetLargestRoomId()
+        public HospitalRoomUnderConstructionRepository()
+        {
+            Rooms = Load();
+        }
+
+        public override int GetLargestRoomId()
         {
             try
             {
@@ -31,7 +35,7 @@ namespace HealthCareCenter.Core.Rooms.Repositories
             }
         }
 
-        private static List<HospitalRoom> Load()
+        protected override List<HospitalRoom> Load()
         {
             try
             {
@@ -51,7 +55,7 @@ namespace HealthCareCenter.Core.Rooms.Repositories
             }
         }
 
-        public static bool Save()
+        public override bool Save()
         {
             try
             {

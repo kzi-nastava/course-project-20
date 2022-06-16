@@ -1,4 +1,6 @@
-﻿using HealthCareCenter.GUI.Patient.SharedViewModels;
+﻿using HealthCareCenter.Core.Users;
+using HealthCareCenter.Core.Users.Services;
+using HealthCareCenter.GUI.Patient.SharedViewModels;
 using System.Collections.Generic;
 using System.Windows.Input;
 
@@ -93,8 +95,18 @@ namespace HealthCareCenter.GUI.Patient.DoctorSearch
             };
             _chosenSortCriteria = _sortCriteria[0];
 
-            SearchDoctors = new SearchDoctorsCommand(this);
-            SortDoctors = new SortDoctorsCommand(this);
+            SearchDoctors = new SearchDoctorsCommand(
+                this,
+                new DoctorService(
+                    new DoctorSearchService(
+                        new UserRepository()),
+                    new UserRepository()));
+            SortDoctors = new SortDoctorsCommand(
+                this,
+                new DoctorService(
+                    new DoctorSearchService(
+                        new UserRepository()),
+                    new UserRepository()));
             SelectDoctor = new SelectDoctorCommand(this, navigationStore);
         }
     }

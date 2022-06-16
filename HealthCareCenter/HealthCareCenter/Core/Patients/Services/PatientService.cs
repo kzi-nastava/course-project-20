@@ -19,24 +19,27 @@ namespace HealthCareCenter.Core.Patients.Services
         private readonly BaseHealthRecordRepository _healthRecordRepository;
         private readonly IHealthRecordService _healthRecordService;
         private readonly IPatientEditService _patientEditService;
+        private readonly BaseUserRepository _userRepository;
 
         public PatientService(
             BaseAppointmentRepository appointmentRepository,
             BaseAppointmentChangeRequestRepository changeRequestRepository,
             BaseHealthRecordRepository healthRecordRepository,
             IHealthRecordService healthRecordService,
-            IPatientEditService patientEditService)
+            IPatientEditService patientEditService,
+            BaseUserRepository userRepository)
         {
             _appointmentRepository = appointmentRepository;
             _changeRequestRepository = changeRequestRepository;
             _healthRecordRepository = healthRecordRepository;
             _healthRecordService= healthRecordService;
             _patientEditService = patientEditService;
+            _userRepository = userRepository;
         }
 
         public Patient Get(int id)
         {
-            foreach (Patient patient in UserRepository.Patients)
+            foreach (Patient patient in _userRepository.Patients)
             {
                 if (patient.ID == id)
                     return patient;
@@ -46,7 +49,7 @@ namespace HealthCareCenter.Core.Patients.Services
 
         public Patient GetPatientByHealthRecordID(int healthRecordID)
         {
-            foreach (Patient patient in UserRepository.Patients)
+            foreach (Patient patient in _userRepository.Patients)
             {
                 if (patient.HealthRecordID == healthRecordID)
                 {
@@ -59,7 +62,7 @@ namespace HealthCareCenter.Core.Patients.Services
         public int GetIndex(int id)
         {
             int counter = 0;
-            foreach (Patient patient in UserRepository.Patients)
+            foreach (Patient patient in _userRepository.Patients)
             {
                 if (patient.ID == id)
                     return counter;
@@ -71,7 +74,7 @@ namespace HealthCareCenter.Core.Patients.Services
         public List<Patient> GetBlockedPatients()
         {
             List<Patient> blockedPatients = new List<Patient>();
-            foreach (Patient patient in UserRepository.Patients)
+            foreach (Patient patient in _userRepository.Patients)
             {
                 if (patient.IsBlocked)
                 {
@@ -85,7 +88,7 @@ namespace HealthCareCenter.Core.Patients.Services
         {
             patient.IsBlocked = true;
             patient.BlockedBy = Blocker.Secretary;
-            UserRepository.SavePatients();
+            _userRepository.SavePatients();
         }
 
         public void Block(Patient patient, List<Patient> blockedPatients)
@@ -98,7 +101,7 @@ namespace HealthCareCenter.Core.Patients.Services
         {
             patient.IsBlocked = false;
             patient.BlockedBy = Blocker.None;
-            UserRepository.SavePatients();
+            _userRepository.SavePatients();
         }
 
         public void Unblock(Patient patient, List<Patient> blockedPatients)
@@ -109,9 +112,9 @@ namespace HealthCareCenter.Core.Patients.Services
 
         public void UpdateMaxIDsIfNeeded()
         {
-            if (UserRepository.maxID == -1)
+            if (_userRepository.LargestID == -1)
             {
-                UserRepository.CalculateMaxID();
+                _userRepository.CalculateMaxID();
             }
             if (_healthRecordRepository.LargestID == -1)
             {
@@ -125,13 +128,13 @@ namespace HealthCareCenter.Core.Patients.Services
             _healthRecordRepository.Save();
 
             _patientEditService.DeletePatient(patient);
-            UserRepository.SavePatients();
+            _userRepository.SavePatients();
         }
 
         public void Create(Patient patient, HealthRecord record)
         {
             _healthRecordRepository.LargestID++;
-            UserRepository.maxID++;
+            _userRepository.LargestID++;
 
             _patientEditService.AddToRepositories(record, patient);
             _patientEditService.SaveRepositories();
@@ -161,7 +164,7 @@ namespace HealthCareCenter.Core.Patients.Services
 
             if (creationCount >= _creationTrollLimit)
             {
-                foreach (Patient patient in UserRepository.Patients)
+                foreach (Patient patient in _userRepository.Patients)
                 {
                     if (possibleTroll.ID == patient.ID)
                     {
@@ -194,7 +197,7 @@ namespace HealthCareCenter.Core.Patients.Services
 
             if (modificationCount >= _modificationTrollLimit)
             {
-                foreach (Patient patient in UserRepository.Patients)
+                foreach (Patient patient in _userRepository.Patients)
                 {
                     if (possibleTroll.ID == patient.ID)
                     {

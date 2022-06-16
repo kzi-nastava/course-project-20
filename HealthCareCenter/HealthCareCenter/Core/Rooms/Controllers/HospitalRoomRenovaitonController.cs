@@ -3,16 +3,27 @@ using System.Collections.Generic;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.Core.Rooms.Models;
 using HealthCareCenter.Core.Exceptions;
+using HealthCareCenter.Core.Equipment.Services;
+using HealthCareCenter.Core.Rooms.Repositories;
+using HealthCareCenter.Core.Equipment.Repositories;
+using HealthCareCenter.Core.Appointments.Repository;
 
 namespace HealthCareCenter.Core.Rooms.Controllers
 {
     public class HospitalRoomRenovaitonController
     {
-        private IRoomService _roomService;
+        private readonly IRoomService _roomService;
+        private readonly IRenovationScheduleService _renovationScheduleService;
+        private readonly IHospitalRoomService _hospitalRoomService;
 
-        public HospitalRoomRenovaitonController(IRoomService roomService)
+        public HospitalRoomRenovaitonController(
+            IRoomService roomService,
+            IRenovationScheduleService renovationScheduleService,
+            IHospitalRoomService hospitalRoomService)
         {
             _roomService = roomService;
+            _renovationScheduleService = renovationScheduleService;
+            _hospitalRoomService = hospitalRoomService;
         }
 
         public void ScheduleRenovation(string hospitalRoomForRenovationId, string startDate, string finishDate)
@@ -20,23 +31,23 @@ namespace HealthCareCenter.Core.Rooms.Controllers
             IsPossibleToScheduleRenovtion(hospitalRoomForRenovationId, startDate, finishDate);
 
             int parsedHospitalRoomForRenovationId = Convert.ToInt32(hospitalRoomForRenovationId);
-            HospitalRoom roomForRenovation = HospitalRoomService.Get(parsedHospitalRoomForRenovationId);
+            HospitalRoom roomForRenovation = _hospitalRoomService.Get(parsedHospitalRoomForRenovationId);
 
             DateTime parsedStartDate = Convert.ToDateTime(startDate);
             DateTime parsedFinishDate = Convert.ToDateTime(finishDate);
 
             RenovationSchedule renovation = new RenovationSchedule(parsedStartDate, parsedFinishDate, roomForRenovation);
-            RenovationScheduleService.ScheduleSimpleRenovation(renovation, roomForRenovation);
+            _renovationScheduleService.ScheduleSimpleRenovation(renovation, roomForRenovation);
         }
 
         public List<HospitalRoom> GetRoomsForDisplay()
         {
-            return HospitalRoomService.GetRooms();
+            return _hospitalRoomService.GetRooms();
         }
 
         public List<RenovationSchedule> GetRenovationsForDisplay()
         {
-            return RenovationScheduleService.GetRenovations();
+            return _renovationScheduleService.GetRenovations();
         }
 
         private bool IsHospitalRoomIdInputValide(string roomId)
@@ -88,15 +99,34 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 
             int parsedHospitalRoomId = Convert.ToInt32(roomId);
 
-            HospitalRoom roomForRenovation = HospitalRoomService.Get(parsedHospitalRoomId);
+            HospitalRoom roomForRenovation = _hospitalRoomService.Get(parsedHospitalRoomId);
 
             if (!IsHospitalRoomFound(roomForRenovation)) { throw new HospitalRoomNotFoundException(roomId); }
         }
 
         private void IsPossibleRenovation(HospitalRoom roomForRenovation)
         {
-            if (HospitalRoomService.ContainsAnyAppointment(roomForRenovation)) { throw new HospitalRoomContainAppointmentException(roomForRenovation.ID.ToString()); }
-            if (_roomService.ContainsAnyRearrangement(roomForRenovation)) { throw new HospitalRoomContainEquipmentRearrangementException(roomForRenovation.ID.ToString()); }
+            if (_hospitalRoomService.ContainsAnyAppointment(roomForRenovation)) { throw new HospitalRoomContainAppointmentException(roomForRenovation.ID.ToString()); }
+            if (_roomService.ContainsAnyRearrangement(
+                roomForRenovation,
+                new EquipmentRearrangementService(
+                    new RoomService(
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()),
+                        new HospitalRoomUnderConstructionService(
+                            new HospitalRoomUnderConstructionRepository()),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository())),
+                    new EquipmentService(
+                        new EquipmentRepository()),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository())))) { throw new HospitalRoomContainEquipmentRearrangementException(roomForRenovation.ID.ToString()); }
         }
 
         private void IsPossibleToScheduleRenovtion(string hospitalRoomForRenovationId, string startDate, string finishDate)
@@ -105,7 +135,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
             IsDateValide(startDate, finishDate);
 
             int parsedHospitalRoomForRenovationId = Convert.ToInt32(hospitalRoomForRenovationId);
-            HospitalRoom roomForRenovation = HospitalRoomService.Get(parsedHospitalRoomForRenovationId);
+            HospitalRoom roomForRenovation = _hospitalRoomService.Get(parsedHospitalRoomForRenovationId);
             IsPossibleRenovation(roomForRenovation);
         }
     }

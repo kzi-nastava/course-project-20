@@ -5,6 +5,7 @@ using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.Core.Rooms.Repositories;
 using HealthCareCenter.Core.Rooms.Services;
+using HealthCareCenter.Core.Users;
 using System;
 using System.Collections.Generic;
 
@@ -16,17 +17,23 @@ namespace HealthCareCenter.Core.Appointments.Services
         private readonly BaseAppointmentChangeRequestRepository _changeRequestRepository;
         private readonly IAppointmentChangeRequestService _changeRequestService;
         private readonly IPatientService _patientService;
+        private readonly IHospitalRoomService _hospitalRoomService;
+        private readonly BaseHospitalRoomRepository _hospitalRoomRepository;
 
         public AppointmentService(
             BaseAppointmentRepository appointmentRepository,
             BaseAppointmentChangeRequestRepository changeRequestRepository,
             IAppointmentChangeRequestService changeRequestService,
-            IPatientService patientService)
+            IPatientService patientService,
+            IHospitalRoomService hospitalRoomService,
+            BaseHospitalRoomRepository hospitalRoomRepository)
         {
             _appointmentRepository = appointmentRepository;
             _changeRequestRepository = changeRequestRepository;
             _changeRequestService = changeRequestService;
             _patientService = patientService;
+            _hospitalRoomService = hospitalRoomService;
+            _hospitalRoomRepository = hospitalRoomRepository;
         }
 
         public Appointment Get(OccupiedAppointment appointmentDisplay)
@@ -85,8 +92,8 @@ namespace HealthCareCenter.Core.Appointments.Services
             _appointmentRepository.Appointments.Add(appointment);
             _appointmentRepository.Save();
 
-            HospitalRoomService.Update(appointment.HospitalRoomID, appointment);
-            HospitalRoomRepository.Save();
+            _hospitalRoomService.Update(appointment.HospitalRoomID, appointment);
+            _hospitalRoomRepository.Save();
 
             return true;
         }
@@ -114,8 +121,8 @@ namespace HealthCareCenter.Core.Appointments.Services
             _appointmentRepository.Appointments.Add(appointment);
             _appointmentRepository.Save();
 
-            HospitalRoomService.Update(appointment.HospitalRoomID, appointment);
-            HospitalRoomRepository.Save();
+            _hospitalRoomService.Update(appointment.HospitalRoomID, appointment);
+            _hospitalRoomRepository.Save();
 
             return true;
         }
@@ -159,7 +166,7 @@ namespace HealthCareCenter.Core.Appointments.Services
             }
             else
             {
-                HospitalRoomService.AddAppointmentToRoom(hospitalRoomID, newChangeRequest.AppointmentID);
+                _hospitalRoomService.AddAppointmentToRoom(hospitalRoomID, newChangeRequest.AppointmentID);
                 _changeRequestService.EditAppointment(newChangeRequest);
             }
 
@@ -257,11 +264,11 @@ namespace HealthCareCenter.Core.Appointments.Services
                     appointments.Sort(appointmentDateComparison);
                     break;
                 case "Doctor":
-                    AppointmentDoctorCompare appointmentDoctorComparison = new AppointmentDoctorCompare();
+                    AppointmentDoctorCompare appointmentDoctorComparison = new AppointmentDoctorCompare(new UserRepository());
                     appointments.Sort(appointmentDoctorComparison);
                     break;
                 case "Professional area":
-                    AppointmentDoctorCompare appointmentProfessionalAreaComparison = new AppointmentDoctorCompare();
+                    AppointmentDoctorCompare appointmentProfessionalAreaComparison = new AppointmentDoctorCompare(new UserRepository());
                     appointments.Sort(appointmentProfessionalAreaComparison);
                     break;
             }

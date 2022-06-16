@@ -9,25 +9,32 @@ namespace HealthCareCenter.Core.Rooms.Controllers
     public class CRUDHospitalRoomController
     {
         private IRoomService _roomService;
+        private IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
+        private IHospitalRoomService _hospitalRoomService;
 
-        public CRUDHospitalRoomController(IRoomService roomService)
+        public CRUDHospitalRoomController(
+            IRoomService roomService, 
+            IHospitalRoomForRenovationService hospitalRoomForRenovationService,
+            IHospitalRoomService hospitalRoomService)
         {
             _roomService = roomService;
+            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
+            _hospitalRoomService = hospitalRoomService;
         }
 
         public void Create(RoomType roomType, string roomName)
         {
             if (!IsHospitalRoomNameInputValide(roomName)) { throw new InvalideHospitalRoomNameException(); }
             HospitalRoom room = new HospitalRoom(roomType, roomName);
-            HospitalRoomService.Add(room);
+            _hospitalRoomService.Add(room);
         }
 
         public void Delete(string roomId)
         {
             IsPossibleToDeleteHospitalRoom(roomId);
             int parsedRoomId = Convert.ToInt32(roomId);
-            HospitalRoom hospitalRoom = HospitalRoomService.Get(parsedRoomId);
-            HospitalRoomService.Delete(hospitalRoom);
+            HospitalRoom hospitalRoom = _hospitalRoomService.Get(parsedRoomId);
+            _hospitalRoomService.Delete(hospitalRoom);
         }
 
         public void Update(string newRoomName, RoomType newRoomType, string roomId)
@@ -35,7 +42,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
             IsPossibleRoomToUpdate(newRoomName, roomId);
 
             int parsedRoomId = Convert.ToInt32(roomId);
-            HospitalRoom hospitalRoom = HospitalRoomService.Get(parsedRoomId);
+            HospitalRoom hospitalRoom = _hospitalRoomService.Get(parsedRoomId);
             hospitalRoom.Name = newRoomName;
             hospitalRoom.Type = newRoomType;
             _roomService.Update(hospitalRoom);
@@ -43,8 +50,8 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 
         public List<HospitalRoom> GetRoomsToDisplay()
         {
-            List<HospitalRoom> availableRooms = HospitalRoomService.GetRooms();
-            List<HospitalRoom> roomsUnderRenovationProcess = HospitalRoomForRenovationService.GetRooms();
+            List<HospitalRoom> availableRooms = _hospitalRoomService.GetRooms();
+            List<HospitalRoom> roomsUnderRenovationProcess = _hospitalRoomForRenovationService.GetRooms();
             List<HospitalRoom> roomsForDisplay = new List<HospitalRoom>();
             roomsForDisplay.AddRange(availableRooms);
             roomsForDisplay.AddRange(roomsUnderRenovationProcess);
@@ -81,9 +88,9 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 
             if (_roomService.ContainAnyEquipment(hospitalRoom)) { throw new HospitalRoomContainsEquipmentException(roomId); }
 
-            if (HospitalRoomService.ContainsAnyAppointment(hospitalRoom)) { throw new HospitalRoomContainsEquipmentException(roomId); }
+            if (_hospitalRoomService.ContainsAnyAppointment(hospitalRoom)) { throw new HospitalRoomContainsEquipmentException(roomId); }
 
-            if (HospitalRoomService.IsCurrentlyRenovating(hospitalRoom)) { throw new HospitalRoomUnderRenovationException(roomId); }
+            if (_hospitalRoomService.IsCurrentlyRenovating(hospitalRoom)) { throw new HospitalRoomUnderRenovationException(roomId); }
         }
 
         private void IsPossibleRoomToUpdate(string newRoomName, string roomId)

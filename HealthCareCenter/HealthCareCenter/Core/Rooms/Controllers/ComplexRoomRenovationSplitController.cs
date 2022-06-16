@@ -4,17 +4,30 @@ using System.Text;
 using HealthCareCenter.Core.Rooms.Services;
 using HealthCareCenter.Core.Rooms.Models;
 using HealthCareCenter.Core.Exceptions;
+using HealthCareCenter.Core.Equipment.Services;
+using HealthCareCenter.Core.Rooms.Repositories;
+using HealthCareCenter.Core.Equipment.Repositories;
+using HealthCareCenter.Core.Appointments.Repository;
 
 namespace HealthCareCenter.Core.Rooms.Controllers
 {
     public class ComplexRoomRenovationSplitController
     {
-        private IRoomService _roomService;
+        private readonly IRoomService _roomService;
+        private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
+        private readonly IRenovationScheduleService _renovationScheduleService;
+        private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
+        private readonly IHospitalRoomService _hospitalRoomService;
 
-        public ComplexRoomRenovationSplitController(IRoomService roomService)
+        public ComplexRoomRenovationSplitController(
+            IRoomService roomService,
+            IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService,
+            IRenovationScheduleService renovationScheduleService,
+            IHospitalRoomForRenovationService hospitalRoomForRenovationService,
+            IHospitalRoomService hospitalRoomService)
         {
             _roomService = roomService;
-        }
+            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;            _renovationScheduleService = renovationScheduleService;            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;            _hospitalRoomService = hospitalRoomService;        }
 
         public HospitalRoom GenerateNewRoom1(string room1Type, string room1Name)
         {
@@ -34,26 +47,26 @@ namespace HealthCareCenter.Core.Rooms.Controllers
         public HospitalRoom GetSplitRoom(string splitRoomId)
         {
             int parsedSplitRoomId = Convert.ToInt32(splitRoomId);
-            HospitalRoom splitRoom = HospitalRoomService.Get(parsedSplitRoomId);
+            HospitalRoom splitRoom = _hospitalRoomService.Get(parsedSplitRoomId);
             return splitRoom;
         }
 
         public List<HospitalRoom> GetRoomsForDisplay()
         {
-            return HospitalRoomService.GetRooms();
+            return _hospitalRoomService.GetRooms();
         }
 
         public List<List<string>> GetSplitRenovationsForDisplay()
         {
             List<List<string>> renovationForDisplay = new List<List<string>>();
-            List<RenovationSchedule> renovations = RenovationScheduleService.GetRenovations();
+            List<RenovationSchedule> renovations = _renovationScheduleService.GetRenovations();
             foreach (RenovationSchedule renovation in renovations)
             {
                 if (renovation.RenovationType == RenovationType.Split)
                 {
-                    HospitalRoom room1 = HospitalRoomUnderConstructionService.Get(renovation.Room1ID);
-                    HospitalRoom room2 = HospitalRoomUnderConstructionService.Get(renovation.Room2ID);
-                    HospitalRoom splitRoom = HospitalRoomForRenovationService.Get(renovation.MainRoomID);
+                    HospitalRoom room1 = _hospitalRoomUnderConstructionService.Get(renovation.Room1ID);
+                    HospitalRoom room2 = _hospitalRoomUnderConstructionService.Get(renovation.Room2ID);
+                    HospitalRoom splitRoom = _hospitalRoomForRenovationService.Get(renovation.MainRoomID);
 
                     List<string> renovationAttributes = new List<string> {
                     room1.ID.ToString(),room1.Name,room1.Type.ToString(),
@@ -77,7 +90,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
             IsSplittingPossible(splitRoomId, room1Name, room2Name, startDate, finishDate);
 
             int parsedSplitRoomId = Convert.ToInt32(splitRoomId);
-            HospitalRoom splitRoom = HospitalRoomService.Get(parsedSplitRoomId);
+            HospitalRoom splitRoom = _hospitalRoomService.Get(parsedSplitRoomId);
 
             HospitalRoom newRoom1 = new HospitalRoom(parsedRoom1Type, room1Name);
             HospitalRoom newRoom2 = new HospitalRoom(parsedRoom2Type, room2Name);
@@ -93,7 +106,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
                 newRoom1, newRoom2, splitRoom,
                 RenovationType.Split);
 
-            RenovationScheduleService.ScheduleSplitRenovation(splitRenovation, newRoom1, newRoom2, splitRoom);
+            _renovationScheduleService.ScheduleSplitRenovation(splitRenovation, newRoom1, newRoom2, splitRoom);
             // ------------------------------
         }
 
@@ -168,7 +181,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
             }
 
             int parsedSplitRoomId = Convert.ToInt32(splitRoomId);
-            HospitalRoom splitRoom = HospitalRoomService.Get(parsedSplitRoomId);
+            HospitalRoom splitRoom = _hospitalRoomService.Get(parsedSplitRoomId);
 
             if (!IsHospitalRoomFound(splitRoom))
             {
@@ -178,12 +191,31 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 
         private void IsPossibleRenovation(HospitalRoom splitRoom)
         {
-            if (HospitalRoomService.ContainsAnyAppointment(splitRoom))
+            if (_hospitalRoomService.ContainsAnyAppointment(splitRoom))
             {
                 throw new HospitalRoomContainAppointmentException(splitRoom.ID.ToString());
             }
 
-            if (_roomService.ContainsAnyRearrangement(splitRoom))
+            if (_roomService.ContainsAnyRearrangement(
+                splitRoom, 
+                new EquipmentRearrangementService(
+                    new RoomService(
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()),
+                        new HospitalRoomUnderConstructionService(
+                            new HospitalRoomUnderConstructionRepository()),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomService(
+                            new AppointmentRepository(),
+                            new HospitalRoomForRenovationService(
+                                new HospitalRoomForRenovationRepository()),
+                            new HospitalRoomRepository())),
+                    new EquipmentService(
+                        new EquipmentRepository()),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository()))))
             {
                 throw new HospitalRoomContainEquipmentRearrangementException(splitRoom.ID.ToString());
             }
@@ -194,7 +226,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
             IsSplitRoomValide(splitRoomId);
 
             int parsedSplitRoomId = Convert.ToInt32(splitRoomId);
-            HospitalRoom splitRoom = HospitalRoomService.Get(parsedSplitRoomId);
+            HospitalRoom splitRoom = _hospitalRoomService.Get(parsedSplitRoomId);
             IsPossibleRenovation(splitRoom);
             if (!IsHospitalRoomNameInputValide(room1Name) || !IsHospitalRoomNameInputValide(room2Name))
             {

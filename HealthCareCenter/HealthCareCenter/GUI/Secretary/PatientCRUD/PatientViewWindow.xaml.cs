@@ -8,6 +8,9 @@ using HealthCareCenter.Core.Patients.Controllers;
 using HealthCareCenter.Core.Patients.Services;
 using HealthCareCenter.Core.Referrals.Repositories;
 using HealthCareCenter.Core.Referrals.Services;
+using HealthCareCenter.Core.Rooms.Repositories;
+using HealthCareCenter.Core.Rooms.Services;
+using HealthCareCenter.Core.Users;
 
 namespace HealthCareCenter.Secretary
 {
@@ -40,7 +43,9 @@ namespace HealthCareCenter.Secretary
                     new HealthRecordService(
                         new HealthRecordRepository()),
                     new PatientEditService(
-                        new HealthRecordRepository())));
+                        new HealthRecordRepository(),
+                        new UserRepository()),
+                    new UserRepository()));
         }
 
         private void InitializeWindow()
@@ -119,7 +124,14 @@ namespace HealthCareCenter.Secretary
                 _patient, 
                 new ReferralService(
                     new ReferralRepository(),
-                    new AppointmentRepository()));
+                    new AppointmentRepository(),
+                    new HospitalRoomService(
+                        new AppointmentRepository(),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository()),
+                        new HospitalRoomRepository()),
+                    new UserRepository(),
+                    new HospitalRoomRepository()));
             window.ShowDialog();
         }
 

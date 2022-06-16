@@ -7,19 +7,26 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Equipment.Services
 {
-    public class EquipmentService
+    public class EquipmentService : IEquipmentService
     {
+        private readonly BaseEquipmentRepository _equipmentRepository;
+
+        public EquipmentService(BaseEquipmentRepository equipmentRepository)
+        {
+            _equipmentRepository = equipmentRepository;
+        }
+
         /// <summary>
         /// Finding equipment with specific id.
         /// </summary>
         /// <param name="id">id of wanted equipment</param>
         /// <returns>Equipment with specific id, if equipment is found, or null if equipment is not found.</returns>
         /// <exception cref="EquipmentNotFound">Thrown when equipment with specific id is not found.</exception>
-        public static Models.Equipment Get(int id)
+        public Models.Equipment Get(int id)
         {
             try
             {
-                foreach (Models.Equipment equipment in EquipmentRepository.Equipments)
+                foreach (Models.Equipment equipment in _equipmentRepository.Equipments)
                 {
                     if (equipment.ID == id)
                     {
@@ -44,19 +51,19 @@ namespace HealthCareCenter.Core.Equipment.Services
         /// Return loaded equipments from list.
         /// </summary>
         /// <returns>Loaded equipments.</returns>
-        public static List<Models.Equipment> GetEquipments()
+        public List<Models.Equipment> GetEquipments()
         {
-            return EquipmentRepository.Equipments;
+            return _equipmentRepository.Equipments;
         }
 
         /// <summary>
         /// Add new equipment in file equipments.json.
         /// </summary>
         /// <param name="newEquipment"></param>
-        public static void Add(Models.Equipment newEquipment)
+        public void Add(Models.Equipment newEquipment)
         {
-            EquipmentRepository.Equipments.Add(newEquipment);
-            EquipmentRepository.Save();
+            _equipmentRepository.Equipments.Add(newEquipment);
+            _equipmentRepository.Save();
         }
 
         /// <summary>
@@ -65,16 +72,16 @@ namespace HealthCareCenter.Core.Equipment.Services
         /// <param name="id">id of the equipment we want to delete.</param>
         /// <returns>true if equipment is deleted or false if it's not.</returns>
         /// <exception cref="EquipmentNotFound">Thrown when equipment with specific id is not found.</exception>
-        public static bool Delete(int id)
+        public bool Delete(int id)
         {
             try
             {
-                for (int i = 0; i < EquipmentRepository.Equipments.Count; i++)
+                for (int i = 0; i < _equipmentRepository.Equipments.Count; i++)
                 {
-                    if (id == EquipmentRepository.Equipments[i].ID)
+                    if (id == _equipmentRepository.Equipments[i].ID)
                     {
-                        EquipmentRepository.Equipments.RemoveAt(i);
-                        EquipmentRepository.Save();
+                        _equipmentRepository.Equipments.RemoveAt(i);
+                        _equipmentRepository.Save();
                         return true;
                     }
                 }
@@ -97,16 +104,16 @@ namespace HealthCareCenter.Core.Equipment.Services
         /// <param name="equipment">equipment we want to delete</param>
         /// <returns>true if equipment is deleted or false if it's not</returns>
         /// <exception cref="EquipmentNotFound">Thrown when equipment with specific id is not found</exception>
-        public static bool Delete(Models.Equipment equipment)
+        public bool Delete(Models.Equipment equipment)
         {
             try
             {
-                for (int i = 0; i < EquipmentRepository.Equipments.Count; i++)
+                for (int i = 0; i < _equipmentRepository.Equipments.Count; i++)
                 {
-                    if (equipment.ID == EquipmentRepository.Equipments[i].ID)
+                    if (equipment.ID == _equipmentRepository.Equipments[i].ID)
                     {
-                        EquipmentRepository.Equipments.RemoveAt(i);
-                        EquipmentRepository.Save();
+                        _equipmentRepository.Equipments.RemoveAt(i);
+                        _equipmentRepository.Save();
                         return true;
                     }
                 }
@@ -129,16 +136,16 @@ namespace HealthCareCenter.Core.Equipment.Services
         /// <param name="equipment"></param>
         /// <returns>true if equipment is found or false if it's not.</returns>
         /// <exception cref="EquipmentNotFound">Thrown when equipment is not found.</exception>
-        public static bool Update(Models.Equipment equipment)
+        public bool Update(Models.Equipment equipment)
         {
             try
             {
-                for (int i = 0; i < EquipmentRepository.Equipments.Count; i++)
+                for (int i = 0; i < _equipmentRepository.Equipments.Count; i++)
                 {
-                    if (equipment.ID == EquipmentRepository.Equipments[i].ID)
+                    if (equipment.ID == _equipmentRepository.Equipments[i].ID)
                     {
-                        EquipmentRepository.Equipments[i] = equipment;
-                        EquipmentRepository.Save();
+                        _equipmentRepository.Equipments[i] = equipment;
+                        _equipmentRepository.Save();
                         return true;
                     }
                 }
@@ -155,7 +162,7 @@ namespace HealthCareCenter.Core.Equipment.Services
             }
         }
 
-        public static bool HasScheduledRearrangement(Models.Equipment equipment)
+        public bool HasScheduledRearrangement(Models.Equipment equipment)
         {
             return equipment.RearrangementID != -1;
         }

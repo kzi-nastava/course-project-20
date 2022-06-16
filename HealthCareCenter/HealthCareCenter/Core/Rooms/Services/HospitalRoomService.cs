@@ -8,18 +8,29 @@ using System.Collections.Generic;
 
 namespace HealthCareCenter.Core.Rooms.Services
 {
-    internal class HospitalRoomService
+    internal class HospitalRoomService : IHospitalRoomService
     {
-        // change to parameterized constructor when refactoring starts
-        private static readonly BaseAppointmentRepository _appointmentRepository = new AppointmentRepository();
+        private readonly BaseAppointmentRepository _appointmentRepository;
+        private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
+        private readonly BaseHospitalRoomRepository _hospitalRoomRepository;
+
+        public HospitalRoomService(
+            BaseAppointmentRepository appointmentRepository,
+            IHospitalRoomForRenovationService hospitalRoomForRenovationService,
+            BaseHospitalRoomRepository hospitalRoomRepository)
+        {
+            _appointmentRepository = appointmentRepository;
+            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
+            _hospitalRoomRepository = hospitalRoomRepository;
+        }
 
         /// <summary>
         /// Return loaded hospital rooms from list.
         /// </summary>
         /// <returns>Loaded hospital rooms.</returns>
-        public static List<HospitalRoom> GetRooms()
+        public List<HospitalRoom> GetRooms()
         {
-            return HospitalRoomRepository.Rooms;
+            return _hospitalRoomRepository.Rooms;
         }
 
         /// <summary>
@@ -28,11 +39,11 @@ namespace HealthCareCenter.Core.Rooms.Services
         /// <param name="id">id of wanted hospital room.</param>
         /// <returns>Hospital room with specific id, if room is found, or null if room is not found.</returns>
         /// <exception cref="HospitalRoomNotFound">Thrown when room with specific id is not found.</exception>
-        public static HospitalRoom Get(int id)
+        public HospitalRoom Get(int id)
         {
             try
             {
-                foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
+                foreach (HospitalRoom room in _hospitalRoomRepository.Rooms)
                 {
                     if (room.ID == id)
                     {
@@ -57,17 +68,17 @@ namespace HealthCareCenter.Core.Rooms.Services
         /// Add new hospital room in file hospitalRooms.json.
         /// </summary>
         /// <param name="newRoom"></param>
-        public static void Add(HospitalRoom newRoom)
+        public void Add(HospitalRoom newRoom)
         {
-            HospitalRoomRepository.Rooms.Add(newRoom);
-            HospitalRoomRepository.Save();
+            _hospitalRoomRepository.Rooms.Add(newRoom);
+            _hospitalRoomRepository.Save();
         }
 
-        public static void Insert(HospitalRoom room)
+        public void Insert(HospitalRoom room)
         {
-            HospitalRoomRepository.Rooms.Add(room);
-            HospitalRoomRepository.Rooms.Sort((x, y) => x.ID.CompareTo(y.ID));
-            HospitalRoomRepository.Save();
+            _hospitalRoomRepository.Rooms.Add(room);
+            _hospitalRoomRepository.Rooms.Sort((x, y) => x.ID.CompareTo(y.ID));
+            _hospitalRoomRepository.Save();
         }
 
         /// <summary>
@@ -76,16 +87,16 @@ namespace HealthCareCenter.Core.Rooms.Services
         /// <param name="id">id of the hospital room we want to delete.</param>
         /// <returns>True if room is deleted or false if it's not.</returns>
         /// <exception cref="HospitalRoomNotFound">Thrown when room with specific id is not found.</exception>
-        public static bool Delete(int id)
+        public bool Delete(int id)
         {
             try
             {
-                for (int i = 0; i < HospitalRoomRepository.Rooms.Count; i++)
+                for (int i = 0; i < _hospitalRoomRepository.Rooms.Count; i++)
                 {
-                    if (id == HospitalRoomRepository.Rooms[i].ID)
+                    if (id == _hospitalRoomRepository.Rooms[i].ID)
                     {
-                        HospitalRoomRepository.Rooms.RemoveAt(i);
-                        HospitalRoomRepository.Save();
+                        _hospitalRoomRepository.Rooms.RemoveAt(i);
+                        _hospitalRoomRepository.Save();
                         return true;
                     }
                 }
@@ -108,16 +119,16 @@ namespace HealthCareCenter.Core.Rooms.Services
         /// <param name="room">Room we want to delete.</param>
         /// <returns>true if room is deleted or false if it's not.</returns>
         /// <exception cref="HospitalRoomNotFound">Thrown when room is not found.</exception>
-        public static bool Delete(HospitalRoom room)
+        public bool Delete(HospitalRoom room)
         {
             try
             {
-                for (int i = 0; i < HospitalRoomRepository.Rooms.Count; i++)
+                for (int i = 0; i < _hospitalRoomRepository.Rooms.Count; i++)
                 {
-                    if (room.ID == HospitalRoomRepository.Rooms[i].ID)
+                    if (room.ID == _hospitalRoomRepository.Rooms[i].ID)
                     {
-                        HospitalRoomRepository.Rooms.RemoveAt(i);
-                        HospitalRoomRepository.Save();
+                        _hospitalRoomRepository.Rooms.RemoveAt(i);
+                        _hospitalRoomRepository.Save();
                         return true;
                     }
                 }
@@ -139,16 +150,16 @@ namespace HealthCareCenter.Core.Rooms.Services
         /// </summary>
         /// <param name="room">Hospital room we want to update.</param>
         /// <returns>true if room is updated or false if room is not found.</returns>
-        public static bool Update(HospitalRoom room)
+        public bool Update(HospitalRoom room)
         {
             try
             {
-                for (int i = 0; i < HospitalRoomRepository.Rooms.Count; i++)
+                for (int i = 0; i < _hospitalRoomRepository.Rooms.Count; i++)
                 {
-                    if (room.ID == HospitalRoomRepository.Rooms[i].ID)
+                    if (room.ID == _hospitalRoomRepository.Rooms[i].ID)
                     {
-                        HospitalRoomRepository.Rooms[i] = room;
-                        HospitalRoomRepository.Save();
+                        _hospitalRoomRepository.Rooms[i] = room;
+                        _hospitalRoomRepository.Save();
                         return true;
                     }
                 }
@@ -165,9 +176,9 @@ namespace HealthCareCenter.Core.Rooms.Services
             }
         }
 
-        public static void Update(int roomID, Appointment appointment)
+        public void Update(int roomID, Appointment appointment)
         {
-            foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
+            foreach (HospitalRoom room in _hospitalRoomRepository.Rooms)
             {
                 if (room.ID == roomID)
                 {
@@ -177,10 +188,10 @@ namespace HealthCareCenter.Core.Rooms.Services
             }
         }
 
-        public static int GetAvailableRoomID(DateTime scheduledDate, RoomType roomType)
+        public int GetAvailableRoomID(DateTime scheduledDate, RoomType roomType)
         {
             int hospitalRoomID = -1;
-            foreach (HospitalRoom hospitalRoom in HospitalRoomRepository.Rooms)
+            foreach (HospitalRoom hospitalRoom in _hospitalRoomRepository.Rooms)
             {
                 if (hospitalRoom.Type != roomType)
                 {
@@ -204,9 +215,9 @@ namespace HealthCareCenter.Core.Rooms.Services
             return hospitalRoomID;
         }
 
-        public static void AddAppointmentToRoom(int hospitalRoomID, int appointmentID)
+        public void AddAppointmentToRoom(int hospitalRoomID, int appointmentID)
         {
-            foreach (HospitalRoom hospitalRoom in HospitalRoomRepository.Rooms)
+            foreach (HospitalRoom hospitalRoom in _hospitalRoomRepository.Rooms)
             {
                 if (hospitalRoom.ID == hospitalRoomID)
                 {
@@ -214,13 +225,12 @@ namespace HealthCareCenter.Core.Rooms.Services
                     break;
                 }
             }
-            HospitalRoomRepository.Save();
+            _hospitalRoomRepository.Save();
         }
 
-
-        public static bool IsCurrentlyRenovating(HospitalRoom room)
+        public bool IsCurrentlyRenovating(HospitalRoom room)
         {
-            foreach (HospitalRoom hospitalRoom in HospitalRoomForRenovationService.GetRooms())
+            foreach (HospitalRoom hospitalRoom in _hospitalRoomForRenovationService.GetRooms())
             {
                 if (room.ID == hospitalRoom.ID)
                 {
@@ -235,14 +245,15 @@ namespace HealthCareCenter.Core.Rooms.Services
         /// Check if room contains any appointment
         /// </summary>
         /// <returns></returns>
-        public static bool ContainsAnyAppointment(HospitalRoom room)
+        public bool ContainsAnyAppointment(HospitalRoom room)
         {
             return room.AppointmentIDs.Count != 0;
         }
-        public static List<HospitalRoomForDisplay> GetRooms(bool checkup)
+
+        public List<HospitalRoomForDisplay> GetRooms(bool checkup)
         {
             List<HospitalRoomForDisplay> rooms = new List<HospitalRoomForDisplay>();
-            foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
+            foreach (HospitalRoom room in _hospitalRoomRepository.Rooms)
             {
                 bool correctRoom = room.Type == RoomType.Checkup && checkup || room.Type == RoomType.Operation && !checkup;
                 if (correctRoom)
@@ -253,10 +264,10 @@ namespace HealthCareCenter.Core.Rooms.Services
             return rooms;
         }
 
-        public static List<HospitalRoom> GetRoomsOfType(AppointmentType type)
+        public List<HospitalRoom> GetRoomsOfType(AppointmentType type)
         {
             List<HospitalRoom> rooms = new List<HospitalRoom>();
-            foreach (HospitalRoom room in HospitalRoomRepository.Rooms)
+            foreach (HospitalRoom room in _hospitalRoomRepository.Rooms)
             {
                 bool correctRoom = type == AppointmentType.Checkup && room.Type == RoomType.Checkup || type == AppointmentType.Operation && room.Type == RoomType.Operation;
                 if (correctRoom)
@@ -267,7 +278,7 @@ namespace HealthCareCenter.Core.Rooms.Services
             return rooms;
         }
 
-        public static bool IsOccupied(int id, DateTime time)
+        public bool IsOccupied(int id, DateTime time)
         {
             foreach (Appointment appointment in _appointmentRepository.Appointments)
             {
@@ -283,7 +294,7 @@ namespace HealthCareCenter.Core.Rooms.Services
             return false;
         }
 
-        public static void RemoveUnavailableRooms(List<HospitalRoom> availableRooms, Appointment appointment)
+        public void RemoveUnavailableRooms(List<HospitalRoom> availableRooms, Appointment appointment)
         {
             foreach (HospitalRoom room in availableRooms)
             {
@@ -293,7 +304,6 @@ namespace HealthCareCenter.Core.Rooms.Services
                     return;
                 }
             }
-
         }
     }
 }

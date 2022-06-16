@@ -5,16 +5,20 @@ using System.IO;
 
 namespace HealthCareCenter.Core.Equipment.Repositories
 {
-    internal class EquipmentRepository
+    internal class EquipmentRepository : BaseEquipmentRepository
     {
         private const string _fileName = "equipments.json";
-        public static List<Models.Equipment> Equipments = Load();
+
+        public EquipmentRepository()
+        {
+            Equipments = Load();
+        }
 
         /// <summary>
         /// Finding last(largest) id in file equipments.json.
         /// </summary>
         /// <returns>last(largest) id.</returns>
-        public static int GetLargestEquipmentId()
+        public override int GetLargestID()
         {
             try
             {
@@ -37,7 +41,7 @@ namespace HealthCareCenter.Core.Equipment.Repositories
         /// Load all equipments from file equipments.json.
         /// </summary>
         /// <returns>List of all hospital rooms.</returns>
-        private static List<Models.Equipment> Load()
+        public override List<Models.Equipment> Load()
         {
             try
             {
@@ -62,7 +66,7 @@ namespace HealthCareCenter.Core.Equipment.Repositories
         /// </summary>
         /// <param name="equipments">Data that will replace the old ones.</param>
         /// <returns>True if data update performed properly.</returns>
-        public static bool Save()
+        public override bool Save()
         {
             try
             {

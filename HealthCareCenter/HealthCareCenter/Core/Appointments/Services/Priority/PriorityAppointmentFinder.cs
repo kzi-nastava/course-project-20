@@ -14,13 +14,19 @@ namespace HealthCareCenter.Core.Appointments.Services.Priority
         // make attributes for IHospitalRoomService and BaseAppointmentRepository
         private readonly BaseAppointmentRepository _appointmentRepository;
         private readonly IAppointmentTermService _termService;
+        private readonly BaseUserRepository _userRepository;
+        private readonly IHospitalRoomService _hospitalRoomService;
 
         public PriorityAppointmentFinder(
             IAppointmentTermService termService,
-            BaseAppointmentRepository appointmentRepository)
+            BaseAppointmentRepository appointmentRepository,
+            BaseUserRepository userRepository,
+            IHospitalRoomService hospitalRoomService)
         {
             _termService = termService;
             _appointmentRepository = appointmentRepository;
+            _userRepository = userRepository;
+            _hospitalRoomService = hospitalRoomService;
         }
 
         public Appointment BothPrioritiesSearch(int doctorID, int healthRecordID, DateTime finalScheduleDate, AppointmentTerm startRange, AppointmentTerm endRange)
@@ -33,7 +39,7 @@ namespace HealthCareCenter.Core.Appointments.Services.Priority
         public Appointment DifferentDoctorSameTimeSearch(int doctorID, int healthRecordID, DateTime finalScheduleDate, AppointmentTerm startRange, AppointmentTerm endRange)
         {
             List<AppointmentTerm> possibleTerms = _termService.GetDailyTermsFromRange(startRange, endRange);
-            foreach (Doctor doctor in UserRepository.Doctors)
+            foreach (Doctor doctor in _userRepository.Doctors)
             {
                 if (doctor.ID == doctorID)
                 {
@@ -100,7 +106,7 @@ namespace HealthCareCenter.Core.Appointments.Services.Priority
                         string scheduleDateParse = date.ToString().Split(" ")[0] + " " + term.ToString();
                         DateTime scheduleDate = Convert.ToDateTime(scheduleDateParse);
 
-                        int hospitalRoomID = HospitalRoomService.GetAvailableRoomID(scheduleDate, RoomType.Checkup);
+                        int hospitalRoomID = _hospitalRoomService.GetAvailableRoomID(scheduleDate, RoomType.Checkup);
                         if (hospitalRoomID == -1)
                         {
                             continue;

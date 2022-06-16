@@ -7,12 +7,16 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Medicine.Repositories
 {
-    public class MedicineCreationRequestRepository
+    public class MedicineCreationRequestRepository : BaseMedicineCreationRequestRepository
     {
-        public static List<MedicineCreationRequest> Requests = Load();
-        public static int LargestID { get; set; }
+        public int LargestID { get; set; }
 
-        public static int GetLargestId()
+        public MedicineCreationRequestRepository()
+        {
+            Requests = Load();
+        }
+
+        public override int CalculateMaxID()
         {
             try
             {
@@ -31,7 +35,7 @@ namespace HealthCareCenter.Core.Medicine.Repositories
             }
         }
 
-        public static List<MedicineCreationRequest> Load()
+        public override List<MedicineCreationRequest> Load()
         {
             var settings = new JsonSerializerSettings
             {
@@ -44,7 +48,7 @@ namespace HealthCareCenter.Core.Medicine.Repositories
             return Requests;
         }
 
-        public static void Save()
+        public override void Save()
         {
             try
             {

@@ -8,10 +8,14 @@ namespace HealthCareCenter.Core.Equipment.Controllers
     public class DistributeDynamicEquipmentController
     {
         private IDynamicEquipmentService _dynamicEquipmentService;
+        private readonly IHospitalRoomService _hospitalRoomService;
 
-        public DistributeDynamicEquipmentController(IDynamicEquipmentService dynamicEquipmentService)
+        public DistributeDynamicEquipmentController(
+            IDynamicEquipmentService dynamicEquipmentService,
+            IHospitalRoomService hospitalRoomService)
         {
             _dynamicEquipmentService = dynamicEquipmentService;
+            _hospitalRoomService = hospitalRoomService;
         }
 
         public void Transfer(string quantityString, string[] equipmentAndAmount, Room roomWithEquipment, Room roomWithShortage, Room storage)
@@ -39,7 +43,7 @@ namespace HealthCareCenter.Core.Equipment.Controllers
 
         public Room GetRoom(int roomID)
         {
-            return HospitalRoomService.Get(roomID);
+            return _hospitalRoomService.Get(roomID);
         }
     }
 }
