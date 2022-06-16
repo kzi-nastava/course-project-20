@@ -93,7 +93,6 @@ namespace HealthCareCenter.Core.Appointments.Services
             _appointmentRepository.Save();
 
             _hospitalRoomService.Update(appointment.HospitalRoomID, appointment);
-            _hospitalRoomRepository.Save();
 
             return true;
         }
@@ -122,7 +121,6 @@ namespace HealthCareCenter.Core.Appointments.Services
             _appointmentRepository.Save();
 
             _hospitalRoomService.Update(appointment.HospitalRoomID, appointment);
-            _hospitalRoomRepository.Save();
 
             return true;
         }

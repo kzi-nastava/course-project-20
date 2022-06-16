@@ -2,7 +2,25 @@
   {
     "DoctorID": 5,
     "PatientID": 2,
-    "Comment": "",
-    "Rating": 3.5
+    "Comment": "Solid (get it?)",
+    "Rating": 4.0
+  },
+  {
+    "DoctorID": 1,
+    "PatientID": 2,
+    "Comment": "Good",
+    "Rating": 4.5
+  },
+  {
+    "DoctorID": 1,
+    "PatientID": 4,
+    "Comment": "Bla",
+    "Rating": 3.0
+  },
+  {
+    "DoctorID": 5,
+    "PatientID": 4,
+    "Comment": "Amazing",
+    "Rating": 5.0
   }
 ]

@@ -183,6 +183,7 @@ namespace HealthCareCenter.Core.Rooms.Services
                 if (room.ID == roomID)
                 {
                     room.AppointmentIDs.Add(appointment.ID);
+                    _hospitalRoomRepository.Save();
                     return;
                 }
             }

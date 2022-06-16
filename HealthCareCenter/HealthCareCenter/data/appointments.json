@@ -158,5 +158,27 @@
     "HealthRecordID": 1,
     "HospitalRoomID": 3,
     "PatientAnamnesis": null
+  },
+  {
+    "ID": 16,
+    "Type": 1,
+    "ScheduledDate": "18/06/2022 10:15",
+    "CreatedDate": "16/06/2022 23:17",
+    "Emergency": false,
+    "DoctorID": 1,
+    "HealthRecordID": 2,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
+  },
+  {
+    "ID": 17,
+    "Type": 1,
+    "ScheduledDate": "17/06/2022 08:00",
+    "CreatedDate": "16/06/2022 23:26",
+    "Emergency": false,
+    "DoctorID": 5,
+    "HealthRecordID": 1,
+    "HospitalRoomID": 3,
+    "PatientAnamnesis": null
   }
 ]

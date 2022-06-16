@@ -1,7 +1,12 @@
 [
   {
     "PatientID": 2,
-    "Comment": "Amazing!",
+    "Comment": "Great",
+    "Rating": 4.5
+  },
+  {
+    "PatientID": 4,
+    "Comment": "Wow",
     "Rating": 5.0
   }
 ]
