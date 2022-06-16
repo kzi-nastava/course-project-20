@@ -9,10 +9,12 @@ namespace HealthCareCenter.Core.Rooms.Controllers
     public class CRUDHospitalRoomController
     {
         private IRoomService _roomService;
+        private IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
 
-        public CRUDHospitalRoomController(IRoomService roomService)
+        public CRUDHospitalRoomController(IRoomService roomService, IHospitalRoomForRenovationService hospitalRoomForRenovationService)
         {
             _roomService = roomService;
+            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
         }
 
         public void Create(RoomType roomType, string roomName)
@@ -44,7 +46,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
         public List<HospitalRoom> GetRoomsToDisplay()
         {
             List<HospitalRoom> availableRooms = HospitalRoomService.GetRooms();
-            List<HospitalRoom> roomsUnderRenovationProcess = HospitalRoomForRenovationService.GetRooms();
+            List<HospitalRoom> roomsUnderRenovationProcess = _hospitalRoomForRenovationService.GetRooms();
             List<HospitalRoom> roomsForDisplay = new List<HospitalRoom>();
             roomsForDisplay.AddRange(availableRooms);
             roomsForDisplay.AddRange(roomsUnderRenovationProcess);

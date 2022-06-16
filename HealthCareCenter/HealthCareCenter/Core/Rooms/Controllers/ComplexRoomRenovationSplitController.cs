@@ -9,12 +9,17 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 {
     public class ComplexRoomRenovationSplitController
     {
-        private IRoomService _roomService;
+        private readonly IRoomService _roomService;
+        private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
+        private readonly IRenovationScheduleService _renovationScheduleService;
+        private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
 
-        public ComplexRoomRenovationSplitController(IRoomService roomService)
+        public ComplexRoomRenovationSplitController(IRoomService roomService,
+            IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService,
+            IRenovationScheduleService renovationScheduleService, IHospitalRoomForRenovationService hospitalRoomForRenovationService)
         {
             _roomService = roomService;
-        }
+            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;            _renovationScheduleService = renovationScheduleService;            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;        }
 
         public HospitalRoom GenerateNewRoom1(string room1Type, string room1Name)
         {
@@ -46,14 +51,14 @@ namespace HealthCareCenter.Core.Rooms.Controllers
         public List<List<string>> GetSplitRenovationsForDisplay()
         {
             List<List<string>> renovationForDisplay = new List<List<string>>();
-            List<RenovationSchedule> renovations = RenovationScheduleService.GetRenovations();
+            List<RenovationSchedule> renovations = _renovationScheduleService.GetRenovations();
             foreach (RenovationSchedule renovation in renovations)
             {
                 if (renovation.RenovationType == RenovationType.Split)
                 {
-                    HospitalRoom room1 = HospitalRoomUnderConstructionService.Get(renovation.Room1ID);
-                    HospitalRoom room2 = HospitalRoomUnderConstructionService.Get(renovation.Room2ID);
-                    HospitalRoom splitRoom = HospitalRoomForRenovationService.Get(renovation.MainRoomID);
+                    HospitalRoom room1 = _hospitalRoomUnderConstructionService.Get(renovation.Room1ID);
+                    HospitalRoom room2 = _hospitalRoomUnderConstructionService.Get(renovation.Room2ID);
+                    HospitalRoom splitRoom = _hospitalRoomForRenovationService.Get(renovation.MainRoomID);
 
                     List<string> renovationAttributes = new List<string> {
                     room1.ID.ToString(),room1.Name,room1.Type.ToString(),
@@ -93,7 +98,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
                 newRoom1, newRoom2, splitRoom,
                 RenovationType.Split);
 
-            RenovationScheduleService.ScheduleSplitRenovation(splitRenovation, newRoom1, newRoom2, splitRoom);
+            _renovationScheduleService.ScheduleSplitRenovation(splitRenovation, newRoom1, newRoom2, splitRoom);
             // ------------------------------
         }
 

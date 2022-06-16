@@ -7,18 +7,25 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Rooms.Services
 {
-    internal class HospitalRoomUnderConstructionService
+    public class HospitalRoomUnderConstructionService : IHospitalRoomUnderConstructionService
     {
-        public static List<HospitalRoom> GetRooms()
+        private AHospitalRoomUnderConstructionRepository _hospitalRoomUnderConstructionRepository;
+
+        public HospitalRoomUnderConstructionService(AHospitalRoomUnderConstructionRepository hospitalRoomUnderConstructionRepository)
         {
-            return HospitalRoomUnderConstructionRepository.Rooms;
+            _hospitalRoomUnderConstructionRepository = hospitalRoomUnderConstructionRepository;
         }
 
-        public static HospitalRoom Get(int id)
+        public List<HospitalRoom> GetRooms()
+        {
+            return _hospitalRoomUnderConstructionRepository.Rooms;
+        }
+
+        public HospitalRoom Get(int id)
         {
             try
             {
-                foreach (HospitalRoom room in HospitalRoomUnderConstructionRepository.Rooms)
+                foreach (HospitalRoom room in _hospitalRoomUnderConstructionRepository.Rooms)
                 {
                     if (room.ID == id)
                     {
@@ -39,22 +46,22 @@ namespace HealthCareCenter.Core.Rooms.Services
             }
         }
 
-        public static void Add(HospitalRoom newRoom)
+        public void Add(HospitalRoom newRoom)
         {
-            HospitalRoomUnderConstructionRepository.Rooms.Add(newRoom);
-            HospitalRoomUnderConstructionRepository.Save();
+            _hospitalRoomUnderConstructionRepository.Rooms.Add(newRoom);
+            _hospitalRoomUnderConstructionRepository.Save();
         }
 
-        public static bool Delete(int id)
+        public bool Delete(int id)
         {
             try
             {
-                for (int i = 0; i < HospitalRoomUnderConstructionRepository.Rooms.Count; i++)
+                for (int i = 0; i < _hospitalRoomUnderConstructionRepository.Rooms.Count; i++)
                 {
-                    if (id == HospitalRoomUnderConstructionRepository.Rooms[i].ID)
+                    if (id == _hospitalRoomUnderConstructionRepository.Rooms[i].ID)
                     {
-                        HospitalRoomUnderConstructionRepository.Rooms.RemoveAt(i);
-                        HospitalRoomUnderConstructionRepository.Save();
+                        _hospitalRoomUnderConstructionRepository.Rooms.RemoveAt(i);
+                        _hospitalRoomUnderConstructionRepository.Save();
                         return true;
                     }
                 }

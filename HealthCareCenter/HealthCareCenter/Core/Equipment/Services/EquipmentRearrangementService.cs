@@ -13,10 +13,12 @@ namespace HealthCareCenter.Core.Equipment.Services
     public class EquipmentRearrangementService : IEquipmentRearrangementService
     {
         private readonly IRoomService _roomService;
+        private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
 
-        public EquipmentRearrangementService(IRoomService roomService)
+        public EquipmentRearrangementService(IRoomService roomService, IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService)
         {
             _roomService = roomService;
+            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
         }
 
         public EquipmentRearrangementService()
@@ -211,7 +213,7 @@ namespace HealthCareCenter.Core.Equipment.Services
 
         public bool IsIrrevocable(EquipmentRearrangement rearrangement)
         {
-            List<HospitalRoom> rooms = HospitalRoomUnderConstructionService.GetRooms();
+            List<HospitalRoom> rooms = _hospitalRoomUnderConstructionService.GetRooms();
             foreach (HospitalRoom room in rooms)
             {
                 if (room.ID == rearrangement.OldRoomID || room.ID == rearrangement.NewRoomID)

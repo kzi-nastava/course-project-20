@@ -11,11 +11,15 @@ namespace HealthCareCenter.Core.Rooms.Services
 {
     public class RoomService : IRoomService
     {
-        private IEquipmentRearrangementService _equipmentRearrangementService;
+        private readonly IEquipmentRearrangementService _equipmentRearrangementService;
+        private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
+        private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
 
-        public RoomService(IEquipmentRearrangementService equipmentRearrangementService)
+        public RoomService(IEquipmentRearrangementService equipmentRearrangementService, IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService, IHospitalRoomForRenovationService hospitalRoomForRenovationService)
         {
             _equipmentRearrangementService = equipmentRearrangementService;
+            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
+            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
         }
 
         /// <summary>
@@ -71,7 +75,7 @@ namespace HealthCareCenter.Core.Rooms.Services
                     HospitalRoom hospitalRoom = (HospitalRoom)room;
                     if (HospitalRoomService.IsCurrentlyRenovating(hospitalRoom))
                     {
-                        HospitalRoomForRenovationService.Update(hospitalRoom);
+                        _hospitalRoomForRenovationService.Update(hospitalRoom);
                     }
                     else
                     {
@@ -101,11 +105,11 @@ namespace HealthCareCenter.Core.Rooms.Services
                 }
                 if (room == null)
                 {
-                    room = HospitalRoomForRenovationService.Get(roomId);
+                    room = _hospitalRoomForRenovationService.Get(roomId);
                 }
                 if (room == null)
                 {
-                    room = HospitalRoomUnderConstructionService.Get(roomId);
+                    room = _hospitalRoomUnderConstructionService.Get(roomId);
                 }
                 if (room == null)
                 {

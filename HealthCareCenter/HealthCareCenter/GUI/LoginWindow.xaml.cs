@@ -22,6 +22,9 @@ using HealthCareCenter.GUI.Patient.AppointmentCRUD.ViewModels;
 using HealthCareCenter.Core.Patients;
 using HealthCareCenter.Core.Appointments.Repository;
 using HealthCareCenter.Core.Appointments.Services;
+using HealthCareCenter.Core.Rooms;
+using HealthCareCenter.Core.Surveys.Services;
+using HealthCareCenter.Core.Rooms.Repositories;
 
 namespace HealthCareCenter
 {
@@ -30,6 +33,15 @@ namespace HealthCareCenter
         private static BackgroundWorker _backgroundWorker = null;
         private static IDynamicEquipmentService _dynamicEquipmentService;
 
+        private readonly IRoomService _roomService;
+        private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
+
+        private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
+        private readonly IRenovationScheduleService _renovationScheduleService;
+
+        private readonly IEquipmentRearrangementService _equipmentRearrangementService;
+        private readonly IDoctorSurveyRatingService _doctorSurveyRatingService;
+
         public LoginWindow(IDynamicEquipmentService dynamicEquipmentService) : this()
         {
             _dynamicEquipmentService = dynamicEquipmentService;
@@ -37,9 +49,26 @@ namespace HealthCareCenter
 
         public LoginWindow()
         {
+            IRoomService roomService = new RoomService(new EquipmentRearrangementService(),
+                new HospitalRoomUnderConstructionService(new HospitalRoomUnderConstructionRepository()),
+                new HospitalRoomForRenovationService(new HospitalRoomForRenovationRepository()));
+            IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService = new HospitalRoomUnderConstructionService(new HospitalRoomUnderConstructionRepository());
             IEquipmentRearrangementService equipmentRearrangementService = new EquipmentRearrangementService();
+            IRenovationScheduleService renovationScheduleService = new RenovationScheduleService(
+                new RoomService(new EquipmentRearrangementService(), new HospitalRoomUnderConstructionService(new HospitalRoomUnderConstructionRepository()), new HospitalRoomForRenovationService(new HospitalRoomForRenovationRepository())),
+                new HospitalRoomUnderConstructionService(new HospitalRoomUnderConstructionRepository()), new HospitalRoomForRenovationService(new HospitalRoomForRenovationRepository()), new RenovationScheduleRepository());
+            IDoctorSurveyRatingService doctorSurveyRatingService = new DoctorSurveyRatingService();
+            IHospitalRoomForRenovationService hospitalRoomForRenovationService = new HospitalRoomForRenovationService(new HospitalRoomForRenovationRepository());
+
+            _roomService = roomService;
+            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
+            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
+            _renovationScheduleService = renovationScheduleService;
+            _equipmentRearrangementService = equipmentRearrangementService;
+            _doctorSurveyRatingService = doctorSurveyRatingService;
+
             InitializeComponent();
-            DoEquipmentRearrangements(equipmentRearrangementService);
+            DoEquipmentRearrangements();
             FinshPossibleRenovation();
 
             try
@@ -54,21 +83,21 @@ namespace HealthCareCenter
             StartBackgroundWorkerIfNeeded();
         }
 
-        private void DoEquipmentRearrangements(IEquipmentRearrangementService equipmentRearrangementService)
+        private void DoEquipmentRearrangements()
         {
             List<Equipment> equipments = EquipmentService.GetEquipments();
             for (int i = 0; i < equipments.Count; i++)
             {
-                equipmentRearrangementService.DoPossibleRearrangement(equipments[i]);
+                _equipmentRearrangementService.DoPossibleRearrangement(equipments[i]);
             }
         }
 
         private void FinshPossibleRenovation()
         {
-            List<RenovationSchedule> renovations = RenovationScheduleService.GetRenovations();
+            List<RenovationSchedule> renovations = _renovationScheduleService.GetRenovations();
             for (int i = 0; i < renovations.Count; i++)
             {
-                RenovationScheduleService.FinishRenovation(renovations[i]);
+                _renovationScheduleService.FinishRenovation(renovations[i]);
             }
         }
 
@@ -111,7 +140,7 @@ namespace HealthCareCenter
                     (Doctor)user,
                     new ReferralsService(
                         new ReferralRepository(),
-                        new AppointmentRepository()), 
+                        new AppointmentRepository()),
                     new ReferralRepository(),
                     new AppointmentRepository(),
                     new AppointmentService(
@@ -120,15 +149,12 @@ namespace HealthCareCenter
                         new AppointmentChangeRequestService(
                             new AppointmentRepository(),
                             new AppointmentChangeRequestRepository())),
-                    new RoomService(new EquipmentRearrangementService()));
+                    new RoomService(new EquipmentRearrangementService(), new HospitalRoomUnderConstructionService(new HospitalRoomUnderConstructionRepository()), new HospitalRoomForRenovationService(new HospitalRoomForRenovationRepository())));
                 Close();
             }
             else if (user.GetType() == typeof(Manager))
             {
-                ShowWindow(new CrudHospitalRoomWindow((Manager)user,
-                    new NotificationService(new NotificationRepository()),
-                    new EquipmentRearrangementService(),
-                    new RoomService(new EquipmentRearrangementService())));
+                ShowWindow(new CrudHospitalRoomWindow((Manager)user, new NotificationService(new NotificationRepository()), _roomService, _hospitalRoomUnderConstructionService, _hospitalRoomForRenovationService, _renovationScheduleService, _equipmentRearrangementService, _doctorSurveyRatingService));
             }
             else if (user.GetType() == typeof(Patient))
             {

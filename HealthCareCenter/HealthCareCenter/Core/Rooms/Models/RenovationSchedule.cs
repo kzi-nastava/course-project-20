@@ -7,6 +7,7 @@ namespace HealthCareCenter.Core.Rooms.Models
 {
     public class RenovationSchedule
     {
+        private ARenovationScheduleRepository _renovationScheduleRepository = new RenovationScheduleRepository();
         public int ID { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime FinishDate { get; set; }
@@ -20,7 +21,7 @@ namespace HealthCareCenter.Core.Rooms.Models
 
         public RenovationSchedule(DateTime startDate, DateTime finishDate, HospitalRoom roomForRenovation)
         {
-            ID = RenovationScheduleRepository.GetLargestId() + 1;
+            ID = _renovationScheduleRepository.GetLargestId() + 1;
             StartDate = startDate;
             FinishDate = finishDate;
             Room1ID = -1;
@@ -31,7 +32,7 @@ namespace HealthCareCenter.Core.Rooms.Models
 
         public RenovationSchedule(DateTime startDate, DateTime finishDate, int roomForRenovationId)
         {
-            ID = RenovationScheduleRepository.GetLargestId() + 1;
+            ID = _renovationScheduleRepository.GetLargestId() + 1;
             StartDate = startDate;
             FinishDate = finishDate;
             Room1ID = -1;
@@ -42,7 +43,7 @@ namespace HealthCareCenter.Core.Rooms.Models
 
         public RenovationSchedule(DateTime startDate, DateTime finishDate, HospitalRoom firstRoomForRenovation, HospitalRoom secondRoomForRenovation, HospitalRoom newRoom, RenovationType renovationType)
         {
-            ID = RenovationScheduleRepository.GetLargestId() + 1;
+            ID = _renovationScheduleRepository.GetLargestId() + 1;
             StartDate = startDate;
             FinishDate = finishDate;
             Room1ID = firstRoomForRenovation.ID;
@@ -53,7 +54,7 @@ namespace HealthCareCenter.Core.Rooms.Models
 
         public RenovationSchedule(DateTime startDate, DateTime finishDate, int firstRoomForRenovationId, int secondRoomForRenovationId, int newRoomId, RenovationType renovationType)
         {
-            ID = RenovationScheduleRepository.GetLargestId() + 1;
+            ID = _renovationScheduleRepository.GetLargestId() + 1;
             StartDate = startDate;
             FinishDate = finishDate;
             Room1ID = firstRoomForRenovationId;
