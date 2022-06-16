@@ -7,17 +7,20 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Rooms.Repositories
 {
-    internal class HospitalRoomForRenovationRepository
+    public class HospitalRoomForRenovationRepository : BaseHospitalRoomForRenovationRepository
     {
         private const string fileName = "hospitalRoomsForRenovation.json";
 
-        public static List<HospitalRoom> Rooms = Load();
+        public HospitalRoomForRenovationRepository()
+        {
+            Rooms = Load();
+        }
 
         /// <summary>
         /// Finding last(largest) id in file hospitalRoomsForRenovation.json.
         /// </summary>
         /// <returns>last(largest) id.</returns>
-        public static int GetLargestRoomId()
+        public override int GetLargestRoomId()
         {
             try
             {
@@ -34,9 +37,9 @@ namespace HealthCareCenter.Core.Rooms.Repositories
             {
                 throw ex;
             }
-
         }
-        private static List<HospitalRoom> Load()
+
+        protected override List<HospitalRoom> Load()
         {
             try
             {
@@ -56,7 +59,7 @@ namespace HealthCareCenter.Core.Rooms.Repositories
             }
         }
 
-        public static bool Save()
+        public override bool Save()
         {
             try
             {

@@ -9,10 +9,18 @@ namespace HealthCareCenter.Core.Rooms.Controllers
     internal class ComplexHospitalRoomRenovationMergeController
     {
         private readonly IRoomService _roomSerivece;
+        private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
+        private readonly IRenovationScheduleService _renovationScheduleService;
+        private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
 
-        public ComplexHospitalRoomRenovationMergeController(IRoomService roomService)
+        public ComplexHospitalRoomRenovationMergeController(IRoomService roomService,
+            IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService,
+            IRenovationScheduleService renovationScheduleService, IHospitalRoomForRenovationService hospitalRoomForRenovationService)
         {
             _roomSerivece = roomService;
+            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
+            _renovationScheduleService = renovationScheduleService;
+            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
         }
 
         public List<HospitalRoom> GetRoomsForDisplay()
@@ -41,7 +49,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
                 parsedRenovationStartDate, parsedRenovationFinishDate,
                 room1, room2, newRoom, RenovationType.Merge
                 );
-            RenovationScheduleService.ScheduleMergeRenovation(mergeRenovation, room1, room2, newRoom);
+            _renovationScheduleService.ScheduleMergeRenovation(mergeRenovation, room1, room2, newRoom);
             // -----------------------------------------
         }
 
@@ -49,14 +57,14 @@ namespace HealthCareCenter.Core.Rooms.Controllers
         {
             List<List<string>> renovationsForDisplay = new List<List<string>>();
 
-            List<RenovationSchedule> renovations = RenovationScheduleService.GetRenovations();
+            List<RenovationSchedule> renovations = _renovationScheduleService.GetRenovations();
             foreach (RenovationSchedule renovation in renovations)
             {
                 if (renovation.RenovationType == RenovationType.Merge)
                 {
-                    HospitalRoom room1 = HospitalRoomForRenovationService.Get(renovation.Room1ID);
-                    HospitalRoom room2 = HospitalRoomForRenovationService.Get(renovation.Room2ID);
-                    HospitalRoom newRoom = HospitalRoomUnderConstructionService.Get(renovation.MainRoomID);
+                    HospitalRoom room1 = _hospitalRoomForRenovationService.Get(renovation.Room1ID);
+                    HospitalRoom room2 = _hospitalRoomForRenovationService.Get(renovation.Room2ID);
+                    HospitalRoom newRoom = _hospitalRoomUnderConstructionService.Get(renovation.MainRoomID);
 
                     List<string> renovationAttribute = new List<string> {
                     room1.ID.ToString(),room1.Name,room1.Type.ToString(),

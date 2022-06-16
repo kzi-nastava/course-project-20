@@ -8,8 +8,11 @@ namespace HealthCareCenter.Core.Medicine.Controllers
 {
     public class MedicineCreationRequestController : BaseMedicineCreationRequestController
     {
-        public MedicineCreationRequestController()
+        private IMedicineCreationRequestService _medicineCreationRequestService;
+
+        public MedicineCreationRequestController(IMedicineCreationRequestService medicineCreationRequestService)
         {
+            _medicineCreationRequestService = medicineCreationRequestService;
             AddedIngrediens = new List<string>();
         }
 
@@ -18,7 +21,7 @@ namespace HealthCareCenter.Core.Medicine.Controllers
             IsPossibleToCreateMedicineCreationRequest(medicineName, medicineManufacturer);
             MedicineCreationRequest medicineCreationRequest = new MedicineCreationRequest(
                 medicineName, AddedIngrediens, medicineManufacturer, RequestState.Waiting);
-            MedicineCreationRequestService.Add(medicineCreationRequest);
+            _medicineCreationRequestService.Add(medicineCreationRequest);
             AddedIngrediens.Clear();
         }
     }

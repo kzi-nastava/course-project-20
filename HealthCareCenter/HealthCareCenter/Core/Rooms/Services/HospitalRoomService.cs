@@ -13,6 +13,15 @@ namespace HealthCareCenter.Core.Rooms.Services
         // change to parameterized constructor when refactoring starts
         private static readonly BaseAppointmentRepository _appointmentRepository = new AppointmentRepository();
 
+        // promeniti da ne bude staticko
+        private static readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService = new HospitalRoomForRenovationService(new HospitalRoomForRenovationRepository());
+
+        public HospitalRoomService(IHospitalRoomForRenovationService hospitalRoomForRenovationService, BaseHospitalRoomForRenovationRepository hospitalRoomForRenovationRepository)
+        {
+            // Odkomentarisati kada se refaktorise
+            //_hospitalRoomForRenovationService = hospitalRoomForRenovationService;
+        }
+
         /// <summary>
         /// Return loaded hospital rooms from list.
         /// </summary>
@@ -217,10 +226,9 @@ namespace HealthCareCenter.Core.Rooms.Services
             HospitalRoomRepository.Save();
         }
 
-
         public static bool IsCurrentlyRenovating(HospitalRoom room)
         {
-            foreach (HospitalRoom hospitalRoom in HospitalRoomForRenovationService.GetRooms())
+            foreach (HospitalRoom hospitalRoom in _hospitalRoomForRenovationService.GetRooms())
             {
                 if (room.ID == hospitalRoom.ID)
                 {
@@ -239,6 +247,7 @@ namespace HealthCareCenter.Core.Rooms.Services
         {
             return room.AppointmentIDs.Count != 0;
         }
+
         public static List<HospitalRoomForDisplay> GetRooms(bool checkup)
         {
             List<HospitalRoomForDisplay> rooms = new List<HospitalRoomForDisplay>();
@@ -293,7 +302,6 @@ namespace HealthCareCenter.Core.Rooms.Services
                     return;
                 }
             }
-
         }
     }
 }

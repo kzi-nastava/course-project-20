@@ -8,11 +8,13 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 {
     public class HospitalRoomRenovaitonController
     {
-        private IRoomService _roomService;
+        private readonly IRoomService _roomService;
+        private readonly IRenovationScheduleService _renovationScheduleService;
 
-        public HospitalRoomRenovaitonController(IRoomService roomService)
+        public HospitalRoomRenovaitonController(IRoomService roomService, IRenovationScheduleService renovationScheduleService)
         {
             _roomService = roomService;
+            _renovationScheduleService = renovationScheduleService;
         }
 
         public void ScheduleRenovation(string hospitalRoomForRenovationId, string startDate, string finishDate)
@@ -26,7 +28,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
             DateTime parsedFinishDate = Convert.ToDateTime(finishDate);
 
             RenovationSchedule renovation = new RenovationSchedule(parsedStartDate, parsedFinishDate, roomForRenovation);
-            RenovationScheduleService.ScheduleSimpleRenovation(renovation, roomForRenovation);
+            _renovationScheduleService.ScheduleSimpleRenovation(renovation, roomForRenovation);
         }
 
         public List<HospitalRoom> GetRoomsForDisplay()
@@ -36,7 +38,7 @@ namespace HealthCareCenter.Core.Rooms.Controllers
 
         public List<RenovationSchedule> GetRenovationsForDisplay()
         {
-            return RenovationScheduleService.GetRenovations();
+            return _renovationScheduleService.GetRenovations();
         }
 
         private bool IsHospitalRoomIdInputValide(string roomId)

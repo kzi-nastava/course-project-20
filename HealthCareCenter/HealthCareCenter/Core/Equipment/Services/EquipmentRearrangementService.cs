@@ -14,18 +14,16 @@ namespace HealthCareCenter.Core.Equipment.Services
     {
         private readonly IRoomService _roomService;
         private readonly IEquipmentService _equipmentService;
+        private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
 
         public EquipmentRearrangementService(
             IRoomService roomService,
-            IEquipmentService equipmentService)
+            IEquipmentService equipmentService,
+            IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService)
         {
             _roomService = roomService;
             _equipmentService = equipmentService;
-        }
-
-        public EquipmentRearrangementService(IEquipmentService equipmentService)
-        {
-            _equipmentService = equipmentService;
+            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
         }
 
         private bool IsBeforeCurrentTime(DateTime rearrangementDate)
@@ -216,7 +214,7 @@ namespace HealthCareCenter.Core.Equipment.Services
 
         public bool IsIrrevocable(EquipmentRearrangement rearrangement)
         {
-            List<HospitalRoom> rooms = HospitalRoomUnderConstructionService.GetRooms();
+            List<HospitalRoom> rooms = _hospitalRoomUnderConstructionService.GetRooms();
             foreach (HospitalRoom room in rooms)
             {
                 if (room.ID == rearrangement.OldRoomID || room.ID == rearrangement.NewRoomID)

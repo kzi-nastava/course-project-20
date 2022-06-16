@@ -41,15 +41,19 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
         private BaseReferralRepository _referralRepository;
         private readonly BaseAppointmentRepository _appointmentRepository;
         private readonly IAppointmentService _appointmentService;
+        private readonly IMedicineCreationRequestService _medicineCreationRequestService;
+        private readonly BaseMedicineCreationRequestRepository _medicineCreationRequestRepository;
         private readonly IHealthRecordService _healthRecordService;
 
         public DoctorWindowViewModel(
-            User signedUser, 
+            User signedUser,
             IReferralService referralsService,
             BaseReferralRepository referralRepository,
             BaseAppointmentRepository appointmentRepository,
             IAppointmentService appointmentService,
             IRoomService roomService,
+            IMedicineCreationRequestService medicineCreationRequestService,
+            BaseMedicineCreationRequestRepository medicineCreationRequestRepository,
             IHealthRecordService healthRecordService)
         {
             _referralsService = referralsService;
@@ -57,9 +61,13 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
             _referralRepository = referralRepository;
             _appointmentRepository = appointmentRepository;
             _appointmentService = appointmentService;
+            _medicineCreationRequestRepository = medicineCreationRequestRepository;
+            _medicineCreationRequestService = medicineCreationRequestService;
+            _roomService = roomService;
+            _healthRecordService = healthRecordService;
             window = new DoctorWindow(
-                signedUser, 
-                this, 
+                signedUser,
+                this,
                 new NotificationService(
                     new NotificationRepository(),
                     new HealthRecordService(
@@ -69,6 +77,9 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                     new MedicineService(
                         new MedicineRepository())),
                 new AppointmentRepository(),
+                new MedicineCreationRequestService(
+                    new MedicineCreationRequestRepository()),
+                new MedicineCreationRequestRepository(),
                 new HealthRecordRepository(),
                 new MedicineRepository(),
                 new MedicineInstructionRepository(),
@@ -76,8 +87,6 @@ namespace HealthCareCenter.GUI.Doctor.ViewModels
                     new MedicineInstructionRepository(),
                     new PrescriptionRepository()),
                 new PrescriptionRepository());
-            _roomService = roomService;
-            _healthRecordService = healthRecordService;
             window.Show();
         }
 

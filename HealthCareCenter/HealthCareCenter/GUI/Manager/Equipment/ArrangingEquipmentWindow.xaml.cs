@@ -1,6 +1,7 @@
 ﻿using HealthCareCenter.Core.Equipment.Controllers;
 using HealthCareCenter.Core.Equipment.Repositories;
 using HealthCareCenter.Core.Equipment.Services;
+using HealthCareCenter.Core.Medicine.Services;
 using HealthCareCenter.Core.HealthRecords;
 using HealthCareCenter.Core.Medicine.Repositories;
 using HealthCareCenter.Core.Medicine.Services;
@@ -37,11 +38,30 @@ namespace HealthCareCenter
             "Equipment Name", "Move Time", "New Room Id"
         };
 
+        private readonly IRoomService _roomService;
+        private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
+
+        private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
+        private readonly IRenovationScheduleService _renovationScheduleService;
+
+        private readonly IEquipmentRearrangementService _equipmentRearrangementService;
+        private readonly IDoctorSurveyRatingService _doctorSurveyRatingService;
+
+        private readonly IMedicineCreationRequestService _medicineCreationRequestService;
+
         private Manager _signedManager;
         private readonly ArrangingEquipmentController _controller;
 
-        public ArrangingEquipmentWindow(Manager manager, IEquipmentRearrangementService equipmentRearrangementService, IRoomService roomService)
+        public ArrangingEquipmentWindow(Manager manager, IRoomService roomService, IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService, IHospitalRoomForRenovationService hospitalRoomForRenovationService, IRenovationScheduleService renovationScheduleService, IEquipmentRearrangementService equipmentRearrangementService, IDoctorSurveyRatingService doctorSurveyRatingService, IMedicineCreationRequestService medicineCreationRequestService)
         {
+            _roomService = roomService;
+            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
+            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
+            _renovationScheduleService = renovationScheduleService;
+            _equipmentRearrangementService = equipmentRearrangementService;
+            _doctorSurveyRatingService = doctorSurveyRatingService;
+            _medicineCreationRequestService = medicineCreationRequestService;
+
             _signedManager = manager;
             _controller = new ArrangingEquipmentController(
                 equipmentRearrangementService, 
@@ -131,7 +151,8 @@ namespace HealthCareCenter
 
         private void CrudHospitalRoomMenuItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new CrudHospitalRoomWindow(_signedManager,
+            ShowWindow(new CrudHospitalRoomWindow(
+                _signedManager,
                 new NotificationService(
                     new NotificationRepository(),
                     new HealthRecordService(
@@ -140,86 +161,129 @@ namespace HealthCareCenter
                             new MedicineInstructionRepository()),
                         new MedicineService(
                             new MedicineRepository())),
-                new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
                 new RoomService(
-                    new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
                         new StorageRepository(),
                         new EquipmentService(
-                            new EquipmentRepository()))));
+                            new EquipmentRepository()),
+                        new HospitalRoomUnderConstructionService(
+                            new HospitalRoomUnderConstructionRepository()),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository())),
+                new HospitalRoomUnderConstructionService(
+                    new HospitalRoomUnderConstructionRepository()),
+                new HospitalRoomForRenovationService(
+                    new HospitalRoomForRenovationRepository()),
+                new RenovationScheduleService(
+                    new RoomService(new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()),
+                        new HospitalRoomUnderConstructionService(
+                            new HospitalRoomUnderConstructionRepository()),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository())),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository()),
+                    new HospitalRoomForRenovationService(
+                        new HospitalRoomForRenovationRepository()),
+                    new RenovationScheduleRepository()),
+                new EquipmentRearrangementService(
+                    new RoomService(
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()),
+                        new HospitalRoomUnderConstructionService(
+                            new HospitalRoomUnderConstructionRepository()),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository())),
+                    new EquipmentService(
+                        new EquipmentRepository()),
+                    new HospitalRoomUnderConstructionService(
+                        new HospitalRoomUnderConstructionRepository())),
+                new DoctorSurveyRatingService(),
+                new MedicineCreationRequestService(
+                    new MedicineCreationRequestRepository())));
         }
 
         private void EquipmentReviewMenuItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new HospitalEquipmentReviewWindow(
-                _signedManager, 
-                new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
-                new RoomService(
-                    new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
-                        new StorageRepository(),
-                        new EquipmentService(
-                            new EquipmentRepository()))));
+            ShowWindow(new HospitalEquipmentReviewWindow(_signedManager, _roomService, _hospitalRoomUnderConstructionService, _hospitalRoomForRenovationService, _renovationScheduleService, _equipmentRearrangementService, _doctorSurveyRatingService, _medicineCreationRequestService));
         }
 
         private void ArrangingEquipmentItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ArrangingEquipmentWindow(_signedManager,
-                new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
-                new RoomService(
-                    new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
-                        new StorageRepository(),
-                        new EquipmentService(
-                            new EquipmentRepository()))));
+            ShowWindow(new ArrangingEquipmentWindow(_signedManager, _roomService, _hospitalRoomUnderConstructionService, _hospitalRoomForRenovationService, _renovationScheduleService, _equipmentRearrangementService, _doctorSurveyRatingService, _medicineCreationRequestService));
         }
 
         private void SimpleRenovationItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new HospitalRoomRenovationWindow(_signedManager,
-                new RoomService(
-                    new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
-                        new StorageRepository(),
-                        new EquipmentService(
-                            new EquipmentRepository()))));
+            ShowWindow(new HospitalRoomRenovationWindow(_signedManager, _roomService, _hospitalRoomUnderConstructionService, _hospitalRoomForRenovationService, _renovationScheduleService, _equipmentRearrangementService, _doctorSurveyRatingService, _medicineCreationRequestService));
         }
 
         private void ComplexRenovationMergeItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ComplexHospitalRoomRenovationMergeWindow(
-                _signedManager,
-                new RoomService(
-                    new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
-                        new StorageRepository(),
-                        new EquipmentService(
-                            new EquipmentRepository()))));
+            ShowWindow(new ComplexHospitalRoomRenovationMergeWindow(_signedManager, _roomService, _hospitalRoomUnderConstructionService, _hospitalRoomForRenovationService, _renovationScheduleService, _equipmentRearrangementService, _doctorSurveyRatingService, _medicineCreationRequestService));
         }
 
         private void ComplexRenovationSplitItemClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager,
-                new RoomService(
-                    new EquipmentRearrangementService(new EquipmentService(new EquipmentRepository())),
-                        new StorageRepository(),
-                        new EquipmentService(
-                            new EquipmentRepository()))));
+            ShowWindow(new ComplexHospitalRoomRenovationSplitWindow(_signedManager, _roomService, _hospitalRoomUnderConstructionService, _hospitalRoomForRenovationService, _renovationScheduleService, _equipmentRearrangementService, _doctorSurveyRatingService, _medicineCreationRequestService));
         }
 
         private void CreateMedicineClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new MedicineCreationRequestWindow(_signedManager));
+            ShowWindow(new MedicineCreationRequestWindow(
+                _signedManager,
+                new RoomService(
+                        new StorageRepository(),
+                        new EquipmentService(
+                            new EquipmentRepository()),
+                        new HospitalRoomUnderConstructionService(
+                            new HospitalRoomUnderConstructionRepository()),
+                        new HospitalRoomForRenovationService(
+                            new HospitalRoomForRenovationRepository())), 
+                _hospitalRoomUnderConstructionService, 
+                _hospitalRoomForRenovationService, 
+                _renovationScheduleService, 
+                _equipmentRearrangementService, 
+                _doctorSurveyRatingService, 
+                _medicineCreationRequestService));
         }
 
         private void ReffusedMedicineClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new ChangedMedicineCreationRequestWindow(_signedManager));
+            ShowWindow(new ChangedMedicineCreationRequestWindow(
+                _signedManager, 
+                _roomService, 
+                _hospitalRoomUnderConstructionService, 
+                _hospitalRoomForRenovationService, 
+                _renovationScheduleService, 
+                _equipmentRearrangementService, 
+                _doctorSurveyRatingService, 
+                _medicineCreationRequestService));
         }
 
         private void HealthcareSurveysClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new HealthcareSurveysOverviewWindow(_signedManager));
+            ShowWindow(new HealthcareSurveysOverviewWindow(
+                _signedManager, 
+                _roomService, 
+                _hospitalRoomUnderConstructionService, 
+                _hospitalRoomForRenovationService, 
+                _renovationScheduleService, 
+                _equipmentRearrangementService, 
+                _doctorSurveyRatingService, _medicineCreationRequestService));
         }
 
         private void DoctorSurveysClick(object sender, RoutedEventArgs e)
         {
-            ShowWindow(new DoctorSurveysOverviewWindow(_signedManager, new DoctorSurveyRatingService()));
+            ShowWindow(new DoctorSurveysOverviewWindow(
+                _signedManager, 
+                _roomService, 
+                _hospitalRoomUnderConstructionService, 
+                _hospitalRoomForRenovationService, 
+                _renovationScheduleService, 
+                _equipmentRearrangementService, 
+                _doctorSurveyRatingService, _medicineCreationRequestService));
         }
 
         private void LogOffItemClick(object sender, RoutedEventArgs e)

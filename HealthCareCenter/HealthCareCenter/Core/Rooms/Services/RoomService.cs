@@ -1,26 +1,50 @@
 ﻿using HealthCareCenter.Core.Equipment.Models;
+using HealthCareCenter.Core.Equipment.Repositories;
 using HealthCareCenter.Core.Equipment.Services;
 using HealthCareCenter.Core.Exceptions;
 using HealthCareCenter.Core.Rooms.Models;
 using HealthCareCenter.Core.Rooms.Repositories;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace HealthCareCenter.Core.Rooms.Services
 {
     public class RoomService : IRoomService
     {
         private readonly IEquipmentRearrangementService _equipmentRearrangementService;
+        private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
+        private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
         private readonly BaseStorageRepository _storageRepository;
-        private IEquipmentService _equipmentService;
+        private readonly IEquipmentService _equipmentService;
 
         public RoomService(
             IEquipmentRearrangementService equipmentRearrangementService,
             BaseStorageRepository storageRepository,
-            IEquipmentService equipmentService)
+            IEquipmentService equipmentService,
+            IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService,
+            IHospitalRoomForRenovationService hospitalRoomForRenovationService)
         {
             _equipmentRearrangementService = equipmentRearrangementService;
+            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
+            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
+            _storageRepository = storageRepository;
+            _equipmentService = equipmentService;
+        }
+
+        public RoomService(
+            BaseStorageRepository storageRepository,
+            IEquipmentService equipmentService,
+            IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService,
+            IHospitalRoomForRenovationService hospitalRoomForRenovationService)
+        {
+            _equipmentRearrangementService = new EquipmentRearrangementService(
+                this, 
+                new EquipmentService(
+                    new EquipmentRepository()),
+                new HospitalRoomUnderConstructionService(
+                    new HospitalRoomUnderConstructionRepository()));
+            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
+            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
             _storageRepository = storageRepository;
             _equipmentService = equipmentService;
         }
@@ -78,7 +102,7 @@ namespace HealthCareCenter.Core.Rooms.Services
                     HospitalRoom hospitalRoom = (HospitalRoom)room;
                     if (HospitalRoomService.IsCurrentlyRenovating(hospitalRoom))
                     {
-                        HospitalRoomForRenovationService.Update(hospitalRoom);
+                        _hospitalRoomForRenovationService.Update(hospitalRoom);
                     }
                     else
                     {
@@ -108,11 +132,11 @@ namespace HealthCareCenter.Core.Rooms.Services
                 }
                 if (room == null)
                 {
-                    room = HospitalRoomForRenovationService.Get(roomId);
+                    room = _hospitalRoomForRenovationService.Get(roomId);
                 }
                 if (room == null)
                 {
-                    room = HospitalRoomUnderConstructionService.Get(roomId);
+                    room = _hospitalRoomUnderConstructionService.Get(roomId);
                 }
                 if (room == null)
                 {

@@ -7,87 +7,42 @@ using System.Text;
 
 namespace HealthCareCenter.Core.Rooms.Services
 {
-    public class RenovationScheduleService
+    public class RenovationScheduleService : IRenovationScheduleService
     {
-        // Change to nonstatic later
-        private static IRoomService _roomService;
+        private readonly IRoomService _roomService;
+        private readonly IHospitalRoomUnderConstructionService _hospitalRoomUnderConstructionService;
+        private readonly IHospitalRoomForRenovationService _hospitalRoomForRenovationService;
+        private readonly BaseRenovationScheduleRepository _renovationScheduleRepository;
 
-        public RenovationScheduleService(IRoomService roomService)
+        public RenovationScheduleService(IRoomService roomService, IHospitalRoomUnderConstructionService hospitalRoomUnderConstructionService, IHospitalRoomForRenovationService hospitalRoomForRenovationService, BaseRenovationScheduleRepository renovationScheduleRepository)
         {
             _roomService = roomService;
+            _hospitalRoomUnderConstructionService = hospitalRoomUnderConstructionService;
+            _hospitalRoomForRenovationService = hospitalRoomForRenovationService;
+            _renovationScheduleRepository = renovationScheduleRepository;
         }
 
-        public static List<RenovationSchedule> GetRenovations()
+        public List<RenovationSchedule> GetRenovations()
         {
-            return RenovationScheduleRepository.Renovations;
+            return _renovationScheduleRepository.Renovations;
         }
 
-        public static RenovationSchedule Get(int id)
+        public void Add(RenovationSchedule newRenovation)
+        {
+            _renovationScheduleRepository.Renovations.Add(newRenovation);
+            _renovationScheduleRepository.Save();
+        }
+
+        public bool Delete(RenovationSchedule renovation)
         {
             try
             {
-                foreach (RenovationSchedule renovation in RenovationScheduleRepository.Renovations)
+                for (int i = 0; i < _renovationScheduleRepository.Renovations.Count; i++)
                 {
-                    if (renovation.ID == id)
+                    if (renovation.ID == _renovationScheduleRepository.Renovations[i].ID)
                     {
-                        return renovation;
-                    }
-                }
-
-                throw new RenovationScheduleNotFound();
-            }
-            catch (RenovationScheduleNotFound ex)
-            {
-                Console.WriteLine(ex.Message);
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public static RenovationSchedule Get(HospitalRoom room)
-        {
-            try
-            {
-                List<RenovationSchedule> renovations = GetRenovations();
-                foreach (RenovationSchedule renovation in renovations)
-                {
-                    if (room.ID == renovation.Room1ID)
-                        return renovation;
-                    else if (room.ID == renovation.Room2ID)
-                        return renovation;
-                }
-                throw new RenovationScheduleNotFound();
-            }
-            catch (RenovationScheduleNotFound ex)
-            {
-                Console.WriteLine(ex);
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public static void Add(RenovationSchedule newRenovation)
-        {
-            RenovationScheduleRepository.Renovations.Add(newRenovation);
-            RenovationScheduleRepository.Save();
-        }
-
-        public static bool Delete(int id)
-        {
-            try
-            {
-                for (int i = 0; i < RenovationScheduleRepository.Renovations.Count; i++)
-                {
-                    if (id == RenovationScheduleRepository.Renovations[i].ID)
-                    {
-                        RenovationScheduleRepository.Renovations.RemoveAt(i);
-                        RenovationScheduleRepository.Save();
+                        _renovationScheduleRepository.Renovations.RemoveAt(i);
+                        _renovationScheduleRepository.Save();
                         return true;
                     }
                 }
@@ -104,111 +59,38 @@ namespace HealthCareCenter.Core.Rooms.Services
             }
         }
 
-        public static bool Delete(RenovationSchedule renovation)
-        {
-            try
-            {
-                for (int i = 0; i < RenovationScheduleRepository.Renovations.Count; i++)
-                {
-                    if (renovation.ID == RenovationScheduleRepository.Renovations[i].ID)
-                    {
-                        RenovationScheduleRepository.Renovations.RemoveAt(i);
-                        RenovationScheduleRepository.Save();
-                        return true;
-                    }
-                }
-                throw new RenovationScheduleNotFound();
-            }
-            catch (RenovationScheduleNotFound ex)
-            {
-                Console.WriteLine(ex);
-                return false;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public static void ScheduleSimpleRenovation(RenovationSchedule renovationSchedule, HospitalRoom roomForRenovation)
+        public void ScheduleSimpleRenovation(RenovationSchedule renovationSchedule, HospitalRoom roomForRenovation)
         {
             Add(renovationSchedule);
             HospitalRoomService.Delete(roomForRenovation);
-            HospitalRoomForRenovationService.Add(roomForRenovation);
+            _hospitalRoomForRenovationService.Add(roomForRenovation);
         }
 
-        public static void ScheduleMergeRenovation(RenovationSchedule renovationSchedule, HospitalRoom room1, HospitalRoom room2, HospitalRoom newRoom)
+        public void ScheduleMergeRenovation(RenovationSchedule renovationSchedule, HospitalRoom room1, HospitalRoom room2, HospitalRoom newRoom)
         {
-            HospitalRoomUnderConstructionService.Add(newRoom);
+            _hospitalRoomUnderConstructionService.Add(newRoom);
 
             HospitalRoomService.Delete(room1);
             HospitalRoomService.Delete(room2);
 
-            HospitalRoomForRenovationService.Add(room1);
-            HospitalRoomForRenovationService.Add(room2);
+            _hospitalRoomForRenovationService.Add(room1);
+            _hospitalRoomForRenovationService.Add(room2);
 
             Add(renovationSchedule);
         }
 
-        public static void ScheduleSplitRenovation(RenovationSchedule renovationSchedule, HospitalRoom newRoom1, HospitalRoom newRoom2, HospitalRoom splitRoom)
+        public void ScheduleSplitRenovation(RenovationSchedule renovationSchedule, HospitalRoom newRoom1, HospitalRoom newRoom2, HospitalRoom splitRoom)
         {
-            HospitalRoomForRenovationService.Add(splitRoom);
+            _hospitalRoomForRenovationService.Add(splitRoom);
             HospitalRoomService.Delete(splitRoom);
 
-            HospitalRoomUnderConstructionService.Add(newRoom1);
-            HospitalRoomUnderConstructionService.Add(newRoom2);
+            _hospitalRoomUnderConstructionService.Add(newRoom1);
+            _hospitalRoomUnderConstructionService.Add(newRoom2);
 
             Add(renovationSchedule);
         }
 
-        private static bool IsDateBeforeToday(DateTime date)
-        {
-            int value = DateTime.Compare(date, DateTime.Now);
-            return value < 0;
-        }
-
-        private static void FinishSimpleRenovation(RenovationSchedule renovationSchedule)
-        {
-            HospitalRoom renovatedRoom = HospitalRoomForRenovationService.Get(renovationSchedule.MainRoomID);
-            HospitalRoomService.Insert(renovatedRoom);
-            HospitalRoomForRenovationService.Delete(renovatedRoom);
-            Delete(renovationSchedule);
-        }
-
-        private static void FinishMergeRenovation(RenovationSchedule renovationSchedule)
-        {
-            HospitalRoom newRoom = HospitalRoomUnderConstructionService.Get(renovationSchedule.MainRoomID);
-            HospitalRoom room1 = HospitalRoomForRenovationService.Get(renovationSchedule.Room1ID);
-            HospitalRoom room2 = HospitalRoomForRenovationService.Get(renovationSchedule.Room2ID);
-            HospitalRoomService.Insert(newRoom);
-            // -----
-
-            _roomService.TransferAllEquipment(room1, newRoom);
-            _roomService.TransferAllEquipment(room2, newRoom);
-            // -----
-            HospitalRoomForRenovationService.Delete(room1);
-            HospitalRoomForRenovationService.Delete(room2);
-            HospitalRoomUnderConstructionService.Delete(newRoom.ID);
-            Delete(renovationSchedule);
-        }
-
-        private static void FinishSplitRenovation(RenovationSchedule renovationSchedule)
-        {
-            HospitalRoom mainRoom = HospitalRoomForRenovationService.Get(renovationSchedule.MainRoomID);
-            HospitalRoom room1 = HospitalRoomUnderConstructionService.Get(renovationSchedule.Room1ID);
-            HospitalRoom room2 = HospitalRoomUnderConstructionService.Get(renovationSchedule.Room2ID);
-
-            HospitalRoomUnderConstructionService.Delete(room1.ID);
-            HospitalRoomUnderConstructionService.Delete(room2.ID);
-            HospitalRoomForRenovationService.Delete(mainRoom.ID);
-
-            HospitalRoomService.Insert(room1);
-            HospitalRoomService.Insert(room2);
-
-            Delete(renovationSchedule);
-        }
-
-        public static void FinishRenovation(RenovationSchedule renovationSchedule)
+        public void FinishRenovation(RenovationSchedule renovationSchedule)
         {
             if (IsDateBeforeToday(renovationSchedule.FinishDate))
             {
@@ -225,6 +107,53 @@ namespace HealthCareCenter.Core.Rooms.Services
                     FinishSplitRenovation(renovationSchedule);
                 }
             }
+        }
+
+        private bool IsDateBeforeToday(DateTime date)
+        {
+            int value = DateTime.Compare(date, DateTime.Now);
+            return value < 0;
+        }
+
+        private void FinishSimpleRenovation(RenovationSchedule renovationSchedule)
+        {
+            HospitalRoom renovatedRoom = _hospitalRoomForRenovationService.Get(renovationSchedule.MainRoomID);
+            HospitalRoomService.Insert(renovatedRoom);
+            _hospitalRoomForRenovationService.Delete(renovatedRoom);
+            Delete(renovationSchedule);
+        }
+
+        private void FinishMergeRenovation(RenovationSchedule renovationSchedule)
+        {
+            HospitalRoom newRoom = _hospitalRoomUnderConstructionService.Get(renovationSchedule.MainRoomID);
+            HospitalRoom room1 = _hospitalRoomForRenovationService.Get(renovationSchedule.Room1ID);
+            HospitalRoom room2 = _hospitalRoomForRenovationService.Get(renovationSchedule.Room2ID);
+            HospitalRoomService.Insert(newRoom);
+            // -----
+
+            _roomService.TransferAllEquipment(room1, newRoom);
+            _roomService.TransferAllEquipment(room2, newRoom);
+            // -----
+            _hospitalRoomForRenovationService.Delete(room1);
+            _hospitalRoomForRenovationService.Delete(room2);
+            _hospitalRoomUnderConstructionService.Delete(newRoom.ID);
+            Delete(renovationSchedule);
+        }
+
+        private void FinishSplitRenovation(RenovationSchedule renovationSchedule)
+        {
+            HospitalRoom mainRoom = _hospitalRoomForRenovationService.Get(renovationSchedule.MainRoomID);
+            HospitalRoom room1 = _hospitalRoomUnderConstructionService.Get(renovationSchedule.Room1ID);
+            HospitalRoom room2 = _hospitalRoomUnderConstructionService.Get(renovationSchedule.Room2ID);
+
+            _hospitalRoomUnderConstructionService.Delete(room1.ID);
+            _hospitalRoomUnderConstructionService.Delete(room2.ID);
+            _hospitalRoomForRenovationService.Delete(mainRoom.ID);
+
+            HospitalRoomService.Insert(room1);
+            HospitalRoomService.Insert(room2);
+
+            Delete(renovationSchedule);
         }
     }
 }
